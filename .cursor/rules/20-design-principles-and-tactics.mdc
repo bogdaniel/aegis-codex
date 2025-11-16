@@ -1,0 +1,12 @@
+---
+description: USE WHEN implementing or reviewing code, writing functions, handling errors, or optimizing hot paths.
+globs:
+alwaysApply: false
+---
+# Design Principles & Tactics
+- SOLID: SRP; OCP via composition; LSP-safe abstractions; ISP-focused interfaces; DIP via ports.
+- Code hygiene: small functions (<~30 lines); descriptive names; no duplication (DRY).
+- Error handling: typed errors; fail-fast; never leak internals to users; structured logs (no sensitive data).
+- Performance: pick the right data structures; avoid O(n^2) hot paths; measure before tuning.
+- Testing: unit-first; property tests for invariants; deterministic (no time/network leaks); ≥90% coverage (critical libs ≥95%).
+- Security basics: parameterized queries/ORM; XSS/CSP/CSRF mitigations; input validation at boundaries.

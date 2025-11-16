@@ -1,0 +1,19 @@
+---
+description: USE WHEN planning or refactoring architecture, defining module boundaries, layering, or selecting patterns (e.g., CQRS, Saga, Ports/Adapters).
+globs:
+alwaysApply: false
+---
+# Architecture Principles & Patterns
+- Clean Architecture layers: domain (pure) → application → interface → infrastructure.
+- DDD: bounded contexts, aggregates, entities, value objects, repositories, domain events.
+- Pattern selection:
+  - Factory/Abstract Factory: enforce invariants at creation.
+  - Strategy: swap algorithms (pricing, retries) at runtime.
+  - Adapter/Facade: isolate external systems behind ports.
+  - Decorator: cross-cutting (caching/telemetry) without inheritance.
+  - Event/Observer: decouple producers/consumers; domain events.
+  - CQRS (when justified): read/write separation; avoid premature split.
+- Invariants:
+  - Dependencies point inward; domain ignorant of IO/frameworks.
+  - Validation at edges; domain assumes valid inputs.
+  - Version public APIs; document migrations.
