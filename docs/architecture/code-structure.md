@@ -22,4 +22,9 @@
 
 ## Low Coupling, High Cohesion
 - Minimize dependencies between modules; avoid deep dependency chains.
-- Group related behavior together; avoid scattering logic for one feature across many unrelated modules.***
+- Group related behavior together; avoid scattering logic for one feature across many unrelated modules.
+
+## Module Boundaries & Public Surfaces
+- Define clear public entry points for each module/feature (for example, an `index` or `public` file).
+- Prefer importing via these public surfaces instead of deep path imports into internal files.
+- Avoid circular dependencies between modules/features; refactor shared concerns into well-defined shared modules when needed.***
