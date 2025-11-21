@@ -1,0 +1,65 @@
+# Aegis Codex — Enterprise AI Coding Ruleset
+
+This repository defines a rule- and agent-pack for AI coding assistants (Cursor, Aider, Continue, etc.) to generate **senior‑grade, production‑ready code** by default.
+
+You do **not** restate standards in your prompts. Instead, the agents and `.cursor/rules` files inject them automatically so you can focus on the task (“build X”, “review Y”, “add tests for Z”).
+
+## Layout
+- `AGENTS.md` — Canonical agent definitions (personas, invariants, formatting).
+- `.cursor/rules/*.mdc` — Machine‑readable rules for Cursor; always‑on standards.
+- `docs/` — Human‑readable guides:
+  - `docs/architecture/` — Architecture patterns, SOLID, core design principles (DRY/KISS/YAGNI/SoC), and design patterns.
+  - `docs/security-standards.md` — Security baseline.
+  - `docs/testing-standards.md` — Testing rules.
+  - `docs/observability-standards.md` — Logging/metrics/tracing/health.
+  - `docs/performance-standards.md` — Performance guidance.
+  - `docs/ci-standards.md` — CI/CD pipeline expectations.
+  - `docs/api-standards.md` — API design rules.
+  - `docs/code-review-standards.md` — Code review guidance.
+  - `docs/language-guides/` — Language‑specific standards.
+- `examples/` — Small “before/after” and flow examples (optional; for humans).
+
+## Core Agents
+- `@architect` — System and service architecture.
+- `@security-auditor` — Security review and fixes.
+- `@test-engineer` — Test design and generation.
+- `@code-reviewer` — Code review and quality gate.
+- `@perf-optimizer` — Performance profiling and optimization.
+- `@api-designer` — REST/GraphQL API contracts.
+- `@devops` — CI/CD and runtime configuration.
+- `@refactorer` — Behavior‑preserving refactors.
+
+Each agent has:
+- Clear role and operating rules.
+- Strict `[FORMAT]` section (single fenced block or “Format non-compliant”).
+- Outputs that always include at least one verification step (tests/checks/commands).
+
+## Using This Pack in Cursor
+1. Place this repo (or its `.cursor` and `AGENTS.md` + `docs` content) at the root of your project.
+2. Open the project in Cursor; it will automatically pick up `.cursor/rules/*.mdc` and `AGENTS.md`.
+3. In chat, invoke an agent by role, focusing only on the task. For example:
+   - `Act as the @code-reviewer. Review this diff and fix anything blocking.`
+   - `Act as the @security-auditor. Audit this handler and apply fixes.`
+   - `Act as the @test-engineer. Add tests for this function.`
+
+The rules ensure the agent:
+- Obeys security/testing/observability/performance/CI/API standards.
+- Returns properly formatted, single‑block outputs (code/spec/tests/config).
+- Includes commands to run (lint, tests, security scans, etc.).
+
+## Using With Other Tools
+For tools that can’t read `.cursor/rules` directly:
+- Load or copy the relevant sections from `AGENTS.md` and `docs/*.md` into the tool’s “system” / “rules” area.
+- Keep your user prompts short and task‑oriented; avoid duplicating rules.
+
+## Extending the System
+- To add a new language: create `docs/language-guides/<lang>.md` and a matching `.cursor/rules/*.mdc` file with globs and MUST/NEVER lists.
+- To add a new agent: extend `AGENTS.md` and mirror it in `.cursor/rules/60-agents.mdc` with role, operating rules, and `[FORMAT]`.
+- To tighten behavior: adjust the relevant `[FORMAT]` or `[OPERATING RULES]` sections; prefer “fail‑closed” patterns (e.g., respond with `Format non-compliant` when format can’t be honored).
+
+## Examples
+See `examples/` for:
+- “Before/after” service handlers.
+- Sample prompts you can reuse to exercise the agents end‑to‑end.
+
+You can safely treat this repository as a **policy/agent layer** that you drop into real projects to upgrade AI‑assisted development to enterprise standards.***
