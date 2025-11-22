@@ -1,0 +1,16 @@
+---
+description: "TypeScript standards: strict types, lint/format, testing."
+alwaysApply: true
+globs:
+  - "**/*.ts"
+  - "**/*.tsx"
+---
+
+[TYPESCRIPT STANDARDS]
+- Stack: Node 20+; ESM preferred; `tsconfig` strict (`noImplicitAny`, `noUncheckedIndexedAccess`) and path aliases where needed; avoid default exports for shared libs.
+- Style/lint: ESLint (typescript-eslint) + Prettier; `npm run lint && npm run format -- --check`; keep imports ordered and unused removed.
+- Types: no `any`/`!`; prefer discriminated unions and readonly; avoid ambient globals; `tsc --noEmit` required.
+- Async/safety: handle promises with try/catch; no unhandled rejections; add timeouts/retries for I/O; avoid `eval`/dynamic code; validate inputs with schemas (e.g., zod/yup); set `helmet`/secure cookies for HTTP.
+- Testing: `npm test` (vitest/jest) with coverage; mock boundaries; include integration/API contract tests where applicable.
+- Security/deps: parameterized queries/ORM; sanitize outputs; secrets from env/manager; `npm audit --production --audit-level=high`.
+- Verification artifact: `npm run lint && npm run format -- --check && tsc --noEmit && npm test && npm audit --production --audit-level=high`.

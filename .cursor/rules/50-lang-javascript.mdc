@@ -1,0 +1,17 @@
+---
+description: "JavaScript standards: lint/format, testing, safe async."
+alwaysApply: true
+globs:
+  - "**/*.js"
+  - "**/*.mjs"
+  - "**/*.cjs"
+---
+
+[JAVASCRIPT STANDARDS]
+- Stack: Node 20+; ESM preferred (`\"type\": \"module\"` or `.mjs`).
+- Style/lint: ESLint + Prettier; `npm run lint && npm run format`; prefer const/let; no implicit globals; small modules.
+- Safety: validate inputs (zod/ajv); avoid `eval`/Function; escape/encode outputs; set `helmet` for HTTP; secure cookies (`HttpOnly`, `Secure`, `SameSite`); CSRF where stateful.
+- Async: async/await with try/catch; prevent unhandled rejections; timeouts/retries on I/O; reuse connections.
+- Testing: `npm test` (vitest/jest) with coverage; mock network/filesystem; include integration/API tests where relevant.
+- Security/deps: parameterized queries/ORM; `npm audit --production --audit-level=high`; no `.env` in git; secrets via env/manager.
+- Verification artifact: `npm run lint && npm run format -- --check && npm test && npm audit --production --audit-level=high`.

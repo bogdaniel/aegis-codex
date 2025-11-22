@@ -1,0 +1,15 @@
+---
+description: "Rust standards: safety, correctness, and tooling."
+alwaysApply: true
+globs:
+  - "**/*.rs"
+---
+
+[RUST STANDARDS]
+- Toolchain: stable Rust 2021+; pin via `rust-toolchain.toml`; prefer workspaces for multi-crate setups.
+- Style/lint: `cargo fmt --all -- --check`; `cargo clippy --all-targets --all-features -D warnings`; avoid unwarranted `clone`.
+- Safety: avoid `unsafe`; if necessary, isolate/justify and wrap safely; use `Result` + `thiserror`; avoid `unwrap`/`expect` outside tests/startup.
+- Testing: `cargo test --all`; add property-based tests (`proptest`/`quickcheck`) for invariants; separate unit (`mod tests`) vs integration (`tests/`).
+- Security: validate inputs; parameterized queries/ORM; no SQL concat; run `cargo audit`; avoid unmaintained crates.
+- Performance: measure before optimizing; prefer iterators; avoid needless allocations; bound async concurrency and add timeouts.
+- Verification artifact: `cargo fmt --all -- --check && cargo clippy --all-targets --all-features -D warnings && cargo test --all && cargo audit`.

@@ -1,0 +1,20 @@
+---
+description: "Testing standards: coverage, determinism, and contracts."
+alwaysApply: true
+globs:
+  - "src/**"
+  - "app/**"
+  - "domain/**"
+  - "tests/**"
+---
+
+[TESTING BASELINE]
+- Coverage: target ≥80% critical code paths; prioritize domain logic, edges, regression tests for fixed bugs; fail on drops in critical modules.
+- Determinism: tests must be hermetic, order-independent, and parallel-safe; no external network/clock randomness; control time/randomness/IO via fakes/mocks; avoid sleep-based waits.
+- Structure: Arrange-Act-Assert; descriptive names by intent; avoid testing implementation details.
+- Scope: unit pure logic with mocked deps; integration with seeded data and cleanup; minimal E2E on critical flows; use containers/fakes for infra.
+- Isolation: small explicit fixtures; no global state; reset between tests; limit parallelism for shared resources.
+- CI gating: block on flakiness; no silent skips; include coverage reports; run lint/type/security checks with tests.
+
+[VERIFICATION]
+- Provide exact commands to run tests per stack (e.g., `npm test -- --runInBand`, `pytest -q`, `go test ./...`, `cargo test`, `phpunit`) and include lint/type where relevant.

@@ -1,0 +1,15 @@
+---
+description: "PHP standards: modern, typed, and secure."
+alwaysApply: true
+globs:
+  - "**/*.php"
+---
+
+[PHP STANDARDS]
+- Version: PHP 8.2+; `declare(strict_types=1);`; type declarations for params/returns/properties; prefer Laravel/Symfony patterns where applicable.
+- Style/lint: PSR-12 enforced via `phpcs --standard=PSR12`; autoformat with `phpcbf`; static analysis with `phpstan analyse --level=max` (or `psalm` strict); no suppressed criticals.
+- Security: validate/sanitize inputs; prepared statements/ORM only; escape outputs; CSRF tokens for stateful forms; secure cookies (`HttpOnly`, `SameSite`, `Secure`); secrets in env/secret manager; hash passwords with Argon2id/bcrypt.
+- Performance: enable OPCache in prod; paginate lists; cache expensive queries (Redis/APCu); avoid N+1.
+- Testing: `./vendor/bin/phpunit` with coverage; mock external services; cover validation/error paths.
+- Dependencies: Composer with lock; run `composer audit`; avoid abandoned packages; disable allow_url_fopen if not needed.
+- Verification artifact: `composer install --no-dev` (if prod) or `composer install` then `phpcs --standard=PSR12`, `phpstan analyse --level=max`, `composer audit`, and `./vendor/bin/phpunit`.

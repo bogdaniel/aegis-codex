@@ -247,8 +247,8 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 ### [AGENT @perf-optimizer]
 - Role: profiling first; improve hot paths only; preserve correctness.
 - Deliver: baseline vs target, bottlenecks with evidence, optimization plan, verification (benchmark/load-test).
-- Format: single fenced corrected code block with language tag and filename comment; otherwise reply “Format non-compliant”.
-- Safeguards: complexity awareness, appropriate data structures, caching/batching, bounded concurrency/back-pressure, timeouts.
+- Format: **exactly one** fenced corrected code block with language tag **and filename comment**; no extra snippets, no commented alternatives, no second variants; if formatting cannot be honored, reply only “Format non-compliant”.
+- Safeguards: state time/space complexity and expected allocations; prefer in-place reuse (`retain`/buffer reuse) or explicit preallocation with justification; avoid heuristic capacity guesses without evidence; avoid speculative perf claims—if unmeasured, say so; keep a single recommended approach (no “alternatives” section).
 
 ### [AGENT @api-designer]
 - Role: contract-first REST/GraphQL; versioning and idempotency.
@@ -602,6 +602,31 @@ Respect bounded contexts; no cross-context imports without explicit contracts an
 
 [LANGUAGE STANDARDS] (50-lang-*.mdc)
 
+## 50-lang-go.mdc — Go standards: idiomatic, typed, and checked.
+- Globs: **/*.go
+
+### [GO STANDARDS]
+- Stack: Go 1.22+ with modules.
+- Style/lint: `gofmt` + `goimports`; `staticcheck` or `golangci-lint`; command: `gofmt -w . && goimports -w . && staticcheck ./...`.
+- Errors: handle and wrap errors; use `errors.Is/As`; no panics for normal flow.
+- Concurrency: contexts everywhere with timeouts; bounded worker pools; avoid data races; prefer channels with back-pressure.
+- Safety: parameterized queries; validate inputs; avoid logging secrets; TLS for network calls; run `gosec ./...`.
+- Testing: `go test ./...` (race detector where relevant); table-driven tests including negatives; `go test -bench=.` for hotspots.
+- Performance: avoid unnecessary goroutines; manage allocations; reuse buffers when safe.
+- Verification artifact: `gofmt -w . && goimports -w . && staticcheck ./... && gosec ./... && go test ./...`.
+
+## 50-lang-javascript.mdc — JavaScript standards: lint/format, testing, safe async.
+- Globs: **/*.js, **/*.mjs, **/*.cjs
+
+### [JAVASCRIPT STANDARDS]
+- Stack: Node 20+; ESM preferred (`\"type\": \"module\"` or `.mjs`).
+- Style/lint: ESLint + Prettier; `npm run lint && npm run format`; prefer const/let; no implicit globals; small modules.
+- Safety: validate inputs (zod/ajv); avoid `eval`/Function; escape/encode outputs; set `helmet` for HTTP; secure cookies (`HttpOnly`, `Secure`, `SameSite`); CSRF where stateful.
+- Async: async/await with try/catch; prevent unhandled rejections; timeouts/retries on I/O; reuse connections.
+- Testing: `npm test` (vitest/jest) with coverage; mock network/filesystem; include integration/API tests where relevant.
+- Security/deps: parameterized queries/ORM; `npm audit --production --audit-level=high`; no `.env` in git; secrets via env/manager.
+- Verification artifact: `npm run lint && npm run format -- --check && npm test && npm audit --production --audit-level=high`.
+
 ## 50-lang-php.mdc — PHP standards: modern, typed, and secure.
 - Globs: **/*.php
 
@@ -613,4 +638,41 @@ Respect bounded contexts; no cross-context imports without explicit contracts an
 - Testing: `./vendor/bin/phpunit` with coverage; mock external services; cover validation/error paths.
 - Dependencies: Composer with lock; run `composer audit`; avoid abandoned packages; disable allow_url_fopen if not needed.
 - Verification artifact: `composer install --no-dev` (if prod) or `composer install` then `phpcs --standard=PSR12`, `phpstan analyse --level=max`, `composer audit`, and `./vendor/bin/phpunit`.
+
+## 50-lang-python.mdc — Python standards: typing, linting, testing.
+- Globs: **/*.py
+
+### [PYTHON STANDARDS]
+- Stack: Python 3.11+ with venv/uv/poetry; pin deps in `pyproject` + lock; avoid unpinned `pip install -r` without hashes.
+- Style/lint: `ruff check .` plus `black --check .` and `isort .`; fix unused imports/code.
+- Typing: `pyright` or `mypy --strict`; no `type: ignore` without justification; prefer dataclasses/pydantic for structured data.
+- Safety: validate inputs (pydantic); no eval/exec; parameterized DB/ORM; context managers for resources; sanitize logs; secrets via env/manager.
+- Testing: `pytest -q` with coverage; mock IO; cover edge/error paths; freeze time for determinism.
+- Security/deps: `bandit -r .`; `pip-audit` or `uv pip audit`; forbid hardcoded creds.
+- Performance: avoid N+1; prefer generators for streams; timeouts/retries with jitter; cap concurrency with semaphores.
+- Verification artifact: `ruff check . && black --check . && isort . && mypy --strict . && pytest -q && bandit -r . && pip-audit`.
+
+## 50-lang-rust.mdc — Rust standards: safety, correctness, and tooling.
+- Globs: **/*.rs
+
+### [RUST STANDARDS]
+- Toolchain: stable Rust 2021+; pin via `rust-toolchain.toml`; prefer workspaces for multi-crate setups.
+- Style/lint: `cargo fmt --all -- --check`; `cargo clippy --all-targets --all-features -D warnings`; avoid unwarranted `clone`.
+- Safety: avoid `unsafe`; if necessary, isolate/justify and wrap safely; use `Result` + `thiserror`; avoid `unwrap`/`expect` outside tests/startup.
+- Testing: `cargo test --all`; add property-based tests (`proptest`/`quickcheck`) for invariants; separate unit (`mod tests`) vs integration (`tests/`).
+- Security: validate inputs; parameterized queries/ORM; no SQL concat; run `cargo audit`; avoid unmaintained crates.
+- Performance: measure before optimizing; prefer iterators; avoid needless allocations; bound async concurrency and add timeouts.
+- Verification artifact: `cargo fmt --all -- --check && cargo clippy --all-targets --all-features -D warnings && cargo test --all && cargo audit`.
+
+## 50-lang-typescript.mdc — TypeScript standards: strict types, lint/format, testing.
+- Globs: **/*.ts, **/*.tsx
+
+### [TYPESCRIPT STANDARDS]
+- Stack: Node 20+; ESM preferred; `tsconfig` strict (`noImplicitAny`, `noUncheckedIndexedAccess`) and path aliases where needed; avoid default exports for shared libs.
+- Style/lint: ESLint (typescript-eslint) + Prettier; `npm run lint && npm run format -- --check`; keep imports ordered and unused removed.
+- Types: no `any`/`!`; prefer discriminated unions and readonly; avoid ambient globals; `tsc --noEmit` required.
+- Async/safety: handle promises with try/catch; no unhandled rejections; add timeouts/retries for I/O; avoid `eval`/dynamic code; validate inputs with schemas (e.g., zod/yup); set `helmet`/secure cookies for HTTP.
+- Testing: `npm test` (vitest/jest) with coverage; mock boundaries; include integration/API contract tests where applicable.
+- Security/deps: parameterized queries/ORM; sanitize outputs; secrets from env/manager; `npm audit --production --audit-level=high`.
+- Verification artifact: `npm run lint && npm run format -- --check && tsc --noEmit && npm test && npm audit --production --audit-level=high`.
 

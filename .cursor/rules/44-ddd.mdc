@@ -1,0 +1,53 @@
+---
+description: "DDD — Domain-Driven Design (boundaries and invariants). Maintain domain purity and bounded contexts."
+alwaysApply: true
+globs:
+  - "src/**"
+  - "domain/**"
+  - "application/**"
+  - "infrastructure/**"
+  - "docs/architecture/**"
+  - "contracts/**"
+  - "docs/adr/**"
+---
+
+[DDD — DOMAIN-DRIVEN DESIGN (BOUNDARIES & INVARIANTS)]
+
+[CORE MANDATE]
+Respect bounded contexts; no cross-context imports without explicit contracts and ADR.
+
+[PRINCIPLES]
+- Keep domain logic pure: no framework/IO dependencies; enforce invariants through Aggregates/VOs where justified.
+- Maintain ubiquitous language across code, tests, acceptance, and docs; rename code to match domain truth.
+- Update context-map and contracts when interactions or boundaries change.
+- Encode critical invariants (money, permissions, AML rules) directly in the domain model with tests.
+- Reject any solution that collapses contexts or leaks infrastructure into domain boundaries.
+
+[BOUNDED CONTEXT RULES]
+- Each context owns its data model and language
+- Cross-context communication via explicit contracts (APIs, events, anti-corruption layers)
+- No direct database sharing across contexts
+- Context map documents relationships and integration patterns
+
+[DOMAIN MODEL PURITY]
+```
+✓ Pure domain logic with no framework imports
+✓ Invariants enforced at construction/mutation
+✓ Value objects for immutable domain concepts
+✓ Aggregates as consistency boundaries
+✗ Domain entities depending on HTTP/DB libraries
+✗ Infrastructure concerns in domain layer
+```
+
+[INVARIANT PROTECTION]
+- Validate at aggregate boundaries
+- Make illegal states unrepresentable
+- Test invariants explicitly with property-based tests
+- Document business rules directly in domain code
+
+[ANTI-PATTERNS]
+- Anemic domain models (just getters/setters)
+- God aggregates that know too much
+- Technical concerns leaking into domain
+- Bypassing invariants through direct setters
+- Context boundaries ignored for convenience

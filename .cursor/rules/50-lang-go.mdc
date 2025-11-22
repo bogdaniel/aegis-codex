@@ -1,0 +1,16 @@
+---
+description: "Go standards: idiomatic, typed, and checked."
+alwaysApply: true
+globs:
+  - "**/*.go"
+---
+
+[GO STANDARDS]
+- Stack: Go 1.22+ with modules.
+- Style/lint: `gofmt` + `goimports`; `staticcheck` or `golangci-lint`; command: `gofmt -w . && goimports -w . && staticcheck ./...`.
+- Errors: handle and wrap errors; use `errors.Is/As`; no panics for normal flow.
+- Concurrency: contexts everywhere with timeouts; bounded worker pools; avoid data races; prefer channels with back-pressure.
+- Safety: parameterized queries; validate inputs; avoid logging secrets; TLS for network calls; run `gosec ./...`.
+- Testing: `go test ./...` (race detector where relevant); table-driven tests including negatives; `go test -bench=.` for hotspots.
+- Performance: avoid unnecessary goroutines; manage allocations; reuse buffers when safe.
+- Verification artifact: `gofmt -w . && goimports -w . && staticcheck ./... && gosec ./... && go test ./...`.

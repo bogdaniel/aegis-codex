@@ -1,0 +1,33 @@
+---
+description: "TDD — Test-Driven Development (deterministic first). Enforce tests before or with production changes."
+alwaysApply: true
+globs:
+  - "src/**"
+  - "app/**"
+  - "domain/**"
+  - "tests/**"
+---
+
+[TDD — TEST-DRIVEN DEVELOPMENT (DETERMINISTIC FIRST)]
+
+[CORE MANDATE]
+Always modify or add tests before or with production changes; reject untested logic.
+
+[PRINCIPLES]
+- Treat every behavior change as a contract: encode expected input/output conditions explicitly.
+- Prefer pure seams and deterministic units; isolate IO/LLM randomness behind adapters with strict contracts.
+- Use property-based tests when invariants exist; ensure trivial code mutations fail (mutation-resilient).
+- Never weaken or delete tests without justification tied to acceptance or domain rules.
+- If a feature cannot be expressed as tests, reduce scope; do not proceed with ambiguous behavior.
+
+[WORKFLOW]
+1. Write failing test that captures the contract
+2. Implement minimal code to pass
+3. Refactor with tests as safety net
+4. Verify mutation resilience
+
+[REJECTION CRITERIA]
+- Production code changes without corresponding test changes
+- Tests that depend on order or shared state
+- Tests that leak implementation details instead of testing behavior
+- Deletion of tests without domain justification

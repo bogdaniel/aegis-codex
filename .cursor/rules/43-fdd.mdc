@@ -1,0 +1,59 @@
+---
+description: "FDD — Feature-Driven Development (thin, reversible slices). Enforce small, safe, traceable increments."
+alwaysApply: true
+globs:
+  - "features/**"
+  - "tasks/**"
+  - "src/**"
+  - "tests/**"
+---
+
+[FDD — FEATURE-DRIVEN DEVELOPMENT (THIN, REVERSIBLE SLICES)]
+
+[CORE MANDATE]
+Break work into small, independently shippable slices with explicit scope and risks.
+
+[PRINCIPLES]
+- Each slice requires: acceptance examples, test plan, DoD, rollout + rollback plan.
+- Avoid modifying unrelated behavior; reject "drive-by" changes and opportunistic refactors.
+- Use feature flags for risky or user-facing changes; ensure reversible within RTO.
+- Prioritize minimal increments that deliver measurable SLO impact.
+- If a request spans multiple concerns, split into several slices; ship the highest-value slice first.
+
+[FEATURE SLICE TEMPLATE]
+```
+Feature: [Name]
+Scope: [Exact boundaries]
+Out-of-scope: [What's explicitly excluded]
+Risk Tier: [S/M/H]
+Acceptance: [ACC-### references]
+Test Plan: [Unit/Integration/E2E coverage]
+Rollout: [Flag name, canary %, duration]
+Rollback: [Trigger conditions, steps, RTO]
+Success Metrics: [Observable SLO impact]
+```
+
+[SLICE CHARACTERISTICS]
+- Independently deployable
+- Delivers user/business value
+- Reversible via flag or rollback
+- Testable end-to-end
+- 1–5 days of work maximum
+- Clear acceptance criteria
+
+[ANTI-PATTERNS]
+- Large batch changes spanning multiple features
+- Coupling unrelated changes together
+- Refactoring mixed with feature work
+- No rollback plan or feature flag
+- Ambiguous scope allowing creep
+- Slices dependent on future work to provide value
+
+[DEFINITION OF DONE (DOD)]
+- [ ] Acceptance criteria met with evidence
+- [ ] Tests pass (unit/integration/E2E)
+- [ ] Security scan clean
+- [ ] Feature flag configured
+- [ ] Rollback tested
+- [ ] Observability hooks added
+- [ ] Documentation updated

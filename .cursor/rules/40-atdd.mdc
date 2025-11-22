@@ -1,0 +1,44 @@
+---
+description: "ATDD — Acceptance Test-Driven Development (done = proven). Define acceptance before implementation."
+alwaysApply: true
+globs:
+  - "acceptance/**"
+  - "src/**"
+  - "tests/**"
+---
+
+[ATDD — ACCEPTANCE TEST-DRIVEN DEVELOPMENT (DONE = PROVEN)]
+
+[CORE MANDATE]
+Define acceptance criteria before designing the implementation; acceptance governs scope.
+
+[PRINCIPLES]
+- Produce 5–20 concrete Given/When/Then examples with real values; no abstractions or vague clauses.
+- Assign stable IDs (ACC-###) and link them to unit/integration tests.
+- Acceptance examples must be updated before modifying behavior intentionally.
+- Treat acceptance criteria as the primary boundary against scope creep.
+- If acceptance cannot be defined clearly, trigger TRIAGE and halt.
+
+[ACCEPTANCE EXAMPLE FORMAT]
+```
+[ACC-001] User authentication with valid credentials
+Given user "alice@example.com" with password "correct-hash"
+When user submits login form
+Then session token is returned
+And token expires in 3600 seconds
+And audit log records successful login
+```
+
+[REQUIREMENTS]
+- Real, concrete values (not "a user" but "alice@example.com")
+- Observable outcomes that can be verified
+- Edge cases and failure modes included
+- Clear pass/fail criteria
+- Stable ID for traceability
+
+[REJECTION CRITERIA]
+- Vague acceptance ("system should work well")
+- Abstract placeholders without concrete examples
+- Acceptance defined after implementation
+- Untestable or unobservable criteria
+- Acceptance that allows infinite scope interpretation

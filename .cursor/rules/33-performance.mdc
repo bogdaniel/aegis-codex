@@ -1,0 +1,21 @@
+---
+description: "Performance standards: efficiency without breaking correctness."
+alwaysApply: true
+globs:
+  - "src/**"
+  - "app/**"
+  - "services/**"
+  - "domain/**"
+---
+
+[PERFORMANCE BASELINE]
+- Measure first with realistic workloads; address hot paths/N+1s only; prefer simplicity over clever micro-optimizations.
+- Complexity: choose appropriate data structures; avoid accidental O(n^2+); batch external calls.
+- Application/API: enforce limits per request (page/batch size); paginate all lists (cursor preferred for large sets); avoid unbounded work.
+- Data/storage: index common queries; reuse pooled connections; set timeouts; avoid long transactions; compress/stream large payloads.
+- Concurrency: bounded concurrency with back-pressure; timeouts/retries with jitter and circuit breakers for remote calls; avoid unbounded goroutines/threads/promises.
+- Caching: safe caching for idempotent reads; define TTL and invalidation; respect consistency.
+- Resource management: close/cleanup handles; cap memory/FD/thread use; avoid per-request allocations in tight loops.
+
+[VERIFICATION]
+- Provide benchmark/load-test/check (e.g., `go test -bench .`, `npm run bench`, `wrk -t2 -c10 -d30s http://...`) and expected latency/throughput target.

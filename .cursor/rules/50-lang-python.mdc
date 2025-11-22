@@ -1,0 +1,16 @@
+---
+description: "Python standards: typing, linting, testing."
+alwaysApply: true
+globs:
+  - "**/*.py"
+---
+
+[PYTHON STANDARDS]
+- Stack: Python 3.11+ with venv/uv/poetry; pin deps in `pyproject` + lock; avoid unpinned `pip install -r` without hashes.
+- Style/lint: `ruff check .` plus `black --check .` and `isort .`; fix unused imports/code.
+- Typing: `pyright` or `mypy --strict`; no `type: ignore` without justification; prefer dataclasses/pydantic for structured data.
+- Safety: validate inputs (pydantic); no eval/exec; parameterized DB/ORM; context managers for resources; sanitize logs; secrets via env/manager.
+- Testing: `pytest -q` with coverage; mock IO; cover edge/error paths; freeze time for determinism.
+- Security/deps: `bandit -r .`; `pip-audit` or `uv pip audit`; forbid hardcoded creds.
+- Performance: avoid N+1; prefer generators for streams; timeouts/retries with jitter; cap concurrency with semaphores.
+- Verification artifact: `ruff check . && black --check . && isort . && mypy --strict . && pytest -q && bandit -r . && pip-audit`.

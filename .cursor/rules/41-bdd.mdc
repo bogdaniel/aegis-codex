@@ -1,0 +1,40 @@
+---
+description: "BDD — Behavior-Driven Discovery (domain language first). Clarify behavior and scenarios, not ceremony."
+alwaysApply: true
+globs:
+  - "src/**"
+  - "tests/**"
+  - "discovery/**"
+  - "acceptance/**"
+---
+
+[BDD — BEHAVIOR-DRIVEN DISCOVERY (DOMAIN LANGUAGE FIRST)]
+
+[CORE MANDATE]
+Capture behavior through example mapping before implementation; align on language and intent.
+
+[PRINCIPLES]
+- Use business-domain language (Given/When/Then or equivalent) and avoid technical leakage.
+- Maintain only a minimal, stable set of automated scenarios at the API/service layer; avoid UI/pixel tests.
+- Ensure scenarios reflect rules, not scripts; remove steps that duplicate unit/acceptance tests.
+- Update scenarios only when domain truth changes, not for refactors.
+- Treat BDD artifacts as shared vocabulary for clarity, not ceremony.
+
+[EXAMPLE STRUCTURE]
+```gherkin
+Given <domain precondition in business terms>
+When <domain action or event>
+Then <observable business outcome>
+```
+
+[ANTI-PATTERNS]
+- Technical language (databases, APIs, classes) in scenarios
+- Brittle UI-level steps that break on cosmetic changes
+- Scenarios that test implementation paths rather than rules
+- Over-specification with unnecessary detail
+- Scenarios maintained as process theater without real value
+
+[SUCCESS CRITERIA]
+- Non-technical stakeholders can read and validate scenarios
+- Scenarios remain stable across refactors
+- Clear traceability from scenario to domain rule

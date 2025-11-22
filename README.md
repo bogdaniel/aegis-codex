@@ -19,6 +19,16 @@ You do **not** restate standards in your prompts. Instead, the agents and `.curs
   - `docs/language-guides/` — Language‑specific standards.
 - `examples/` — Small “before/after” and flow examples (optional; for humans).
 
+### Cursor rule load order (priority)
+Rules are ordered by filename to ensure persona/bootstrap runs first, then global/agents, standards, methodologies, and languages:
+
+1. `00-persona.mdc`
+2. `10-global.mdc`
+3. `20-agents.mdc`
+4. `30-38*.mdc` (security, testing, observability, performance, ci, api, architecture, code-structure, compliance)
+5. `40-44*.mdc` (atdd, bdd, tdd, fdd, ddd)
+6. `50-lang-*.mdc` (language-specific)
+
 ## Core Agents
 - `@architect` — System and service architecture.
 - `@security-auditor` — Security review and fixes.

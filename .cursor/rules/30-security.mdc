@@ -1,0 +1,25 @@
+---
+description: "Security standards (defense-in-depth, OWASP) distilled for assistants."
+alwaysApply: true
+globs:
+  - "src/**"
+  - "app/**"
+  - "api/**"
+  - "services/**"
+  - "infra/**"
+  - "tests/**"
+---
+
+[SECURITY BASELINE]
+- Input/output hygiene: validate and normalize all external inputs (type/length/range/charset); prefer allowlists; encode/escape outputs for sink; block inline scripts.
+- AuthN/AuthZ: require authenticated identity for non-public actions; authorize at boundaries with deny-by-default; short-lived tokens validated server-side (audience/issuer); separate user/service identities.
+- Anti-CSRF/XSS/SQLi: CSRF tokens on state-changing HTTP; parameterized queries/ORM only; CSP, HSTS, secure cookies with HttpOnly+SameSite.
+- Secrets/config: never hardcode; load via env/secret manager; rotate; redact in logs/errors; no secrets in tests/examples.
+- Transport/data protection: TLS in transit; encrypt sensitive data at rest where supported; avoid logging PII/secrets; field-level filtering where needed.
+- Rate/abuse and limits: rate limit public endpoints; apply pagination/limits to prevent resource exhaustion.
+- Dependencies/supply chain: pin versions; SBOM + vulnerability scan; block High/Critical unless risk-accepted with expiry; prefer vetted registries.
+- Logging/error handling: structured logs with correlation/request IDs; separate 4xx vs 5xx; no stack traces to clients; no sensitive data in logs.
+- Data handling: classify data; minimize collection; enforce content-type/size checks; use monotonic clocks for ordering-sensitive logic.
+
+[VERIFICATION]
+- Run secrets/deps/security scans per stack and fail on High/Critical (e.g., `gitleaks detect`, `npm audit --audit-level=high`, `pip-audit`, `cargo audit`, `govulncheck`, `bandit`/`gosec`/`semgrep`).

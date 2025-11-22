@@ -1,0 +1,18 @@
+---
+description: "Code structure and organization standards."
+alwaysApply: true
+globs:
+  - "src/**"
+  - "app/**"
+  - "domain/**"
+  - "tests/**"
+---
+
+[CODE STRUCTURE BASELINE]
+- Modular: cohesive modules; avoid grab-bag files; prefer feature/domain folders when it improves cohesion; keep layers clear inside features (domain/app/infra/presentation).
+- Naming: clear, descriptive, domain-aligned; avoid abbreviations/generic names; expose public surfaces (index/public files) instead of deep imports; avoid circular deps.
+- Principles: DRY/KISS/YAGNI; small focused functions (~20–30 lines); extract helpers for distinct steps/branches; isolate I/O from pure logic.
+- Config: externalize env/config; no hardcoded env-specific constants; remove dead code/unused deps.
+
+[VERIFICATION]
+- Run formatter/linter for the language to ensure structure/naming/import hygiene.

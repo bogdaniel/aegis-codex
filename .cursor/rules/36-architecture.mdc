@@ -1,0 +1,21 @@
+---
+description: "Architecture standards: SOLID, clean architecture, decomposition."
+alwaysApply: true
+globs:
+  - "src/**"
+  - "app/**"
+  - "domain/**"
+  - "services/**"
+  - "docs/architecture/**"
+---
+
+[ARCHITECTURE BASELINE]
+- Principles: SOLID, separation of concerns, DRY/KISS/YAGNI; avoid god objects; keep functions/classes cohesive.
+- Clean architecture: domain independent of frameworks/IO; explicit domain/application/infrastructure boundaries; dependencies point inward; DI preferred.
+- DDD alignment: respect bounded contexts; explicit contracts/APIs/events with ACL/anti-corruption layers; no shared DB across contexts; update context maps/ADRs on boundary changes.
+- Integration/resilience: timeouts, retries with jitter, circuit breakers; idempotency for side effects; deterministic ordering; explicit time zones and monotonic clocks when ordering matters.
+- Decomposition: prefer simple services/components; introduce microservices only with justification (team scaling, isolation, throughput); document ADRs for changes.
+- Patterns: select patterns intentionally (Factory/Strategy/Observer/etc.) with rationale; avoid premature abstraction/indirection.
+
+[VERIFICATION]
+- Provide design review checklist or ADR reference and run static analysis/lint as applicable.

@@ -1,0 +1,16 @@
+---
+description: "CI/CD standards: gates, supply chain, and rollout safety."
+alwaysApply: true
+globs:
+  - "**/*"
+---
+
+[CI/CD BASELINE]
+- Pipeline stages: lint/format/type-check → unit tests + coverage → integration/smoke (DB/cache/API) → security scans (deps + secrets + static security) → build/package + SBOM/signing.
+- Required gates: block on lint/type errors, test failures/flakiness, coverage drops in critical paths, and High/Critical vulnerabilities unless risk-accepted with expiry; fail if secrets scan hits.
+- Supply chain: pin dependencies/locks; hermetic builds when possible; avoid `latest`; cache verified deps; publish SBOM as artifact.
+- Deployment: prefer canary/blue-green; health/readiness checks mandatory; auto-rollback on triggers (p95 latency +20%/15m, error rate +0.5%/10m, critical security event).
+- Environment/secrets: config via env/secret manager; least-privilege CI tokens; redact secrets from logs.
+
+[VERIFICATION]
+- Provide local pipeline command (e.g., `npm run lint && npm test`, `go test ./...`, `cargo fmt -- --check && cargo clippy && cargo test`) and reference CI workflow path.

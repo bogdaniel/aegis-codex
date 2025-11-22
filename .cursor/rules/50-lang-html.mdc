@@ -1,0 +1,13 @@
+---
+description: "HTML standards: semantic structure and accessibility."
+alwaysApply: true
+globs:
+  - "**/*.html"
+---
+
+[HTML STANDARDS]
+- Structure: semantic tags (header/nav/main/section/article/footer); meaningful heading hierarchy; include `lang`, charset, and viewport meta; avoid div/span soup.
+- Accessibility/security: label form controls; use aria where semantics insufficient; avoid inline event handlers; escape untrusted content; prefer CSP/HSTS/referrer policies at server; avoid inline scripts/styles unless hashed.
+- Performance: optimize and lazy-load images/media; modern formats; defer/async scripts; minimize DOM depth; prefer CSS for layout/effects.
+- Tooling: lint with `htmlhint`/`eslint-plugin-html`; prettify formatting.
+- Verification artifact: `npx htmlhint "**/*.html"` (or configured linter) and `prettier --check "**/*.html"`.

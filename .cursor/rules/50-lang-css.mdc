@@ -1,0 +1,14 @@
+---
+description: "CSS standards: structure, accessibility, performance."
+alwaysApply: true
+globs:
+  - "**/*.css"
+---
+
+[CSS STANDARDS]
+- Organization: use BEM/component-scoped styles; keep specificity low; avoid global leaks; prefer custom properties for colors/spacing/typography and light/dark tokens if needed.
+- Layout: prefer flex/grid; avoid absolute positioning except for layering; avoid `!important`.
+- Performance/quality: minimize unused CSS; consider `content-visibility`; use `min`/`max`/`clamp` for responsive sizing; prefer hardware-accelerated transforms; respect `prefers-reduced-motion`.
+- Accessibility: ensure focus states and WCAG contrast; responsive layouts; reduced-motion fallbacks.
+- Tooling: lint with `stylelint`; format with `prettier`/`stylelint --fix`.
+- Verification artifact: `npx stylelint "**/*.css"` (or package script) and `prettier --check "**/*.css"`.

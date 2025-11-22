@@ -1,0 +1,20 @@
+---
+description: "Observability standards: logs, metrics, traces, health."
+alwaysApply: true
+globs:
+  - "src/**"
+  - "app/**"
+  - "services/**"
+  - "infra/**"
+---
+
+[OBSERVABILITY BASELINE]
+- Logging: structured (JSON) with level, UTC timestamp, correlation/request ID, and sanitized context; redact PII/secrets; stable event names; cap cardinality; no stack traces to clients.
+- Metrics: RED/USE (rate, errors, duration; utilization/saturation/errors) per endpoint/task with units/tags (service, endpoint, status, region); bounded cardinality; track p50/p95/p99.
+- Tracing: propagate W3C trace context; name spans by operation; annotate key attributes; avoid sensitive payloads; wrap external calls.
+- Health/readiness: expose `/health` (liveness) and `/ready` (readiness with dependency checks/timeouts); include build/version/hash; keep payloads lightweight.
+- Resilience: retries with jitter, timeouts, circuit breakers on critical deps; central exception capture; graceful degradation.
+- Alerts/SLOs: define SLOs; rollback triggers p95 latency >+20%/15m or error rate >0.5% above baseline/10m.
+
+[VERIFICATION]
+- Include how to smoke-test signals locally (e.g., `curl -f http://localhost:PORT/health`) and call out metrics/traces availability in dev.
