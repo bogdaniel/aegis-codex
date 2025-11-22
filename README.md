@@ -5,7 +5,7 @@ This repository defines a rule- and agent-pack for AI coding assistants (Cursor,
 You do **not** restate standards in your prompts. Instead, the agents and `.cursor/rules` files inject them automatically so you can focus on the task (“build X”, “review Y”, “add tests for Z”).
 
 ## Layout
-- `AGENTS.md` — Canonical agent definitions (personas, invariants, formatting).
+- `AGENTS.md` — Human‑readable aggregation of all rules, generated from `.cursor/rules/*.mdc` (do not edit by hand; run `node scripts/build-agents-doc.js`).
 - `.cursor/rules/*.mdc` — Machine‑readable rules for Cursor; always‑on standards.
 - `docs/` — Human‑readable guides:
   - `docs/architecture/` — Architecture patterns, SOLID, core design principles (DRY/KISS/YAGNI/SoC), and design patterns.
@@ -63,9 +63,19 @@ For tools that can’t read `.cursor/rules` directly:
 - Keep your user prompts short and task‑oriented; avoid duplicating rules.
 
 ## Extending the System
-- To add a new language: create `docs/language-guides/<lang>.md` and a matching `.cursor/rules/*.mdc` file with globs and MUST/NEVER lists.
-- To add a new agent: extend `AGENTS.md` and mirror it in `.cursor/rules/60-agents.mdc` with role, operating rules, and `[FORMAT]`.
-- To tighten behavior: adjust the relevant `[FORMAT]` or `[OPERATING RULES]` sections; prefer “fail‑closed” patterns (e.g., respond with `Format non-compliant` when format can’t be honored).
+- To add a new language: create `docs/language-guides/<lang>.md` and a matching `.cursor/rules/50-lang-<lang>.mdc` file with globs and MUST/NEVER lists.
+- To add a new agent: edit `.cursor/rules/20-agents.mdc` with role, operating rules, and `[FORMAT]`; optionally add usage in `docs/agent-prompts.md`; then regenerate `AGENTS.md` via `node scripts/build-agents-doc.js`.
+- To tighten behavior: adjust the relevant `.cursor/rules/*.mdc` section; prefer “fail‑closed” patterns (e.g., respond with `Format non-compliant` when format can’t be honored), then regenerate `AGENTS.md`.
+
+## Quickstart with Cursor
+1) Clone/open this repo in Cursor (ensure `.cursor/rules` and `AGENTS.md` are at project root).
+2) Use an agent prompt, e.g.: `Act as the @code-reviewer. Review this diff.` or `Act as the @security-auditor. Audit src/handler.ts`.
+3) Standards load automatically from `.cursor/rules/*.mdc` and AGENTS. Keep prompts short; the rules enforce security, testing, observability, and formatting.
+
+## Status (v0.1 scope)
+- **Tier 1 (fully enforced, examples present):** TypeScript, PHP.
+- **Tier 2 (solid baseline, fewer examples):** Rust, Go, Python.
+- **Tier 3 (light guidance, evolving):** CSS, HTML, Dart, GDScript.
 
 ## Examples
 See `examples/` for:

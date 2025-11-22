@@ -14,40 +14,32 @@ globs:
 [DDD — DOMAIN-DRIVEN DESIGN (BOUNDARIES & INVARIANTS)]
 
 [CORE MANDATE]
-Respect bounded contexts; no cross-context imports without explicit contracts and ADR.
+- Model complex domains explicitly using ubiquitous language, bounded contexts, aggregates, and invariants; keep domain logic independent of technical concerns.
 
 [PRINCIPLES]
-- Keep domain logic pure: no framework/IO dependencies; enforce invariants through Aggregates/VOs where justified.
-- Maintain ubiquitous language across code, tests, acceptance, and docs; rename code to match domain truth.
-- Update context-map and contracts when interactions or boundaries change.
-- Encode critical invariants (money, permissions, AML rules) directly in the domain model with tests.
-- Reject any solution that collapses contexts or leaks infrastructure into domain boundaries.
-
-[BOUNDED CONTEXT RULES]
-- Each context owns its data model and language
-- Cross-context communication via explicit contracts (APIs, events, anti-corruption layers)
-- No direct database sharing across contexts
-- Context map documents relationships and integration patterns
-
-[DOMAIN MODEL PURITY]
-```
-✓ Pure domain logic with no framework imports
-✓ Invariants enforced at construction/mutation
-✓ Value objects for immutable domain concepts
-✓ Aggregates as consistency boundaries
-✗ Domain entities depending on HTTP/DB libraries
-✗ Infrastructure concerns in domain layer
-```
+- Ubiquitous language: use domain terms consistently in code (types, methods, modules) and documentation; avoid leaky technical names in the domain layer.
+- Bounded contexts: partition the domain into cohesive contexts with clear boundaries and ownership; define explicit contracts (APIs, events, schemas) at context borders.
+- Aggregates & invariants: design aggregates as consistency boundaries; enforce invariants inside them rather than in random services or controllers.
+- Domain purity: keep domain model free from frameworks and infrastructure (no ORMs, HTTP, or persistence concerns in domain types); infrastructure depends on domain, not vice versa.
+- Context mapping: document relationships between contexts (partnerships, upstream/downstream, ACLs) and keep ADRs and diagrams up to date when boundaries or contracts change.
+- Align with architecture patterns in docs/architecture/architecture-patterns.md and systemic guidance in docs/architecture/system-decomposition.md.
 
 [INVARIANT PROTECTION]
-- Validate at aggregate boundaries
-- Make illegal states unrepresentable
-- Test invariants explicitly with property-based tests
-- Document business rules directly in domain code
+- Validate at aggregate boundaries; reject or correct invalid commands early.
+- Make illegal states unrepresentable through type modeling and construction rules.
+- Test invariants explicitly (unit and property-based tests where helpful).
+- Document critical business rules directly in domain code (names, comments, and tests), not only in external docs.
 
 [ANTI-PATTERNS]
-- Anemic domain models (just getters/setters)
-- God aggregates that know too much
-- Technical concerns leaking into domain
-- Bypassing invariants through direct setters
-- Context boundaries ignored for convenience
+- Anemic domain models (entities with just getters/setters and no behavior).
+- God aggregates or services that know too much and own unrelated responsibilities.
+- Technical concerns (ORM, HTTP, framework annotations) leaking into domain types.
+- Bypassing invariants via direct setters, public mutable fields, or raw persistence access.
+- Context boundaries ignored “for convenience” (shared DB tables, cross-context backdoor calls).
+
+[VERIFICATION]
+- For domain-heavy changes, ensure:
+  - Types and modules reflect domain language and bounded contexts.
+  - Invariants are enforced in aggregates/domain services and covered by tests.
+  - Contracts between contexts (APIs, events, schemas) are explicit and versioned.
+  - Architecture docs (context maps, ADRs) are updated when boundaries or invariants change.

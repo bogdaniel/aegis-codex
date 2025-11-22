@@ -11,23 +11,30 @@ globs:
 [TDD — TEST-DRIVEN DEVELOPMENT (DETERMINISTIC FIRST)]
 
 [CORE MANDATE]
-Always modify or add tests before or with production changes; reject untested logic.
+- Always add or modify tests before or with production changes; reject untested logic, especially in critical paths.
 
 [PRINCIPLES]
-- Treat every behavior change as a contract: encode expected input/output conditions explicitly.
-- Prefer pure seams and deterministic units; isolate IO/LLM randomness behind adapters with strict contracts.
-- Use property-based tests when invariants exist; ensure trivial code mutations fail (mutation-resilient).
-- Never weaken or delete tests without justification tied to acceptance or domain rules.
-- If a feature cannot be expressed as tests, reduce scope; do not proceed with ambiguous behavior.
+- Tests must be deterministic, hermetic, and fast: no real network, clock, randomness, or global state; fake or inject dependencies.
+- Design for testability: isolate pure logic, inject I/O and time/random sources, and keep side effects at well-defined boundaries.
+- Use TDD to shape APIs and domain behavior: tests encode contracts and edge cases; refactor with tests as a safety net.
+- Prefer CQS-friendly designs: queries are side-effect free and easy to assert; commands change state and are validated via observable outcomes.
+- Keep tests focused on behavior, not implementation details (no brittle assertions on private internals or incidental structure).
+- Never weaken or delete tests without explicit justification tied to acceptance criteria or domain rule changes.
 
 [WORKFLOW]
-1. Write failing test that captures the contract
-2. Implement minimal code to pass
-3. Refactor with tests as safety net
-4. Verify mutation resilience
+1. Write a failing test that captures the desired contract or bug fix.
+2. Implement the minimal code needed to make the test pass.
+3. Refactor implementation and tests to improve design while keeping tests green.
+4. Periodically run mutation tests or introduce small “safe breaks” to confirm test resilience where tooling is available.
 
 [REJECTION CRITERIA]
-- Production code changes without corresponding test changes
-- Tests that depend on order or shared state
-- Tests that leak implementation details instead of testing behavior
-- Deletion of tests without domain justification
+- Production code changes without corresponding test changes or clear evidence of existing coverage.
+- Tests that depend on ordering, shared mutable state, or environmental flakiness.
+- Tests that mirror implementation structure instead of business rules.
+- Deletion or weakening of tests without traceable domain-level justification.
+
+[VERIFICATION]
+- For any PR/patch touching logic:
+  - Identify which tests encode the changed behavior; if none, require new tests.
+  - Confirm tests adhere to docs/testing-standards.md (deterministic, AAA structure, meaningful coverage).
+  - If relying on existing coverage, reference the specific suites or files and explain why they are sufficient.

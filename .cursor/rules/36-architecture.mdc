@@ -10,12 +10,12 @@ globs:
 ---
 
 [ARCHITECTURE BASELINE]
-- Principles: SOLID, separation of concerns, DRY/KISS/YAGNI; avoid god objects; keep functions/classes cohesive.
-- Clean architecture: domain independent of frameworks/IO; explicit domain/application/infrastructure boundaries; dependencies point inward; DI preferred.
-- DDD alignment: respect bounded contexts; explicit contracts/APIs/events with ACL/anti-corruption layers; no shared DB across contexts; update context maps/ADRs on boundary changes.
-- Integration/resilience: timeouts, retries with jitter, circuit breakers; idempotency for side effects; deterministic ordering; explicit time zones and monotonic clocks when ordering matters.
-- Decomposition: prefer simple services/components; introduce microservices only with justification (team scaling, isolation, throughput); document ADRs for changes.
-- Patterns: select patterns intentionally (Factory/Strategy/Observer/etc.) with rationale; avoid premature abstraction/indirection.
+- Foundational principles: apply Separation of Concerns, high cohesion / low coupling, abstraction & encapsulation, Single Source of Truth, immutability-by-default in core logic, idempotent side-effect boundaries, Design by Contract & fail-fast, Law of Demeter, and Principle of Least Astonishment. Align with docs/architecture/design-principles.md.
+- SOLID & GRASP: use SRP/OCP/LSP/ISP/DIP and responsibility assignment (Information Expert, Creator, Controller, Polymorphism) as the default OO lens; prefer composition over inheritance and avoid deep inheritance hierarchies. See docs/architecture/solid-principles.md and docs/architecture/design-principles.md.
+- Clean / Hexagonal & DDD: keep domain independent of frameworks/IO; define explicit application and infrastructure boundaries; dependencies point inward; use DI for infrastructure. Only reach for full DDD (aggregates, domain events, rich value objects) when domain complexity warrants it. See docs/architecture/architecture-patterns.md and docs/architecture/system-decomposition.md.
+- Decomposition & bounded contexts: prefer modular monolith or simple services first; introduce microservices only with clear justification (team scaling, isolation, throughput/latency, regulatory, blast radius). Boundaries must have explicit contracts (HTTP/RPC/events) and clear ownership; update context maps and ADRs when boundaries change.
+- Integration & resilience: design external interactions with timeouts, retries with jitter, circuit breakers, and back-pressure; strive for idempotent handlers where feasible; handle time and ordering explicitly (time zones, monotonic clocks, message ordering guarantees).
+- Patterns: select patterns intentionally (Factory, Abstract Factory, Builder, Strategy, Observer, Decorator, Composite, Adapter, Facade, Chain of Responsibility, State, Mediator, etc.) when they reduce complexity or enable required variability; avoid pattern cargo-culting and unnecessary indirection. See docs/architecture/design-patterns.md for when/why guidance.
 
 [VERIFICATION]
-- Provide design review checklist or ADR reference and run static analysis/lint as applicable.
+- Provide a short architecture rationale or ADR reference and list concrete checks (lint/static analysis and, if available, architecture/import rules) that show how the design adheres to these constraints.

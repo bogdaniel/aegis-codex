@@ -10,35 +10,29 @@ globs:
 [ATDD — ACCEPTANCE TEST-DRIVEN DEVELOPMENT (DONE = PROVEN)]
 
 [CORE MANDATE]
-Define acceptance criteria before designing the implementation; acceptance governs scope.
+- Define acceptance criteria and key scenarios before designing the implementation; “done” is defined by observable outcomes, not code volume.
 
 [PRINCIPLES]
-- Produce 5–20 concrete Given/When/Then examples with real values; no abstractions or vague clauses.
-- Assign stable IDs (ACC-###) and link them to unit/integration tests.
-- Acceptance examples must be updated before modifying behavior intentionally.
-- Treat acceptance criteria as the primary boundary against scope creep.
-- If acceptance cannot be defined clearly, trigger TRIAGE and halt.
+- Express acceptance using domain language and clear outcomes that stakeholders understand; avoid technical jargon (DB tables, classes, HTTP internals).
+- Align acceptance criteria with bounded contexts and domain concepts; reflect the ubiquitous language of the domain (DDD).
+- Turn critical acceptance criteria into executable tests (API/E2E/contract tests) that remain stable across refactors.
+- Prioritize a small set of high-value acceptance tests over large, flaky, UI-heavy suites; use lower layers (unit/integration) to cover details.
+- Keep acceptance tests focused on behavior and business rules; do not assert on incidental implementation details or layout.
 
-[ACCEPTANCE EXAMPLE FORMAT]
-```
-[ACC-001] User authentication with valid credentials
-Given user "alice@example.com" with password "correct-hash"
-When user submits login form
-Then session token is returned
-And token expires in 3600 seconds
-And audit log records successful login
-```
+[WORKFLOW]
+1. Discover and refine acceptance criteria with stakeholders (optionally using BDD-style Given/When/Then examples).
+2. Select key scenarios and implement them as executable acceptance tests.
+3. Use TDD at lower levels (unit/integration) to drive design until acceptance tests pass.
+4. Keep acceptance tests stable; when behavior changes, update acceptance criteria first, then adjust tests and implementation.
 
-[REQUIREMENTS]
-- Real, concrete values (not "a user" but "alice@example.com")
-- Observable outcomes that can be verified
-- Edge cases and failure modes included
-- Clear pass/fail criteria
-- Stable ID for traceability
+[ANTI-PATTERNS]
+- Writing “acceptance” tests after implementation as documentation theater.
+- Overly UI-coupled scenarios that break on cosmetic changes.
+- Acceptance suites that are slow, flaky, and rarely run.
+- Scenarios that mirror implementation steps instead of domain rules.
 
-[REJECTION CRITERIA]
-- Vague acceptance ("system should work well")
-- Abstract placeholders without concrete examples
-- Acceptance defined after implementation
-- Untestable or unobservable criteria
-- Acceptance that allows infinite scope interpretation
+[VERIFICATION]
+- For any new feature or major change, ensure:
+  - Acceptance criteria are explicitly stated (story, ADR, or acceptance test names).
+  - At least one executable acceptance test exists for critical behavior, or a clear justification is given if not feasible.
+- Cross-check against docs/testing-standards.md to ensure acceptance tests are deterministic, meaningful, and part of the CI pipeline.

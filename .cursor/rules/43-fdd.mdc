@@ -11,49 +11,34 @@ globs:
 [FDD — FEATURE-DRIVEN DEVELOPMENT (THIN, REVERSIBLE SLICES)]
 
 [CORE MANDATE]
-Break work into small, independently shippable slices with explicit scope and risks.
+- Break work into small, independently shippable slices with explicit scope, acceptance, and rollback paths.
 
 [PRINCIPLES]
-- Each slice requires: acceptance examples, test plan, DoD, rollout + rollback plan.
-- Avoid modifying unrelated behavior; reject "drive-by" changes and opportunistic refactors.
-- Use feature flags for risky or user-facing changes; ensure reversible within RTO.
-- Prioritize minimal increments that deliver measurable SLO impact.
-- If a request spans multiple concerns, split into several slices; ship the highest-value slice first.
-
-[FEATURE SLICE TEMPLATE]
-```
-Feature: [Name]
-Scope: [Exact boundaries]
-Out-of-scope: [What's explicitly excluded]
-Risk Tier: [S/M/H]
-Acceptance: [ACC-### references]
-Test Plan: [Unit/Integration/E2E coverage]
-Rollout: [Flag name, canary %, duration]
-Rollback: [Trigger conditions, steps, RTO]
-Success Metrics: [Observable SLO impact]
-```
-
-[SLICE CHARACTERISTICS]
-- Independently deployable
-- Delivers user/business value
-- Reversible via flag or rollback
-- Testable end-to-end
-- 1–5 days of work maximum
-- Clear acceptance criteria
+- Prefer thin vertical slices that cut through UI/API → application → domain → persistence, delivering a coherent behavior end-to-end.
+- Keep slices reversible: use feature flags, configuration toggles, or safe defaults to disable or roll back behavior quickly.
+- Avoid mixing unrelated concerns in a single slice (e.g., refactor + feature + dependency upgrade).
+- Each slice must have clear acceptance criteria and corresponding tests; defer speculative groundwork to future slices (YAGNI).
+- Document risks and dependencies (migrations, external systems) and plan mitigation/rollback upfront.
 
 [ANTI-PATTERNS]
-- Large batch changes spanning multiple features
-- Coupling unrelated changes together
-- Refactoring mixed with feature work
-- No rollback plan or feature flag
-- Ambiguous scope allowing creep
-- Slices dependent on future work to provide value
+- Coupling unrelated changes together (features + refactors + infra) in a single change set.
+- Refactoring mixed with feature work without clear separation and tests.
+- No rollback plan or feature flag for risky changes.
+- Ambiguous scope that allows silent scope creep.
+- Slices that only provide value when combined with multiple future slices.
 
 [DEFINITION OF DONE (DOD)]
-- [ ] Acceptance criteria met with evidence
-- [ ] Tests pass (unit/integration/E2E)
-- [ ] Security scan clean
-- [ ] Feature flag configured
-- [ ] Rollback tested
-- [ ] Observability hooks added
-- [ ] Documentation updated
+- [ ] Acceptance criteria met with evidence (tests and/or acceptance checks).
+- [ ] Tests pass (unit/integration/E2E as appropriate).
+- [ ] Security checks run and clean for impacted surface.
+- [ ] Feature flag or safe configuration in place where relevant.
+- [ ] Rollback path identified and, where possible, exercised or simulated.
+- [ ] Observability hooks added for new critical paths.
+- [ ] User-facing or ops documentation updated where needed.
+
+[VERIFICATION]
+- For any feature/task, ensure:
+  - Scope is small, well-bounded, and described.
+  - The change can be enabled/disabled or rolled back with minimal blast radius.
+  - Tests and observability confirm behavior and provide insight post-deploy.
+- Push back on oversized, multi-concern changes that violate these constraints; propose slicing strategies instead.

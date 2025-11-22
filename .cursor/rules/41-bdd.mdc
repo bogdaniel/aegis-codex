@@ -11,30 +11,34 @@ globs:
 [BDD — BEHAVIOR-DRIVEN DISCOVERY (DOMAIN LANGUAGE FIRST)]
 
 [CORE MANDATE]
-Capture behavior through example mapping before implementation; align on language and intent.
+- Use examples and scenarios to clarify desired behavior and language before implementation; BDD is about shared understanding, not tooling.
 
 [PRINCIPLES]
-- Use business-domain language (Given/When/Then or equivalent) and avoid technical leakage.
-- Maintain only a minimal, stable set of automated scenarios at the API/service layer; avoid UI/pixel tests.
-- Ensure scenarios reflect rules, not scripts; remove steps that duplicate unit/acceptance tests.
-- Update scenarios only when domain truth changes, not for refactors.
-- Treat BDD artifacts as shared vocabulary for clarity, not ceremony.
-
-[EXAMPLE STRUCTURE]
-```gherkin
-Given <domain precondition in business terms>
-When <domain action or event>
-Then <observable business outcome>
-```
+- Express scenarios in Given/When/Then style where:
+  - Given: relevant context and domain state,
+  - When: the key action or event,
+  - Then: an observable business outcome.
+- Use domain language consistently; avoid leaking technical details (DB schema, HTTP internals, class names) into scenarios.
+- Keep each scenario focused on a single behavior or rule; multiple outcomes → multiple scenarios.
+- Maintain traceability from scenario → domain rule → tests; scenario titles and tags should map to features and bounded contexts.
+- Treat scenarios as living specifications; update them when domain rules change, not as static documentation.
 
 [ANTI-PATTERNS]
-- Technical language (databases, APIs, classes) in scenarios
-- Brittle UI-level steps that break on cosmetic changes
-- Scenarios that test implementation paths rather than rules
-- Over-specification with unnecessary detail
-- Scenarios maintained as process theater without real value
+- Technical language (databases, APIs, classes) dominating scenarios instead of domain terms.
+- Brittle UI-level steps that break on cosmetic changes (CSS selectors, pixel coordinates).
+- Scenarios that test implementation paths instead of high-level rules.
+- Over-specified steps with unnecessary detail that makes scenarios noisy and fragile.
+- Scenarios written or maintained purely as process theater, with no link to tests or code.
 
 [SUCCESS CRITERIA]
-- Non-technical stakeholders can read and validate scenarios
-- Scenarios remain stable across refactors
-- Clear traceability from scenario to domain rule
+- Non-technical stakeholders can read and validate scenarios.
+- Scenarios remain stable when internals are refactored.
+- Each scenario maps cleanly to one or more domain rules and tests.
+- The set of scenarios provides good coverage of core behavior without combinatorial explosion.
+
+[VERIFICATION]
+- Ensure new or changed features have at least one clear scenario (in discovery/acceptance docs or tests) that:
+  - Uses domain language,
+  - Follows a Given/When/Then structure (explicitly or implicitly),
+  - Maps to implemented tests and behavior.
+- If scenarios are missing or purely technical, push for rephrasing in domain terms before designing or coding.
