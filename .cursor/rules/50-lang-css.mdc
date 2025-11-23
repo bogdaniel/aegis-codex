@@ -1,14 +1,93 @@
 ---
-description: "CSS standards: structure, accessibility, performance."
+description: "CSS standards — architecture, naming, preprocessors, and performance for scalable styles."
 alwaysApply: true
 globs:
-  - "**/*.css"
+  - "src/**/*.css"
+  - "src/**/*.scss"
+  - "src/**/*.sass"
+  - "src/**/*.pcss"
+  - "frontend/**/*.css"
+  - "frontend/**/*.scss"
+  - "public/**/*.css"
+  - "resources/**/*.css"
+  - "resources/**/*.scss"
 ---
 
-[CSS STANDARDS]
-- Organization: use BEM/component-scoped styles; keep specificity low; avoid global leaks; prefer custom properties for colors/spacing/typography and light/dark tokens if needed.
-- Layout: prefer flex/grid; avoid absolute positioning except for layering; avoid `!important`.
-- Performance/quality: minimize unused CSS; consider `content-visibility`; use `min`/`max`/`clamp` for responsive sizing; prefer hardware-accelerated transforms; respect `prefers-reduced-motion`.
-- Accessibility: ensure focus states and WCAG contrast; responsive layouts; reduced-motion fallbacks.
-- Tooling: lint with `stylelint`; format with `prettier`/`stylelint --fix`.
-- Verification artifact: `npx stylelint "**/*.css"` (or package script) and `prettier --check "**/*.css"`.
+[CSS — ARCHITECTURE & BEST PRACTICES]
+
+[BASELINE]
+- CSS must remain:
+  - Predictable: no surprising global overrides or hidden side effects.
+  - Composable: reusable building blocks over one-off hacks.
+  - Maintainable: clear structure, limited specificity, and minimal duplication.
+- Align CSS with overall architecture & design principles (SoC, high cohesion/low coupling, least surprise) as defined in docs/architecture/design-principles.md.
+
+[ARCHITECTURAL PATTERNS (OOCSS, BEM, SMACSS, ATOMIC)]
+- OOCSS (Object-Oriented CSS):
+  - Separate structure (layout, box model) from skin (colors, backgrounds, typography) so objects can be reused across contexts.
+  - Prefer reusable “objects” (e.g., `.media`, `.card`, `.btn`) rather than bespoke styles per page.
+- BEM (Block–Element–Modifier):
+  - Use descriptive, stable naming to express component boundaries:
+    - `.block`, `.block__element`, `.block--modifier`.
+  - BEM is recommended for component-level styles where classes are the primary binding.
+- SMACSS / Layering:
+  - Organize CSS into layers (base, layout, module/component, state, theme) to make the cascade and overrides intentional.
+  - Keep global/base styles thin; push most styling into components and utilities.
+- Atomic/Utility classes:
+  - Use utility classes (spacing, flex, typography) where they simplify markup and avoid local complexity.
+  - Do not rebuild a full design system of utilities if you’re already using a utility framework (Tailwind, etc.); avoid duplication.
+
+> These approaches are complementary: use OOCSS for reusable objects, BEM for components, SMACSS for layering, and utilities for small adjustments. Do not cargo-cult any single methodology.
+
+[PREPROCESSORS & TOOLING]
+- Preprocessors and transformers:
+  - Sass/SCSS is allowed for variables, mixins, and limited nesting; avoid deep nesting (max ~3 levels).
+  - PostCSS/Lightning CSS may be used for modern syntax (nesting, color functions, logical properties) and optimizations (minification, prefixing).
+- Constraints:
+  - Keep generated CSS small and readable; do not rely on heavy abstractions that produce bloated or highly specific output.
+  - Avoid overusing mixins/functions; prefer CSS custom properties (`var(--token)`) for theming and dynamic values.
+  - Ensure build tools (Lightning CSS/PostCSS) are configured in CI; treat build warnings as issues to address.
+
+[STYLE & ORGANIZATION]
+- Structure:
+  - Group related rules by component/module; avoid giant “catch-all” files where everything lives.
+  - Prefer one component per file (or per folder) in larger systems, with clear entry points (index.scss).
+- Specificity:
+  - Prefer class selectors over IDs or element selectors for styling.
+  - Avoid complex selectors (`.nav ul li a span`) and nested selectors that mirror DOM structure.
+  - Avoid `!important` except in tightly scoped utility or override layers; document any use.
+- Responsiveness:
+  - Use mobile-first styles with min-width media queries where practical.
+  - Use modern layout primitives (Flexbox, Grid) rather than float hacks.
+  - Avoid rigid pixel layouts; use `rem`, `em`, and `minmax()`/`auto-fit` where appropriate.
+- Theming & tokens:
+  - Use CSS variables for colors, spacing, typography, and component tokens.
+  - Keep design tokens centrally defined (e.g., `:root` or theme files) and referenced rather than hard-coding values everywhere.
+
+[ACCESSIBILITY & UX]
+- Contrast:
+  - Choose color combinations that meet WCAG AA contrast as a default; document deviations and mitigate them.
+- Focus & states:
+  - Never remove focus outlines without providing visible alternatives.
+  - Ensure hover and focus states are consistent and not solely color-dependent.
+- Motion:
+  - Respect `prefers-reduced-motion`; reduce or disable non-essential animations/transitions when set.
+- States & feedback:
+  - Encode state (error, success, disabled) with both color and additional cues (icons, text).
+
+[ANTI-PATTERNS]
+- Global resets or overrides that unintentionally affect unrelated components.
+- Deep nesting in Sass (e.g., 5+ levels) mirroring DOM structure.
+- Overuse of `!important` and high-specificity selectors to “win” fights with the cascade.
+- Inline styles and style attributes in production code (allowed only for tiny one-off test/demo snippets).
+- Duplicated patterns (multiple slightly different button styles) instead of reusable objects/components.
+- Large, unstructured CSS files with mixed concerns and no clear boundaries.
+
+[VERIFICATION]
+- Ensure:
+  - CSS passes linting (stylelint or equivalent) with project rules.
+  - Build pipeline (Sass/PostCSS/Lightning CSS) runs in CI and fails on syntax errors.
+  - At least a basic accessibility/contrast check is done for primary UI (via design tokens, tools, or documented review).
+- For significant frontend changes:
+  - Verify that new components follow the chosen architecture (OOCSS/BEM/SMACSS layering).
+  - Confirm that you have not introduced new global overrides or regressions in unrelated components (smoke test key views).

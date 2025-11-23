@@ -1,40 +1,65 @@
 ---
-description: "TDD — Test-Driven Development (deterministic first). Enforce tests before or with production changes."
+description: "TDD — Test-Driven Development (deterministic first). Tests before or with any logic change, especially primary user actions."
 alwaysApply: true
 globs:
   - "src/**"
   - "app/**"
   - "domain/**"
+  - "services/**"
+  - "frontend/**"
+  - "public/**"
   - "tests/**"
 ---
 
 [TDD — TEST-DRIVEN DEVELOPMENT (DETERMINISTIC FIRST)]
 
 [CORE MANDATE]
-- Always add or modify tests before or with production changes; reject untested logic, especially in critical paths.
+- Any change to behavior must be accompanied by tests that prove it. For critical flows and primary user actions (save, submit, delete, login, checkout, navigation), untested logic is rejected by default.
 
 [PRINCIPLES]
-- Tests must be deterministic, hermetic, and fast: no real network, clock, randomness, or global state; fake or inject dependencies.
-- Design for testability: isolate pure logic, inject I/O and time/random sources, and keep side effects at well-defined boundaries.
-- Use TDD to shape APIs and domain behavior: tests encode contracts and edge cases; refactor with tests as a safety net.
-- Prefer CQS-friendly designs: queries are side-effect free and easy to assert; commands change state and are validated via observable outcomes.
-- Keep tests focused on behavior, not implementation details (no brittle assertions on private internals or incidental structure).
-- Never weaken or delete tests without explicit justification tied to acceptance criteria or domain rule changes.
+- Determinism:
+  - Tests must be deterministic, hermetic, and fast: no real network, real clock, random global state, or shared mutable fixtures.
+  - Isolate external dependencies (HTTP, DB, filesystem, DOM, timers, randomness) behind interfaces or injected collaborators.
+- Design for testability:
+  - Structure code so core logic is pure or nearly pure and easy to call from tests.
+  - Keep I/O, framework glue, and DOM wiring at the edges; keep domain/application logic in testable modules.
+- Behavior over implementation:
+  - Tests assert on observable behavior and contracts, not internal structure or incidental details.
+  - Prefer CQS-friendly designs: queries are side-effect free and easy to assert; commands change state and are validated via observable outcomes.
+- Coverage with intent:
+  - Focus tests on invariants, edge cases, and failure modes, not just happy paths.
+  - For primary actions, ensure at least one test covers “action enabled only when valid” and “action disabled when invalid”.
+
+[FRONTEND & UI-SPECIFIC EXPECTATIONS]
+- Primary UI controls (buttons/links) that trigger important actions (save, delete, submit, login, payment, navigation) must not rely on “looks correct” reasoning alone.
+- For client-side logic controlling these actions:
+  - Provide at least one executable check: unit test, component test, or a small scripted harness that asserts expected behavior (e.g., enabling/disabling, validation logic).
+  - If a full test harness is not available (small static demos), include a minimal programmatic sanity check (e.g., JS function calls with `console.assert` or equivalent) and state clearly that this is temporary and must be replaced with real tests in production code.
+- Avoid hiding logic inside opaque event handlers that are hard to exercise from tests; keep validation and state transitions in functions that do not depend on the DOM.
 
 [WORKFLOW]
-1. Write a failing test that captures the desired contract or bug fix.
-2. Implement the minimal code needed to make the test pass.
-3. Refactor implementation and tests to improve design while keeping tests green.
-4. Periodically run mutation tests or introduce small “safe breaks” to confirm test resilience where tooling is available.
+1. Before or alongside any logic change, write or update a test that captures the desired behavior or bug fix.
+2. Implement the minimal code necessary to make the test pass.
+3. Refactor implementation and tests to improve design while preserving test coverage and behavior.
+4. For UI-heavy code, prefer small, testable pieces:
+   - Extract validation and state logic into plain functions/modules.
+   - Test those directly, and keep DOM glue thin.
+5. Periodically perform small “safe breaks” (manual mutation) or use mutation testing tools (where available) to confirm tests actually catch regressions.
 
 [REJECTION CRITERIA]
-- Production code changes without corresponding test changes or clear evidence of existing coverage.
-- Tests that depend on ordering, shared mutable state, or environmental flakiness.
-- Tests that mirror implementation structure instead of business rules.
-- Deletion or weakening of tests without traceable domain-level justification.
+- Production or shared code changes that:
+  - Introduce or modify logic without any corresponding test changes or clear evidence of existing test coverage.
+  - Add new primary user actions (buttons, forms, flows) without at least one executable check of their behavior.
+  - Depend on brittle conditions (timing hacks, global flags, DOM ordering) that are not encoded in tests.
+- Deleting or weakening tests without:
+  - A clear domain-level justification (acceptance criteria changed), and
+  - Replacement tests that reflect the new behavior.
 
 [VERIFICATION]
-- For any PR/patch touching logic:
-  - Identify which tests encode the changed behavior; if none, require new tests.
-  - Confirm tests adhere to docs/testing-standards.md (deterministic, AAA structure, meaningful coverage).
-  - If relying on existing coverage, reference the specific suites or files and explain why they are sufficient.
+- For each PR/change:
+  - Identify which test(s) encode the changed behavior; if none exist, require creation of at least one.
+  - For primary actions and critical flows, require:
+    - Direct tests of the enabling/disabling logic and error handling, or
+    - A clearly documented plan to add tests before promoting beyond experimental/demo code.
+  - Ensure tests satisfy docs/testing-standards.md (deterministic, meaningful, not relying on incidental details).
+- For UI logic bugs found in manual testing (e.g., buttons never enabling), backfill tests to capture them so they cannot regress silently.
