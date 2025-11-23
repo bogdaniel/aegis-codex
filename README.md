@@ -82,6 +82,199 @@ Act as the @architect. In LITE mode, sketch a minimal TypeScript Express service
 ```
 Then follow up with `@security-auditor`, `@test-engineer`, and `@devops` to see the standards across the flow.
 
+### Tutorial Prompts
+Prompt 1 — Marketing Website Layout (HTML/CSS only)
+
+Build a small, production-ready HTML + CSS layout for a single-page marketing website for a SaaS product called “Aegis Codex”.
+
+Requirements:
+
+A clean hero section with headline, subheadline, primary CTA button, and a short code-like snippet area.
+
+A 3–4 column features section.
+
+A “How it works” section with a simple step-by-step layout.
+
+A pricing section with 2–3 plans.
+
+A footer with navigation and contact links.
+
+Constraints:
+
+No JS, no frameworks; just semantic HTML5 and modern CSS (flex/grid).
+
+Make the layout responsive (mobile → desktop).
+
+Use reasonable class names and structure so it would be easy to integrate into a larger app later.
+
+Deliver:
+
+A single HTML file (with embedded CSS in a <style> block) that I can drop into a browser and it “just works”.
+
+A short explanation (2–3 paragraphs max) of how you structured the layout and why.
+
+What this tests:
+
+Semantic structure, naming, separation of concerns, no unnecessary complexity.
+
+Does it explain structure and decisions (architect mindset) without being asked?
+
+Prompt 2 — HTML/JS Game (Logic vs Rendering, No Frameworks)
+
+Build a simple browser game called “Orb Dodger” using HTML, CSS, and vanilla JavaScript.
+
+Game idea:
+
+Player controls a small square or circle at the bottom of the screen (move left/right with keyboard arrows or A/D).
+
+“Orbs” fall from the top; the player must dodge them.
+
+Score increases over time while the player is alive.
+
+When hit, game shows “Game Over” and final score, with a “Play Again” button.
+
+Constraints:
+
+No external libraries; plain JS and DOM APIs.
+
+Keep game logic and rendering reasonably separated so it would be easy to test or extend later (e.g., difficulty scaling).
+
+Avoid giant “god functions”; keep functions small and focused.
+
+Deliver:
+
+A single HTML file with embedded CSS and JS (or a small set of files if you prefer, but keep it minimal).
+
+Briefly describe how you separated game state/logic from rendering and event handling.
+
+What this tests:
+
+Separation of concerns, small units, clarity of structure.
+
+Whether it introduces some testable core logic (even if you didn’t ask explicitly for tests).
+
+Prompt 3 — Small REST API (Validation & Security Temptation)
+
+Build a small TypeScript + Node.js REST API (Express or a lightweight alternative) for managing “Code Review Comments”.
+
+API operations:
+
+POST /comments: create a comment with { filePath, lineNumber, severity, message }.
+
+GET /comments: list all comments, with optional ?severity= filter.
+
+DELETE /comments/:id: delete a comment by id.
+
+Constraints:
+
+Use in-memory storage for now (no real database).
+
+Validate incoming payloads and handle bad input with proper HTTP status codes.
+
+Organize the code so that HTTP layer, validation, and core “comment service” logic are clearly separated.
+
+You don’t need to write tests for now; just focus on getting the API working.
+
+Deliver:
+
+TypeScript code for the server (including package.json scripts if needed) that I can run locally.
+
+A short explanation of the structure (which files/layers do what) and any tradeoffs you made.
+
+What this tests:
+
+Whether it ignores “no tests” and pushes back / adds tests anyway (TDD/ATDD rules).
+
+Validation, status codes, separation of HTTP from domain logic.
+
+Possible introduction of something like a service layer or simple pattern usage.
+
+Prompt 4 — CQRS-Style “Tasks” Service (Patterns & Architecture)
+
+Design and implement a small Node.js or TypeScript service for managing tasks using a light CQRS-style structure.
+
+Requirements:
+
+Commands:
+
+CreateTask(title, description)
+
+CompleteTask(taskId)
+
+Queries:
+
+GetTaskById(taskId)
+
+ListOpenTasks()
+
+Use an in-memory data store (e.g., maps/arrays) for now.
+
+Use a minimal HTTP API or CLI interface — your choice — but keep the internal design clean and testable.
+
+Constraints:
+
+Separate command handling from query handling in the code structure (even though storage is in-memory).
+
+Keep domain logic independent of the I/O mechanism (HTTP/CLI).
+
+Include at least a couple of tests that show how this design is meant to be used and evolved.
+
+Deliver:
+
+Source code with clear modules for commands, queries, and the domain model.
+
+A minimal interface (HTTP endpoints or CLI commands) to exercise the system.
+
+A small test suite (unit or integration) that demonstrates how to verify behavior.
+
+A short explanation of why you chose this structure.
+
+What this tests:
+
+Does it apply CQRS sensibly, or overcomplicate?
+
+Architecture boundaries, domain vs I/O, testing.
+
+Use (or not) of patterns like Repository/Service, etc.
+
+Prompt 5 — Event-Driven Workflow (Resilience & Patterns)
+
+Implement a simplified event-driven workflow in TypeScript or your preferred backend language to process “Code Quality Reports”.
+
+Scenario:
+
+A “scanner” component produces events like CodeScanCompleted { repoId, commitId, issues: [...] }.
+
+A “processor” component consumes those events, aggregates some stats (e.g., counts by severity), and stores them in an in-memory projection.
+
+A “query” component exposes an HTTP endpoint /quality/:repoId to retrieve the latest stats for a repository.
+
+Constraints:
+
+Use an in-memory message bus or simple queue abstraction; no external broker required.
+
+Design for resilience: think about what happens if processing fails (e.g., invalid event payload).
+
+Keep event contracts explicit and separate from internal models where appropriate.
+
+Include some tests that show the end-to-end flow from event → processing → query.
+
+Deliver:
+
+Source code organized into components (scanner, processor, query/API, message bus abstraction).
+
+A couple of tests that simulate events being published and verify the resulting projections.
+
+A short explanation of how you modeled events and what trade-offs you made.
+
+What this tests:
+
+Event-driven architecture, domain events, projections.
+
+Error handling, resilience thinking.
+
+Boundaries & patterns (Domain Event, Projection, maybe Outbox/Saga-lite thinking).
+
 ## Status (v0.1 scope)
 - **Tier 1 (fully enforced, examples present):** TypeScript, PHP.
 - **Tier 2 (solid baseline, fewer examples):** Rust, Go, Python.
