@@ -402,6 +402,50 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Require documentation updates (README/ADR/api docs) when behavior or contracts change.
 - Verification artifact: cite checklist items covered and command(s) run (tests, scans, sbom).
 
+## 39-accessibility.mdc — Accessibility & UX — semantic structure, keyboard navigation, and usable layouts.
+- Globs: src/**, app/**, public/**, frontend/**, resources/views/**, templates/**
+
+### [ACCESSIBILITY & UX BASELINE]
+
+### [CORE MANDATE]
+- All user-facing UIs (web, mobile, desktop) must be usable with keyboard-only navigation, readable with assistive tech, and structurally predictable. Visual polish must not break basic accessibility.
+
+### [PRINCIPLES]
+- Semantics & landmarks:
+  - Use semantic elements (`header`, `nav`, `main`, `section`, `footer`, `form`, etc.) and a clear heading hierarchy (one `h1` per page, descending `h2`/`h3` as needed).
+  - Provide alt text for meaningful images; mark purely decorative images appropriately (e.g., `alt=""`).
+  - Use ARIA roles/attributes only when semantics cannot be expressed with native elements; avoid ARIA overuse.
+
+- Navigation & structure:
+  - Never hide primary navigation on small screens without providing an accessible alternative (e.g., a visible “Menu” button that toggles the nav and is keyboard-operable).
+  - Provide a “Skip to main content” link at the top of the page for complex layouts where keyboard users would otherwise tab through large navs.
+  - Keep layout changes predictable across breakpoints; do not reorder content in ways that confuse keyboard/screen-reader users.
+
+- Keyboard & focus:
+  - All interactive elements (links, buttons, form controls) must be reachable via keyboard (Tab/Shift+Tab) and activatable via keyboard (Enter/Space).
+  - Never remove focus outlines without providing a visible alternative (e.g., `:focus-visible` styles that are at least as visible as default).
+  - Avoid click handlers on non-interactive elements (`div`, `span`) unless you provide correct roles, tabindex, and keyboard interaction.
+
+- Color, contrast & motion:
+  - Use sufficient contrast between text and background (aim for WCAG AA as a default).
+  - Do not rely on color alone to convey important state (errors, selection, disabled).
+  - Avoid gratuitous motion; respect reduced-motion preferences where animations are non-trivial.
+
+### [ANTI-PATTERNS]
+- Hiding navigation (`display: none`) at mobile breakpoints with no replacement or accessible menu control.
+- Removing focus styles globally (e.g., `*:focus { outline: none; }`) without custom focus styles.
+- Using `<div>` or `<span>` for buttons/links without roles, keyboard handling, and accessible names.
+- Building entire layouts with `div` soup instead of semantic elements and proper headings.
+- Using tiny click targets, insufficient color contrast, or hover-only affordances for critical actions.
+
+### [VERIFICATION]
+- For UI changes, at minimum:
+  - Perform a quick keyboard-only walkthrough (Tab/Shift+Tab, Enter/Space) of primary flows.
+  - Manually verify that navigation, buttons, and forms are usable without a mouse.
+- For web front-ends, consider:
+  - Running an HTML/CSS validator and an accessibility linter (e.g., axe, eslint-plugin-jsx-a11y) where applicable.
+- Document any deliberate deviations (e.g., legacy constraints, third-party widgets) and mitigation steps in the PR description or ADR.
+
 [METHODOLOGIES] (ATDD/BDD/TDD/FDD/DDD)
 
 ## 40-atdd.mdc — ATDD — Acceptance Test-Driven Development (done = proven). Define acceptance before implementation.
@@ -476,39 +520,61 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
   - Maps to implemented tests and behavior.
 - If scenarios are missing or purely technical, push for rephrasing in domain terms before designing or coding.
 
-## 42-tdd.mdc — TDD — Test-Driven Development (deterministic first). Enforce tests before or with production changes.
-- Globs: src/**, app/**, domain/**, tests/**
+## 42-tdd.mdc — TDD — Test-Driven Development (deterministic first). Tests before or with any logic change, especially primary user actions.
+- Globs: src/**, app/**, domain/**, services/**, frontend/**, public/**, tests/**
 
 ### [TDD — TEST-DRIVEN DEVELOPMENT (DETERMINISTIC FIRST)]
 
 ### [CORE MANDATE]
-- Always add or modify tests before or with production changes; reject untested logic, especially in critical paths.
+- Any change to behavior must be accompanied by tests that prove it. For critical flows and primary user actions (save, submit, delete, login, checkout, navigation), untested logic is rejected by default.
 
 ### [PRINCIPLES]
-- Tests must be deterministic, hermetic, and fast: no real network, clock, randomness, or global state; fake or inject dependencies.
-- Design for testability: isolate pure logic, inject I/O and time/random sources, and keep side effects at well-defined boundaries.
-- Use TDD to shape APIs and domain behavior: tests encode contracts and edge cases; refactor with tests as a safety net.
-- Prefer CQS-friendly designs: queries are side-effect free and easy to assert; commands change state and are validated via observable outcomes.
-- Keep tests focused on behavior, not implementation details (no brittle assertions on private internals or incidental structure).
-- Never weaken or delete tests without explicit justification tied to acceptance criteria or domain rule changes.
+- Determinism:
+  - Tests must be deterministic, hermetic, and fast: no real network, real clock, random global state, or shared mutable fixtures.
+  - Isolate external dependencies (HTTP, DB, filesystem, DOM, timers, randomness) behind interfaces or injected collaborators.
+- Design for testability:
+  - Structure code so core logic is pure or nearly pure and easy to call from tests.
+  - Keep I/O, framework glue, and DOM wiring at the edges; keep domain/application logic in testable modules.
+- Behavior over implementation:
+  - Tests assert on observable behavior and contracts, not internal structure or incidental details.
+  - Prefer CQS-friendly designs: queries are side-effect free and easy to assert; commands change state and are validated via observable outcomes.
+- Coverage with intent:
+  - Focus tests on invariants, edge cases, and failure modes, not just happy paths.
+  - For primary actions, ensure at least one test covers “action enabled only when valid” and “action disabled when invalid”.
+
+### [FRONTEND & UI-SPECIFIC EXPECTATIONS]
+- Primary UI controls (buttons/links) that trigger important actions (save, delete, submit, login, payment, navigation) must not rely on “looks correct” reasoning alone.
+- For client-side logic controlling these actions:
+  - Provide at least one executable check: unit test, component test, or a small scripted harness that asserts expected behavior (e.g., enabling/disabling, validation logic).
+  - If a full test harness is not available (small static demos), include a minimal programmatic sanity check (e.g., JS function calls with `console.assert` or equivalent) and state clearly that this is temporary and must be replaced with real tests in production code.
+- Avoid hiding logic inside opaque event handlers that are hard to exercise from tests; keep validation and state transitions in functions that do not depend on the DOM.
 
 ### [WORKFLOW]
-1. Write a failing test that captures the desired contract or bug fix.
-2. Implement the minimal code needed to make the test pass.
-3. Refactor implementation and tests to improve design while keeping tests green.
-4. Periodically run mutation tests or introduce small “safe breaks” to confirm test resilience where tooling is available.
+1. Before or alongside any logic change, write or update a test that captures the desired behavior or bug fix.
+2. Implement the minimal code necessary to make the test pass.
+3. Refactor implementation and tests to improve design while preserving test coverage and behavior.
+4. For UI-heavy code, prefer small, testable pieces:
+   - Extract validation and state logic into plain functions/modules.
+   - Test those directly, and keep DOM glue thin.
+5. Periodically perform small “safe breaks” (manual mutation) or use mutation testing tools (where available) to confirm tests actually catch regressions.
 
 ### [REJECTION CRITERIA]
-- Production code changes without corresponding test changes or clear evidence of existing coverage.
-- Tests that depend on ordering, shared mutable state, or environmental flakiness.
-- Tests that mirror implementation structure instead of business rules.
-- Deletion or weakening of tests without traceable domain-level justification.
+- Production or shared code changes that:
+  - Introduce or modify logic without any corresponding test changes or clear evidence of existing test coverage.
+  - Add new primary user actions (buttons, forms, flows) without at least one executable check of their behavior.
+  - Depend on brittle conditions (timing hacks, global flags, DOM ordering) that are not encoded in tests.
+- Deleting or weakening tests without:
+  - A clear domain-level justification (acceptance criteria changed), and
+  - Replacement tests that reflect the new behavior.
 
 ### [VERIFICATION]
-- For any PR/patch touching logic:
-  - Identify which tests encode the changed behavior; if none, require new tests.
-  - Confirm tests adhere to docs/testing-standards.md (deterministic, AAA structure, meaningful coverage).
-  - If relying on existing coverage, reference the specific suites or files and explain why they are sufficient.
+- For each PR/change:
+  - Identify which test(s) encode the changed behavior; if none exist, require creation of at least one.
+  - For primary actions and critical flows, require:
+    - Direct tests of the enabling/disabling logic and error handling, or
+    - A clearly documented plan to add tests before promoting beyond experimental/demo code.
+  - Ensure tests satisfy docs/testing-standards.md (deterministic, meaningful, not relying on incidental details).
+- For UI logic bugs found in manual testing (e.g., buttons never enabling), backfill tests to capture them so they cannot regress silently.
 
 ## 43-fdd.mdc — FDD — Feature-Driven Development (thin, reversible slices). Enforce small, safe, traceable increments.
 - Globs: features/**, tasks/**, src/**, app/**, tests/**
@@ -586,16 +652,87 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 
 [LANGUAGE STANDARDS] (50-lang-*.mdc)
 
-## 50-lang-css.mdc — CSS standards: structure, accessibility, performance.
-- Globs: **/*.css
+## 50-lang-css.mdc — CSS standards — architecture, naming, preprocessors, and performance for scalable styles.
+- Globs: src/**/*.css, src/**/*.scss, src/**/*.sass, src/**/*.pcss, frontend/**/*.css, frontend/**/*.scss, public/**/*.css, resources/**/*.css, resources/**/*.scss
 
-### [CSS STANDARDS]
-- Organization: use BEM/component-scoped styles; keep specificity low; avoid global leaks; prefer custom properties for colors/spacing/typography and light/dark tokens if needed.
-- Layout: prefer flex/grid; avoid absolute positioning except for layering; avoid `!important`.
-- Performance/quality: minimize unused CSS; consider `content-visibility`; use `min`/`max`/`clamp` for responsive sizing; prefer hardware-accelerated transforms; respect `prefers-reduced-motion`.
-- Accessibility: ensure focus states and WCAG contrast; responsive layouts; reduced-motion fallbacks.
-- Tooling: lint with `stylelint`; format with `prettier`/`stylelint --fix`.
-- Verification artifact: `npx stylelint "**/*.css"` (or package script) and `prettier --check "**/*.css"`.
+### [CSS — ARCHITECTURE & BEST PRACTICES]
+
+### [BASELINE]
+- CSS must remain:
+  - Predictable: no surprising global overrides or hidden side effects.
+  - Composable: reusable building blocks over one-off hacks.
+  - Maintainable: clear structure, limited specificity, and minimal duplication.
+- Align CSS with overall architecture & design principles (SoC, high cohesion/low coupling, least surprise) as defined in docs/architecture/design-principles.md.
+
+### [ARCHITECTURAL PATTERNS (OOCSS, BEM, SMACSS, ATOMIC)]
+- OOCSS (Object-Oriented CSS):
+  - Separate structure (layout, box model) from skin (colors, backgrounds, typography) so objects can be reused across contexts.
+  - Prefer reusable “objects” (e.g., `.media`, `.card`, `.btn`) rather than bespoke styles per page.
+- BEM (Block–Element–Modifier):
+  - Use descriptive, stable naming to express component boundaries:
+    - `.block`, `.block__element`, `.block--modifier`.
+  - BEM is recommended for component-level styles where classes are the primary binding.
+- SMACSS / Layering:
+  - Organize CSS into layers (base, layout, module/component, state, theme) to make the cascade and overrides intentional.
+  - Keep global/base styles thin; push most styling into components and utilities.
+- Atomic/Utility classes:
+  - Use utility classes (spacing, flex, typography) where they simplify markup and avoid local complexity.
+  - Do not rebuild a full design system of utilities if you’re already using a utility framework (Tailwind, etc.); avoid duplication.
+
+> These approaches are complementary: use OOCSS for reusable objects, BEM for components, SMACSS for layering, and utilities for small adjustments. Do not cargo-cult any single methodology.
+
+### [PREPROCESSORS & TOOLING]
+- Preprocessors and transformers:
+  - Sass/SCSS is allowed for variables, mixins, and limited nesting; avoid deep nesting (max ~3 levels).
+  - PostCSS/Lightning CSS may be used for modern syntax (nesting, color functions, logical properties) and optimizations (minification, prefixing).
+- Constraints:
+  - Keep generated CSS small and readable; do not rely on heavy abstractions that produce bloated or highly specific output.
+  - Avoid overusing mixins/functions; prefer CSS custom properties (`var(--token)`) for theming and dynamic values.
+  - Ensure build tools (Lightning CSS/PostCSS) are configured in CI; treat build warnings as issues to address.
+
+### [STYLE & ORGANIZATION]
+- Structure:
+  - Group related rules by component/module; avoid giant “catch-all” files where everything lives.
+  - Prefer one component per file (or per folder) in larger systems, with clear entry points (index.scss).
+- Specificity:
+  - Prefer class selectors over IDs or element selectors for styling.
+  - Avoid complex selectors (`.nav ul li a span`) and nested selectors that mirror DOM structure.
+  - Avoid `!important` except in tightly scoped utility or override layers; document any use.
+- Responsiveness:
+  - Use mobile-first styles with min-width media queries where practical.
+  - Use modern layout primitives (Flexbox, Grid) rather than float hacks.
+  - Avoid rigid pixel layouts; use `rem`, `em`, and `minmax()`/`auto-fit` where appropriate.
+- Theming & tokens:
+  - Use CSS variables for colors, spacing, typography, and component tokens.
+  - Keep design tokens centrally defined (e.g., `:root` or theme files) and referenced rather than hard-coding values everywhere.
+
+### [ACCESSIBILITY & UX]
+- Contrast:
+  - Choose color combinations that meet WCAG AA contrast as a default; document deviations and mitigate them.
+- Focus & states:
+  - Never remove focus outlines without providing visible alternatives.
+  - Ensure hover and focus states are consistent and not solely color-dependent.
+- Motion:
+  - Respect `prefers-reduced-motion`; reduce or disable non-essential animations/transitions when set.
+- States & feedback:
+  - Encode state (error, success, disabled) with both color and additional cues (icons, text).
+
+### [ANTI-PATTERNS]
+- Global resets or overrides that unintentionally affect unrelated components.
+- Deep nesting in Sass (e.g., 5+ levels) mirroring DOM structure.
+- Overuse of `!important` and high-specificity selectors to “win” fights with the cascade.
+- Inline styles and style attributes in production code (allowed only for tiny one-off test/demo snippets).
+- Duplicated patterns (multiple slightly different button styles) instead of reusable objects/components.
+- Large, unstructured CSS files with mixed concerns and no clear boundaries.
+
+### [VERIFICATION]
+- Ensure:
+  - CSS passes linting (stylelint or equivalent) with project rules.
+  - Build pipeline (Sass/PostCSS/Lightning CSS) runs in CI and fails on syntax errors.
+  - At least a basic accessibility/contrast check is done for primary UI (via design tokens, tools, or documented review).
+- For significant frontend changes:
+  - Verify that new components follow the chosen architecture (OOCSS/BEM/SMACSS layering).
+  - Confirm that you have not introduced new global overrides or regressions in unrelated components (smoke test key views).
 
 ## 50-lang-gdscript.mdc — GDScript standards: readability, signals, and safety.
 - Globs: **/*.gd
@@ -621,15 +758,81 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Performance: avoid unnecessary goroutines; manage allocations; reuse buffers when safe.
 - Verification artifact: `gofmt -w . && goimports -w . && staticcheck ./... && gosec ./... && go test ./...`.
 
-## 50-lang-html.mdc — HTML standards: semantic structure and accessibility.
-- Globs: **/*.html
+## 50-lang-html.mdc — HTML standards — semantic structure, accessibility, and head/document hygiene.
+- Globs: src/**/*.html, public/**/*.html, resources/views/**/*.html, templates/**/*.html, frontend/**/*.html
 
-### [HTML STANDARDS]
-- Structure: semantic tags (header/nav/main/section/article/footer); meaningful heading hierarchy; include `lang`, charset, and viewport meta; avoid div/span soup.
-- Accessibility/security: label form controls; use aria where semantics insufficient; avoid inline event handlers; escape untrusted content; prefer CSP/HSTS/referrer policies at server; avoid inline scripts/styles unless hashed.
-- Performance: optimize and lazy-load images/media; modern formats; defer/async scripts; minimize DOM depth; prefer CSS for layout/effects.
-- Tooling: lint with `htmlhint`/`eslint-plugin-html`; prettify formatting.
-- Verification artifact: `npx htmlhint "**/*.html"` (or configured linter) and `prettier --check "**/*.html"`.
+### [HTML — SEMANTICS, ACCESSIBILITY & DOCUMENT STRUCTURE]
+
+### [BASELINE]
+- HTML must be:
+  - Semantic: elements reflect their purpose, not just used for styling.
+  - Accessible: usable via keyboard and assistive technologies.
+  - Predictable: consistent structure across pages, clear headings and landmarks.
+- Align with docs/architecture/design-principles.md and accessibility rule (39-accessibility.mdc).
+
+### [DOCUMENT SKELETON & HEAD HYGIENE]
+- Document:
+  - Always use `<!doctype html>`, `<html lang="...">`, `<head>`, `<body>`.
+  - Set `lang` correctly for the primary language of the page.
+- `<head>`:
+  - Include a descriptive `<title>` and relevant `<meta name="description">`.
+  - Include `<meta charset="utf-8">` and responsive viewport `<meta name="viewport" content="width=device-width, initial-scale=1">`.
+  - Only load necessary assets; avoid blocking scripts/styles where possible.
+  - Use `<link rel="canonical">`, `<meta name="robots">`, and social metadata (Open Graph/Twitter) for public pages where appropriate.
+- Scripts & styles:
+  - Prefer external JS/CSS files for production code; inline only small snippets for demos/tests.
+  - Use `defer`/`async` for scripts where safe; avoid blocking rendering unnecessarily.
+
+### [SEMANTIC LAYOUT & STRUCTURE]
+- Landmarks:
+  - Use `<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<aside>`, `<footer>` appropriately.
+  - Each page must have a single `<main>` element representing primary content.
+- Headings:
+  - Use one `<h1>` per document (or per main content region in SPA subtrees) and descending `<h2>`, `<h3>` for subsections.
+  - Do not skip levels purely for styling; use CSS for visual size.
+- Sections:
+  - Group related content in `<section>`/`<article>` and label them with headings or `aria-labelledby`.
+  - Avoid unstructured `div` soup; use semantic elements whenever possible.
+
+### [FORMS & INTERACTIVITY]
+- Forms:
+  - Each input must have a proper `<label>` associated via `for`/`id` or by wrapping the control.
+  - Use `<fieldset>`/`<legend>` to group related controls (e.g., password fields, notification settings).
+  - Use appropriate input types (`email`, `tel`, `url`, `number`, `password`, etc.) to leverage native validation and mobile keyboards.
+- Validation & errors:
+  - Place error messages near the relevant fields; associate them via `aria-describedby` if necessary.
+  - Mark invalid fields with `aria-invalid="true"` and provide clear text explaining the issue.
+- Interactivity:
+  - Use native interactive elements (`<button>`, `<a>`, `<input>`, `<select>`) instead of clickable `div`/`span` where possible.
+  - When non-native elements must be interactive, provide appropriate `role`, `tabindex`, and keyboard handling.
+
+### [ACCESSIBILITY & SEO]
+- Accessibility:
+  - Provide alt text for meaningful images; use empty alt (`alt=""`) for decorative images.
+  - Ensure keyboard access to all interactive elements; do not trap focus unintentionally.
+  - Use ARIA roles and attributes sparingly, only when native semantics are insufficient.
+  - For complex widgets (modals, dialogs, menus), follow established patterns: roles, `aria-modal`, `aria-expanded`, and focus management.
+- SEO:
+  - Use meaningful titles, headings, and link text (no “click here”).
+  - Avoid content hidden to sighted users but visible to search engines solely for keyword stuffing.
+  - Use structured data (JSON-LD) when appropriate for public marketing pages.
+
+### [ANTI-PATTERNS]
+- Presentational markup (e.g., `<b>`, `<i>` instead of `<strong>`, `<em>`) used for meaning.
+- Overuse of generic `<div>` and `<span>` where semantic elements exist.
+- Inline event handlers (`onclick=""`, `onchange=""`) in production code; prefer JS modules and event listeners.
+- Hard-coded text without language and direction metadata when mixed languages or RTL/LTR issues apply.
+- Missing `lang` attribute, missing `title`/`meta description` on important pages.
+
+### [VERIFICATION]
+- For each HTML change:
+  - Run an HTML validator (W3C or tooling equivalent) to detect structural errors.
+  - Perform a quick keyboard-only walkthrough for key flows (Tab/Shift+Tab, Enter/Space).
+  - Use automated tools (Lighthouse, axe, or similar) where available to catch obvious accessibility and SEO issues.
+- Ensure:
+  - Pages have proper document skeleton and semantic landmarks.
+  - Forms are labeled, errors are announced, and primary interactions are keyboard accessible.
+  - No new inline JS/CSS has been introduced in production templates without explicit justification.
 
 ## 50-lang-javascript.mdc — JavaScript standards: lint/format, testing, safe async.
 - Globs: **/*.js, **/*.mjs, **/*.cjs
