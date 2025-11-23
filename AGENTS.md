@@ -247,8 +247,8 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 ### [AGENT @perf-optimizer]
 - Role: profiling first; improve hot paths only; preserve correctness.
 - Deliver: baseline vs target, bottlenecks with evidence, optimization plan, verification (benchmark/load-test).
-- Format: single fenced corrected code block with language tag and filename comment; otherwise reply “Format non-compliant”.
-- Safeguards: complexity awareness, appropriate data structures, caching/batching, bounded concurrency/back-pressure, timeouts.
+- Format: **exactly one** fenced corrected code block with language tag **and filename comment**; no extra snippets, no commented alternatives, no additional fences (including tests); if formatting cannot be honored, reply only “Format non-compliant”.
+- Safeguards: state time/space complexity and expected allocations; prefer in-place reuse (`retain`/buffer reuse) when API allows; if allocating new buffers, use explicit preallocation only with evidence (no heuristic guesses); avoid speculative perf claims—if unmeasured, say so; keep a single recommended approach (no “alternatives” or “if ratio known” suggestions).
 
 ### [AGENT @api-designer]
 - Role: contract-first REST/GraphQL; versioning and idempotency.
@@ -369,27 +369,28 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Globs: src/**, app/**, domain/**, services/**, docs/architecture/**
 
 ### [ARCHITECTURE BASELINE]
-- Principles: SOLID, separation of concerns, DRY/KISS/YAGNI; avoid god objects; keep functions/classes cohesive.
-- Clean architecture: domain independent of frameworks/IO; explicit domain/application/infrastructure boundaries; dependencies point inward; DI preferred.
-- DDD alignment: respect bounded contexts; explicit contracts/APIs/events with ACL/anti-corruption layers; no shared DB across contexts; update context maps/ADRs on boundary changes.
-- Integration/resilience: timeouts, retries with jitter, circuit breakers; idempotency for side effects; deterministic ordering; explicit time zones and monotonic clocks when ordering matters.
-- Decomposition: prefer simple services/components; introduce microservices only with justification (team scaling, isolation, throughput); document ADRs for changes.
-- Patterns: select patterns intentionally (Factory/Strategy/Observer/etc.) with rationale; avoid premature abstraction/indirection.
+- Foundational principles: apply Separation of Concerns, high cohesion / low coupling, abstraction & encapsulation, Single Source of Truth, immutability-by-default in core logic, idempotent side-effect boundaries, Design by Contract & fail-fast, Law of Demeter, and Principle of Least Astonishment. Align with docs/architecture/design-principles.md.
+- SOLID & GRASP: use SRP/OCP/LSP/ISP/DIP and responsibility assignment (Information Expert, Creator, Controller, Polymorphism) as the default OO lens; prefer composition over inheritance and avoid deep inheritance hierarchies. See docs/architecture/solid-principles.md and docs/architecture/design-principles.md.
+- Clean / Hexagonal & DDD: keep domain independent of frameworks/IO; define explicit application and infrastructure boundaries; dependencies point inward; use DI for infrastructure. Only reach for full DDD (aggregates, domain events, rich value objects) when domain complexity warrants it. See docs/architecture/architecture-patterns.md and docs/architecture/system-decomposition.md.
+- Decomposition & bounded contexts: prefer modular monolith or simple services first; introduce microservices only with clear justification (team scaling, isolation, throughput/latency, regulatory, blast radius). Boundaries must have explicit contracts (HTTP/RPC/events) and clear ownership; update context maps and ADRs when boundaries change.
+- Integration & resilience: design external interactions with timeouts, retries with jitter, circuit breakers, and back-pressure; strive for idempotent handlers where feasible; handle time and ordering explicitly (time zones, monotonic clocks, message ordering guarantees).
+- Patterns: select patterns intentionally (Factory, Abstract Factory, Builder, Strategy, Observer, Decorator, Composite, Adapter, Facade, Chain of Responsibility, State, Mediator, etc.) when they reduce complexity or enable required variability; avoid pattern cargo-culting and unnecessary indirection. See docs/architecture/design-patterns.md for when/why guidance.
 
 ### [VERIFICATION]
-- Provide design review checklist or ADR reference and run static analysis/lint as applicable.
+- Provide a short architecture rationale or ADR reference and list concrete checks (lint/static analysis and, if available, architecture/import rules) that show how the design adheres to these constraints.
 
 ## 37-code-structure.mdc — Code structure and organization standards.
 - Globs: src/**, app/**, domain/**, tests/**
 
 ### [CODE STRUCTURE BASELINE]
-- Modular: cohesive modules; avoid grab-bag files; prefer feature/domain folders when it improves cohesion; keep layers clear inside features (domain/app/infra/presentation).
-- Naming: clear, descriptive, domain-aligned; avoid abbreviations/generic names; expose public surfaces (index/public files) instead of deep imports; avoid circular deps.
-- Principles: DRY/KISS/YAGNI; small focused functions (~20–30 lines); extract helpers for distinct steps/branches; isolate I/O from pure logic.
-- Config: externalize env/config; no hardcoded env-specific constants; remove dead code/unused deps.
+- Modularity & feature slices: organize code into cohesive modules and feature-oriented verticals (e.g., feature/domain → application/service → infrastructure → interface); avoid grab-bag “utils” files; keep boundaries inside features clear and explicit. Align with docs/architecture/design-principles.md and docs/architecture/architecture-patterns.md.
+- Naming & layout: use clear, descriptive, domain-aligned names; avoid ambiguous abbreviations; keep directory depth reasonable; prefer explicit, stable public entry points (barrel/index/public files) over fragile deep relative imports; avoid circular dependencies.
+- Code-level heuristics: apply DRY/KISS/YAGNI with judgment (prefer a bit of duplication over the wrong abstraction); keep functions small and focused (~20–30 lines where practical); isolate I/O and side effects from pure logic; follow Tell, Don’t Ask and Law of Demeter; make behavior explicit rather than relying on hidden magic. See docs/architecture/design-principles.md.
+- Testability & observability: structure code so that core logic is easy to unit test (dependency injection, seams for I/O, time, randomness); keep cross-cutting concerns like logging/metrics/tracing in dedicated modules or middleware instead of scattered calls in business logic. Coordinate with docs/testing-standards.md and docs/observability-standards.md.
+- Config & environment: externalize environment/configuration; never hardcode secrets or environment-specific constants; remove dead code and unused dependencies regularly as part of normal maintenance.
 
 ### [VERIFICATION]
-- Run formatter/linter for the language to ensure structure/naming/import hygiene.
+- Run the formatter and linter for the language to ensure structure/naming/import hygiene, and reference any architecture/import-rule checks (if present) that enforce modular boundaries.
 
 ## 38-compliance.mdc — Compliance checklist enforcement.
 - Globs: **/*
@@ -409,38 +410,32 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 ### [ATDD — ACCEPTANCE TEST-DRIVEN DEVELOPMENT (DONE = PROVEN)]
 
 ### [CORE MANDATE]
-Define acceptance criteria before designing the implementation; acceptance governs scope.
+- Define acceptance criteria and key scenarios before designing the implementation; “done” is defined by observable outcomes, not code volume.
 
 ### [PRINCIPLES]
-- Produce 5–20 concrete Given/When/Then examples with real values; no abstractions or vague clauses.
-- Assign stable IDs (ACC-###) and link them to unit/integration tests.
-- Acceptance examples must be updated before modifying behavior intentionally.
-- Treat acceptance criteria as the primary boundary against scope creep.
-- If acceptance cannot be defined clearly, trigger TRIAGE and halt.
+- Express acceptance using domain language and clear outcomes that stakeholders understand; avoid technical jargon (DB tables, classes, HTTP internals).
+- Align acceptance criteria with bounded contexts and domain concepts; reflect the ubiquitous language of the domain (DDD).
+- Turn critical acceptance criteria into executable tests (API/E2E/contract tests) that remain stable across refactors.
+- Prioritize a small set of high-value acceptance tests over large, flaky, UI-heavy suites; use lower layers (unit/integration) to cover details.
+- Keep acceptance tests focused on behavior and business rules; do not assert on incidental implementation details or layout.
 
-### [ACCEPTANCE EXAMPLE FORMAT]
-```
-[ACC-001] User authentication with valid credentials
-Given user "alice@example.com" with password "correct-hash"
-When user submits login form
-Then session token is returned
-And token expires in 3600 seconds
-And audit log records successful login
-```
+### [WORKFLOW]
+1. Discover and refine acceptance criteria with stakeholders (optionally using BDD-style Given/When/Then examples).
+2. Select key scenarios and implement them as executable acceptance tests.
+3. Use TDD at lower levels (unit/integration) to drive design until acceptance tests pass.
+4. Keep acceptance tests stable; when behavior changes, update acceptance criteria first, then adjust tests and implementation.
 
-### [REQUIREMENTS]
-- Real, concrete values (not "a user" but "alice@example.com")
-- Observable outcomes that can be verified
-- Edge cases and failure modes included
-- Clear pass/fail criteria
-- Stable ID for traceability
+### [ANTI-PATTERNS]
+- Writing “acceptance” tests after implementation as documentation theater.
+- Overly UI-coupled scenarios that break on cosmetic changes.
+- Acceptance suites that are slow, flaky, and rarely run.
+- Scenarios that mirror implementation steps instead of domain rules.
 
-### [REJECTION CRITERIA]
-- Vague acceptance ("system should work well")
-- Abstract placeholders without concrete examples
-- Acceptance defined after implementation
-- Untestable or unobservable criteria
-- Acceptance that allows infinite scope interpretation
+### [VERIFICATION]
+- For any new feature or major change, ensure:
+  - Acceptance criteria are explicitly stated (story, ADR, or acceptance test names).
+  - At least one executable acceptance test exists for critical behavior, or a clear justification is given if not feasible.
+- Cross-check against docs/testing-standards.md to ensure acceptance tests are deterministic, meaningful, and part of the CI pipeline.
 
 ## 41-bdd.mdc — BDD — Behavior-Driven Discovery (domain language first). Clarify behavior and scenarios, not ceremony.
 - Globs: src/**, tests/**, discovery/**, acceptance/**
@@ -448,33 +443,37 @@ And audit log records successful login
 ### [BDD — BEHAVIOR-DRIVEN DISCOVERY (DOMAIN LANGUAGE FIRST)]
 
 ### [CORE MANDATE]
-Capture behavior through example mapping before implementation; align on language and intent.
+- Use examples and scenarios to clarify desired behavior and language before implementation; BDD is about shared understanding, not tooling.
 
 ### [PRINCIPLES]
-- Use business-domain language (Given/When/Then or equivalent) and avoid technical leakage.
-- Maintain only a minimal, stable set of automated scenarios at the API/service layer; avoid UI/pixel tests.
-- Ensure scenarios reflect rules, not scripts; remove steps that duplicate unit/acceptance tests.
-- Update scenarios only when domain truth changes, not for refactors.
-- Treat BDD artifacts as shared vocabulary for clarity, not ceremony.
-
-### [EXAMPLE STRUCTURE]
-```gherkin
-Given <domain precondition in business terms>
-When <domain action or event>
-Then <observable business outcome>
-```
+- Express scenarios in Given/When/Then style where:
+  - Given: relevant context and domain state,
+  - When: the key action or event,
+  - Then: an observable business outcome.
+- Use domain language consistently; avoid leaking technical details (DB schema, HTTP internals, class names) into scenarios.
+- Keep each scenario focused on a single behavior or rule; multiple outcomes → multiple scenarios.
+- Maintain traceability from scenario → domain rule → tests; scenario titles and tags should map to features and bounded contexts.
+- Treat scenarios as living specifications; update them when domain rules change, not as static documentation.
 
 ### [ANTI-PATTERNS]
-- Technical language (databases, APIs, classes) in scenarios
-- Brittle UI-level steps that break on cosmetic changes
-- Scenarios that test implementation paths rather than rules
-- Over-specification with unnecessary detail
-- Scenarios maintained as process theater without real value
+- Technical language (databases, APIs, classes) dominating scenarios instead of domain terms.
+- Brittle UI-level steps that break on cosmetic changes (CSS selectors, pixel coordinates).
+- Scenarios that test implementation paths instead of high-level rules.
+- Over-specified steps with unnecessary detail that makes scenarios noisy and fragile.
+- Scenarios written or maintained purely as process theater, with no link to tests or code.
 
 ### [SUCCESS CRITERIA]
-- Non-technical stakeholders can read and validate scenarios
-- Scenarios remain stable across refactors
-- Clear traceability from scenario to domain rule
+- Non-technical stakeholders can read and validate scenarios.
+- Scenarios remain stable when internals are refactored.
+- Each scenario maps cleanly to one or more domain rules and tests.
+- The set of scenarios provides good coverage of core behavior without combinatorial explosion.
+
+### [VERIFICATION]
+- Ensure new or changed features have at least one clear scenario (in discovery/acceptance docs or tests) that:
+  - Uses domain language,
+  - Follows a Given/When/Then structure (explicitly or implicitly),
+  - Maps to implemented tests and behavior.
+- If scenarios are missing or purely technical, push for rephrasing in domain terms before designing or coding.
 
 ## 42-tdd.mdc — TDD — Test-Driven Development (deterministic first). Enforce tests before or with production changes.
 - Globs: src/**, app/**, domain/**, tests/**
@@ -482,26 +481,33 @@ Then <observable business outcome>
 ### [TDD — TEST-DRIVEN DEVELOPMENT (DETERMINISTIC FIRST)]
 
 ### [CORE MANDATE]
-Always modify or add tests before or with production changes; reject untested logic.
+- Always add or modify tests before or with production changes; reject untested logic, especially in critical paths.
 
 ### [PRINCIPLES]
-- Treat every behavior change as a contract: encode expected input/output conditions explicitly.
-- Prefer pure seams and deterministic units; isolate IO/LLM randomness behind adapters with strict contracts.
-- Use property-based tests when invariants exist; ensure trivial code mutations fail (mutation-resilient).
-- Never weaken or delete tests without justification tied to acceptance or domain rules.
-- If a feature cannot be expressed as tests, reduce scope; do not proceed with ambiguous behavior.
+- Tests must be deterministic, hermetic, and fast: no real network, clock, randomness, or global state; fake or inject dependencies.
+- Design for testability: isolate pure logic, inject I/O and time/random sources, and keep side effects at well-defined boundaries.
+- Use TDD to shape APIs and domain behavior: tests encode contracts and edge cases; refactor with tests as a safety net.
+- Prefer CQS-friendly designs: queries are side-effect free and easy to assert; commands change state and are validated via observable outcomes.
+- Keep tests focused on behavior, not implementation details (no brittle assertions on private internals or incidental structure).
+- Never weaken or delete tests without explicit justification tied to acceptance criteria or domain rule changes.
 
 ### [WORKFLOW]
-1. Write failing test that captures the contract
-2. Implement minimal code to pass
-3. Refactor with tests as safety net
-4. Verify mutation resilience
+1. Write a failing test that captures the desired contract or bug fix.
+2. Implement the minimal code needed to make the test pass.
+3. Refactor implementation and tests to improve design while keeping tests green.
+4. Periodically run mutation tests or introduce small “safe breaks” to confirm test resilience where tooling is available.
 
 ### [REJECTION CRITERIA]
-- Production code changes without corresponding test changes
-- Tests that depend on order or shared state
-- Tests that leak implementation details instead of testing behavior
-- Deletion of tests without domain justification
+- Production code changes without corresponding test changes or clear evidence of existing coverage.
+- Tests that depend on ordering, shared mutable state, or environmental flakiness.
+- Tests that mirror implementation structure instead of business rules.
+- Deletion or weakening of tests without traceable domain-level justification.
+
+### [VERIFICATION]
+- For any PR/patch touching logic:
+  - Identify which tests encode the changed behavior; if none, require new tests.
+  - Confirm tests adhere to docs/testing-standards.md (deterministic, AAA structure, meaningful coverage).
+  - If relying on existing coverage, reference the specific suites or files and explain why they are sufficient.
 
 ## 43-fdd.mdc — FDD — Feature-Driven Development (thin, reversible slices). Enforce small, safe, traceable increments.
 - Globs: features/**, tasks/**, src/**, tests/**
@@ -509,52 +515,37 @@ Always modify or add tests before or with production changes; reject untested lo
 ### [FDD — FEATURE-DRIVEN DEVELOPMENT (THIN, REVERSIBLE SLICES)]
 
 ### [CORE MANDATE]
-Break work into small, independently shippable slices with explicit scope and risks.
+- Break work into small, independently shippable slices with explicit scope, acceptance, and rollback paths.
 
 ### [PRINCIPLES]
-- Each slice requires: acceptance examples, test plan, DoD, rollout + rollback plan.
-- Avoid modifying unrelated behavior; reject "drive-by" changes and opportunistic refactors.
-- Use feature flags for risky or user-facing changes; ensure reversible within RTO.
-- Prioritize minimal increments that deliver measurable SLO impact.
-- If a request spans multiple concerns, split into several slices; ship the highest-value slice first.
-
-### [FEATURE SLICE TEMPLATE]
-```
-Feature: [Name]
-Scope: [Exact boundaries]
-Out-of-scope: [What's explicitly excluded]
-Risk Tier: [S/M/H]
-Acceptance: [ACC-### references]
-Test Plan: [Unit/Integration/E2E coverage]
-Rollout: [Flag name, canary %, duration]
-Rollback: [Trigger conditions, steps, RTO]
-Success Metrics: [Observable SLO impact]
-```
-
-### [SLICE CHARACTERISTICS]
-- Independently deployable
-- Delivers user/business value
-- Reversible via flag or rollback
-- Testable end-to-end
-- 1–5 days of work maximum
-- Clear acceptance criteria
+- Prefer thin vertical slices that cut through UI/API → application → domain → persistence, delivering a coherent behavior end-to-end.
+- Keep slices reversible: use feature flags, configuration toggles, or safe defaults to disable or roll back behavior quickly.
+- Avoid mixing unrelated concerns in a single slice (e.g., refactor + feature + dependency upgrade).
+- Each slice must have clear acceptance criteria and corresponding tests; defer speculative groundwork to future slices (YAGNI).
+- Document risks and dependencies (migrations, external systems) and plan mitigation/rollback upfront.
 
 ### [ANTI-PATTERNS]
-- Large batch changes spanning multiple features
-- Coupling unrelated changes together
-- Refactoring mixed with feature work
-- No rollback plan or feature flag
-- Ambiguous scope allowing creep
-- Slices dependent on future work to provide value
+- Coupling unrelated changes together (features + refactors + infra) in a single change set.
+- Refactoring mixed with feature work without clear separation and tests.
+- No rollback plan or feature flag for risky changes.
+- Ambiguous scope that allows silent scope creep.
+- Slices that only provide value when combined with multiple future slices.
 
 ### [DEFINITION OF DONE (DOD)]
-- [ ] Acceptance criteria met with evidence
-- [ ] Tests pass (unit/integration/E2E)
-- [ ] Security scan clean
-- [ ] Feature flag configured
-- [ ] Rollback tested
-- [ ] Observability hooks added
-- [ ] Documentation updated
+- [ ] Acceptance criteria met with evidence (tests and/or acceptance checks).
+- [ ] Tests pass (unit/integration/E2E as appropriate).
+- [ ] Security checks run and clean for impacted surface.
+- [ ] Feature flag or safe configuration in place where relevant.
+- [ ] Rollback path identified and, where possible, exercised or simulated.
+- [ ] Observability hooks added for new critical paths.
+- [ ] User-facing or ops documentation updated where needed.
+
+### [VERIFICATION]
+- For any feature/task, ensure:
+  - Scope is small, well-bounded, and described.
+  - The change can be enabled/disabled or rolled back with minimal blast radius.
+  - Tests and observability confirm behavior and provide insight post-deploy.
+- Push back on oversized, multi-concern changes that violate these constraints; propose slicing strategies instead.
 
 ## 44-ddd.mdc — DDD — Domain-Driven Design (boundaries and invariants). Maintain domain purity and bounded contexts.
 - Globs: src/**, domain/**, application/**, infrastructure/**, docs/architecture/**, contracts/**, docs/adr/**
@@ -562,45 +553,96 @@ Success Metrics: [Observable SLO impact]
 ### [DDD — DOMAIN-DRIVEN DESIGN (BOUNDARIES & INVARIANTS)]
 
 ### [CORE MANDATE]
-Respect bounded contexts; no cross-context imports without explicit contracts and ADR.
+- Model complex domains explicitly using ubiquitous language, bounded contexts, aggregates, and invariants; keep domain logic independent of technical concerns.
 
 ### [PRINCIPLES]
-- Keep domain logic pure: no framework/IO dependencies; enforce invariants through Aggregates/VOs where justified.
-- Maintain ubiquitous language across code, tests, acceptance, and docs; rename code to match domain truth.
-- Update context-map and contracts when interactions or boundaries change.
-- Encode critical invariants (money, permissions, AML rules) directly in the domain model with tests.
-- Reject any solution that collapses contexts or leaks infrastructure into domain boundaries.
-
-### [BOUNDED CONTEXT RULES]
-- Each context owns its data model and language
-- Cross-context communication via explicit contracts (APIs, events, anti-corruption layers)
-- No direct database sharing across contexts
-- Context map documents relationships and integration patterns
-
-### [DOMAIN MODEL PURITY]
-```
-✓ Pure domain logic with no framework imports
-✓ Invariants enforced at construction/mutation
-✓ Value objects for immutable domain concepts
-✓ Aggregates as consistency boundaries
-✗ Domain entities depending on HTTP/DB libraries
-✗ Infrastructure concerns in domain layer
-```
+- Ubiquitous language: use domain terms consistently in code (types, methods, modules) and documentation; avoid leaky technical names in the domain layer.
+- Bounded contexts: partition the domain into cohesive contexts with clear boundaries and ownership; define explicit contracts (APIs, events, schemas) at context borders.
+- Aggregates & invariants: design aggregates as consistency boundaries; enforce invariants inside them rather than in random services or controllers.
+- Domain purity: keep domain model free from frameworks and infrastructure (no ORMs, HTTP, or persistence concerns in domain types); infrastructure depends on domain, not vice versa.
+- Context mapping: document relationships between contexts (partnerships, upstream/downstream, ACLs) and keep ADRs and diagrams up to date when boundaries or contracts change.
+- Align with architecture patterns in docs/architecture/architecture-patterns.md and systemic guidance in docs/architecture/system-decomposition.md.
 
 ### [INVARIANT PROTECTION]
-- Validate at aggregate boundaries
-- Make illegal states unrepresentable
-- Test invariants explicitly with property-based tests
-- Document business rules directly in domain code
+- Validate at aggregate boundaries; reject or correct invalid commands early.
+- Make illegal states unrepresentable through type modeling and construction rules.
+- Test invariants explicitly (unit and property-based tests where helpful).
+- Document critical business rules directly in domain code (names, comments, and tests), not only in external docs.
 
 ### [ANTI-PATTERNS]
-- Anemic domain models (just getters/setters)
-- God aggregates that know too much
-- Technical concerns leaking into domain
-- Bypassing invariants through direct setters
-- Context boundaries ignored for convenience
+- Anemic domain models (entities with just getters/setters and no behavior).
+- God aggregates or services that know too much and own unrelated responsibilities.
+- Technical concerns (ORM, HTTP, framework annotations) leaking into domain types.
+- Bypassing invariants via direct setters, public mutable fields, or raw persistence access.
+- Context boundaries ignored “for convenience” (shared DB tables, cross-context backdoor calls).
+
+### [VERIFICATION]
+- For domain-heavy changes, ensure:
+  - Types and modules reflect domain language and bounded contexts.
+  - Invariants are enforced in aggregates/domain services and covered by tests.
+  - Contracts between contexts (APIs, events, schemas) are explicit and versioned.
+  - Architecture docs (context maps, ADRs) are updated when boundaries or invariants change.
 
 [LANGUAGE STANDARDS] (50-lang-*.mdc)
+
+## 50-lang-*.mdc
+
+## 50-lang-css.mdc — CSS standards: structure, accessibility, performance.
+- Globs: **/*.css
+
+### [CSS STANDARDS]
+- Organization: use BEM/component-scoped styles; keep specificity low; avoid global leaks; prefer custom properties for colors/spacing/typography and light/dark tokens if needed.
+- Layout: prefer flex/grid; avoid absolute positioning except for layering; avoid `!important`.
+- Performance/quality: minimize unused CSS; consider `content-visibility`; use `min`/`max`/`clamp` for responsive sizing; prefer hardware-accelerated transforms; respect `prefers-reduced-motion`.
+- Accessibility: ensure focus states and WCAG contrast; responsive layouts; reduced-motion fallbacks.
+- Tooling: lint with `stylelint`; format with `prettier`/`stylelint --fix`.
+- Verification artifact: `npx stylelint "**/*.css"` (or package script) and `prettier --check "**/*.css"`.
+
+## 50-lang-gdscript.mdc — GDScript standards: readability, signals, and safety.
+- Globs: **/*.gd
+
+### [GDSCRIPT STANDARDS]
+- Style: typed GDScript; snake_case; one class per file with file named after class/scene; avoid global state; keep scripts small per node responsibility; prefer composition via nodes/scenes over inheritance.
+- Signals: use signals for decoupling instead of direct node coupling; check node existence before use.
+- Safety/security: validate network input; sanitize file IO paths; avoid `yield` abuse; disable debug features in prod; avoid storing secrets client-side.
+- Performance: avoid per-frame allocations; cache node lookups (`onready var`); choose `_process` vs `_physics_process` appropriately with delta; use signals over polling.
+- Testing: prefer deterministic logic separated from scene tree; use Godot built-in tests or GUT; `godot --headless --editor --quit --check` (or project test addon) for lint/checks.
+- Verification artifact: `godot --headless --editor --quit --check` (adjust path/version) or project’s test workflow command.
+
+## 50-lang-go.mdc — Go standards: idiomatic, typed, and checked.
+- Globs: **/*.go
+
+### [GO STANDARDS]
+- Stack: Go 1.22+ with modules.
+- Style/lint: `gofmt` + `goimports`; `staticcheck` or `golangci-lint`; command: `gofmt -w . && goimports -w . && staticcheck ./...`.
+- Errors: handle and wrap errors; use `errors.Is/As`; no panics for normal flow.
+- Concurrency: contexts everywhere with timeouts; bounded worker pools; avoid data races; prefer channels with back-pressure.
+- Safety: parameterized queries; validate inputs; avoid logging secrets; TLS for network calls; run `gosec ./...`.
+- Testing: `go test ./...` (race detector where relevant); table-driven tests including negatives; `go test -bench=.` for hotspots.
+- Performance: avoid unnecessary goroutines; manage allocations; reuse buffers when safe.
+- Verification artifact: `gofmt -w . && goimports -w . && staticcheck ./... && gosec ./... && go test ./...`.
+
+## 50-lang-html.mdc — HTML standards: semantic structure and accessibility.
+- Globs: **/*.html
+
+### [HTML STANDARDS]
+- Structure: semantic tags (header/nav/main/section/article/footer); meaningful heading hierarchy; include `lang`, charset, and viewport meta; avoid div/span soup.
+- Accessibility/security: label form controls; use aria where semantics insufficient; avoid inline event handlers; escape untrusted content; prefer CSP/HSTS/referrer policies at server; avoid inline scripts/styles unless hashed.
+- Performance: optimize and lazy-load images/media; modern formats; defer/async scripts; minimize DOM depth; prefer CSS for layout/effects.
+- Tooling: lint with `htmlhint`/`eslint-plugin-html`; prettify formatting.
+- Verification artifact: `npx htmlhint "**/*.html"` (or configured linter) and `prettier --check "**/*.html"`.
+
+## 50-lang-javascript.mdc — JavaScript standards: lint/format, testing, safe async.
+- Globs: **/*.js, **/*.mjs, **/*.cjs
+
+### [JAVASCRIPT STANDARDS]
+- Stack: Node 20+; ESM preferred (`\"type\": \"module\"` or `.mjs`).
+- Style/lint: ESLint + Prettier; `npm run lint && npm run format`; prefer const/let; no implicit globals; small modules.
+- Safety: validate inputs (zod/ajv); avoid `eval`/Function; escape/encode outputs; set `helmet` for HTTP; secure cookies (`HttpOnly`, `Secure`, `SameSite`); CSRF where stateful.
+- Async: async/await with try/catch; prevent unhandled rejections; timeouts/retries on I/O; reuse connections.
+- Testing: `npm test` (vitest/jest) with coverage; mock network/filesystem; include integration/API tests where relevant.
+- Security/deps: parameterized queries/ORM; `npm audit --production --audit-level=high`; no `.env` in git; secrets via env/manager.
+- Verification artifact: `npm run lint && npm run format -- --check && npm test && npm audit --production --audit-level=high`.
 
 ## 50-lang-php.mdc — PHP standards: modern, typed, and secure.
 - Globs: **/*.php
@@ -613,4 +655,41 @@ Respect bounded contexts; no cross-context imports without explicit contracts an
 - Testing: `./vendor/bin/phpunit` with coverage; mock external services; cover validation/error paths.
 - Dependencies: Composer with lock; run `composer audit`; avoid abandoned packages; disable allow_url_fopen if not needed.
 - Verification artifact: `composer install --no-dev` (if prod) or `composer install` then `phpcs --standard=PSR12`, `phpstan analyse --level=max`, `composer audit`, and `./vendor/bin/phpunit`.
+
+## 50-lang-python.mdc — Python standards: typing, linting, testing.
+- Globs: **/*.py
+
+### [PYTHON STANDARDS]
+- Stack: Python 3.11+ with venv/uv/poetry; pin deps in `pyproject` + lock; avoid unpinned `pip install -r` without hashes.
+- Style/lint: `ruff check .` plus `black --check .` and `isort .`; fix unused imports/code.
+- Typing: `pyright` or `mypy --strict`; no `type: ignore` without justification; prefer dataclasses/pydantic for structured data.
+- Safety: validate inputs (pydantic); no eval/exec; parameterized DB/ORM; context managers for resources; sanitize logs; secrets via env/manager.
+- Testing: `pytest -q` with coverage; mock IO; cover edge/error paths; freeze time for determinism.
+- Security/deps: `bandit -r .`; `pip-audit` or `uv pip audit`; forbid hardcoded creds.
+- Performance: avoid N+1; prefer generators for streams; timeouts/retries with jitter; cap concurrency with semaphores.
+- Verification artifact: `ruff check . && black --check . && isort . && mypy --strict . && pytest -q && bandit -r . && pip-audit`.
+
+## 50-lang-rust.mdc — Rust standards: safety, correctness, and tooling.
+- Globs: **/*.rs
+
+### [RUST STANDARDS]
+- Toolchain: stable Rust 2021+; pin via `rust-toolchain.toml`; prefer workspaces for multi-crate setups.
+- Style/lint: `cargo fmt --all -- --check`; `cargo clippy --all-targets --all-features -D warnings`; avoid unwarranted `clone`.
+- Safety: avoid `unsafe`; if necessary, isolate/justify and wrap safely; use `Result` + `thiserror`; avoid `unwrap`/`expect` outside tests/startup.
+- Testing: `cargo test --all`; add property-based tests (`proptest`/`quickcheck`) for invariants; separate unit (`mod tests`) vs integration (`tests/`).
+- Security: validate inputs; parameterized queries/ORM; no SQL concat; run `cargo audit`; avoid unmaintained crates.
+- Performance: measure before optimizing; prefer iterators; avoid needless allocations; bound async concurrency and add timeouts.
+- Verification artifact: `cargo fmt --all -- --check && cargo clippy --all-targets --all-features -D warnings && cargo test --all && cargo audit`.
+
+## 50-lang-typescript.mdc — TypeScript standards: strict types, lint/format, testing.
+- Globs: **/*.ts, **/*.tsx
+
+### [TYPESCRIPT STANDARDS]
+- Stack: Node 20+; ESM preferred; `tsconfig` strict (`noImplicitAny`, `noUncheckedIndexedAccess`) and path aliases where needed; avoid default exports for shared libs.
+- Style/lint: ESLint (typescript-eslint) + Prettier; `npm run lint && npm run format -- --check`; keep imports ordered and unused removed.
+- Types: no `any`/`!`; prefer discriminated unions and readonly; avoid ambient globals; `tsc --noEmit` required.
+- Async/safety: handle promises with try/catch; no unhandled rejections; add timeouts/retries for I/O; avoid `eval`/dynamic code; validate inputs with schemas (e.g., zod/yup); set `helmet`/secure cookies for HTTP.
+- Testing: `npm test` (vitest/jest) with coverage; mock boundaries; include integration/API contract tests where applicable.
+- Security/deps: parameterized queries/ORM; sanitize outputs; secrets from env/manager; `npm audit --production --audit-level=high`.
+- Verification artifact: `npm run lint && npm run format -- --check && tsc --noEmit && npm test && npm audit --production --audit-level=high`.
 

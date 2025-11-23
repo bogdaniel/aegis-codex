@@ -8,7 +8,7 @@ You do **not** restate standards in your prompts. Instead, the agents and `.curs
 - `AGENTS.md` — Human‑readable aggregation of all rules, generated from `.cursor/rules/*.mdc` (do not edit by hand; run `node scripts/build-agents-doc.js`).
 - `.cursor/rules/*.mdc` — Machine‑readable rules for Cursor; always‑on standards.
 - `docs/` — Human‑readable guides:
-  - `docs/architecture/` — Architecture patterns, SOLID, core design principles (DRY/KISS/YAGNI/SoC), and design patterns.
+  - `docs/architecture/` — Architecture patterns, SOLID, core design principles (DRY/KISS/YAGNI/SoC), and design patterns. See `docs/architecture/patterns/` for per-pattern notes and navigation.
   - `docs/security-standards.md` — Security baseline.
   - `docs/testing-standards.md` — Testing rules.
   - `docs/observability-standards.md` — Logging/metrics/tracing/health.
@@ -44,18 +44,21 @@ Each agent has:
 - Strict `[FORMAT]` section (single fenced block or “Format non-compliant”).
 - Outputs that always include at least one verification step (tests/checks/commands).
 
-## Using This Pack in Cursor
+## Modes: Light, Standard, Full
+- **LITE (default):** concise answers, ≤8 bullets, one best-practice path. Use for narrow tasks (e.g., “fix this handler”).
+- **STANDARD:** adds Grounding Block + Plan + Validation. Use for design/debug tasks where context matters.
+- **FULL:** includes MVE plan, ADR-1p, DONE checklist. Use for higher-risk work (auth/PII/contracts) or when changing behavior broadly.
+- Trigger a mode by asking for it: `Use FULL mode for this auth change` or `Respond in STANDARD mode for design review`.
+
+## Quick Tutorial (Cursor or similar)
 1. Place this repo (or its `.cursor` and `AGENTS.md` + `docs` content) at the root of your project.
 2. Open the project in Cursor; it will automatically pick up `.cursor/rules/*.mdc` and `AGENTS.md`.
-3. In chat, invoke an agent by role, focusing only on the task. For example:
+3. Pick the right mode (LITE/ STANDARD/ FULL) based on risk; default is LITE.
+4. In chat, invoke an agent by role with a short task. For example:
    - `Act as the @code-reviewer. Review this diff and fix anything blocking.`
    - `Act as the @security-auditor. Audit this handler and apply fixes.`
    - `Act as the @test-engineer. Add tests for this function.`
-
-The rules ensure the agent:
-- Obeys security/testing/observability/performance/CI/API standards.
-- Returns properly formatted, single‑block outputs (code/spec/tests/config).
-- Includes commands to run (lint, tests, security scans, etc.).
+5. The rules auto-apply security/testing/observability/performance/CI/API standards and enforce single-block outputs plus verification commands.
 
 ## Using With Other Tools
 For tools that can’t read `.cursor/rules` directly:
@@ -71,6 +74,13 @@ For tools that can’t read `.cursor/rules` directly:
 1) Clone/open this repo in Cursor (ensure `.cursor/rules` and `AGENTS.md` are at project root).
 2) Use an agent prompt, e.g.: `Act as the @code-reviewer. Review this diff.` or `Act as the @security-auditor. Audit src/handler.ts`.
 3) Standards load automatically from `.cursor/rules/*.mdc` and AGENTS. Keep prompts short; the rules enforce security, testing, observability, and formatting.
+
+### Starter Demo Prompt
+Ask any agent to spin up a tiny sample to see the rules in action. Example (LITE mode):
+```
+Act as the @architect. In LITE mode, sketch a minimal TypeScript Express service exposing GET /health and GET /users/:id with validation, logging, and tests outlined.
+```
+Then follow up with `@security-auditor`, `@test-engineer`, and `@devops` to see the standards across the flow.
 
 ## Status (v0.1 scope)
 - **Tier 1 (fully enforced, examples present):** TypeScript, PHP.
