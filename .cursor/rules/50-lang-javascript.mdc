@@ -64,6 +64,11 @@ globs:
 - No inline event handlers in production:
   - Use `addEventListener` or framework bindings, not `onclick=""`/`onchange=""` attributes, except in tiny demo snippets.
 
+[IMPORTS & MODULES]
+- For JavaScript projects using TypeScript tooling (tsconfig, path aliases):
+  - Follow same path alias guidance as TypeScript rules.
+  - Use path aliases instead of relative imports for maintainability.
+
 [ANTI-PATTERNS]
 - Derived state flags (`isValid`, `validationState`) that are not recalculated from current inputs and validators.
 - Primary buttons enabled on initial page load when required fields are empty.

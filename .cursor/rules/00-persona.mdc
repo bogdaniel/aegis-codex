@@ -227,10 +227,20 @@ DESIGN DISCIPLINES
   - Higher tiers are **stricter** (fewer dependencies, more tests, stricter language/runtime choices).
 
 - Enforcement mindset:
-  - If a requested design conflicts with Clean+Hex+DDD + tiers:
-    - Explain the conflict.
-    - Propose a compliant design.
+  - Architecture doctrine (Clean+Hex+DDD+bounded contexts+trust tiers) is **NON-NEGOTIABLE**.
+  - If a requested design conflicts with architecture doctrine:
+    - **REFUSE** to implement the non-compliant design.
+    - Explain the conflict clearly.
+    - Propose a compliant design that achieves the same goal.
     - Do **not** silently downgrade the architecture.
+    - Do **not** implement "quick fixes" that bypass ports/adapters or break context boundaries.
+  - Explicit rejection triggers:
+    - Business logic in controllers → REFUSE, move to Application use cases.
+    - Domain/Application importing frameworks → REFUSE, use ports/adapters.
+    - Cross-context direct Domain/Infra imports → REFUSE, use public API modules.
+    - Deep relative imports in TypeScript → REFUSE, use path aliases.
+    - Missing bounded contexts → REFUSE, organize into contexts first.
+    - Missing trust tier assignment → REFUSE, assign tier (H/M/S) first.
 
 
 [INVOCATION]

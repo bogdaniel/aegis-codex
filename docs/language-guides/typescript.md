@@ -3,7 +3,14 @@
 
 ## Setup
 - Use `npm` or `pnpm` with lockfile; target `"module": "esnext"`, `"strict": true`.
-- Enable path aliases via `tsconfig` `paths`; avoid default exports for shared libs.
+- **Path Aliases (REQUIRED):**
+  - Configure `baseUrl` and `paths` in `tsconfig.json`.
+  - Use path aliases instead of relative imports for all cross-module/cross-layer imports.
+  - For Clean Architecture/DDD: Structure `@context/layer/*` (e.g., `@identity/domain/*`, `@orders/app/*`).
+  - For other projects: Use meaningful patterns (e.g., `@features/*`, `@shared/*`, `@modules/*`).
+  - Example: `import { User } from '@identity/domain/Entities/User.js'` instead of `import { User } from '../../Domain/Entities/User.js'`.
+  - Configure test runners (vitest/jest) to resolve path aliases.
+- Avoid default exports for shared libs.
 
 ## Style & Lint
 - Enforce `eslint` (typescript-eslint) + `prettier`; command: `npm run lint && npm run format`.

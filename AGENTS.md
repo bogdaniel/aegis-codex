@@ -230,10 +230,20 @@ DESIGN DISCIPLINES
   - Higher tiers are **stricter** (fewer dependencies, more tests, stricter language/runtime choices).
 
 - Enforcement mindset:
-  - If a requested design conflicts with Clean+Hex+DDD + tiers:
-    - Explain the conflict.
-    - Propose a compliant design.
+  - Architecture doctrine (Clean+Hex+DDD+bounded contexts+trust tiers) is **NON-NEGOTIABLE**.
+  - If a requested design conflicts with architecture doctrine:
+    - **REFUSE** to implement the non-compliant design.
+    - Explain the conflict clearly.
+    - Propose a compliant design that achieves the same goal.
     - Do **not** silently downgrade the architecture.
+    - Do **not** implement "quick fixes" that bypass ports/adapters or break context boundaries.
+  - Explicit rejection triggers:
+    - Business logic in controllers → REFUSE, move to Application use cases.
+    - Domain/Application importing frameworks → REFUSE, use ports/adapters.
+    - Cross-context direct Domain/Infra imports → REFUSE, use public API modules.
+    - Deep relative imports in TypeScript → REFUSE, use path aliases.
+    - Missing bounded contexts → REFUSE, organize into contexts first.
+    - Missing trust tier assignment → REFUSE, assign tier (H/M/S) first.
 
 ### [INVOCATION]
 INVOCATION
@@ -339,6 +349,17 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Isolation: small explicit fixtures; no global state; reset between tests; limit parallelism for shared resources.
 - CI gating: block on flakiness; no silent skips; include coverage reports; run lint/type/security checks with tests.
 
+### [TEST FILE STRUCTURE]
+- Test file import patterns:
+  - Can import from any layer within their context (for testing purposes).
+  - Can import Infrastructure adapters directly (for test doubles and mocks).
+  - MUST use public API modules for cross-context imports (same as production code).
+  - Test utilities should be in `tests/` or `__tests__/` directories.
+- Mock patterns:
+  - Mocks should implement ports (interfaces), not concrete classes.
+  - Test doubles should be in test files or `tests/fixtures/` directories.
+  - Prefer interface-based mocks over class-based mocks for better testability.
+
 ### [VERIFICATION]
 - Provide exact commands to run tests per stack (e.g., `npm test -- --runInBand`, `pytest -q`, `go test ./...`, `cargo test`, `phpunit`) and include lint/type where relevant.
 
@@ -380,6 +401,21 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Supply chain: pin dependencies/locks; hermetic builds when possible; avoid `latest`; cache verified deps; publish SBOM as artifact.
 - Deployment: prefer canary/blue-green; health/readiness checks mandatory; auto-rollback on triggers (p95 latency +20%/15m, error rate +0.5%/10m, critical security event).
 - Environment/secrets: config via env/secret manager; least-privilege CI tokens; redact secrets from logs.
+
+### [ARCHITECTURE ENFORCEMENT]
+- Required CI checks:
+  - Static analysis (ESLint/Deptrac) must pass.
+  - Architecture dependency checks must pass (layer dependencies, cross-context imports).
+  - Public API module exports must be documented (JSDoc/TSDoc headers present).
+  - No cross-context domain/infra imports (must use public API modules).
+  - Path aliases must be used (no relative imports beyond 1 level).
+- Pre-commit hooks:
+  - Run architecture checks before commit (static analysis, dependency validation).
+  - Block commits with violations (layer dependencies, cross-context imports, path alias violations).
+- PR requirements:
+  - Architecture review for public API changes (new exports, breaking changes).
+  - Documentation updates for new public APIs (JSDoc/TSDoc headers).
+  - Verify no architecture violations introduced (use static analysis tools).
 
 ### [VERIFICATION]
 - Provide local pipeline command (e.g., `npm run lint && npm test`, `go test ./...`, `cargo fmt -- --check && cargo clippy && cargo test`) and reference CI workflow path.
@@ -439,8 +475,41 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
   - Domain depending on Interface/Infrastructure or frameworks.
   - Application depending on Symfony/Laravel/ORM/HTTP clients directly.
   - Cross-layer shortcuts (controller → repository directly, skipping use cases).
+- Layer-specific import patterns:
+  - **Domain Layer:**
+    - Can import: Other Domain entities/VOs within same context, public API modules from other contexts (rare).
+    - Cannot import: Application, Infrastructure, Interface layers.
+  - **Application Layer:**
+    - Can import: Domain (same context), Ports (same context), public API modules (other contexts).
+    - Cannot import: Infrastructure, Interface layers.
+  - **Interface Layer:**
+    - Can import: Application (same context), Domain DTOs (same context), public API modules (other contexts).
+    - Cannot import: Infrastructure adapters directly (use ports).
+  - **Infrastructure Layer:**
+    - Can import: Domain, Application (same context), public API modules (other contexts).
+    - Cannot import: Interface layer.
+- Import restrictions (enforced via path aliases):
+  - Domain layer MUST NOT import from Infrastructure or Interface aliases (e.g., `@context/infra/*`, `@context/interface/*`).
+  - Domain can only import from its own domain layer or other contexts' public API modules (if needed).
+  - Example: `@identity/domain/Entities/User.ts` cannot import from `@identity/infra/*` or `@identity/interface/*`.
+
+### [PORTS & ADAPTERS — HEXAGONAL ARCHITECTURE]
+- Ports (interfaces) are defined in Domain/Application layers; adapters implement them in Infrastructure/Interface.
+- Port ownership:
+  - Each port MUST be owned by exactly one bounded context (the context that defines its contract).
+  - The owning context defines the canonical port interface (e.g., `IdentityContext/Application/Ports/IdentityPort.ts`).
+  - Port names reflect the owning context's domain language.
+- Cross-context port usage (ACL pattern):
+  - When a context needs to use another context's port, it MUST define its own ACL interface with a distinct name.
+  - The ACL interface shields the consuming context from the provider's exact semantics.
+  - Example: `IdentityContext` owns `IdentityPort`; `OrdersContext` defines `IdentityValidationPort` (ACL) that adapts to `IdentityPort`.
+  - Forbidden: Multiple contexts defining ports with the same name but different contracts (e.g., both `IdentityContext` and `OrdersContext` having `IdentityPort`).
+  - ACL adapter in Infrastructure layer translates between the ACL interface and the canonical port.
 
 ### [DDD — BOUNDED CONTEXTS & MODELLING]
+- **MANDATORY:** All backend code MUST be organized into bounded contexts.
+- There is no "shared" or "common" code outside of bounded contexts (except infrastructure utilities).
+- **Exception:** Small, clearly-marked Tier S utilities (one-off scripts, migrations) may live outside bounded contexts, but MUST NOT grow into core services.
 - Each major business area is a **bounded context** with its own:
   - Ubiquitous language,
   - Entities/Aggregates,
@@ -452,8 +521,45 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Cross-context interactions:
   - Must go through explicit contracts (APIs, messages).
   - Never share persistence models across bounded contexts.
+- **REJECTION CRITERIA:**
+  - Code organized by technical layers only (e.g., `models/`, `services/`, `controllers/`) without bounded contexts → **REJECT**.
+  - "Shared" domain models used across multiple business areas → **REJECT**, create bounded contexts.
+  - Missing bounded context structure → **REJECT**, organize into contexts first.
+  - Scripts/migrations accumulating real business logic → **REJECT**, promote into proper bounded context.
+- Port ownership in cross-context communication:
+  - The owning context defines the canonical port (e.g., `IdentityContext` owns `IdentityPort`).
+  - Consuming contexts MUST define their own ACL interface with a distinct name (e.g., `OrdersContext` defines `IdentityValidationPort`, not `IdentityPort`).
+  - This prevents confusion from duplicate port names with different contracts.
+  - ACL adapters in Infrastructure layer translate between ACL interfaces and canonical ports.
+- Public API modules (facades):
+  - Each bounded context MUST define a small "public API" module per layer that's the only approved entry point for other contexts.
+  - Structure: `ContextName/Application/index.ts` (or `public.ts`) exports only approved use cases and ports.
+  - Cross-context imports MUST go through these public API modules, not direct imports into internal subfolders.
+  - Example: `import { RegisterUser, IdentityPort } from '@identity/app'` (via `IdentityContext/Application/index.ts`), NOT `import { RegisterUser } from '@identity/app/UseCases/RegisterUser/RegisterUser.js'`.
+  - Anti-pattern: Allowing direct imports into arbitrary subfolders (e.g., `@identity/app/UseCases/RegisterUser/RegisterUser.js`) from other contexts.
+- Public API module structure:
+  - **MUST export:** Use cases (classes), Ports (interfaces for cross-context use).
+  - **SHOULD export:** Command/Query types (as types only, using `export type`).
+  - **MUST NOT export:** Internal implementations, Infrastructure adapters, Domain entities directly.
+  - **Versioning:** Breaking changes to public APIs require deprecation period; use semantic versioning for public API modules.
+- Public API module structure:
+  - **MUST export:** Use cases (classes), Ports (interfaces for cross-context use).
+  - **SHOULD export:** Command/Query types (as types only, using `export type`).
+  - **MUST NOT export:** Internal implementations, Infrastructure adapters, Domain entities directly.
+  - **Versioning:** Breaking changes to public APIs require deprecation period; use semantic versioning for public API modules.
+- Cross-context import restrictions:
+  - A context MAY NOT import another context's Domain or Infrastructure directly.
+  - Cross-context imports MUST go through documented public API modules only (e.g., `@identity/app`, `@identity/domain` if domain has public API).
+  - Forbidden: `import { User } from '@identity/domain/Entities/User.js'` from OrdersContext (must use `@identity/app` public API if needed).
+  - Forbidden: `import { InMemoryUserRepository } from '@identity/infra/Adapters/InMemoryUserRepository.js'` from any other context.
+  - Only public API modules (facades) are approved entry points for cross-context access.
 
 ### [CONTEXT MAP & TRUST TIERS (H/M/S)]
+- **MANDATORY:** Every bounded context MUST be assigned a trust tier before implementation.
+- **REJECTION CRITERIA:**
+  - Bounded context without assigned trust tier → **REJECT**, assign tier (H/M/S) first.
+  - Tier H contexts with heavy framework dependencies → **REJECT**, use ports/adapters.
+  - Tier S contexts directly accessing Tier H persistence → **REJECT**, use APIs/messages.
 - Every bounded context must be assigned:
   - A **trust tier**:
     - Tier H (High / Safety Kernel): Auth, Policy, Ledger, Risk, Compliance.
@@ -479,7 +585,15 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
     - `src/BillingContext/...`, `src/CasinoCoreContext/...`, etc.
 - New features:
   - Belong to an existing bounded context or trigger creation of a new one.
-  - Avoid “misc/shared” dumping grounds that bypass contexts.
+  - Avoid "misc/shared" dumping grounds that bypass contexts.
+
+### [UTILITIES & SCRIPTS]
+- Migrations and one-off scripts are **Tier S utilities** with limited scope.
+- They may live outside bounded contexts (e.g., `migrations/`, `scripts/`).
+- **REJECTION CRITERIA:**
+  - If a script starts accumulating real business logic → **REJECT**, promote it into a proper bounded context.
+  - Scripts accessing Domain/Application directly without going through ports → **REJECT**, use proper architecture.
+- **Naming:** Use clear prefixes (e.g., `migrate_`, `script_`) to mark them as Tier S utilities.
 
 ### [OBSERVABILITY & NON-FUNCTIONALS]
 - Each bounded context exposes:
@@ -508,26 +622,72 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
     - Tier S can accept more complexity for UX, but not at the expense of Tier H/M reliability.
 
 ### [ENFORCEMENT & TOOLING]
+- Static analysis tooling:
+  - **TypeScript/JavaScript:**
+    - ESLint plugin: `eslint-plugin-import` with custom rules to enforce path aliases and prevent relative imports.
+    - Custom ESLint rule: Enforce path aliases, prevent relative imports beyond one level.
+    - TypeScript compiler: Use `paths` in `tsconfig.json` (already required).
+    - Consider: `dependency-cruiser` for dependency graph validation and architecture enforcement.
+  - **PHP:**
+    - `Deptrac` for layer/context dependency enforcement.
+    - `PHPStan` level 8+ for strict type checking and architecture validation.
+  - **General:**
+    - Pre-commit hooks: Run static analysis before commits to catch violations early.
+    - CI gates: Fail builds on architecture violations (layer dependencies, cross-context imports, path alias violations).
 - Use Deptrac/static analysis to:
   - Enforce layer dependency rules.
   - Prevent Domain from importing frameworks.
-  - Prevent cross-context imports that bypass public APIs.
+  - Prevent Domain from importing Infrastructure or Interface layers (e.g., `@context/infra/*`, `@context/interface/*`).
+  - Prevent cross-context imports that bypass public API modules (facades).
+  - Enforce that cross-context imports only use public API entry points (e.g., `@context/app`, not `@context/app/UseCases/...`).
+  - Prevent cross-context direct imports to Domain or Infrastructure (e.g., `@other-context/domain/*`, `@other-context/infra/*`).
+  - Verify that all cross-context imports go through public API modules only.
 - Use contract tests and schema validation for:
   - Cross-context APIs (OpenAPI/JSON Schema, Protobuf).
   - Event schemas (see anti-corruption/events rules).
 
+### [WIRING & BOOTSTRAP FILES]
+- Wiring files (dependency injection containers, bootstrap files):
+  - Located at root or `infra/wiring/` directory (outside bounded contexts).
+  - Can import from multiple contexts (they're outside contexts).
+  - MUST use public API modules for cross-context imports.
+  - Can import Infrastructure adapters directly (for wiring only).
+  - Should be the ONLY place that imports Infrastructure adapters across contexts.
+- Naming: Use `*-wiring.ts`, `*-bootstrap.ts`, or `*-container.ts` suffix.
+- Example: `app-wiring.ts`, `dependency-container.ts`, `bootstrap.ts`.
+
 ### [REJECTION CRITERIA]
+- **FORBIDDEN:** Business logic in controllers → **REJECT**, move to Application use cases.
+- **FORBIDDEN:** Controllers accessing repositories/ORM directly → **REJECT**, use Application use cases.
+- **FORBIDDEN:** Business logic in Infrastructure → **REJECT**, move to Domain/Application.
+- **FORBIDDEN:** Anemic domain models with logic in services → **REJECT**, use rich domain models.
 - Code that places business logic directly in controllers, OR in Infrastructure, bypassing Domain/Application.
 - Direct use of external DTOs/entities inside Domain without mapping/ACL.
 - Cross-context database access or entity reuse.
 - Tier H services that depend heavily on frameworks or bypass ports/adapters.
+
+### [DOCUMENTATION REQUIREMENTS]
+- Public API documentation:
+  - **MANDATORY:** Public API modules that are imported by other bounded contexts MUST have a JSDoc/TSDoc (or equivalent) header that documents purpose, stability, and breaking-change policy.
+  - **SHOULD:** Modules used only inside a single bounded context SHOULD be documented, but lack of a header should not be an immediate REJECT.
+  - Documentation should include:
+    - Purpose of the module.
+    - List of all exports with brief descriptions.
+    - Breaking changes and deprecations (if any).
+  - **REJECTION CRITERIA:**
+    - Cross-context public API module without documentation → **REJECT**, add documentation first.
+    - Public API module exporting internal implementations → **REJECT**, export only approved contracts.
+- Context map documentation:
+  - MUST document all cross-context dependencies.
+  - MUST document trust tiers for each context.
+  - MUST document communication patterns (sync vs async).
 
 ## 37-code-structure.mdc — Code structure and organization standards.
 - Globs: src/**, app/**, domain/**, services/**, tests/**
 
 ### [CODE STRUCTURE BASELINE]
 - Modularity & feature slices: organize code into cohesive modules and feature-oriented verticals (e.g., feature/domain → application/service → infrastructure → interface); avoid grab-bag “utils” files; keep boundaries inside features clear and explicit. Align with docs/architecture/design-principles.md and docs/architecture/architecture-patterns.md.
-- Naming & layout: use clear, descriptive, domain-aligned names; avoid ambiguous abbreviations; keep directory depth reasonable; prefer explicit, stable public entry points (barrel/index/public files) over fragile deep relative imports; avoid circular dependencies.
+- Naming & layout: use clear, descriptive, domain-aligned names; avoid ambiguous abbreviations; keep directory depth reasonable; prefer explicit, stable public entry points (barrel/index/public files) over fragile deep relative imports; avoid circular dependencies. For TypeScript projects: use path aliases instead of relative imports for maintainability and clarity. For Clean Architecture/DDD: structure as `@context/layer/*` to make architecture boundaries explicit. For bounded contexts: define public API modules (facades) per context layer (e.g., `ContextName/Application/index.ts`) as the only approved entry point for cross-context imports.
 - Code-level heuristics: apply DRY/KISS/YAGNI with judgment (prefer a bit of duplication over the wrong abstraction); keep functions small and focused (~20–30 lines where practical); isolate I/O and side effects from pure logic; follow Tell, Don’t Ask and Law of Demeter; make behavior explicit rather than relying on hidden magic. See docs/architecture/design-principles.md.
 - Testability & observability: structure code so that core logic is easy to unit test (dependency injection, seams for I/O, time, randomness); keep cross-cutting concerns like logging/metrics/tracing in dedicated modules or middleware instead of scattered calls in business logic. Coordinate with docs/testing-standards.md and docs/observability-standards.md.
 - Config & environment: externalize environment/configuration; never hardcode secrets or environment-specific constants; remove dead code and unused dependencies regularly as part of normal maintenance.
@@ -550,17 +710,43 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
   - Have versioned schemas (JSON Schema, Protobuf, or equivalent).
   - Are published from Domain/Application, not from Infrastructure directly.
 - Cross-context events:
+  - **MANDATORY:** All cross-context events MUST have versioned schemas (JSON Schema, Protobuf, or equivalent).
+  - **Domain-internal events that never leave a bounded context are exempt from schema requirements.**
+  - **MANDATORY:** Schema validation MUST happen at adapter boundaries (before events reach Domain/Application).
   - Use canonical, versioned event definitions.
   - Are treated as **contracts**; changes are backward-compatible.
+- Event schema enforcement:
+  - **Schema Requirements:**
+    - All cross-context events MUST have JSON Schema or Protobuf schema.
+    - Schemas MUST be versioned (e.g., `OrderPlaced.v1.schema.json`).
+    - Schema validation MUST happen at adapter boundaries.
+  - **Naming Convention:**
+    - Events: `{ContextName}{EventName}` (e.g., `OrdersOrderPlaced`).
+    - Schemas: `{EventName}.v{version}.schema.{json|proto}`.
+  - **Breaking Changes:**
+    - New schema version required for breaking changes.
+    - Deprecation period for old versions.
+    - Document migration path.
+  - **REJECTION CRITERIA:**
+    - Cross-context event without schema → **REJECT**, define schema first.
+    - Publishing raw external events without canonicalization → **REJECT**, use ACL.
 
 ### [ANTI-CORRUPTION LAYERS (ACL)]
 - Every integration with legacy/third-party systems must pass through an ACL that:
   - Translates external models and semantics into clean domain types.
   - Hides external weirdness from Domain/Application.
   - Prevents external DTOs/entities from being used directly in Domain.
+- ACL for cross-context ports:
+  - When a context consumes another context's port, it MUST define its own ACL interface with a distinct name.
+  - The owning context defines the canonical port (e.g., `IdentityContext/Application/Ports/IdentityPort.ts`).
+  - The consuming context defines an ACL interface (e.g., `OrdersContext/Application/Ports/IdentityValidationPort.ts`).
+  - ACL adapter in Infrastructure translates between ACL interface and canonical port.
+  - This shields the consuming context from the provider's exact semantics and prevents duplicate port names.
 - Forbidden patterns:
   - Direct use of third-party SDK models as Domain Entities.
   - Having Domain code depending on external client libraries or transport-specific types.
+  - Multiple contexts defining ports with the same name but different contracts (e.g., both contexts having `IdentityPort`).
+  - Consuming contexts importing and using the canonical port directly (must use ACL interface).
 
 ### [EVENT CANONICALIZATION]
 - Do not publish raw external events onto internal buses.
@@ -644,8 +830,12 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
   - Emit structured logs with correlation IDs and principal information (no secrets).
   - Integrate with tracing (spans at use case boundaries, tagged with context + operation).
 - Use case boundaries:
-  - Log start/end with correlation ID + principal.
-  - Avoid logging sensitive data (passwords, tokens, full PII).
+  - **MANDATORY:** Log start/end with correlation ID + principal (user/tenant/service).
+  - **MANDATORY:** Avoid logging sensitive data (passwords, tokens, full PII).
+  - **FORBIDDEN:** Logging secrets, credentials, or sensitive PII → **REJECT**, redact or remove.
+  - **REJECTION CRITERIA:**
+    - Use case without logging → **REJECT**, add logging with correlation ID.
+    - Logs containing secrets → **REJECT**, redact secrets.
 
 ### [SECURITY]
 - Use mTLS between contexts and avoid unencrypted internal traffic where feasible.
@@ -1144,6 +1334,11 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - No inline event handlers in production:
   - Use `addEventListener` or framework bindings, not `onclick=""`/`onchange=""` attributes, except in tiny demo snippets.
 
+### [IMPORTS & MODULES]
+- For JavaScript projects using TypeScript tooling (tsconfig, path aliases):
+  - Follow same path alias guidance as TypeScript rules.
+  - Use path aliases instead of relative imports for maintainability.
+
 ### [ANTI-PATTERNS]
 - Derived state flags (`isValid`, `validationState`) that are not recalculated from current inputs and validators.
 - Primary buttons enabled on initial page load when required fields are empty.
@@ -1211,14 +1406,22 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 ### [ARCHITECTURE INTEGRATION — CLEAN + HEX + DDD]
 
 - Domain layer (`Domain/` in contexts/modules):
-  - No framework dependencies: **no** `Request`, `Response`, `Controller`, `Model`, `DB`, `Auth`, etc.
+  - **FORBIDDEN:** No framework dependencies whatsoever.
+  - **FORBIDDEN:** `Request`, `Response`, `Controller`, `Model`, `DB`, `Auth`, `Config`, `Cache`, `Queue`, `Mail`, `Log`, `Validator`, `Gate`, `Policy`, `Route`, `Schema`, `Migration`, or any Laravel/Symfony class.
+  - **FORBIDDEN:** Laravel facades (`\Illuminate\Support\Facades\*`) or helper functions (`request()`, `auth()`, `config()`, etc.).
   - Contains:
     - Entities, Value Objects, Domain Services, Domain Events, Repository interfaces.
   - All business invariants live here.
 - Application layer (`Application/`):
+  - **FORBIDDEN:** Direct framework dependencies (same as Domain).
+  - **FORBIDDEN:** Laravel facades or helper functions.
   - Use Cases, Commands/Queries, Application Services.
   - Depends on Domain; can depend on simple DTOs and interfaces.
   - No direct ORM/HTTP/framework usage; use ports defined in Domain/Application.
+- **REJECTION CRITERIA:**
+  - Domain/Application code importing Laravel/Symfony classes → **REJECT**, use ports/adapters.
+  - Use case using `\Illuminate\Http\Request` or `request()` helper → **REJECT**, pass DTOs.
+  - Domain entity extending `Illuminate\Database\Eloquent\Model` → **REJECT**, use plain PHP classes.
 - Interface layer (`Interface/`, HTTP/CLI adapters):
   - Controllers, console commands, route handlers, view models.
   - Maps HTTP/CLI → Application use cases (input DTOs) and maps results → HTTP/JSON/View models.
@@ -1341,11 +1544,73 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Globs: **/*.ts, **/*.tsx
 
 ### [TYPESCRIPT STANDARDS]
-- Stack: Node 20+; ESM preferred; `tsconfig` strict (`noImplicitAny`, `noUncheckedIndexedAccess`) and path aliases where needed; avoid default exports for shared libs.
+- Stack: Node 20+; ESM preferred; `tsconfig` strict (`noImplicitAny`, `noUncheckedIndexedAccess`) and path aliases REQUIRED (see IMPORTS & PATH ALIASES section); avoid default exports for shared libs.
 - Style/lint: ESLint (typescript-eslint) + Prettier; `npm run lint && npm run format -- --check`; keep imports ordered and unused removed.
 - Types: no `any`/`!`; prefer discriminated unions and readonly; avoid ambient globals; `tsc --noEmit` required.
 - Async/safety: handle promises with try/catch; no unhandled rejections; add timeouts/retries for I/O; avoid `eval`/dynamic code; validate inputs with schemas (e.g., zod/yup); set `helmet`/secure cookies for HTTP.
 - Testing: `npm test` (vitest/jest) with coverage; mock boundaries; include integration/API contract tests where applicable.
 - Security/deps: parameterized queries/ORM; sanitize outputs; secrets from env/manager; `npm audit --production --audit-level=high`.
 - Verification artifact: `npm run lint && npm run format -- --check && tsc --noEmit && npm test && npm audit --production --audit-level=high`.
+
+### [IMPORTS & PATH ALIASES]
+- Path aliases are REQUIRED for all TypeScript projects:
+  - Use path aliases instead of relative imports (`../../`) for maintainability and clarity.
+  - Configure in `tsconfig.json` with `baseUrl` and `paths`.
+  - Structure aliases to reflect project organization (modules, features, layers, contexts).
+- Benefits:
+  - Maintainable: moving files doesn't break imports.
+  - Self-documenting: imports show project structure.
+  - Clear boundaries: architecture/module boundaries visible in code.
+- Type-only imports:
+  - Commands, Queries, and DTOs SHOULD be imported as types when only used for type annotations.
+  - Prevents accidental runtime imports of DTOs and improves tree-shaking.
+  - Example: `import type { RegisterUserCommand } from '@identity/app/index.js'` (for type-only usage).
+  - Use regular imports when DTOs are instantiated at runtime (e.g., in controllers).
+- For Clean Architecture / DDD projects with bounded contexts:
+  - Structure: `@context/layer/*` (e.g., `@identity/domain/*`, `@orders/app/*`).
+  - Makes bounded contexts and layers explicit in imports.
+  - Pattern: `@context/layer/Path/To/File` (e.g., `@identity/domain/Entities/User`).
+- Path alias configuration validation:
+  - **MANDATORY:** `tsconfig.json` MUST have `baseUrl` and `paths` configured.
+  - **MANDATORY:** Path aliases MUST match directory structure (e.g., `@identity/domain/*` → `IdentityContext/Domain/*`).
+  - **MANDATORY:** Test runners (Vitest/Jest) MUST resolve path aliases (configure `resolve.alias` or use `tsconfig-paths`).
+  - **MANDATORY:** Build tools MUST resolve path aliases (TypeScript compiler, bundlers).
+  - **Validation:** CI should verify path alias configuration; warn if relative imports found (beyond 1 level).
+  - **Public API modules (facades) REQUIRED:**
+    - Each bounded context MUST define public API modules (barrel exports) per layer as the only approved entry point for cross-context imports.
+    - Structure: `ContextName/Application/index.ts` exports approved use cases and ports.
+    - Cross-context imports: `import { RegisterUser, IdentityPort } from '@identity/app'` (via public API).
+    - Forbidden: Direct imports into internal subfolders from other contexts (e.g., `@identity/app/UseCases/RegisterUser/RegisterUser.js`).
+    - Within-context imports can use full paths (e.g., `@identity/app/UseCases/RegisterUser/RegisterUser.js`).
+  - **Layer import restrictions:**
+    - Domain layer MUST NOT import from Infrastructure or Interface aliases (e.g., `@context/infra/*`, `@context/interface/*`).
+    - Domain can only import from its own domain layer or other contexts' public API modules.
+    - Example: `@identity/domain/Entities/User.ts` cannot import from `@identity/infra/*` or `@identity/interface/*`.
+  - **Cross-context import restrictions:**
+    - A context MAY NOT import another context's Domain or Infrastructure directly.
+    - Cross-context imports MUST go through documented public API modules only (e.g., `@identity/app`).
+    - Forbidden: `import { User } from '@identity/domain/Entities/User.js'` from OrdersContext.
+    - Forbidden: `import { InMemoryUserRepository } from '@identity/infra/Adapters/InMemoryUserRepository.js'` from any other context.
+- For other project structures:
+  - Use meaningful alias patterns (e.g., `@features/*`, `@shared/*`, `@modules/*`).
+  - Align aliases with project organization and module boundaries.
+- **FORBIDDEN:**
+  - Deep relative imports (`../` beyond one level, or `../../` and deeper) are **FORBIDDEN**.
+  - Example: `import { User } from '../../Domain/Entities/User.js'` → **FORBIDDEN**.
+  - Use path aliases instead: `import { User } from '@identity/domain/Entities/User.js'`.
+  - Exception: Single-level relative imports (`./` or `../`) within the same file's immediate directory are allowed for local utilities.
+- **Domain Layer Import Restrictions (TypeScript):**
+  - Domain layer MUST NOT import from Infrastructure or Interface aliases (e.g., `@context/infra/*`, `@context/interface/*`).
+  - Domain can only import from its own domain layer or other contexts' public API modules.
+  - Example: `@identity/domain/Entities/User.ts` cannot import from `@identity/infra/*` or `@identity/interface/*`.
+  - **REJECTION CRITERIA:**
+    - Domain file importing from `@context/infra/*` or `@context/interface/*` → **REJECT**, use ports/adapters pattern.
+- Anti-patterns:
+  - Relative imports like `../../Domain/Entities/User` (use path aliases instead).
+  - Path aliases without clear structure or meaning.
+  - Mixing relative imports and path aliases inconsistently.
+  - Cross-context imports bypassing public API modules (e.g., `@orders/app/UseCases/PlaceOrder/PlaceOrder.js` from IdentityContext).
+  - Public API modules that export everything (should export only approved, stable contracts).
+  - Domain importing from Infrastructure or Interface (e.g., `@context/infra/*`, `@context/interface/*`).
+  - Cross-context direct imports to Domain or Infrastructure (e.g., `@other-context/domain/*`, `@other-context/infra/*`).
 

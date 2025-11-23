@@ -16,5 +16,16 @@ globs:
 - Isolation: small explicit fixtures; no global state; reset between tests; limit parallelism for shared resources.
 - CI gating: block on flakiness; no silent skips; include coverage reports; run lint/type/security checks with tests.
 
+[TEST FILE STRUCTURE]
+- Test file import patterns:
+  - Can import from any layer within their context (for testing purposes).
+  - Can import Infrastructure adapters directly (for test doubles and mocks).
+  - MUST use public API modules for cross-context imports (same as production code).
+  - Test utilities should be in `tests/` or `__tests__/` directories.
+- Mock patterns:
+  - Mocks should implement ports (interfaces), not concrete classes.
+  - Test doubles should be in test files or `tests/fixtures/` directories.
+  - Prefer interface-based mocks over class-based mocks for better testability.
+
 [VERIFICATION]
 - Provide exact commands to run tests per stack (e.g., `npm test -- --runInBand`, `pytest -q`, `go test ./...`, `cargo test`, `phpunit`) and include lint/type where relevant.

@@ -7,10 +7,72 @@ globs:
 ---
 
 [TYPESCRIPT STANDARDS]
-- Stack: Node 20+; ESM preferred; `tsconfig` strict (`noImplicitAny`, `noUncheckedIndexedAccess`) and path aliases where needed; avoid default exports for shared libs.
+- Stack: Node 20+; ESM preferred; `tsconfig` strict (`noImplicitAny`, `noUncheckedIndexedAccess`) and path aliases REQUIRED (see IMPORTS & PATH ALIASES section); avoid default exports for shared libs.
 - Style/lint: ESLint (typescript-eslint) + Prettier; `npm run lint && npm run format -- --check`; keep imports ordered and unused removed.
 - Types: no `any`/`!`; prefer discriminated unions and readonly; avoid ambient globals; `tsc --noEmit` required.
 - Async/safety: handle promises with try/catch; no unhandled rejections; add timeouts/retries for I/O; avoid `eval`/dynamic code; validate inputs with schemas (e.g., zod/yup); set `helmet`/secure cookies for HTTP.
 - Testing: `npm test` (vitest/jest) with coverage; mock boundaries; include integration/API contract tests where applicable.
 - Security/deps: parameterized queries/ORM; sanitize outputs; secrets from env/manager; `npm audit --production --audit-level=high`.
 - Verification artifact: `npm run lint && npm run format -- --check && tsc --noEmit && npm test && npm audit --production --audit-level=high`.
+
+[IMPORTS & PATH ALIASES]
+- Path aliases are REQUIRED for all TypeScript projects:
+  - Use path aliases instead of relative imports (`../../`) for maintainability and clarity.
+  - Configure in `tsconfig.json` with `baseUrl` and `paths`.
+  - Structure aliases to reflect project organization (modules, features, layers, contexts).
+- Benefits:
+  - Maintainable: moving files doesn't break imports.
+  - Self-documenting: imports show project structure.
+  - Clear boundaries: architecture/module boundaries visible in code.
+- Type-only imports:
+  - Commands, Queries, and DTOs SHOULD be imported as types when only used for type annotations.
+  - Prevents accidental runtime imports of DTOs and improves tree-shaking.
+  - Example: `import type { RegisterUserCommand } from '@identity/app/index.js'` (for type-only usage).
+  - Use regular imports when DTOs are instantiated at runtime (e.g., in controllers).
+- For Clean Architecture / DDD projects with bounded contexts:
+  - Structure: `@context/layer/*` (e.g., `@identity/domain/*`, `@orders/app/*`).
+  - Makes bounded contexts and layers explicit in imports.
+  - Pattern: `@context/layer/Path/To/File` (e.g., `@identity/domain/Entities/User`).
+- Path alias configuration validation:
+  - **MANDATORY:** `tsconfig.json` MUST have `baseUrl` and `paths` configured.
+  - **MANDATORY:** Path aliases MUST match directory structure (e.g., `@identity/domain/*` → `IdentityContext/Domain/*`).
+  - **MANDATORY:** Test runners (Vitest/Jest) MUST resolve path aliases (configure `resolve.alias` or use `tsconfig-paths`).
+  - **MANDATORY:** Build tools MUST resolve path aliases (TypeScript compiler, bundlers).
+  - **Validation:** CI should verify path alias configuration; warn if relative imports found (beyond 1 level).
+  - **Public API modules (facades) REQUIRED:**
+    - Each bounded context MUST define public API modules (barrel exports) per layer as the only approved entry point for cross-context imports.
+    - Structure: `ContextName/Application/index.ts` exports approved use cases and ports.
+    - Cross-context imports: `import { RegisterUser, IdentityPort } from '@identity/app'` (via public API).
+    - Forbidden: Direct imports into internal subfolders from other contexts (e.g., `@identity/app/UseCases/RegisterUser/RegisterUser.js`).
+    - Within-context imports can use full paths (e.g., `@identity/app/UseCases/RegisterUser/RegisterUser.js`).
+  - **Layer import restrictions:**
+    - Domain layer MUST NOT import from Infrastructure or Interface aliases (e.g., `@context/infra/*`, `@context/interface/*`).
+    - Domain can only import from its own domain layer or other contexts' public API modules.
+    - Example: `@identity/domain/Entities/User.ts` cannot import from `@identity/infra/*` or `@identity/interface/*`.
+  - **Cross-context import restrictions:**
+    - A context MAY NOT import another context's Domain or Infrastructure directly.
+    - Cross-context imports MUST go through documented public API modules only (e.g., `@identity/app`).
+    - Forbidden: `import { User } from '@identity/domain/Entities/User.js'` from OrdersContext.
+    - Forbidden: `import { InMemoryUserRepository } from '@identity/infra/Adapters/InMemoryUserRepository.js'` from any other context.
+- For other project structures:
+  - Use meaningful alias patterns (e.g., `@features/*`, `@shared/*`, `@modules/*`).
+  - Align aliases with project organization and module boundaries.
+- **FORBIDDEN:**
+  - Deep relative imports (`../` beyond one level, or `../../` and deeper) are **FORBIDDEN**.
+  - Example: `import { User } from '../../Domain/Entities/User.js'` → **FORBIDDEN**.
+  - Use path aliases instead: `import { User } from '@identity/domain/Entities/User.js'`.
+  - Exception: Single-level relative imports (`./` or `../`) within the same file's immediate directory are allowed for local utilities.
+- **Domain Layer Import Restrictions (TypeScript):**
+  - Domain layer MUST NOT import from Infrastructure or Interface aliases (e.g., `@context/infra/*`, `@context/interface/*`).
+  - Domain can only import from its own domain layer or other contexts' public API modules.
+  - Example: `@identity/domain/Entities/User.ts` cannot import from `@identity/infra/*` or `@identity/interface/*`.
+  - **REJECTION CRITERIA:**
+    - Domain file importing from `@context/infra/*` or `@context/interface/*` → **REJECT**, use ports/adapters pattern.
+- Anti-patterns:
+  - Relative imports like `../../Domain/Entities/User` (use path aliases instead).
+  - Path aliases without clear structure or meaning.
+  - Mixing relative imports and path aliases inconsistently.
+  - Cross-context imports bypassing public API modules (e.g., `@orders/app/UseCases/PlaceOrder/PlaceOrder.js` from IdentityContext).
+  - Public API modules that export everything (should export only approved, stable contracts).
+  - Domain importing from Infrastructure or Interface (e.g., `@context/infra/*`, `@context/interface/*`).
+  - Cross-context direct imports to Domain or Infrastructure (e.g., `@other-context/domain/*`, `@other-context/infra/*`).

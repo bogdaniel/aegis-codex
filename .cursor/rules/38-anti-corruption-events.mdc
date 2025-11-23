@@ -20,17 +20,43 @@ globs:
   - Have versioned schemas (JSON Schema, Protobuf, or equivalent).
   - Are published from Domain/Application, not from Infrastructure directly.
 - Cross-context events:
+  - **MANDATORY:** All cross-context events MUST have versioned schemas (JSON Schema, Protobuf, or equivalent).
+  - **Domain-internal events that never leave a bounded context are exempt from schema requirements.**
+  - **MANDATORY:** Schema validation MUST happen at adapter boundaries (before events reach Domain/Application).
   - Use canonical, versioned event definitions.
   - Are treated as **contracts**; changes are backward-compatible.
+- Event schema enforcement:
+  - **Schema Requirements:**
+    - All cross-context events MUST have JSON Schema or Protobuf schema.
+    - Schemas MUST be versioned (e.g., `OrderPlaced.v1.schema.json`).
+    - Schema validation MUST happen at adapter boundaries.
+  - **Naming Convention:**
+    - Events: `{ContextName}{EventName}` (e.g., `OrdersOrderPlaced`).
+    - Schemas: `{EventName}.v{version}.schema.{json|proto}`.
+  - **Breaking Changes:**
+    - New schema version required for breaking changes.
+    - Deprecation period for old versions.
+    - Document migration path.
+  - **REJECTION CRITERIA:**
+    - Cross-context event without schema → **REJECT**, define schema first.
+    - Publishing raw external events without canonicalization → **REJECT**, use ACL.
 
 [ANTI-CORRUPTION LAYERS (ACL)]
 - Every integration with legacy/third-party systems must pass through an ACL that:
   - Translates external models and semantics into clean domain types.
   - Hides external weirdness from Domain/Application.
   - Prevents external DTOs/entities from being used directly in Domain.
+- ACL for cross-context ports:
+  - When a context consumes another context's port, it MUST define its own ACL interface with a distinct name.
+  - The owning context defines the canonical port (e.g., `IdentityContext/Application/Ports/IdentityPort.ts`).
+  - The consuming context defines an ACL interface (e.g., `OrdersContext/Application/Ports/IdentityValidationPort.ts`).
+  - ACL adapter in Infrastructure translates between ACL interface and canonical port.
+  - This shields the consuming context from the provider's exact semantics and prevents duplicate port names.
 - Forbidden patterns:
   - Direct use of third-party SDK models as Domain Entities.
   - Having Domain code depending on external client libraries or transport-specific types.
+  - Multiple contexts defining ports with the same name but different contracts (e.g., both contexts having `IdentityPort`).
+  - Consuming contexts importing and using the canonical port directly (must use ACL interface).
 
 [EVENT CANONICALIZATION]
 - Do not publish raw external events onto internal buses.

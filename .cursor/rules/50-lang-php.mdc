@@ -50,14 +50,22 @@ globs:
 [ARCHITECTURE INTEGRATION — CLEAN + HEX + DDD]
 
 - Domain layer (`Domain/` in contexts/modules):
-  - No framework dependencies: **no** `Request`, `Response`, `Controller`, `Model`, `DB`, `Auth`, etc.
+  - **FORBIDDEN:** No framework dependencies whatsoever.
+  - **FORBIDDEN:** `Request`, `Response`, `Controller`, `Model`, `DB`, `Auth`, `Config`, `Cache`, `Queue`, `Mail`, `Log`, `Validator`, `Gate`, `Policy`, `Route`, `Schema`, `Migration`, or any Laravel/Symfony class.
+  - **FORBIDDEN:** Laravel facades (`\Illuminate\Support\Facades\*`) or helper functions (`request()`, `auth()`, `config()`, etc.).
   - Contains:
     - Entities, Value Objects, Domain Services, Domain Events, Repository interfaces.
   - All business invariants live here.
 - Application layer (`Application/`):
+  - **FORBIDDEN:** Direct framework dependencies (same as Domain).
+  - **FORBIDDEN:** Laravel facades or helper functions.
   - Use Cases, Commands/Queries, Application Services.
   - Depends on Domain; can depend on simple DTOs and interfaces.
   - No direct ORM/HTTP/framework usage; use ports defined in Domain/Application.
+- **REJECTION CRITERIA:**
+  - Domain/Application code importing Laravel/Symfony classes → **REJECT**, use ports/adapters.
+  - Use case using `\Illuminate\Http\Request` or `request()` helper → **REJECT**, pass DTOs.
+  - Domain entity extending `Illuminate\Database\Eloquent\Model` → **REJECT**, use plain PHP classes.
 - Interface layer (`Interface/`, HTTP/CLI adapters):
   - Controllers, console commands, route handlers, view models.
   - Maps HTTP/CLI → Application use cases (input DTOs) and maps results → HTTP/JSON/View models.

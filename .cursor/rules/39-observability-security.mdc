@@ -15,8 +15,12 @@ globs:
   - Emit structured logs with correlation IDs and principal information (no secrets).
   - Integrate with tracing (spans at use case boundaries, tagged with context + operation).
 - Use case boundaries:
-  - Log start/end with correlation ID + principal.
-  - Avoid logging sensitive data (passwords, tokens, full PII).
+  - **MANDATORY:** Log start/end with correlation ID + principal (user/tenant/service).
+  - **MANDATORY:** Avoid logging sensitive data (passwords, tokens, full PII).
+  - **FORBIDDEN:** Logging secrets, credentials, or sensitive PII → **REJECT**, redact or remove.
+  - **REJECTION CRITERIA:**
+    - Use case without logging → **REJECT**, add logging with correlation ID.
+    - Logs containing secrets → **REJECT**, redact secrets.
 
 [SECURITY]
 - Use mTLS between contexts and avoid unencrypted internal traffic where feasible.
