@@ -422,7 +422,7 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
   - Keep layout changes predictable across breakpoints; do not reorder content in ways that confuse keyboard/screen-reader users.
 
 - Keyboard & focus:
-  - All interactive elements (links, buttons, form controls) must be reachable via keyboard (Tab/Shift+Tab) and activatable via keyboard (Enter/Space).
+  - All interactive elements (links, buttons, form controls) must be reachable via keyboard (Tab/Shift+Tab, Enter/Space).
   - Never remove focus outlines without providing a visible alternative (e.g., `:focus-visible` styles that are at least as visible as default).
   - Avoid click handlers on non-interactive elements (`div`, `span`) unless you provide correct roles, tabindex, and keyboard interaction.
 
@@ -520,13 +520,13 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
   - Maps to implemented tests and behavior.
 - If scenarios are missing or purely technical, push for rephrasing in domain terms before designing or coding.
 
-## 42-tdd.mdc — TDD — Test-Driven Development (deterministic first). Tests before or with any logic change, especially primary user actions.
+## 42-tdd.mdc — TDD — Test-Driven Development (deterministic first). Tests before or with any logic change, especially primary user actions and UI invariants.
 - Globs: src/**, app/**, domain/**, services/**, frontend/**, public/**, tests/**
 
 ### [TDD — TEST-DRIVEN DEVELOPMENT (DETERMINISTIC FIRST)]
 
 ### [CORE MANDATE]
-- Any change to behavior must be accompanied by tests that prove it. For critical flows and primary user actions (save, submit, delete, login, checkout, navigation), untested logic is rejected by default.
+- Any change to behavior must be accompanied by tests that prove it. For critical flows and primary user actions (save, submit, delete, login, checkout, navigation), untested logic and unproven state invariants are rejected by default.
 
 ### [PRINCIPLES]
 - Determinism:
@@ -540,28 +540,53 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
   - Prefer CQS-friendly designs: queries are side-effect free and easy to assert; commands change state and are validated via observable outcomes.
 - Coverage with intent:
   - Focus tests on invariants, edge cases, and failure modes, not just happy paths.
-  - For primary actions, ensure at least one test covers “action enabled only when valid” and “action disabled when invalid”.
+  - For primary actions, ensure at least one test covers:
+    - “Action is enabled only when valid”, and
+    - “Action is disabled when invalid”.
+
+### [STATE & INVARIANTS]
+- Treat invariants as first-class citizens. Examples:
+  - “Save button is disabled if and only if the form is invalid.”
+  - “Modal is open if and only if overlay is visible and focus is trapped inside it.”
+- Invariants must:
+  - Be encoded explicitly in code (as predicates or small helper functions), and
+  - Be exercised by tests or a harness, not just described in comments or documentation.
+- For derived UI state (e.g., `isFormValid`, `validationState`, `isButtonDisabled`):
+  - Prefer deriving from current inputs/validators in a single function rather than manually toggling flags in multiple places.
+  - Initial state must be consistent with invariants (e.g., required fields start invalid; primary action starts disabled).
+  - Event handlers must update invariants via the central function, not ad-hoc logic that can drift.
 
 ### [FRONTEND & UI-SPECIFIC EXPECTATIONS]
-- Primary UI controls (buttons/links) that trigger important actions (save, delete, submit, login, payment, navigation) must not rely on “looks correct” reasoning alone.
-- For client-side logic controlling these actions:
-  - Provide at least one executable check: unit test, component test, or a small scripted harness that asserts expected behavior (e.g., enabling/disabling, validation logic).
-  - If a full test harness is not available (small static demos), include a minimal programmatic sanity check (e.g., JS function calls with `console.assert` or equivalent) and state clearly that this is temporary and must be replaced with real tests in production code.
-- Avoid hiding logic inside opaque event handlers that are hard to exercise from tests; keep validation and state transitions in functions that do not depend on the DOM.
+- Primary UI controls (buttons/links) triggering important actions (save, delete, submit, login, payment, navigation) must not rely on “looks correct” reasoning alone.
+- For client-side logic that controls these actions:
+  - Provide at least one executable check: unit test, component test, end-to-end test, or a small scripted harness that asserts the invariants (e.g., enabling/disabling rules, error handling).
+  - For forms:
+    - Encode the validation and “is form valid?” logic in a separable function or module.
+    - Ensure tests/harnesses cover at least:
+      - Initial state (empty form → invalid; primary action disabled).
+      - Valid minimal input → valid; primary action enabled.
+      - Representative invalid states (e.g., missing required fields, mismatched passwords).
+  - Avoid hiding logic inside opaque event handlers that are hard to exercise from tests; keep validation and state transitions in functions that do not depend on the DOM.
+- For single-file demos (HTML + inline JS) that include primary actions:
+  - Embed a small, opt-in Aegis demo harness (guarded by a flag such as `window.__AEGIS_DEMO_TESTS__`) that:
+    - Does not run by default in normal usage.
+    - Asserts the key invariants (initial invalid state, enabled state when valid, disabled state when invalid).
+    - Produces clear console output on failures.
+  - This harness is a stopgap and must be replaced by proper tests in production applications.
 
 ### [WORKFLOW]
-1. Before or alongside any logic change, write or update a test that captures the desired behavior or bug fix.
-2. Implement the minimal code necessary to make the test pass.
-3. Refactor implementation and tests to improve design while preserving test coverage and behavior.
-4. For UI-heavy code, prefer small, testable pieces:
+1. Before or alongside any logic change, write or update a test (or demo harness check) that captures the desired behavior or bug fix.
+2. Implement the minimal code necessary to make the check pass.
+3. Refactor implementation and tests to improve design while preserving coverage and invariants.
+4. For UI-heavy code:
    - Extract validation and state logic into plain functions/modules.
-   - Test those directly, and keep DOM glue thin.
+   - Test those functions directly, and keep DOM glue thin.
 5. Periodically perform small “safe breaks” (manual mutation) or use mutation testing tools (where available) to confirm tests actually catch regressions.
 
 ### [REJECTION CRITERIA]
 - Production or shared code changes that:
-  - Introduce or modify logic without any corresponding test changes or clear evidence of existing test coverage.
-  - Add new primary user actions (buttons, forms, flows) without at least one executable check of their behavior.
+  - Introduce or modify logic without any corresponding test changes or clear evidence of existing coverage.
+  - Add new primary user actions (buttons, forms, flows) without at least one executable check of their behavior and state invariants.
   - Depend on brittle conditions (timing hacks, global flags, DOM ordering) that are not encoded in tests.
 - Deleting or weakening tests without:
   - A clear domain-level justification (acceptance criteria changed), and
@@ -569,12 +594,12 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 
 ### [VERIFICATION]
 - For each PR/change:
-  - Identify which test(s) encode the changed behavior; if none exist, require creation of at least one.
+  - Identify which test(s) or harness checks encode the changed behavior; if none exist, require creation of at least one.
   - For primary actions and critical flows, require:
-    - Direct tests of the enabling/disabling logic and error handling, or
+    - Direct tests of enabling/disabling logic and error handling, or
     - A clearly documented plan to add tests before promoting beyond experimental/demo code.
   - Ensure tests satisfy docs/testing-standards.md (deterministic, meaningful, not relying on incidental details).
-- For UI logic bugs found in manual testing (e.g., buttons never enabling), backfill tests to capture them so they cannot regress silently.
+- For UI logic bugs found in manual testing (e.g., buttons never enabling or staying enabled when invalid), backfill tests or harness checks to capture them so they cannot regress silently.
 
 ## 43-fdd.mdc — FDD — Feature-Driven Development (thin, reversible slices). Enforce small, safe, traceable increments.
 - Globs: features/**, tasks/**, src/**, app/**, tests/**
@@ -805,6 +830,9 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Interactivity:
   - Use native interactive elements (`<button>`, `<a>`, `<input>`, `<select>`) instead of clickable `div`/`span` where possible.
   - When non-native elements must be interactive, provide appropriate `role`, `tabindex`, and keyboard handling.
+- Primary actions and invariants:
+  - For forms with required fields and client-side validation, the primary action (e.g., “Save”, “Submit”) should start disabled and only become enabled when the form is valid according to the validators.
+  - This invariant (“button disabled until form is valid”) must be enforced in code (see 50-lang-javascript.mdc) and verified via tests or a demo harness, not only assumed from markup.
 
 ### [ACCESSIBILITY & SEO]
 - Accessibility:
@@ -834,17 +862,83 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
   - Forms are labeled, errors are announced, and primary interactions are keyboard accessible.
   - No new inline JS/CSS has been introduced in production templates without explicit justification.
 
-## 50-lang-javascript.mdc — JavaScript standards: lint/format, testing, safe async.
-- Globs: **/*.js, **/*.mjs, **/*.cjs
+## 50-lang-javascript.mdc — JavaScript/TypeScript standards — state, invariants, and UI behavior.
+- Globs: src/**/*.js, src/**/*.ts, frontend/**/*.js, frontend/**/*.ts, public/**/*.js
 
-### [JAVASCRIPT STANDARDS]
-- Stack: Node 20+; ESM preferred (`\"type\": \"module\"` or `.mjs`).
-- Style/lint: ESLint + Prettier; `npm run lint && npm run format`; prefer const/let; no implicit globals; small modules.
-- Safety: validate inputs (zod/ajv); avoid `eval`/Function; escape/encode outputs; set `helmet` for HTTP; secure cookies (`HttpOnly`, `Secure`, `SameSite`); CSRF where stateful.
-- Async: async/await with try/catch; prevent unhandled rejections; timeouts/retries on I/O; reuse connections.
-- Testing: `npm test` (vitest/jest) with coverage; mock network/filesystem; include integration/API tests where relevant.
-- Security/deps: parameterized queries/ORM; `npm audit --production --audit-level=high`; no `.env` in git; secrets via env/manager.
-- Verification artifact: `npm run lint && npm run format -- --check && npm test && npm audit --production --audit-level=high`.
+### [JAVASCRIPT / TYPESCRIPT — STATE & UI BEHAVIOR]
+
+### [BASELINE]
+- JS code must be:
+  - Predictable: no hidden state transitions or surprising side effects.
+  - Testable: logic separable from framework/DOM when feasible.
+  - Explicit about invariants: state relationships and constraints are encoded in code, not just implied.
+
+### [STATE & SINGLE SOURCE OF TRUTH]
+- Prefer a single source of truth for state:
+  - Derive UI state (e.g., button enabled/disabled, error visibility) from current data and validators, not from independent booleans that can drift.
+  - Encapsulate derived state in functions like `isFormValid(formData)` instead of toggling flags in many places.
+- Initial state must respect invariants:
+  - If fields are required, they start invalid; primary actions that depend on them start disabled.
+  - Avoid initializing validation flags to `true` for required fields.
+- Event handlers:
+  - Should call dedicated validation/state functions and then update the UI via a single “update” function (e.g., `updateSaveButtonState()`).
+  - Must not depend on fragile conditions like “only validate if there is some text”; deleting text should re-validate and update derived state.
+
+### [FORM VALIDATION & PRIMARY ACTIONS]
+- Validation:
+  - Implement validation as pure or nearly pure functions that return structured results (valid/invalid, error messages).
+  - Keep DOM manipulation (setting `textContent`, toggling classes) in thin adapters around these validators.
+- Primary actions (save, submit, delete, login):
+  - Guard actions with validation:** never** proceed if invariants (e.g., form validity) are not satisfied.
+  - Maintain the invariant: “primary button is disabled if and only if the underlying action would be rejected by validation”.
+- Password / grouped fields:
+  - For groups that are optional (e.g., password change):
+    - Treat the group as valid when all fields are empty.
+    - Only require individual fields when the group is “activated” (some fields filled).
+  - Keep this logic explicit and testable in a group-level validator.
+
+### [ERROR HANDLING & FOCUS]
+- Errors:
+  - Attach errors near the relevant fields; use `aria-describedby` and `role="alert"`/`aria-live` for accessibility.
+  - Use classes (e.g., `.error`, `.error-visible`) to control visual state; do not abuse ARIA attributes (like `aria-live`) as display toggles.
+- Focus:
+  - On invalid form submission, focus the first field that **actually has a visible error**, not inferred heuristically from values.
+  - Implement this via checking error visibility (e.g., class on error container) or validator results, not guessed conditions.
+- Modal/dialogs:
+  - Use established patterns:
+    - `role="dialog"`, `aria-modal="true"`, `aria-labelledby`.
+    - Focus trap implemented via centralized keydown handler.
+    - Close on Escape and via explicit close controls.
+  - Keep one modal instance; avoid cloning nodes to “reset listeners” unless you fully re-bind all references.
+
+### [STRUCTURE & STYLE]
+- Prefer small, focused functions:
+  - Validation, state computation, and DOM updates should be separate concerns.
+  - Avoid large monolithic event handlers mixing all logic.
+- Use modern syntax safely:
+  - ES2015+ features are encouraged where supported, but do not sacrifice clarity for syntax cleverness.
+- No inline event handlers in production:
+  - Use `addEventListener` or framework bindings, not `onclick=""`/`onchange=""` attributes, except in tiny demo snippets.
+
+### [ANTI-PATTERNS]
+- Derived state flags (`isValid`, `validationState`) that are not recalculated from current inputs and validators.
+- Primary buttons enabled on initial page load when required fields are empty.
+- Event handlers that:
+  - Only validate on partial conditions (e.g., “if value is non-empty, then validate”), leaving stale state when values change.
+  - Mutate multiple unrelated pieces of state without going through a central “update” function.
+- Focus on error guessed from field values instead of actual error state.
+- Cloning DOM nodes to “reset” listeners instead of managing handler lifetimes explicitly.
+
+### [VERIFICATION]
+- For JS changes:
+  - Ensure that:
+    - Initial state matches invariants (e.g., primary actions disabled when form is invalid).
+    - Validation and state-update functions are the single path used by event handlers.
+  - For form/interaction-heavy code:
+    - Add unit tests for validators and state computation, OR
+    - Add an Aegis demo harness that asserts key invariants when enabled.
+- For regressions discovered manually (enabled save on invalid form, wrong error focus, broken modal reopen):
+  - Backfill tests or harness checks that would have caught them, and assert they now fail on the previous buggy version.
 
 ## 50-lang-php.mdc — PHP standards: modern, typed, and secure.
 - Globs: **/*.php

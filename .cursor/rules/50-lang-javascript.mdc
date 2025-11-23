@@ -1,17 +1,85 @@
 ---
-description: "JavaScript standards: lint/format, testing, safe async."
+description: "JavaScript/TypeScript standards — state, invariants, and UI behavior."
 alwaysApply: true
 globs:
-  - "**/*.js"
-  - "**/*.mjs"
-  - "**/*.cjs"
+  - "src/**/*.js"
+  - "src/**/*.ts"
+  - "frontend/**/*.js"
+  - "frontend/**/*.ts"
+  - "public/**/*.js"
 ---
 
-[JAVASCRIPT STANDARDS]
-- Stack: Node 20+; ESM preferred (`\"type\": \"module\"` or `.mjs`).
-- Style/lint: ESLint + Prettier; `npm run lint && npm run format`; prefer const/let; no implicit globals; small modules.
-- Safety: validate inputs (zod/ajv); avoid `eval`/Function; escape/encode outputs; set `helmet` for HTTP; secure cookies (`HttpOnly`, `Secure`, `SameSite`); CSRF where stateful.
-- Async: async/await with try/catch; prevent unhandled rejections; timeouts/retries on I/O; reuse connections.
-- Testing: `npm test` (vitest/jest) with coverage; mock network/filesystem; include integration/API tests where relevant.
-- Security/deps: parameterized queries/ORM; `npm audit --production --audit-level=high`; no `.env` in git; secrets via env/manager.
-- Verification artifact: `npm run lint && npm run format -- --check && npm test && npm audit --production --audit-level=high`.
+[JAVASCRIPT / TYPESCRIPT — STATE & UI BEHAVIOR]
+
+[BASELINE]
+- JS code must be:
+  - Predictable: no hidden state transitions or surprising side effects.
+  - Testable: logic separable from framework/DOM when feasible.
+  - Explicit about invariants: state relationships and constraints are encoded in code, not just implied.
+
+[STATE & SINGLE SOURCE OF TRUTH]
+- Prefer a single source of truth for state:
+  - Derive UI state (e.g., button enabled/disabled, error visibility) from current data and validators, not from independent booleans that can drift.
+  - Encapsulate derived state in functions like `isFormValid(formData)` instead of toggling flags in many places.
+- Initial state must respect invariants:
+  - If fields are required, they start invalid; primary actions that depend on them start disabled.
+  - Avoid initializing validation flags to `true` for required fields.
+- Event handlers:
+  - Should call dedicated validation/state functions and then update the UI via a single “update” function (e.g., `updateSaveButtonState()`).
+  - Must not depend on fragile conditions like “only validate if there is some text”; deleting text should re-validate and update derived state.
+
+[FORM VALIDATION & PRIMARY ACTIONS]
+- Validation:
+  - Implement validation as pure or nearly pure functions that return structured results (valid/invalid, error messages).
+  - Keep DOM manipulation (setting `textContent`, toggling classes) in thin adapters around these validators.
+- Primary actions (save, submit, delete, login):
+  - Guard actions with validation:** never** proceed if invariants (e.g., form validity) are not satisfied.
+  - Maintain the invariant: “primary button is disabled if and only if the underlying action would be rejected by validation”.
+- Password / grouped fields:
+  - For groups that are optional (e.g., password change):
+    - Treat the group as valid when all fields are empty.
+    - Only require individual fields when the group is “activated” (some fields filled).
+  - Keep this logic explicit and testable in a group-level validator.
+
+[ERROR HANDLING & FOCUS]
+- Errors:
+  - Attach errors near the relevant fields; use `aria-describedby` and `role="alert"`/`aria-live` for accessibility.
+  - Use classes (e.g., `.error`, `.error-visible`) to control visual state; do not abuse ARIA attributes (like `aria-live`) as display toggles.
+- Focus:
+  - On invalid form submission, focus the first field that **actually has a visible error**, not inferred heuristically from values.
+  - Implement this via checking error visibility (e.g., class on error container) or validator results, not guessed conditions.
+- Modal/dialogs:
+  - Use established patterns:
+    - `role="dialog"`, `aria-modal="true"`, `aria-labelledby`.
+    - Focus trap implemented via centralized keydown handler.
+    - Close on Escape and via explicit close controls.
+  - Keep one modal instance; avoid cloning nodes to “reset listeners” unless you fully re-bind all references.
+
+[STRUCTURE & STYLE]
+- Prefer small, focused functions:
+  - Validation, state computation, and DOM updates should be separate concerns.
+  - Avoid large monolithic event handlers mixing all logic.
+- Use modern syntax safely:
+  - ES2015+ features are encouraged where supported, but do not sacrifice clarity for syntax cleverness.
+- No inline event handlers in production:
+  - Use `addEventListener` or framework bindings, not `onclick=""`/`onchange=""` attributes, except in tiny demo snippets.
+
+[ANTI-PATTERNS]
+- Derived state flags (`isValid`, `validationState`) that are not recalculated from current inputs and validators.
+- Primary buttons enabled on initial page load when required fields are empty.
+- Event handlers that:
+  - Only validate on partial conditions (e.g., “if value is non-empty, then validate”), leaving stale state when values change.
+  - Mutate multiple unrelated pieces of state without going through a central “update” function.
+- Focus on error guessed from field values instead of actual error state.
+- Cloning DOM nodes to “reset” listeners instead of managing handler lifetimes explicitly.
+
+[VERIFICATION]
+- For JS changes:
+  - Ensure that:
+    - Initial state matches invariants (e.g., primary actions disabled when form is invalid).
+    - Validation and state-update functions are the single path used by event handlers.
+  - For form/interaction-heavy code:
+    - Add unit tests for validators and state computation, OR
+    - Add an Aegis demo harness that asserts key invariants when enabled.
+- For regressions discovered manually (enabled save on invalid form, wrong error focus, broken modal reopen):
+  - Backfill tests or harness checks that would have caught them, and assert they now fail on the previous buggy version.

@@ -53,6 +53,9 @@ globs:
 - Interactivity:
   - Use native interactive elements (`<button>`, `<a>`, `<input>`, `<select>`) instead of clickable `div`/`span` where possible.
   - When non-native elements must be interactive, provide appropriate `role`, `tabindex`, and keyboard handling.
+- Primary actions and invariants:
+  - For forms with required fields and client-side validation, the primary action (e.g., “Save”, “Submit”) should start disabled and only become enabled when the form is valid according to the validators.
+  - This invariant (“button disabled until form is valid”) must be enforced in code (see 50-lang-javascript.mdc) and verified via tests or a demo harness, not only assumed from markup.
 
 [ACCESSIBILITY & SEO]
 - Accessibility:
