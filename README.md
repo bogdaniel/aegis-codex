@@ -98,9 +98,10 @@ Then follow up with `@security-auditor`, `@test-engineer`, and `@devops` to see 
 - Deliver:
   - A single HTML file (with embedded CSS in a <style> block) that I can drop into a browser and it “just works”.
   - A short explanation (2–3 paragraphs max) of how you structured the layout and why.
-- What this tests:
-  - Semantic structure, naming, separation of concerns, no unnecessary complexity.
-  - Does it explain structure and decisions (architect mindset) without being asked?
+
+What this tests:
+- Semantic structure, naming, separation of concerns, no unnecessary complexity.
+- Does it explain structure and decisions (architect mindset) without being asked?
 
 #### Prompt 2 — HTML/JS Game (Logic vs Rendering, No Frameworks)
 - Build a simple browser game called “Orb Dodger” using HTML, CSS, and vanilla JavaScript.
@@ -116,9 +117,10 @@ Then follow up with `@security-auditor`, `@test-engineer`, and `@devops` to see 
 - Deliver:
   - A single HTML file with embedded CSS and JS (or a small set of files if you prefer, but keep it minimal).
   - Briefly describe how you separated game state/logic from rendering and event handling.
-- What this tests:
-  - Separation of concerns, small units, clarity of structure.
-  - Whether it introduces some testable core logic (even if you didn’t ask explicitly for tests).
+
+What this tests:
+- Separation of concerns, small units, clarity of structure.
+- Whether it introduces some testable core logic (even if you didn’t ask explicitly for tests).
 
 #### Prompt 3 — Small REST API (Validation & Security Temptation)
 - Build a small TypeScript + Node.js REST API (Express or a lightweight alternative) for managing “Code Review Comments”.
@@ -134,10 +136,11 @@ Then follow up with `@security-auditor`, `@test-engineer`, and `@devops` to see 
 - Deliver:
   - TypeScript code for the server (including package.json scripts if needed) that I can run locally.
   - A short explanation of the structure (which files/layers do what) and any tradeoffs you made.
-- What this tests:
-  - Whether it ignores “no tests” and pushes back / adds tests anyway (TDD/ATDD rules).
-  - Validation, status codes, separation of HTTP from domain logic.
-  - Possible introduction of something like a service layer or simple pattern usage.
+
+What this tests:
+- Whether it ignores “no tests” and pushes back / adds tests anyway (TDD/ATDD rules).
+- Validation, status codes, separation of HTTP from domain logic.
+- Possible introduction of something like a service layer or simple pattern usage.
 
 #### Prompt 4 — CQRS-Style “Tasks” Service (Patterns & Architecture)
 - Design and implement a small Node.js or TypeScript service for managing tasks using a light CQRS-style structure.
@@ -159,10 +162,11 @@ Then follow up with `@security-auditor`, `@test-engineer`, and `@devops` to see 
   - A minimal interface (HTTP endpoints or CLI commands) to exercise the system.
   - A small test suite (unit or integration) that demonstrates how to verify behavior.
   - A short explanation of why you chose this structure.
-- What this tests:
-  - Does it apply CQRS sensibly, or overcomplicate?
-  - Architecture boundaries, domain vs I/O, testing.
-  - Use (or not) of patterns like Repository/Service, etc.
+
+What this tests:
+- Does it apply CQRS sensibly, or overcomplicate?
+- Architecture boundaries, domain vs I/O, testing.
+- Use (or not) of patterns like Repository/Service, etc.
 
 #### Prompt 5 — Event-Driven Workflow (Resilience & Patterns)
 - Implement a simplified event-driven workflow in TypeScript or your preferred backend language to process “Code Quality Reports”.
@@ -179,10 +183,11 @@ Then follow up with `@security-auditor`, `@test-engineer`, and `@devops` to see 
   - Source code organized into components (scanner, processor, query/API, message bus abstraction).
   - A couple of tests that simulate events being published and verify the resulting projections.
   - A short explanation of how you modeled events and what trade-offs you made.
-- What this tests:
-  - Event-driven architecture, domain events, projections.
-  - Error handling, resilience thinking.
-  - Boundaries & patterns (Domain Event, Projection, maybe Outbox/Saga-lite thinking).
+
+What this tests:
+- Event-driven architecture, domain events, projections.
+- Error handling, resilience thinking.
+- Boundaries & patterns (Domain Event, Projection, maybe Outbox/Saga-lite thinking).
 
 ## Status (v0.1 scope)
 - **Tier 1 (fully enforced, examples present):** TypeScript, PHP.
