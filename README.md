@@ -9,6 +9,7 @@ You do **not** restate standards in your prompts. Instead, the agents and `.curs
 - `.cursor/rules/*.mdc` — Machine‑readable rules for Cursor; always‑on standards.
 - `docs/` — Human‑readable guides:
   - `docs/architecture/` — Architecture patterns, SOLID, core design principles (DRY/KISS/YAGNI/SoC), and design patterns. See `docs/architecture/patterns/` for per-pattern notes and navigation.
+  - `docs/laravel-php-ai-guidelines.md` — Laravel/PHP AI assistant guidance derived from Spatie’s AI guidelines (mirrored in `.cursor/rules/50-lang-php-laravel-guidelines.mdc`).
   - `docs/security-standards.md` — Security baseline.
   - `docs/testing-standards.md` — Testing rules.
   - `docs/observability-standards.md` — Logging/metrics/tracing/health.
@@ -81,6 +82,9 @@ Ask any agent to spin up a tiny sample to see the rules in action. Example (LITE
 Act as the @architect. In LITE mode, sketch a minimal TypeScript Express service exposing GET /health and GET /users/:id with validation, logging, and tests outlined.
 ```
 Then follow up with `@security-auditor`, `@test-engineer`, and `@devops` to see the standards across the flow.
+
+### Laravel & Spatie AI Guidelines
+For PHP/Laravel work, this pack integrates Spatie’s AI guidelines directly into the Cursor rules (`.cursor/rules/50-lang-php-laravel-guidelines.mdc`) and the human guide (`docs/laravel-php-ai-guidelines.md`). Follow Laravel conventions first, then these additions to keep AI output aligned with Spatie’s standards.
 
 ### Tutorial Prompts
 #### Prompt 1 — Marketing Website Layout (HTML/CSS only)

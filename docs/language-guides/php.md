@@ -1,5 +1,6 @@
 # PHP Guide
 - **Stack defaults:** PHP 8.2+, Composer for deps; PSR-12 coding style; prefer Laravel/Symfony for services.
+- **Laravel/AI note:** For Laravel projects, also follow `docs/laravel-php-ai-guidelines.md` (Spatie-derived) and its mirrored Cursor rules at `.cursor/rules/50-lang-php-laravel-guidelines.mdc`.
 
 ## Setup
 - Use Composer with `composer.lock`; autoload via PSR-4; enable strict types (`declare(strict_types=1);`).
