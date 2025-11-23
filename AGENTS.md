@@ -366,7 +366,7 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Provide schema validation or contract test command (e.g., `npm run lint:openapi`, `spectral lint openapi.yaml`, API contract tests in CI).
 
 ## 36-architecture.mdc — Architecture standards: SOLID, clean architecture, decomposition.
-- Globs: src/**, app/**, domain/**, services/**, docs/architecture/**
+- Globs: src/**, app/**, domain/**, services/**, backend/**
 
 ### [ARCHITECTURE BASELINE]
 - Foundational principles: apply Separation of Concerns, high cohesion / low coupling, abstraction & encapsulation, Single Source of Truth, immutability-by-default in core logic, idempotent side-effect boundaries, Design by Contract & fail-fast, Law of Demeter, and Principle of Least Astonishment. Align with docs/architecture/design-principles.md.
@@ -374,13 +374,13 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Clean / Hexagonal & DDD: keep domain independent of frameworks/IO; define explicit application and infrastructure boundaries; dependencies point inward; use DI for infrastructure. Only reach for full DDD (aggregates, domain events, rich value objects) when domain complexity warrants it. See docs/architecture/architecture-patterns.md and docs/architecture/system-decomposition.md.
 - Decomposition & bounded contexts: prefer modular monolith or simple services first; introduce microservices only with clear justification (team scaling, isolation, throughput/latency, regulatory, blast radius). Boundaries must have explicit contracts (HTTP/RPC/events) and clear ownership; update context maps and ADRs when boundaries change.
 - Integration & resilience: design external interactions with timeouts, retries with jitter, circuit breakers, and back-pressure; strive for idempotent handlers where feasible; handle time and ordering explicitly (time zones, monotonic clocks, message ordering guarantees).
-- Patterns: select patterns intentionally (Factory, Abstract Factory, Builder, Strategy, Observer, Decorator, Composite, Adapter, Facade, Chain of Responsibility, State, Mediator, etc.) when they reduce complexity or enable required variability; avoid pattern cargo-culting and unnecessary indirection. See docs/architecture/design-patterns.md for when/why guidance.
+- Patterns: select patterns intentionally (Factory, Abstract Factory, Builder, Strategy, Observer, Decorator, Composite, Adapter, Facade, Chain of Responsibility, State, Mediator, etc.) when they reduce complexity or enable required variability; avoid pattern cargo-culting and unnecessary indirection. See docs/architecture/design-patterns.md and .cursor/rules/patterns/** for when/why guidance.
 
 ### [VERIFICATION]
 - Provide a short architecture rationale or ADR reference and list concrete checks (lint/static analysis and, if available, architecture/import rules) that show how the design adheres to these constraints.
 
 ## 37-code-structure.mdc — Code structure and organization standards.
-- Globs: src/**, app/**, domain/**, tests/**
+- Globs: src/**, app/**, domain/**, services/**, tests/**
 
 ### [CODE STRUCTURE BASELINE]
 - Modularity & feature slices: organize code into cohesive modules and feature-oriented verticals (e.g., feature/domain → application/service → infrastructure → interface); avoid grab-bag “utils” files; keep boundaries inside features clear and explicit. Align with docs/architecture/design-principles.md and docs/architecture/architecture-patterns.md.
@@ -405,7 +405,7 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 [METHODOLOGIES] (ATDD/BDD/TDD/FDD/DDD)
 
 ## 40-atdd.mdc — ATDD — Acceptance Test-Driven Development (done = proven). Define acceptance before implementation.
-- Globs: acceptance/**, src/**, tests/**
+- Globs: acceptance/**, src/**, app/**, tests/**
 
 ### [ATDD — ACCEPTANCE TEST-DRIVEN DEVELOPMENT (DONE = PROVEN)]
 
@@ -414,16 +414,17 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 
 ### [PRINCIPLES]
 - Express acceptance using domain language and clear outcomes that stakeholders understand; avoid technical jargon (DB tables, classes, HTTP internals).
-- Align acceptance criteria with bounded contexts and domain concepts; reflect the ubiquitous language of the domain (DDD).
+- Align acceptance criteria with bounded contexts and domain concepts; reflect the ubiquitous language of the domain (DDD) when applicable.
 - Turn critical acceptance criteria into executable tests (API/E2E/contract tests) that remain stable across refactors.
 - Prioritize a small set of high-value acceptance tests over large, flaky, UI-heavy suites; use lower layers (unit/integration) to cover details.
 - Keep acceptance tests focused on behavior and business rules; do not assert on incidental implementation details or layout.
+- When behavior changes, update acceptance criteria first, then tests, then implementation.
 
 ### [WORKFLOW]
 1. Discover and refine acceptance criteria with stakeholders (optionally using BDD-style Given/When/Then examples).
 2. Select key scenarios and implement them as executable acceptance tests.
 3. Use TDD at lower levels (unit/integration) to drive design until acceptance tests pass.
-4. Keep acceptance tests stable; when behavior changes, update acceptance criteria first, then adjust tests and implementation.
+4. Keep acceptance tests stable; when behavior changes, revise criteria and tests deliberately.
 
 ### [ANTI-PATTERNS]
 - Writing “acceptance” tests after implementation as documentation theater.
@@ -438,7 +439,7 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Cross-check against docs/testing-standards.md to ensure acceptance tests are deterministic, meaningful, and part of the CI pipeline.
 
 ## 41-bdd.mdc — BDD — Behavior-Driven Discovery (domain language first). Clarify behavior and scenarios, not ceremony.
-- Globs: src/**, tests/**, discovery/**, acceptance/**
+- Globs: src/**, app/**, tests/**, discovery/**, acceptance/**
 
 ### [BDD — BEHAVIOR-DRIVEN DISCOVERY (DOMAIN LANGUAGE FIRST)]
 
@@ -510,7 +511,7 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
   - If relying on existing coverage, reference the specific suites or files and explain why they are sufficient.
 
 ## 43-fdd.mdc — FDD — Feature-Driven Development (thin, reversible slices). Enforce small, safe, traceable increments.
-- Globs: features/**, tasks/**, src/**, tests/**
+- Globs: features/**, tasks/**, src/**, app/**, tests/**
 
 ### [FDD — FEATURE-DRIVEN DEVELOPMENT (THIN, REVERSIBLE SLICES)]
 
@@ -584,8 +585,6 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
   - Architecture docs (context maps, ADRs) are updated when boundaries or invariants change.
 
 [LANGUAGE STANDARDS] (50-lang-*.mdc)
-
-## 50-lang-*.mdc
 
 ## 50-lang-css.mdc — CSS standards: structure, accessibility, performance.
 - Globs: **/*.css
