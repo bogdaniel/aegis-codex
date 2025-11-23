@@ -1,0 +1,27 @@
+---
+description: "Retry & Timeout pattern guidance."
+alwaysApply: false
+globs:
+  - "src/**"
+  - "app/**"
+  - "domain/**"
+  - "services/**"
+---
+
+[INTENT]
+- Retry & Timeout is a architectural / enterprise pattern used to address a recurring design problem in a controlled, explicit way.
+
+[WHEN_TO_USE]
+- Use **Retry & Timeout** when it clearly simplifies the design compared to straightforward code, and when the problem it solves is present in this codebase.
+- Consider it only if it improves clarity, testability, or flexibility versus a simpler alternative.
+- Prefer language-idiomatic constructs (functions, modules, composition) where they achieve the same effect with less ceremony.
+
+[WHEN_NOT_TO_USE]
+- Do **not** force Retry & Timeout into code that is already simple and clear without it.
+- Avoid it when it increases indirection without reducing real complexity, or when it primarily serves as resume-driven development.
+- Treat it as a smell if it appears only because someone recognised the pattern name rather than a concrete problem.
+
+[ACTIONS_FOR_AGENTS]
+- `@architect`: If Retry & Timeout is appropriate, explain **which concrete problem** it solves here (e.g., variability of algorithms, integration boundary, domain consistency) and why it beats simpler alternatives.
+- `@code-reviewer`: When you see Retry & Timeout, verify it is implemented cleanly, does not violate SOLID/design principles, and is justified by the problem. If not, recommend a simpler refactor.
+- `@refactorer`: When refactoring, consider introducing Retry & Timeout only if it removes duplication, clarifies responsibilities, or isolates change hotspots; otherwise, favour straightforward composition.

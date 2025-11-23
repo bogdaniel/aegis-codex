@@ -1,0 +1,30 @@
+---
+description: "Overview of design pattern usage and guidance for Aegis Codex."
+alwaysApply: false
+globs:
+  - "src/**"
+  - "app/**"
+  - "domain/**"
+  - "services/**"
+---
+
+[INTENT]
+- Provide shared vocabulary for common design patterns without treating them as mandatory or magical.
+- Encourage agents and humans to apply patterns **only when they solve a concrete problem** better than simpler alternatives.
+
+[GUIDANCE]
+- Patterns are descriptive, not prescriptive. They name useful shapes but are not requirements.
+- Always start from the actual problem (duplication, tangled dependencies, poor testability, unclear boundaries) and only then consider whether a known pattern fits.
+- Prefer composition, simple functions, and clear modules over heavy pattern structures when both are viable.
+- Some patterns (e.g., Singleton, Active Record) are primarily **smell detectors** in modern systems; Aegis should flag them as risky by default.
+
+[USAGE WITH AGENTS]
+- `@architect` should reference specific patterns when they meaningfully clarify the design, not as buzzwords.
+- `@code-reviewer` should recognise patterns already in the code and evaluate whether they are justified and well-implemented.
+- `@refactorer` may suggest introducing or removing patterns, but must explain the trade-offs and tie them to concrete issues (duplication, coupling, invariants, resilience, etc.).
+
+[VERIFICATION]
+- When a pattern is used or proposed, agents must be able to answer:
+  - What exact problem is this solving here?
+  - Why is this pattern better than a simpler alternative?
+  - How does it interact with SOLID, design principles, and the existing architecture?
