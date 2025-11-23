@@ -1,21 +1,130 @@
 ---
-description: "Architecture standards: SOLID, clean architecture, decomposition."
+description: "Architecture — Clean Architecture + Hexagonal ports/adapters + DDD + Context Map + Trust Tiers."
 alwaysApply: true
 globs:
   - "src/**"
   - "app/**"
-  - "domain/**"
-  - "services/**"
   - "backend/**"
+  - "services/**"
+  - "modules/**"
 ---
 
-[ARCHITECTURE BASELINE]
-- Foundational principles: apply Separation of Concerns, high cohesion / low coupling, abstraction & encapsulation, Single Source of Truth, immutability-by-default in core logic, idempotent side-effect boundaries, Design by Contract & fail-fast, Law of Demeter, and Principle of Least Astonishment. Align with docs/architecture/design-principles.md.
-- SOLID & GRASP: use SRP/OCP/LSP/ISP/DIP and responsibility assignment (Information Expert, Creator, Controller, Polymorphism) as the default OO lens; prefer composition over inheritance and avoid deep inheritance hierarchies. See docs/architecture/solid-principles.md and docs/architecture/design-principles.md.
-- Clean / Hexagonal & DDD: keep domain independent of frameworks/IO; define explicit application and infrastructure boundaries; dependencies point inward; use DI for infrastructure. Only reach for full DDD (aggregates, domain events, rich value objects) when domain complexity warrants it. See docs/architecture/architecture-patterns.md and docs/architecture/system-decomposition.md.
-- Decomposition & bounded contexts: prefer modular monolith or simple services first; introduce microservices only with clear justification (team scaling, isolation, throughput/latency, regulatory, blast radius). Boundaries must have explicit contracts (HTTP/RPC/events) and clear ownership; update context maps and ADRs when boundaries change.
-- Integration & resilience: design external interactions with timeouts, retries with jitter, circuit breakers, and back-pressure; strive for idempotent handlers where feasible; handle time and ordering explicitly (time zones, monotonic clocks, message ordering guarantees).
-- Patterns: select patterns intentionally (Factory, Abstract Factory, Builder, Strategy, Observer, Decorator, Composite, Adapter, Facade, Chain of Responsibility, State, Mediator, etc.) when they reduce complexity or enable required variability; avoid pattern cargo-culting and unnecessary indirection. See docs/architecture/design-patterns.md and .cursor/rules/patterns/** for when/why guidance.
+[ARCHITECTURE — CLEAN + HEXAGONAL + DDD + MODULAR CONTEXTS]
 
-[VERIFICATION]
-- Provide a short architecture rationale or ADR reference and list concrete checks (lint/static analysis and, if available, architecture/import rules) that show how the design adheres to these constraints.
+[CORE MANDATE]
+- All non-trivial backend codebases must follow:
+  - **Clean Architecture** layering,
+  - **Hexagonal** port/adapter boundaries,
+  - **Domain-Driven Design (DDD)** for modelling.
+- The system is a **modular project** composed of **bounded contexts** with explicit trust tiers.
+
+[LAYERING — CLEAN ARCHITECTURE]
+- Define and respect these layers:
+  - **Domain**:
+    - Entities, Value Objects, Domain Services, Domain Events.
+    - No framework dependencies (no Symfony/Laravel/HTTP/ORM).
+    - Contains business invariants and rules.
+  - **Application**:
+    - Use cases, Commands/Queries, Application Services.
+    - Orchestrates domain objects and ports.
+    - Depends on Domain; does not depend directly on HTTP/DB frameworks.
+  - **Interface (Adapters-Inbound)**:
+    - HTTP controllers, CLI commands, message consumers, BFFs.
+    - Translates external protocols (HTTP, CLI, messages) into Application calls.
+  - **Infrastructure (Adapters-Outbound)**:
+    - Persistence, messaging, external APIs, caching, filesystem.
+    - Implements ports defined in Domain/Application.
+    - Contains ORM mappings, SDK usage, and technical glue.
+
+[LAYERING RULES — DEPENDENCIES]
+- Allowed dependency directions:
+  - Domain → (no inward dependencies).
+  - Application → Domain.
+  - Interface → Application (+ Domain DTOs where strictly needed).
+  - Infrastructure → Domain/Application.
+- Forbidden:
+  - Domain depending on Interface/Infrastructure or frameworks.
+  - Application depending on Symfony/Laravel/ORM/HTTP clients directly.
+  - Cross-layer shortcuts (controller → repository directly, skipping use cases).
+
+[DDD — BOUNDED CONTEXTS & MODELLING]
+- Each major business area is a **bounded context** with its own:
+  - Ubiquitous language,
+  - Entities/Aggregates,
+  - Value Objects,
+  - Domain Events.
+- Within a bounded context:
+  - Favor rich domain models over anemic data structures.
+  - Use aggregates to enforce invariants; avoid leaking internal state.
+- Cross-context interactions:
+  - Must go through explicit contracts (APIs, messages).
+  - Never share persistence models across bounded contexts.
+
+[CONTEXT MAP & TRUST TIERS (H/M/S)]
+- Every bounded context must be assigned:
+  - A **trust tier**:
+    - Tier H (High / Safety Kernel): Auth, Policy, Ledger, Risk, Compliance.
+    - Tier M (Medium / Business Core).
+    - Tier S (Surface / Edge / UI/BFF).
+  - Documented relationships in a **context map** (who can call whom, sync vs async).
+- Tier rules:
+  - Tier H:
+    - Minimal dependencies; strong isolation.
+    - Strict Clean/Hex; no “shortcut” access to DBs or external services.
+    - Higher test coverage, property-based tests for invariants where applicable.
+  - Tier M:
+    - Clean/Hex/DDD applied pragmatically.
+    - May integrate with more external services, but still through ports/adapters.
+  - Tier S:
+    - Mainly orchestration and presentation.
+    - No direct access to Tier H persistence; must call Tier H via APIs/messages.
+
+[MODULAR PROJECT STRUCTURE]
+- The project must be modular:
+  - Group code into context modules, e.g.:
+    - `src/AuthContext/Domain`, `src/AuthContext/Application`, `src/AuthContext/Infrastructure`, `src/AuthContext/Interface`.
+    - `src/BillingContext/...`, `src/CasinoCoreContext/...`, etc.
+- New features:
+  - Belong to an existing bounded context or trigger creation of a new one.
+  - Avoid “misc/shared” dumping grounds that bypass contexts.
+
+[OBSERVABILITY & NON-FUNCTIONALS]
+- Each bounded context exposes:
+  - **Request metrics** (latency, error rates).
+  - **Domain metrics** (e.g., number of payouts, fraud flags, logins).
+  - **Logs with correlation IDs** and principal information (without sensitive data).
+  - **Traces** with spans around use case boundaries.
+- Use case boundaries:
+  - Must log start/end with correlation ID + principal (user/tenant/service).
+  - Logs must not contain secrets, credentials, or sensitive PII beyond what is strictly necessary.
+
+[SECURITY & TRUST]
+- mTLS between contexts where possible; avoid plain HTTP inside the core network.
+- AuthN vs AuthZ:
+  - AuthN (Identity, tokens) handled by an **AuthContext**.
+  - AuthZ (permissions, policies) handled by a **PolicyContext** or equivalent.
+- Principle of least privilege:
+  - DB, queue, and service-account permissions are scoped to per-context needs.
+  - No “root” credentials embedded in general-purpose services.
+
+[SLOs & ERROR BUDGETS]
+- Tier H and Tier M contexts must have:
+  - Explicit latency and availability SLOs.
+  - Error budgets that shape design decisions:
+    - Tier H favors simplicity, fewer moving parts, and minimal dependencies.
+    - Tier S can accept more complexity for UX, but not at the expense of Tier H/M reliability.
+
+[ENFORCEMENT & TOOLING]
+- Use Deptrac/static analysis to:
+  - Enforce layer dependency rules.
+  - Prevent Domain from importing frameworks.
+  - Prevent cross-context imports that bypass public APIs.
+- Use contract tests and schema validation for:
+  - Cross-context APIs (OpenAPI/JSON Schema, Protobuf).
+  - Event schemas (see anti-corruption/events rules).
+
+[REJECTION CRITERIA]
+- Code that places business logic directly in controllers, OR in Infrastructure, bypassing Domain/Application.
+- Direct use of external DTOs/entities inside Domain without mapping/ACL.
+- Cross-context database access or entity reuse.
+- Tier H services that depend heavily on frameworks or bypass ports/adapters.

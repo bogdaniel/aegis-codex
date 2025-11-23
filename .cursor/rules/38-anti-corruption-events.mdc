@@ -1,0 +1,51 @@
+---
+description: "Anti-Corruption Layers + Event Catalog — safe integration with external/legacy systems."
+alwaysApply: true
+globs:
+  - "src/**"
+  - "app/**"
+  - "backend/**"
+  - "services/**"
+---
+
+[ANTI-CORRUPTION LAYERS & EVENT CATALOG]
+
+[CORE MANDATE]
+- External/legacy systems must not leak directly into core domains.
+- All domain events and external events must go through explicit schemas and mapping layers.
+
+[EVENT CATALOG]
+- Domain events:
+  - Are defined per bounded context (e.g., `AuthContext.UserRegistered`, `BillingContext.PaymentCaptured`).
+  - Have versioned schemas (JSON Schema, Protobuf, or equivalent).
+  - Are published from Domain/Application, not from Infrastructure directly.
+- Cross-context events:
+  - Use canonical, versioned event definitions.
+  - Are treated as **contracts**; changes are backward-compatible.
+
+[ANTI-CORRUPTION LAYERS (ACL)]
+- Every integration with legacy/third-party systems must pass through an ACL that:
+  - Translates external models and semantics into clean domain types.
+  - Hides external weirdness from Domain/Application.
+  - Prevents external DTOs/entities from being used directly in Domain.
+- Forbidden patterns:
+  - Direct use of third-party SDK models as Domain Entities.
+  - Having Domain code depending on external client libraries or transport-specific types.
+
+[EVENT CANONICALIZATION]
+- Do not publish raw external events onto internal buses.
+- All inbound events:
+  - Are received by an adapter.
+  - Mapped into internal event types or commands via ACLs.
+  - Validated against schemas before reaching Domain/Application.
+- All outbound events:
+  - Are constructed from Domain/Application state.
+  - Validated against their schema before being emitted.
+
+[VERIFICATION]
+- For each integration:
+  - Identify and document its ACL.
+  - Ensure Domain/Application references only internal models, not external DTOs.
+- For each event type:
+  - Ensure a schema exists and is referenced by producers/consumers.
+  - Ensure changes to event schemas are reviewed for backward compatibility.
