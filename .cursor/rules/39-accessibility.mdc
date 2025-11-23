@@ -27,7 +27,7 @@ globs:
   - Keep layout changes predictable across breakpoints; do not reorder content in ways that confuse keyboard/screen-reader users.
 
 - Keyboard & focus:
-  - All interactive elements (links, buttons, form controls) must be reachable via keyboard (Tab/Shift+Tab) and activatable via keyboard (Enter/Space).
+  - All interactive elements (links, buttons, form controls) must be reachable via keyboard (Tab/Shift+Tab, Enter/Space).
   - Never remove focus outlines without providing a visible alternative (e.g., `:focus-visible` styles that are at least as visible as default).
   - Avoid click handlers on non-interactive elements (`div`, `span`) unless you provide correct roles, tabindex, and keyboard interaction.
 
