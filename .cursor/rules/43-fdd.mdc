@@ -5,6 +5,7 @@ globs:
   - "features/**"
   - "tasks/**"
   - "src/**"
+  - "app/**"
   - "tests/**"
 ---
 

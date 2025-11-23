@@ -6,7 +6,7 @@ globs:
   - "app/**"
   - "domain/**"
   - "services/**"
-  - "docs/architecture/**"
+  - "backend/**"
 ---
 
 [ARCHITECTURE BASELINE]
@@ -15,7 +15,7 @@ globs:
 - Clean / Hexagonal & DDD: keep domain independent of frameworks/IO; define explicit application and infrastructure boundaries; dependencies point inward; use DI for infrastructure. Only reach for full DDD (aggregates, domain events, rich value objects) when domain complexity warrants it. See docs/architecture/architecture-patterns.md and docs/architecture/system-decomposition.md.
 - Decomposition & bounded contexts: prefer modular monolith or simple services first; introduce microservices only with clear justification (team scaling, isolation, throughput/latency, regulatory, blast radius). Boundaries must have explicit contracts (HTTP/RPC/events) and clear ownership; update context maps and ADRs when boundaries change.
 - Integration & resilience: design external interactions with timeouts, retries with jitter, circuit breakers, and back-pressure; strive for idempotent handlers where feasible; handle time and ordering explicitly (time zones, monotonic clocks, message ordering guarantees).
-- Patterns: select patterns intentionally (Factory, Abstract Factory, Builder, Strategy, Observer, Decorator, Composite, Adapter, Facade, Chain of Responsibility, State, Mediator, etc.) when they reduce complexity or enable required variability; avoid pattern cargo-culting and unnecessary indirection. See docs/architecture/design-patterns.md for when/why guidance.
+- Patterns: select patterns intentionally (Factory, Abstract Factory, Builder, Strategy, Observer, Decorator, Composite, Adapter, Facade, Chain of Responsibility, State, Mediator, etc.) when they reduce complexity or enable required variability; avoid pattern cargo-culting and unnecessary indirection. See docs/architecture/design-patterns.md and .cursor/rules/patterns/** for when/why guidance.
 
 [VERIFICATION]
 - Provide a short architecture rationale or ADR reference and list concrete checks (lint/static analysis and, if available, architecture/import rules) that show how the design adheres to these constraints.

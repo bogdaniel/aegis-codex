@@ -4,6 +4,7 @@ alwaysApply: true
 globs:
   - "acceptance/**"
   - "src/**"
+  - "app/**"
   - "tests/**"
 ---
 
@@ -14,16 +15,17 @@ globs:
 
 [PRINCIPLES]
 - Express acceptance using domain language and clear outcomes that stakeholders understand; avoid technical jargon (DB tables, classes, HTTP internals).
-- Align acceptance criteria with bounded contexts and domain concepts; reflect the ubiquitous language of the domain (DDD).
+- Align acceptance criteria with bounded contexts and domain concepts; reflect the ubiquitous language of the domain (DDD) when applicable.
 - Turn critical acceptance criteria into executable tests (API/E2E/contract tests) that remain stable across refactors.
 - Prioritize a small set of high-value acceptance tests over large, flaky, UI-heavy suites; use lower layers (unit/integration) to cover details.
 - Keep acceptance tests focused on behavior and business rules; do not assert on incidental implementation details or layout.
+- When behavior changes, update acceptance criteria first, then tests, then implementation.
 
 [WORKFLOW]
 1. Discover and refine acceptance criteria with stakeholders (optionally using BDD-style Given/When/Then examples).
 2. Select key scenarios and implement them as executable acceptance tests.
 3. Use TDD at lower levels (unit/integration) to drive design until acceptance tests pass.
-4. Keep acceptance tests stable; when behavior changes, update acceptance criteria first, then adjust tests and implementation.
+4. Keep acceptance tests stable; when behavior changes, revise criteria and tests deliberately.
 
 [ANTI-PATTERNS]
 - Writing “acceptance” tests after implementation as documentation theater.

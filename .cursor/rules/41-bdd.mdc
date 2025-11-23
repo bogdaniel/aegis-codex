@@ -3,6 +3,7 @@ description: "BDD — Behavior-Driven Discovery (domain language first). Clarify
 alwaysApply: true
 globs:
   - "src/**"
+  - "app/**"
   - "tests/**"
   - "discovery/**"
   - "acceptance/**"

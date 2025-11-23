@@ -5,6 +5,7 @@ globs:
   - "src/**"
   - "app/**"
   - "domain/**"
+  - "services/**"
   - "tests/**"
 ---
 
