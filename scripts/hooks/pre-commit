@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Example pre-commit hook to mirror CI using Aegis checks.
+# Install by symlinking into .git/hooks:
+#   mkdir -p .git/hooks
+#   ln -sf ../../scripts/hooks/pre-commit .git/hooks/pre-commit
+# Fails on first failing check; adjust to your tolerance.
+set -euo pipefail
+
+root_dir="$(cd "$(dirname "$0")/../.." && pwd)"
+cd "$root_dir"
+
+./scripts/aegis-check.sh

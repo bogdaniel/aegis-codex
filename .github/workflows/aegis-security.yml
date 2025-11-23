@@ -1,0 +1,73 @@
+# Security scans for PRs and default-branch pushes; skips when stack not detected.
+name: Aegis Security
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+env:
+  NODE_VERSION: "20"
+
+jobs:
+  dependency-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node audit
+      - uses: actions/setup-node@v4
+        if: hashFiles('package-lock.json', 'pnpm-lock.yaml', 'yarn.lock') != ''
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: npm audit
+        if: hashFiles('package-lock.json') != ''
+        run: npm audit --production
+      - name: pnpm audit
+        if: hashFiles('pnpm-lock.yaml') != ''
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - name: pnpm audit run
+        if: hashFiles('pnpm-lock.yaml') != ''
+        run: pnpm audit --prod
+
+      # PHP audit
+      - name: composer audit
+        if: hashFiles('composer.lock') != ''
+        run: |
+          composer install --no-interaction --prefer-dist
+          composer audit
+
+      # Rust audit
+      - name: cargo audit
+        if: hashFiles('Cargo.toml') != ''
+        run: |
+          cargo install cargo-audit || true
+          cargo audit
+
+      # Go vuln check
+      - name: govulncheck
+        if: hashFiles('go.mod') != ''
+        run: |
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          govulncheck ./...
+
+  static-security-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Semgrep or other SAST if config exists.
+      - name: Semgrep scan (optional, config-driven)
+        if: hashFiles('.semgrep.yml', '.semgrep.yaml') != ''
+        run: |
+          pip install --user semgrep
+          ~/.local/bin/semgrep ci
+
+      # PHP static security via phpstan/psalm if present.
+      - name: PHP security static analysis
+        if: hashFiles('composer.lock') != ''
+        run: |
+          composer install --no-interaction --prefer-dist
+          vendor/bin/phpstan analyse --no-progress --level=max || true

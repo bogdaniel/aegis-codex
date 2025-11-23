@@ -1,0 +1,60 @@
+# Policy guardrails: keep AGENTS.md in sync and ensure pattern docs exist.
+name: Aegis Policy Check
+
+on:
+  pull_request:
+
+jobs:
+  validate-aegis-artifacts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Regenerate AGENTS.md and diff
+        run: |
+          node scripts/build-agents-doc.js
+          git diff --exit-code AGENTS.md
+
+      - name: Ensure .cursor/rules/*.mdc have frontmatter
+        run: |
+          for f in $(find .cursor/rules -name "*.mdc"); do
+            head -n1 "$f" | grep -q "^---" || { echo "Missing frontmatter: $f"; exit 1; }
+          done
+
+  check-structure-and-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ensure pattern rules have matching docs (and vice versa)
+        run: |
+          missing_docs=()
+          while IFS= read -r rule; do
+            rel="${rule#./.cursor/rules/patterns/}"
+            doc="docs/architecture/patterns/${rel%.mdc}.md"
+            [ -f "$doc" ] || missing_docs+=("$doc")
+          done < <(find .cursor/rules/patterns -name "*.mdc")
+          missing_rules=()
+          while IFS= read -r doc; do
+            rel="${doc#./docs/architecture/patterns/}"
+            rule=".cursor/rules/patterns/${rel%.md}.mdc"
+            [ -f "$rule" ] || missing_rules+=("$rule")
+          done < <(find docs/architecture/patterns -name "*.md")
+          if [ ${#missing_docs[@]} -gt 0 ] || [ ${#missing_rules[@]} -gt 0 ]; then
+            echo "Missing docs:" "${missing_docs[@]}"
+            echo "Missing rules:" "${missing_rules[@]}"
+            exit 1
+          fi
+
+  optional-ai-review:
+    if: false  # Set to true and provide secrets to enable.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder for AI review (opt-in)
+        run: |
+          echo "Call your LLM provider here with PR diff + AGENTS.md + .cursor/rules references."
+          echo "Example env: LLM_API_KEY=${LLM_API_KEY:-unset}"
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
