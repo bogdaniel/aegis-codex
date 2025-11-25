@@ -1,8 +1,13 @@
 # Agent Prompt Scenarios
 
+> **⚠️ Legacy Document** — For comprehensive templates and best practices, see `docs/agent-prompts/` directory:
+> - `docs/agent-prompts/templates.md` — Complete template library
+> - `docs/agent-prompts/best-practices.md` — Best practices guide
+> - `docs/agent-prompts/common-patterns.md` — Common patterns
+
 These prompts are designed to **exercise each agent and rule** in this repo without restating standards or docs. Use them in Cursor (or similar tools) after loading this project.
 
-Keep the pattern: “Act as the @agent and do X for this file/snippet.” The rules and docs will supply standards automatically.
+Keep the pattern: "Act as the @agent and do X for this file/snippet." The rules and docs will supply standards automatically.
 
 ---
 

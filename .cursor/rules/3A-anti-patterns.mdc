@@ -1,0 +1,335 @@
+---
+description: "Anti-patterns catalog — common mistakes and fixes."
+alwaysApply: true
+globs:
+  - "src/**"
+  - "app/**"
+  - "domain/**"
+  - "application/**"
+  - "infrastructure/**"
+  - "interface/**"
+---
+
+[ANTI-PATTERNS CATALOG]
+
+This catalog consolidates common anti-patterns across SOLID, Clean Architecture, DDD, and general code quality. Each anti-pattern includes symptoms, fixes, and links to examples.
+
+[ARCHITECTURE ANTI-PATTERNS]
+
+### Fat Controller
+**Symptom:** Controllers contain business logic, validation, persistence, and orchestration.
+**Violates:** Clean Architecture (business logic in Interface layer), SRP (multiple responsibilities).
+**Fix:** Move business logic to Application use cases; controllers only translate HTTP ↔ Application commands.
+**Example:** See `examples/refactoring/clean-architecture/fat-controller/`.
+
+### Anemic Domain Model
+**Symptom:** Domain entities are dumb data structures with getters/setters; all logic in services.
+**Violates:** DDD (rich domain models), SRP (logic separated from data).
+**Fix:** Move business logic into domain entities; use value objects for validation.
+**Example:**
+```typescript
+// ❌ BAD: Anemic domain model
+class User {
+  email: string;
+  password: string;
+}
+class UserService {
+  validateEmail(user: User): boolean {
+    return user.email.includes('@');
+  }
+}
+
+// ✅ GOOD: Rich domain model
+class UserEmail {
+  private constructor(private readonly value: string) {
+    if (!value.includes('@')) throw new Error('Invalid email');
+  }
+  static create(value: string): UserEmail {
+    return new UserEmail(value);
+  }
+}
+```
+
+### God Class/Service
+**Symptom:** Single class/service handles multiple unrelated responsibilities.
+**Violates:** SRP (multiple reasons to change).
+**Fix:** Split into focused classes/services, each with one responsibility.
+**Example:** See `examples/refactoring/srp-god-class/`.
+
+### Framework in Domain
+**Symptom:** Domain entities/use cases import framework classes (Laravel, Spring, ASP.NET).
+**Violates:** Clean Architecture (Domain must be framework-free), DIP (depends on concretions).
+**Fix:** Remove framework dependencies; use ports/adapters pattern.
+**Example:** See `examples/refactoring/clean-architecture/framework-in-domain/` for before/after example.
+
+### Direct Cross-Context Imports
+**Symptom:** One context imports another context's Domain or Infrastructure directly.
+**Violates:** DDD (bounded context boundaries), Clean Architecture (context isolation).
+**Fix:** Use public API modules (facades) for cross-context imports.
+**Example:** See `examples/refactoring/clean-architecture/cross-context-direct/` for before/after example.
+
+### Missing Bounded Contexts
+**Symptom:** Code organized by technical layers (models/, services/, controllers/) without bounded contexts.
+**Violates:** DDD (bounded contexts required).
+**Fix:** Organize code into bounded contexts (IdentityContext, OrdersContext, etc.).
+**Example:**
+```
+// ❌ BAD: Technical layers
+src/models/User.ts
+src/services/UserService.ts
+src/controllers/UserController.ts
+
+// ✅ GOOD: Bounded contexts
+src/IdentityContext/Domain/Entities/User.ts
+src/IdentityContext/Application/UseCases/RegisterUser.ts
+src/IdentityContext/Interface/Adapters/HttpHandlers.ts
+```
+
+### Missing Trust Tiers
+**Symptom:** Bounded contexts without assigned trust tiers (H/M/S).
+**Violates:** Context Map & Trust Tiers (every context must have a tier).
+**Fix:** Assign trust tier before implementation; document in context map.
+**Example:**
+- Tier H: IdentityContext (auth, tokens)
+- Tier M: OrdersContext (business workflows)
+- Tier S: WebBFF (UI/BFF, low impact)
+
+[SOLID ANTI-PATTERNS]
+
+### Single Responsibility Violation
+**Symptom:** Class has multiple reasons to change (validation, persistence, formatting, email).
+**Violates:** SRP.
+**Fix:** Split into focused classes, each with one responsibility.
+**Example:** See `examples/refactoring/srp-god-class/`.
+
+### Open/Closed Violation
+**Symptom:** Modifying existing code to add new cases (if/switch on type).
+**Violates:** OCP.
+**Fix:** Use interfaces/strategies; extend via new implementations, not modification.
+**Example:**
+```typescript
+// ❌ BAD: Modification for new cases
+class PaymentProcessor {
+  process(type: string, amount: number) {
+    if (type === 'credit') { /* ... */ }
+    else if (type === 'paypal') { /* ... */ }
+    // Adding new type requires modification
+  }
+}
+
+// ✅ GOOD: Extension via interfaces
+interface PaymentMethod {
+  process(amount: number): Promise<void>;
+}
+class CreditCardPayment implements PaymentMethod { }
+class PayPalPayment implements PaymentMethod { }
+// Adding new type: implement interface, no modification needed
+```
+
+### Liskov Substitution Violation
+**Symptom:** Subtype doesn't satisfy base type contract (throws exceptions for valid inputs, returns different shapes).
+**Violates:** LSP.
+**Fix:** Ensure all implementations satisfy the same contract.
+**Example:**
+```typescript
+// ❌ BAD: Repository throws for valid input
+class UserRepository {
+  findById(id: string): Promise<User> {
+    if (!id) throw new Error('ID required'); // Widens precondition
+  }
+}
+
+// ✅ GOOD: Repository handles all valid inputs
+class UserRepository {
+  findById(id: string): Promise<User | null> {
+    if (!id) return null; // Same contract
+  }
+}
+```
+
+### Interface Segregation Violation
+**Symptom:** Large interface with many methods; clients depend on methods they don't use.
+**Violates:** ISP.
+**Fix:** Split into focused interfaces; clients depend only on what they need.
+**Example:**
+```typescript
+// ❌ BAD: Large interface
+interface UserService {
+  create(): void;
+  update(): void;
+  delete(): void;
+  validate(): void;
+  format(): void;
+  sendEmail(): void;
+}
+
+// ✅ GOOD: Focused interfaces
+interface UserRepository {
+  save(user: User): Promise<void>;
+  findById(id: string): Promise<User | null>;
+}
+interface EmailSender {
+  sendWelcomeEmail(email: string): Promise<void>;
+}
+```
+
+### Dependency Inversion Violation
+**Symptom:** High-level modules depend on low-level modules (use cases instantiate concrete repositories).
+**Violates:** DIP.
+**Fix:** Define ports (interfaces) in Domain/Application; inject dependencies via constructor.
+**Example:** See `examples/refactoring/dip-inversion/`.
+
+[CODE QUALITY ANTI-PATTERNS]
+
+### Deep Relative Imports
+**Symptom:** Imports like `../../Domain/Entities/User` (beyond one level).
+**Violates:** Maintainability, path alias requirements (TypeScript).
+**Fix:** Use path aliases (`@identity/domain/Entities/User`).
+**Example:**
+```typescript
+// ❌ BAD: Deep relative import
+import { User } from '../../Domain/Entities/User.js';
+
+// ✅ GOOD: Path alias
+import { User } from '@identity/domain/Entities/User.js';
+```
+
+### Magic Numbers/Strings
+**Symptom:** Hard-coded numbers/strings without explanation.
+**Violates:** Readability, maintainability.
+**Fix:** Extract to named constants or configuration.
+**Example:**
+```typescript
+// ❌ BAD: Magic numbers
+if (password.length < 8) { }
+
+// ✅ GOOD: Named constant
+const MIN_PASSWORD_LENGTH = 8;
+if (password.length < MIN_PASSWORD_LENGTH) { }
+```
+
+### Copy-Paste Programming
+**Symptom:** Duplicated code across multiple files.
+**Violates:** DRY (Don't Repeat Yourself).
+**Fix:** Extract common logic to shared functions/modules (but avoid wrong abstraction).
+**Example:**
+```typescript
+// ❌ BAD: Duplicated validation
+function validateEmail(email: string): boolean {
+  return email.includes('@') && email.includes('.');
+}
+function validateUserEmail(email: string): boolean {
+  return email.includes('@') && email.includes('.');
+}
+
+// ✅ GOOD: Shared validation
+function validateEmail(email: string): boolean {
+  return email.includes('@') && email.includes('.');
+}
+```
+
+### Premature Optimization
+**Symptom:** Optimizing code before profiling or measuring.
+**Violates:** Performance best practices (measure first).
+**Fix:** Profile first; optimize only hot paths with evidence.
+**Example:**
+```typescript
+// ❌ BAD: Premature optimization
+const result = items.map(x => x.value).filter(x => x > 0).reduce((a, b) => a + b, 0);
+
+// ✅ GOOD: Measure first, then optimize if needed
+// (If profiling shows this is a bottleneck, then optimize)
+```
+
+### Missing Error Handling
+**Symptom:** Functions don't handle errors; exceptions bubble up uncaught.
+**Violates:** Reliability, observability.
+**Fix:** Handle errors at boundaries; log with context; return appropriate error responses.
+**Example:**
+```typescript
+// ❌ BAD: No error handling
+async function getUser(id: string) {
+  return await db.users.findById(id);
+}
+
+// ✅ GOOD: Error handling
+async function getUser(id: string): Promise<User | null> {
+  try {
+    return await db.users.findById(id);
+  } catch (error) {
+    logger.error({ event: 'get_user_failed', id, error });
+    return null;
+  }
+}
+```
+
+[SECURITY ANTI-PATTERNS]
+
+### SQL Injection
+**Symptom:** User input concatenated into SQL queries.
+**Violates:** Security (OWASP A03:2021 – Injection).
+**Fix:** Use parameterized queries or ORM.
+**Example:** See `.cursor/rules/30-security.mdc` (A03:2021 – Injection).
+
+### XSS (Cross-Site Scripting)
+**Symptom:** Untrusted user input rendered in HTML without escaping.
+**Violates:** Security (OWASP A03:2021 – Injection).
+**Fix:** Escape output; use framework escaping; set CSP headers.
+**Example:** See `.cursor/rules/30-security.mdc` (Common Vulnerabilities Catalog).
+
+### Missing Authorization
+**Symptom:** Authorization checks only in UI, not in API/use cases.
+**Violates:** Security (OWASP A01:2021 – Broken Access Control).
+**Fix:** Authorize at API/use case boundaries, not just UI.
+**Example:** See `.cursor/rules/30-security.mdc` (A01:2021 – Broken Access Control).
+
+### Hardcoded Secrets
+**Symptom:** Secrets (API keys, passwords) hardcoded in source code.
+**Violates:** Security (OWASP A02:2021 – Cryptographic Failures).
+**Fix:** Use environment variables or secret managers.
+**Example:** See `.cursor/rules/30-security.mdc` (A02:2021 – Cryptographic Failures).
+
+[INTEGRATION WITH SOLID, CLEAN ARCHITECTURE, DDD]
+
+- **SOLID violations:** See `examples/refactoring/` for SRP, DIP examples.
+- **Clean Architecture violations:** See `examples/refactoring/clean-architecture/` for:
+  - `fat-controller/` — Moving business logic from controllers to use cases
+  - `framework-in-domain/` — Removing framework dependencies from Domain layer
+  - `cross-context-direct/` — Replacing direct cross-context imports with public API modules
+- **DDD violations:** See `.cursor/rules/36-architecture.mdc` for bounded context, trust tier examples.
+
+**See also:**
+- `.cursor/rules/45-solid-principles.mdc` — SOLID principles with architecture integration
+- `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns
+- `.cursor/rules/44-ddd.mdc` — Domain-Driven Design methodology
+- `examples/refactoring/` — Refactoring examples for each anti-pattern
+
+[REFACTOR WORKFLOW INTEGRATION]
+
+- Each anti-pattern should have at least one before/after refactor example in `examples/refactoring/`.
+- Examples are usable by `@refactorer` and `@code-reviewer` agents.
+- Link from this rule file to examples directory.
+
+**Example locations:**
+- `examples/refactoring/srp-god-class/` — SRP violations ✅
+- `examples/refactoring/dip-inversion/` — DIP violations ✅
+- `examples/refactoring/clean-architecture/fat-controller/` — Clean Architecture violations ✅
+
+[VERIFICATION]
+
+- For code reviews:
+  - Check for architecture anti-patterns (fat controller, anemic domain, framework in domain).
+  - Check for SOLID violations (SRP, OCP, LSP, ISP, DIP).
+  - Check for code quality anti-patterns (deep imports, magic numbers, copy-paste).
+  - Check for security anti-patterns (SQL injection, XSS, missing authorization).
+
+- For refactoring:
+  - Identify anti-patterns in current code.
+  - Propose fixes following examples in `examples/refactoring/`.
+  - Ensure fixes improve architecture compliance.
+
+[AGENT GUIDANCE]
+
+- **@code-reviewer:** Flag anti-patterns; recommend fixes from examples.
+- **@refactorer:** Use anti-pattern catalog to identify issues; propose fixes.
+- **@architect:** Design to avoid anti-patterns; use bounded contexts, trust tiers, ports/adapters.

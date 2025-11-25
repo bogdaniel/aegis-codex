@@ -1,0 +1,108 @@
+# Pre-commit hooks for Aegis Codex architecture enforcement
+# Install: pip install pre-commit && pre-commit install
+# Run manually: pre-commit run --all-files
+
+repos:
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+
+  # TypeScript/JavaScript: ESLint with architecture rules
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v9.0.0
+    hooks:
+      - id: eslint
+        name: ESLint (Architecture Rules)
+        types: [file]
+        files: \.(ts|tsx|js|jsx)$
+        exclude: ^(node_modules|dist|\.next|build)/
+        additional_dependencies:
+          - eslint@^9.0.0
+          - '@typescript-eslint/parser@^7.0.0'
+          - '@typescript-eslint/eslint-plugin@^7.0.0'
+        args:
+          - '--config'
+          - 'test/example-app/.eslintrc.json'
+          - '--ext'
+          - '.ts,.tsx,.js,.jsx'
+        # Only run if ESLint config exists
+        pass_filenames: true
+        require_serial: true
+
+  # TypeScript: Check for deep relative imports
+  - repo: local
+    hooks:
+      - id: check-deep-relative-imports
+        name: Check Deep Relative Imports
+        entry: bash -c 'if find . -name "*.ts" -type f ! -path "*/node_modules/*" ! -path "*/dist/*" ! -path "*/.next/*" ! -path "*/build/*" ! -path "*/test/scenarios/*" | xargs grep -l "\.\./\.\./\.\." 2>/dev/null | grep -v ".test.ts" | grep -v ".spec.ts" | head -1; then echo "❌ Deep relative imports (../../ or deeper) found. Use path aliases instead (e.g., @identity/domain/*)"; exit 1; else echo "✅ No deep relative imports found"; exit 0; fi'
+        language: system
+        types: [file]
+        files: \.(ts|tsx)$
+        exclude: ^(node_modules|dist|\.next|build|test/scenarios)/
+
+  # PHP: PHPCS and PHPStan (if composer.json exists)
+  - repo: local
+    hooks:
+      - id: php-architecture-check
+        name: PHP Architecture Check (PHPCS + PHPStan)
+        entry: bash -c 'if [ -f "composer.json" ]; then composer install --no-interaction --prefer-dist --quiet && vendor/bin/phpcs --standard=PSR12 --extensions=php --ignore=vendor/ . && vendor/bin/phpstan analyse --no-progress --level=max --error-format=table || exit 0; else echo "No composer.json found. Skipping PHP checks."; exit 0; fi'
+        language: system
+        types: [file]
+        files: \.php$
+        exclude: ^(vendor|node_modules)/
+
+  # Rust: fmt and clippy (if Cargo.toml exists)
+  - repo: https://github.com/doublify/pre-commit-rust
+    rev: v1.0
+    hooks:
+      - id: fmt
+        name: Rust fmt
+        files: \.rs$
+      - id: clippy
+        name: Rust clippy
+        files: \.rs$
+        args: ['--', '-D', 'warnings']
+
+  # Go: fmt and vet (if go.mod exists)
+  - repo: https://github.com/dnephin/pre-commit-golang
+    rev: v0.5.1
+    hooks:
+      - id: go-fmt
+        name: Go fmt
+      - id: go-vet
+        name: Go vet
+      - id: go-mod-tidy
+        name: Go mod tidy
+
+  # Python: Black and Ruff (if pyproject.toml or requirements.txt exists)
+  - repo: https://github.com/psf/black
+    rev: 24.1.1
+    hooks:
+      - id: black
+        name: Python Black
+        files: \.py$
+        exclude: ^(venv|\.venv|env)/
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.9
+    hooks:
+      - id: ruff
+        name: Ruff (Python linter)
+        args: ['--fix', '--exit-non-zero-on-fix']
+
+  # Markdown: Check formatting
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.38.0
+    hooks:
+      - id: markdownlint
+        name: Markdown lint
+        args: ['--fix']
+        exclude: ^(node_modules|vendor|\.git)/
+

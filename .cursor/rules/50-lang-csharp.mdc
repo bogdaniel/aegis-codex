@@ -1,0 +1,191 @@
+---
+description: "C# / .NET standards: idiomatic, typed, and architecture-enforced."
+alwaysApply: false
+globs:
+  - "**/*.cs"
+---
+
+[C# / .NET STANDARDS]
+- Stack: .NET 8+, C# 12+.
+- Style/lint: EditorConfig, StyleCop, Roslyn analyzers; command: `dotnet format --verify` and `dotnet build` (with analyzers enabled).
+- Errors: use exceptions appropriately; prefer `Option<T>` or nullable reference types over null returns; avoid `dynamic`.
+- Concurrency: `Task`, `async`/`await`, `IAsyncEnumerable`; use `SemaphoreSlim` for bounded concurrency; avoid `lock` where possible.
+- Safety: parameterized queries (Entity Framework, Dapper); validate inputs; avoid logging secrets; TLS for network calls; run `dotnet list package --vulnerable`.
+- Testing: xUnit, Moq, FluentAssertions; `dotnet test`; table-driven tests including negatives.
+- Performance: avoid unnecessary allocations; reuse pooled connections; prefer `Span<T>`/`Memory<T>` for zero-copy operations; use `IAsyncEnumerable` for streaming.
+- Verification artifact: `dotnet build && dotnet test && dotnet format --verify && dotnet list package --vulnerable`.
+
+[ARCHITECTURE INTEGRATION — CLEAN + HEX + DDD]
+
+- **MANDATORY:** All C# backend code MUST follow Clean Architecture, Hexagonal Architecture, and DDD patterns as defined in `.cursor/rules/36-architecture.mdc`.
+
+- Project/Assembly Structure:
+  - Require separate projects/assemblies or folders per bounded context, and enforce namespace conventions accordingly.
+  - Example: `Company.IdentityContext.Domain`, `Company.IdentityContext.Application`, `Company.OrdersContext.Domain`.
+  - Each bounded context should be a separate .NET project (Class Library).
+  - Namespace structure: `{Company}.{Context}.{Layer}.{Feature}` (e.g., `Company.Identity.Domain.User`).
+
+- Domain layer (`{Context}.Domain` project/namespace):
+  - **FORBIDDEN:** No framework dependencies whatsoever.
+  - **FORBIDDEN:** `[Entity]`, `[Table]`, `[Key]`, `[Required]`, `[ApiController]`, `[Route]`, `[HttpPost]`, `[FromBody]`, `DbContext`, `DbSet`, or any ASP.NET Core/Entity Framework attributes/classes.
+  - **FORBIDDEN:** Entity Framework Core, ASP.NET Core, or any ORM frameworks in Domain.
+  - **FORBIDDEN:** `HttpRequest`, `HttpResponse`, `ControllerBase`, or any ASP.NET Core types.
+  - Contains:
+    - Entities (plain C# classes), Value Objects, Domain Services, Domain Events, Repository interfaces (plain interfaces).
+  - All business invariants live here.
+  - Example: `Company.Identity.Domain.User` (plain class), `Company.Identity.Domain.IUserRepository` (interface).
+
+- Application layer (`{Context}.Application` project/namespace):
+  - **FORBIDDEN:** Direct framework dependencies (same as Domain).
+  - **FORBIDDEN:** ASP.NET Core attributes (`[ApiController]`, `[Route]`, etc.).
+  - **FORBIDDEN:** Entity Framework Core (`DbContext`, `DbSet`, etc.).
+  - Use Cases, Commands/Queries, Application Services.
+  - Depends on Domain; can depend on simple DTOs and interfaces.
+  - No direct ORM/HTTP/framework usage; use ports (interfaces) defined in Domain/Application.
+  - Example: `Company.Identity.Application.RegisterUser` (use case), `Company.Identity.Application.Commands.RegisterUserCommand` (DTO).
+
+- **REJECTION CRITERIA:**
+  - Domain/Application code importing ASP.NET Core/Entity Framework classes → **REJECT**, use ports/adapters.
+  - Use case using `HttpRequest` or ASP.NET Core `[FromBody]` → **REJECT**, pass DTOs.
+  - Domain entity inheriting from `DbContext` or annotated with `[Entity]` → **REJECT**, use plain C# classes.
+  - Application use case annotated with `[ApiController]` → **REJECT**, use plain C# classes.
+
+- Interface layer (`{Context}.Interface` project/namespace, HTTP/CLI adapters):
+  - Controllers (`[ApiController]`), console commands, message consumers, view models.
+  - Maps HTTP/CLI → Application use cases (input DTOs) and maps results → HTTP/JSON/View models.
+  - **MANDATORY:** Controllers are thin; delegate to Application use cases.
+  - **FORBIDDEN:** Business logic in controllers → **REJECT**, move to Application use cases.
+  - Example: `Company.Identity.Interface.Http.IdentityController` (thin, delegates to `RegisterUser` use case).
+
+- Infrastructure layer (`{Context}.Infrastructure` project/namespace):
+  - Entity Framework entities, DbContext, external API clients, message publishers.
+  - Implements ports (interfaces) from Domain/Application.
+  - Contains ORM mappings, SDK usage, and technical glue.
+  - Example: `Company.Identity.Infrastructure.Persistence.EfUserRepository` (implements `IUserRepository` port).
+
+- Forbidden patterns:
+  - Business logic inside controllers, services with framework attributes, or Entity Framework entities in Domain.
+  - Domain code depending on ASP.NET Core attributes or framework-specific classes.
+  - Cross-context DB access or using one bounded context's entities in another.
+  - Controllers accessing repositories directly → **REJECT**, use Application use cases.
+
+[ASP.NET CORE INTEGRATION]
+
+- ASP.NET Core is allowed in Infrastructure and Interface layers only.
+- Use ASP.NET Core for:
+  - Dependency injection (wiring Infrastructure adapters to Application use cases).
+  - HTTP controllers (`[ApiController]` in Interface layer).
+  - Database configuration (Entity Framework Core, connection pooling in Infrastructure).
+  - External service clients (HttpClient, IHttpClientFactory in Infrastructure).
+- **Domain/Application remain pure:**
+  - No ASP.NET Core attributes in Domain/Application projects.
+  - Use constructor injection in Application use cases (.NET DI provides dependencies, but use cases don't know about ASP.NET Core).
+  - Example: `RegisterUser` use case receives `IUserRepository` via constructor (.NET DI provides implementation, but use case doesn't import ASP.NET Core).
+
+[.NET CORE CONVENTIONS]
+
+- Follow ASP.NET Core conventions by default; diverge only with strong reasons.
+- Controllers:
+  - Keep thin; delegate to Application use cases.
+  - Use dependency injection via constructor (.NET DI handles wiring).
+  - Example:
+    ```csharp
+    [ApiController]
+    [Route("api/identity")]
+    public class IdentityController : ControllerBase
+    {
+        private readonly RegisterUser _registerUser;
+        
+        public IdentityController(RegisterUser registerUser)
+        {
+            _registerUser = registerUser;
+        }
+        
+        [HttpPost("register")]
+        public IActionResult Register([FromBody] RegisterUserRequest request)
+        {
+            // Map HTTP → Command
+            var command = new RegisterUserCommand(request.Email, request.Password);
+            // Delegate to use case
+            _registerUser.Execute(command);
+            return Ok();
+        }
+    }
+    ```
+- Configuration:
+  - Use `Program.cs` or `Startup.cs` in Infrastructure/Interface layers for wiring.
+  - Wire Application use cases with Infrastructure adapters.
+  - Example:
+    ```csharp
+    // Program.cs
+    builder.Services.AddScoped<IUserRepository, EfUserRepository>();
+    builder.Services.AddScoped<RegisterUser>(sp =>
+    {
+        var repo = sp.GetRequiredService<IUserRepository>();
+        return new RegisterUser(repo, new BCryptPasswordHasher());
+    });
+    ```
+
+[SECURITY & DATA SAFETY]
+
+- Input handling:
+  - Validate and sanitize all untrusted input; use Data Annotations (`[Required]`, `[EmailAddress]`, etc.) in Interface layer DTOs.
+  - Use ASP.NET Core Identity for authentication/authorization (in Interface/Infrastructure layers only).
+- Persistence:
+  - Use Entity Framework Core with parameterized queries; never build SQL via string concatenation.
+  - Avoid dynamic queries without parameter binding.
+- Secrets & credentials:
+  - Never hard-code secrets; use `IConfiguration` with environment variables or Azure Key Vault.
+- Authentication & authorization:
+  - Keep AuthN/AuthZ logic in appropriate contexts (IdentityContext, PolicyContext).
+  - Use ASP.NET Core Identity/Authorization in Interface layer; Domain/Application remain framework-free.
+
+[PERFORMANCE & SCALABILITY]
+
+- Query behavior:
+  - Avoid N+1 queries; use `.Include()` or projection where necessary.
+  - Use pagination (`Skip`/`Take` or `IAsyncEnumerable`) for large result sets.
+- Caching:
+  - Use `IMemoryCache` or `IDistributedCache` in Infrastructure layer only (not Domain/Application).
+  - Invalidate cache explicitly on domain events or state changes.
+- Connection pooling:
+  - Configure connection pooling in `DbContext` options (Infrastructure layer).
+
+[TESTING & TOOLING]
+
+- Testing:
+  - Use xUnit with:
+    - Unit tests for Domain and Application (no ASP.NET Core/EF Core).
+    - Integration tests for Infrastructure and Interface boundaries (use `WebApplicationFactory`).
+  - Mock external services; avoid real network calls in tests.
+  - Use TestContainers or in-memory databases for database integration tests.
+  - Ensure critical domain invariants are covered (happy path + edge cases + error paths).
+- Static analysis & QA:
+  - Run Roslyn analyzers: `dotnet build` (analyzers enabled by default).
+  - Run StyleCop: `dotnet format --verify` (if StyleCop is configured).
+  - Run dependency check: `dotnet list package --vulnerable`.
+- CI pipeline (baseline commands):
+  - `dotnet build`.
+  - `dotnet test`.
+  - `dotnet format --verify`.
+  - `dotnet list package --vulnerable`.
+
+[ANTI-PATTERS]
+
+- Anemic models used as dumb structs while controllers hold all logic.
+- Direct use of ASP.NET Core attributes in Domain/Application code (`[ApiController]`, `[Route]`, `[FromBody]`).
+- Large God classes/services that mix responsibilities across multiple bounded contexts.
+- Inline SQL, hand-built JSON strings, or manual serialization where frameworks provide safe abstractions.
+- Copy-pasting validation rules or business logic across controllers instead of centralizing in Domain/Application.
+- Controllers accessing repositories directly (bypassing Application use cases).
+
+[VERIFICATION]
+
+- For C# changes:
+  - Confirm Domain/Application projects have no ASP.NET Core/Entity Framework imports.
+  - Check that domain code is framework-free and follows Clean/Hex/DDD layering.
+  - Run the standard toolchain (build, test, format, dependency check).
+- For ASP.NET Core:
+  - Cross-check structure against `.cursor/rules/36-architecture.mdc`.
+  - Ensure controllers are thin and domain logic is in Domain/Application layers.
+  - Verify ASP.NET Core is only used in Infrastructure/Interface layers.

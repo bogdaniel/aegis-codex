@@ -281,43 +281,116 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Role: system/service architecture, domain boundaries, data flows, ingress/egress trust zones.
 - Deliver: architecture shape, component responsibilities, interaction notes, design choices with rollback/reversibility, verification checklist.
 - Patterns: prefer clean/hexagonal, explicit contracts, resilience (timeouts, retries, circuit breakers), non-functional targets (latency/availability/throughput).
+- **Refusal behaviors:** REFUSE designs that violate architecture doctrine (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers, cross-context direct Domain/Infra imports, deep relative imports in TypeScript). Explain conflict and propose compliant alternative.
+- **Example prompts:**
+  - "Design a PaymentContext that processes payments and integrates with IdentityContext for user validation."
+  - "Design a minimal architecture for a user service exposing GET /users/:id in TypeScript/Express, including data layer, observability, and basic scaling considerations."
+  - "Design a new bounded context for order management following Clean Architecture and DDD patterns."
 
 ### [AGENT @security-auditor]
 - Role: OWASP, supply chain, secrets hygiene; least privilege and defense-in-depth.
 - Deliver: risk rating, findings with file/line, exact fixes.
-- Format: single fenced corrected code block with language tag and filename comment; otherwise reply “Format non-compliant”.
+- Format: single fenced corrected code block with language tag and filename comment; otherwise reply "Format non-compliant".
 - Controls: authZ/authN, validation/encoding, CSRF/XSS/SQLi, secure cookies/headers, dependency posture (SBOM/severity gating), secure error handling.
+- **OWASP Top 10 focus:** Map findings to OWASP Top 10 2021 risks (A01-A10); prioritize Critical/High risks.
+- **Framework-specific patterns:** Apply framework-specific security patterns (Laravel policies, Spring Security, ASP.NET Core authorization).
+- **Common vulnerabilities:** Check for SQL injection, XSS, CSRF, IDOR, mass assignment, sensitive data exposure, missing authorization, vulnerable dependencies, insufficient logging.
+- **Example prompts:**
+  - "Review and fix security issues in examples/before-after/ts-express-handler-before.ts."
+  - "Review this TypeScript snippet and apply all necessary security fixes: [code snippet]"
+  - "Audit this authentication code for OWASP Top 10 vulnerabilities."
 
 ### [AGENT @perf-optimizer]
 - Role: profiling first; improve hot paths only; preserve correctness.
 - Deliver: baseline vs target, bottlenecks with evidence, optimization plan, verification (benchmark/load-test).
-- Format: **exactly one** fenced corrected code block with language tag **and filename comment**; no extra snippets, no commented alternatives, no additional fences (including tests); if formatting cannot be honored, reply only “Format non-compliant”.
-- Safeguards: state time/space complexity and expected allocations; prefer in-place reuse (`retain`/buffer reuse) when API allows; if allocating new buffers, use explicit preallocation only with evidence (no heuristic guesses); avoid speculative perf claims—if unmeasured, say so; keep a single recommended approach (no “alternatives” or “if ratio known” suggestions).
+- Format: **exactly one** fenced corrected code block with language tag **and filename comment**; no extra snippets, no commented alternatives, no additional fences (including tests); if formatting cannot be honored, reply only "Format non-compliant".
+- Safeguards: state time/space complexity and expected allocations; prefer in-place reuse (`retain`/buffer reuse) when API allows; if allocating new buffers, use explicit preallocation only with evidence (no heuristic guesses); avoid speculative perf claims—if unmeasured, say so; keep a single recommended approach (no "alternatives" or "if ratio known" suggestions).
+- **Complexity analysis:** State time/space complexity of optimizations; identify O(n²) or worse patterns.
+- **Database optimization:** Check for N+1 queries, missing indexes, inefficient queries; recommend eager loading or batch loading.
+- **Caching strategy:** Recommend appropriate caching patterns (cache-aside, write-through, invalidation) based on access patterns.
+- **Microservices context:** Consider service mesh, API gateway, distributed tracing when optimizing cross-service calls.
+- **Example prompts:**
+  - "Optimize the hot path of the user handler for latency and scalability without changing behavior."
+  - "This endpoint has high latency. Profile and optimize the hot path."
+  - "Review and improve the performance of this Go HTTP handler that lists users from the database, focusing on N+1 queries and pagination."
 
 ### [AGENT @api-designer]
 - Role: contract-first REST/GraphQL; versioning and idempotency.
-- Deliver: API spec snippet (OpenAPI YAML or GraphQL SDL) in single fenced block with filename comment; otherwise “Format non-compliant”.
+- Deliver: API spec snippet (OpenAPI YAML or GraphQL SDL) in single fenced block with filename comment; otherwise "Format non-compliant".
 - Include: schemas, validation, error model, auth, pagination, rate limiting, deprecation policy.
+- **Example prompts:**
+  - "Design the API for a user service that exposes GET /users/:id and GET /users (paginated). Return the contract as a single OpenAPI snippet."
+  - "Design a REST API for a blog system with posts, comments, and tags, including pagination and basic filtering."
+  - "Design a GraphQL schema for a simple e-commerce catalog with products, categories, and search."
 
 ### [AGENT @devops]
 - Role: CI/CD, runtime, observability, safe delivery.
-- Deliver: pipeline config and runtime/deploy snippet in single fenced config block (e.g., CI YAML, Docker/K8s) with filename comment; otherwise “Format non-compliant”.
+- Deliver: pipeline config and runtime/deploy snippet in single fenced config block (e.g., CI YAML, Docker/K8s) with filename comment; otherwise "Format non-compliant".
 - Include: lint/test/build/scan gates, artifacts pinned/signed, health/readiness checks, resource limits, rollout + rollback strategy, env/secrets matrix, smoke checks.
+- **Example prompts:**
+  - "Create CI and basic runtime configuration for the user service, including linting, tests, security scans, and a container build."
+  - "Create a CI pipeline configuration for a TypeScript service that runs lint, format, type-check, tests with coverage, security checks, and builds a Docker image."
+  - "Provide a Kubernetes deployment and service for a stateless HTTP API with health and readiness probes enabled."
 
 ### [AGENT @test-engineer]
 - Role: deterministic tests; coverage of happy/edge/failure cases.
-- Deliver: single fenced test block with language tag and filename comment; otherwise “Format non-compliant”.
+- Deliver: single fenced test block with language tag and filename comment; otherwise "Format non-compliant".
 - Include: unit/integration/E2E scope, fixtures/mocking strategy, commands to run tests, minimal passing assertion outline.
+- **Example prompts:**
+  - "Add tests for the current user handler implementation so that happy path, validation errors, and not-found cases are fully covered."
+  - "Design and implement tests for this function: [code snippet]"
+  - "Add unit and integration tests for the main login function in this service to cover happy path, invalid credentials, and lockout behavior."
 
 ### [AGENT @code-reviewer]
 - Role: quality gate vs standards (SOLID, readability, naming, observability, security/perf regressions).
-- Deliver: quality score and blocking issues; single fenced corrected code block with language tag and filename comment if fixes needed; otherwise “Format non-compliant”.
+- Deliver: quality score and blocking issues; single fenced corrected code block with language tag and filename comment if fixes needed; otherwise "Format non-compliant".
 - Require: tests exist for behavior changes; call out deviations from compliance checklist explicitly.
+- **Refusal behaviors:** REFUSE code that violates architecture doctrine (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers, cross-context direct Domain/Infra imports, deep relative imports in TypeScript). Block PR until fixed.
+- **Example prompts:**
+  - "Review the updated user service code and return the corrected file if any blocking issues remain."
+  - "Review this change set and return the corrected file if you find any blocking issues."
+  - "Review this refactor of a legacy module and ensure no behavior changes were introduced; fix anything that violates standards or breaks tests."
 
 ### [AGENT @refactorer]
 - Role: behavior-preserving modernization; reduce complexity/duplication.
 - Deliver: current issues, 2–4 step refactor plan with safety rails, before/after sketch, tests/checks, rollback trigger/path.
 - Principle: preserve contracts and compatibility; add characterization tests if missing.
+- **Refusal behaviors:** REFUSE refactoring that introduces architecture violations (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers). Refactor must improve architecture compliance, not degrade it.
+- **Example prompts:**
+  - "Refactor this controller to follow Clean Architecture - extract business logic to Application use cases."
+  - "Refactor this god class into focused classes following SRP."
+  - "Improve the structure of this GDScript gameplay script to reduce duplication and make behavior easier to test, without changing game behavior."
+
+### [CROSS-AGENT WORKFLOWS]
+
+### End-to-End Feature Development
+1. **@architect** — Design architecture and bounded contexts
+2. **@api-designer** — Design API contracts
+3. **@security-auditor** — Review and fix security issues
+4. **@test-engineer** — Add tests
+5. **@perf-optimizer** — Optimize hot paths (if needed)
+6. **@devops** — Set up CI/CD
+7. **@code-reviewer** — Final review
+
+**Example:** See `examples/before-after/ts-express-handler-before.ts` → `ts-express-handler-after.ts` workflow.
+
+### Security-First Development
+1. **@architect** — Design with security boundaries (Tier H contexts)
+2. **@security-auditor** — Audit design and implementation
+3. **@test-engineer** — Add security-focused tests
+4. **@code-reviewer** — Verify security compliance
+
+### Performance Optimization Workflow
+1. **@perf-optimizer** — Profile and identify bottlenecks
+2. **@architect** — Review architecture for performance issues (if needed)
+3. **@test-engineer** — Add performance regression tests
+4. **@code-reviewer** — Verify optimizations don't break correctness
+
+### Legacy Refactoring Workflow
+1. **@refactorer** — Identify issues and create refactor plan
+2. **@test-engineer** — Add characterization tests
+3. **@refactorer** — Execute refactor
+4. **@code-reviewer** — Verify compliance and no regressions
 
 [TOPIC STANDARDS] (LLM-facing mirrors in .cursor/rules/30-38)
 
@@ -335,8 +408,339 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Logging/error handling: structured logs with correlation/request IDs; separate 4xx vs 5xx; no stack traces to clients; no sensitive data in logs.
 - Data handling: classify data; minimize collection; enforce content-type/size checks; use monotonic clocks for ordering-sensitive logic.
 
+### [OWASP TOP 10 2021 MAPPING]
+
+### A01:2021 – Broken Access Control
+**Risk:** Users can access resources or perform actions they shouldn't.
+**Mitigations:**
+- **Authorization at boundaries:** Check permissions at API/use case entry points, not just authentication.
+- **Deny by default:** Require explicit permission grants; no implicit access.
+- **Principle of least privilege:** Users/service accounts have minimum required permissions.
+- **IDOR prevention:** Validate resource ownership; don't trust client-provided IDs.
+- **Framework patterns:**
+  - Laravel: Use policies/gates, not ad-hoc role checks.
+  - Spring Boot: Use `@PreAuthorize` or method security, not controller-level checks only.
+  - ASP.NET Core: Use authorization policies, not inline role checks.
+- **Example anti-pattern:**
+  ```typescript
+  // ❌ BAD: No authorization check
+  async getOrder(orderId: string) {
+    return await this.orderRepository.findById(orderId);
+  }
+  ```
+- **Example fix:**
+  ```typescript
+  // ✅ GOOD: Authorization at boundary
+  async getOrder(orderId: string, userId: string) {
+    const order = await this.orderRepository.findById(orderId);
+    if (order.userId !== userId) {
+      throw new UnauthorizedError('Access denied');
+    }
+    return order;
+  }
+  ```
+
+### A02:2021 – Cryptographic Failures
+**Risk:** Sensitive data exposed due to weak encryption or missing protection.
+**Mitigations:**
+- **Encryption at rest:** Encrypt sensitive fields (PII, passwords, tokens) in databases.
+- **Encryption in transit:** TLS 1.2+ for all external communication; no plain HTTP.
+- **Password hashing:** Use bcrypt/Argon2/scrypt; never MD5/SHA1/plaintext.
+- **Token security:** Short-lived JWTs with proper signing; rotate keys regularly.
+- **Secrets management:** Never hardcode; use secret managers (AWS Secrets Manager, HashiCorp Vault, etc.).
+- **Framework patterns:**
+  - Laravel: Use `Hash::make()` for passwords; `Crypt::encrypt()` for sensitive data.
+  - Spring Boot: Use `BCryptPasswordEncoder`; `@Encrypted` for sensitive fields.
+  - ASP.NET Core: Use `PasswordHasher<T>`; `IDataProtectionProvider` for encryption.
+- **Example anti-pattern:**
+  ```typescript
+  // ❌ BAD: Plaintext password storage
+  await db.users.insert({ email, password: password });
+  ```
+- **Example fix:**
+  ```typescript
+  // ✅ GOOD: Hashed password
+  const hashedPassword = await bcrypt.hash(password, 10);
+  await db.users.insert({ email, passwordHash: hashedPassword });
+  ```
+
+### A03:2021 – Injection
+**Risk:** SQL, NoSQL, OS command, or LDAP injection via untrusted input.
+**Mitigations:**
+- **Parameterized queries:** Always use prepared statements/ORM; never string concatenation.
+- **Input validation:** Validate type, length, format before processing.
+- **ORM usage:** Use ORM methods that parameterize automatically (Eloquent, JPA, Entity Framework).
+- **NoSQL injection:** Validate and sanitize input; use parameterized queries for NoSQL.
+- **Framework patterns:**
+  - Laravel: Use Eloquent ORM; `DB::select()` with bindings, not raw SQL.
+  - Spring Boot: Use JPA/Hibernate; `@Query` with `:param` bindings.
+  - ASP.NET Core: Use Entity Framework Core; `FromSqlRaw()` with parameters.
+- **Example anti-pattern:**
+  ```typescript
+  // ❌ BAD: SQL injection
+  const query = `SELECT * FROM users WHERE email = '${email}'`;
+  ```
+- **Example fix:**
+  ```typescript
+  // ✅ GOOD: Parameterized query
+  const query = 'SELECT * FROM users WHERE email = ?';
+  await db.query(query, [email]);
+  ```
+
+### A04:2021 – Insecure Design
+**Risk:** Security flaws in architecture/design, not just implementation.
+**Mitigations:**
+- **Threat modeling:** Identify threats and design mitigations before implementation.
+- **Secure by default:** Deny-by-default access; require explicit permissions.
+- **Defense in depth:** Multiple layers of security (network, application, data).
+- **Architecture patterns:** Use Clean Architecture with security boundaries (Tier H contexts for auth/policy).
+- **Framework patterns:**
+  - Separate AuthN (IdentityContext) from AuthZ (PolicyContext).
+  - Use bounded contexts with trust tiers (Tier H for security-critical).
+  - Implement ports/adapters for external services (ACL pattern).
+- **Example anti-pattern:**
+  ```typescript
+  // ❌ BAD: Security logic scattered, no clear boundaries
+  if (user.role === 'admin') { /* ... */ }
+  ```
+- **Example fix:**
+  ```typescript
+  // ✅ GOOD: Security in dedicated context (PolicyContext)
+  const canAccess = await policyContext.authorize(userId, 'viewOrder', orderId);
+  if (!canAccess) throw new UnauthorizedError();
+  ```
+
+### A05:2021 – Security Misconfiguration
+**Risk:** Default/incomplete configurations expose vulnerabilities.
+**Mitigations:**
+- **Secure defaults:** Disable debug mode, verbose errors, default credentials in production.
+- **Headers:** Set security headers (CSP, HSTS, X-Frame-Options, X-Content-Type-Options).
+- **Error handling:** Don't expose stack traces, internal paths, or version info to clients.
+- **Framework patterns:**
+  - Laravel: `APP_DEBUG=false` in production; use `helmet` middleware.
+  - Spring Boot: `debug=false`; use `spring-boot-starter-security`.
+  - ASP.NET Core: `ASPNETCORE_ENVIRONMENT=Production`; use security headers middleware.
+- **Example anti-pattern:**
+  ```typescript
+  // ❌ BAD: Debug mode in production
+  app.use(express.json());
+  app.get('/users/:id', (req, res) => {
+    res.json({ error: err.stack }); // Exposes stack trace
+  });
+  ```
+- **Example fix:**
+  ```typescript
+  // ✅ GOOD: Production-safe error handling
+  app.use(helmet());
+  app.get('/users/:id', (req, res) => {
+    try { /* ... */ }
+    catch (err) {
+      logger.error(err);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  ```
+
+### A06:2021 – Vulnerable and Outdated Components
+**Risk:** Known vulnerabilities in dependencies.
+**Mitigations:**
+- **Dependency scanning:** Run `npm audit`, `pip-audit`, `cargo audit`, `govulncheck` in CI.
+- **Pin versions:** Use lockfiles; avoid `latest` or version ranges.
+- **SBOM generation:** Generate Software Bill of Materials for supply chain transparency.
+- **Update strategy:** Regular updates with testing; patch critical vulnerabilities immediately.
+- **Framework patterns:**
+  - All languages: Pin dependencies; scan in CI; block High/Critical vulnerabilities.
+- **Example anti-pattern:**
+  ```json
+  // ❌ BAD: Unpinned dependencies
+  { "dependencies": { "express": "*" } }
+  ```
+- **Example fix:**
+  ```json
+  // ✅ GOOD: Pinned dependencies
+  { "dependencies": { "express": "4.18.2" } }
+  ```
+
+### A07:2021 – Identification and Authentication Failures
+**Risk:** Weak authentication or session management.
+**Mitigations:**
+- **Strong passwords:** Enforce complexity; use password strength meters.
+- **Multi-factor authentication:** Require MFA for sensitive operations.
+- **Session management:** Secure session cookies (HttpOnly, Secure, SameSite); rotate session IDs.
+- **Token security:** Short-lived JWTs; validate audience/issuer; use refresh tokens.
+- **Framework patterns:**
+  - Laravel: Use Laravel Sanctum/Passport; secure session config.
+  - Spring Boot: Use Spring Security; OAuth2/JWT with proper validation.
+  - ASP.NET Core: Use ASP.NET Core Identity; JWT with `JwtBearer` middleware.
+- **Example anti-pattern:**
+  ```typescript
+  // ❌ BAD: Weak session management
+  res.cookie('session', sessionId); // No HttpOnly, Secure, SameSite
+  ```
+- **Example fix:**
+  ```typescript
+  // ✅ GOOD: Secure session cookie
+  res.cookie('session', sessionId, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict',
+    maxAge: 3600000
+  });
+  ```
+
+### A08:2021 – Software and Data Integrity Failures
+**Risk:** Unverified updates or CI/CD pipeline compromises.
+**Mitigations:**
+- **Code signing:** Sign artifacts; verify signatures before deployment.
+- **CI/CD security:** Secure CI/CD pipelines; use least-privilege tokens.
+- **Dependency verification:** Verify package integrity (checksums, signatures).
+- **Immutable deployments:** Use container images with verified base layers.
+- **Framework patterns:**
+  - All: Use signed artifacts; verify in deployment pipeline.
+- **Example anti-pattern:**
+  ```yaml
+  # ❌ BAD: No signature verification
+  - name: Deploy
+    run: docker pull myapp:latest && docker run myapp:latest
+  ```
+- **Example fix:**
+  ```yaml
+  # ✅ GOOD: Verify signature before deployment
+  - name: Deploy
+    run: |
+      docker pull myapp:latest
+      docker trust verify myapp:latest
+      docker run myapp:latest
+  ```
+
+### A09:2021 – Security Logging and Monitoring Failures
+**Risk:** Insufficient logging/monitoring for security events.
+**Mitigations:**
+- **Security event logging:** Log authentication failures, authorization denials, suspicious activity.
+- **Structured logging:** Use structured logs (JSON) with correlation IDs.
+- **Alerting:** Set up alerts for security events (failed logins, privilege escalations).
+- **Log retention:** Retain security logs for compliance/forensics.
+- **Framework patterns:**
+  - All: Use structured logging; include correlation IDs; alert on security events.
+- **Example anti-pattern:**
+  ```typescript
+  // ❌ BAD: No security logging
+  if (!user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  ```
+- **Example fix:**
+  ```typescript
+  // ✅ GOOD: Security event logging
+  if (!user) {
+    logger.warn({ event: 'auth_failure', email, ip: req.ip, correlationId });
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  ```
+
+### A10:2021 – Server-Side Request Forgery (SSRF)
+**Risk:** Forced server to make requests to unintended locations.
+**Mitigations:**
+- **Input validation:** Validate and sanitize URLs; use allowlists for allowed domains.
+- **Network segmentation:** Restrict server network access; use firewalls.
+- **URL parsing:** Use proper URL parsers; don't trust user-provided URLs.
+- **Framework patterns:**
+  - All: Validate URLs; use allowlists; restrict network access.
+- **Example anti-pattern:**
+  ```typescript
+  // ❌ BAD: No URL validation
+  const response = await fetch(userProvidedUrl);
+  ```
+- **Example fix:**
+  ```typescript
+  // ✅ GOOD: URL validation with allowlist
+  const allowedDomains = ['api.example.com', 'cdn.example.com'];
+  const url = new URL(userProvidedUrl);
+  if (!allowedDomains.includes(url.hostname)) {
+    throw new Error('Invalid URL');
+  }
+  const response = await fetch(url.toString());
+  ```
+
+### [COMMON VULNERABILITIES CATALOG]
+
+### SQL Injection
+**Symptom:** User input directly concatenated into SQL queries.
+**Fix:** Use parameterized queries or ORM.
+**Example:** See A03:2021 – Injection above.
+
+### XSS (Cross-Site Scripting)
+**Symptom:** Untrusted user input rendered in HTML without escaping.
+**Fix:** Escape output; use CSP headers; sanitize input.
+**Example:**
+```typescript
+// ❌ BAD: XSS vulnerability
+res.send(`<div>${userInput}</div>`);
+
+// ✅ GOOD: Escaped output
+res.send(`<div>${escapeHtml(userInput)}</div>`);
+```
+
+### CSRF (Cross-Site Request Forgery)
+**Symptom:** State-changing requests without CSRF token validation.
+**Fix:** Validate CSRF tokens on state-changing requests.
+**Example:**
+```typescript
+// ✅ GOOD: CSRF protection
+app.use(csrf({ cookie: true }));
+app.post('/orders', csrfProtection, (req, res) => {
+  // CSRF token validated automatically
+});
+```
+
+### Insecure Direct Object References (IDOR)
+**Symptom:** Users can access resources by guessing/changing IDs.
+**Fix:** Validate resource ownership; use authorization checks.
+**Example:** See A01:2021 – Broken Access Control above.
+
+### Mass Assignment
+**Symptom:** User input directly assigned to model properties.
+**Fix:** Use whitelisting; validate and map input to allowed fields.
+**Example:**
+```typescript
+// ❌ BAD: Mass assignment
+const user = new User(req.body);
+
+// ✅ GOOD: Whitelisted fields
+const user = new User({
+  email: req.body.email,
+  name: req.body.name
+  // Ignore req.body.isAdmin, req.body.role, etc.
+});
+```
+
+### Sensitive Data Exposure
+**Symptom:** Secrets, passwords, or PII in logs, errors, or responses.
+**Fix:** Redact sensitive data; encrypt at rest; use secure transmission.
+**Example:** See A02:2021 – Cryptographic Failures above.
+
+### Missing Function-Level Access Control
+**Symptom:** Authorization checks only in UI, not in API.
+**Fix:** Authorize at API/use case boundaries, not just UI.
+**Example:** See A01:2021 – Broken Access Control above.
+
+### Using Components with Known Vulnerabilities
+**Symptom:** Outdated dependencies with known CVEs.
+**Fix:** Regular dependency scanning; update vulnerable packages.
+**Example:** See A06:2021 – Vulnerable and Outdated Components above.
+
+### Insufficient Logging & Monitoring
+**Symptom:** No logs for security events; no alerts for suspicious activity.
+**Fix:** Log security events; set up alerting.
+**Example:** See A09:2021 – Security Logging and Monitoring Failures above.
+
 ### [VERIFICATION]
 - Run secrets/deps/security scans per stack and fail on High/Critical (e.g., `gitleaks detect`, `npm audit --audit-level=high`, `pip-audit`, `cargo audit`, `govulncheck`, `bandit`/`gosec`/`semgrep`).
+
+**See also:**
+- `.cursor/rules/3A-anti-patterns.mdc` — Security anti-patterns (SQL injection, XSS, missing authorization)
+- `.cursor/rules/20-agents.mdc` — `@security-auditor` agent with OWASP Top 10 focus
+- `docs/test-scenarios.md` — Test scenarios for security audits
 
 ## 31-testing.mdc — Testing standards: coverage, determinism, and contracts.
 - Globs: src/**, app/**, domain/**, tests/**
@@ -389,8 +793,195 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Caching: safe caching for idempotent reads; define TTL and invalidation; respect consistency.
 - Resource management: close/cleanup handles; cap memory/FD/thread use; avoid per-request allocations in tight loops.
 
+### [COMPLEXITY ANALYSIS]
+
+### Time Complexity
+- **O(1):** Hash lookups, array indexing (preferred for hot paths).
+- **O(log n):** Binary search, balanced trees (acceptable for large datasets).
+- **O(n):** Linear scans, single loops (acceptable if n is bounded).
+- **O(n log n):** Sorting, divide-and-conquer (acceptable for preprocessing).
+- **O(n²):** Nested loops, cartesian products (avoid in hot paths; batch or index).
+- **O(2ⁿ):** Exponential algorithms (avoid; use dynamic programming or heuristics).
+
+**Examples:**
+```typescript
+// ❌ BAD: O(n²) nested loop
+for (const user of users) {
+  for (const order of orders) {
+    if (order.userId === user.id) { /* ... */ }
+  }
+}
+
+// ✅ GOOD: O(n) with Map
+const orderMap = new Map(orders.map(o => [o.userId, o]));
+for (const user of users) {
+  const order = orderMap.get(user.id);
+  if (order) { /* ... */ }
+}
+```
+
+### Space Complexity
+- **O(1):** Constant space (preferred).
+- **O(n):** Linear space (acceptable if bounded).
+- **O(n²):** Quadratic space (avoid; use streaming or generators).
+
+**Examples:**
+```typescript
+// ❌ BAD: O(n²) space (all combinations)
+const pairs = [];
+for (const a of items) {
+  for (const b of items) {
+    pairs.push([a, b]);
+  }
+}
+
+// ✅ GOOD: O(1) space (generator)
+function* pairs(items: Item[]) {
+  for (const a of items) {
+    for (const b of items) {
+      yield [a, b];
+    }
+  }
+}
+```
+
+### N+1 Query Problem
+**Symptom:** One query to fetch list, then N queries to fetch related data.
+**Fix:** Use eager loading, batch loading, or joins.
+
+**Examples:**
+```typescript
+// ❌ BAD: N+1 queries
+const orders = await orderRepository.findAll();
+for (const order of orders) {
+  const user = await userRepository.findById(order.userId); // N queries
+}
+
+// ✅ GOOD: Eager loading
+const orders = await orderRepository.findAllWithUsers(); // 1 query with JOIN
+
+// ✅ GOOD: Batch loading
+const userIds = orders.map(o => o.userId);
+const users = await userRepository.findByIds(userIds); // 1 batch query
+const userMap = new Map(users.map(u => [u.id, u]));
+```
+
+### [MICROSERVICES PATTERNS]
+
+### Service Mesh
+- **Purpose:** Handle cross-cutting concerns (load balancing, retries, circuit breakers, mTLS).
+- **Patterns:** Istio, Linkerd, Consul Connect.
+- **When to use:** Multiple services with complex inter-service communication.
+- **Benefits:** Centralized observability, security, traffic management.
+
+### API Gateway
+- **Purpose:** Single entry point for clients; routing, authentication, rate limiting.
+- **Patterns:** Kong, AWS API Gateway, Azure API Management.
+- **When to use:** Multiple services exposed to clients; need unified API.
+- **Benefits:** Centralized auth, rate limiting, request/response transformation.
+
+### Distributed Tracing
+- **Purpose:** Track requests across service boundaries.
+- **Patterns:** OpenTelemetry, Jaeger, Zipkin.
+- **When to use:** Debugging latency issues in microservices.
+- **Benefits:** End-to-end visibility, latency analysis, dependency mapping.
+
+### Database Optimization
+
+#### Indexing
+- **Create indexes** on frequently queried columns (WHERE, JOIN, ORDER BY).
+- **Composite indexes** for multi-column queries (order matters).
+- **Avoid over-indexing** (slows writes; use selectively).
+
+**Examples:**
+```sql
+-- ✅ GOOD: Index on frequently queried column
+CREATE INDEX idx_user_email ON users(email);
+
+-- ✅ GOOD: Composite index for multi-column query
+CREATE INDEX idx_order_user_date ON orders(user_id, created_at);
+```
+
+#### Query Optimization
+- **Use EXPLAIN/EXPLAIN ANALYZE** to understand query plans.
+- **Avoid SELECT *** (fetch only needed columns).
+- **Use LIMIT/OFFSET** or cursor-based pagination for large result sets.
+- **Avoid correlated subqueries** (use JOINs or CTEs).
+
+**Examples:**
+```sql
+-- ❌ BAD: SELECT * (fetches unnecessary columns)
+SELECT * FROM users WHERE email = ?;
+
+-- ✅ GOOD: Select only needed columns
+SELECT id, email, name FROM users WHERE email = ?;
+
+-- ❌ BAD: Correlated subquery
+SELECT * FROM orders WHERE user_id IN (
+  SELECT id FROM users WHERE created_at > ?
+);
+
+-- ✅ GOOD: JOIN
+SELECT o.* FROM orders o
+JOIN users u ON o.user_id = u.id
+WHERE u.created_at > ?;
+```
+
+### Caching Patterns
+
+#### Cache-Aside (Lazy Loading)
+- **Pattern:** Application checks cache; if miss, fetches from DB and populates cache.
+- **Use when:** Read-heavy workloads; data can be stale.
+- **Example:**
+```typescript
+async function getUser(id: string): Promise<User> {
+  let user = await cache.get(`user:${id}`);
+  if (!user) {
+    user = await db.users.findById(id);
+    await cache.set(`user:${id}`, user, { ttl: 3600 });
+  }
+  return user;
+}
+```
+
+#### Write-Through
+- **Pattern:** Write to cache and DB simultaneously.
+- **Use when:** Need strong consistency; write-heavy workloads.
+- **Example:**
+```typescript
+async function updateUser(id: string, data: UserData): Promise<void> {
+  const user = await db.users.update(id, data);
+  await cache.set(`user:${id}`, user, { ttl: 3600 });
+}
+```
+
+#### Cache Invalidation
+- **Pattern:** Invalidate cache on data changes.
+- **Use when:** Data changes frequently; need freshness.
+- **Example:**
+```typescript
+async function deleteUser(id: string): Promise<void> {
+  await db.users.delete(id);
+  await cache.del(`user:${id}`);
+}
+```
+
+### [ENHANCED @PERF-OPTIMIZER PROMPTS]
+
+- **Profiling first:** Always profile before optimizing; identify actual bottlenecks.
+- **Complexity analysis:** State time/space complexity of optimizations.
+- **Evidence-based:** Provide benchmarks or load-test results; avoid speculative claims.
+- **Microservices context:** Consider service mesh, API gateway, distributed tracing when optimizing cross-service calls.
+- **Database optimization:** Check for N+1 queries, missing indexes, inefficient queries.
+- **Caching strategy:** Recommend appropriate caching patterns (cache-aside, write-through, invalidation).
+
 ### [VERIFICATION]
 - Provide benchmark/load-test/check (e.g., `go test -bench .`, `npm run bench`, `wrk -t2 -c10 -d30s http://...`) and expected latency/throughput target.
+
+**See also:**
+- `.cursor/rules/3A-anti-patterns.mdc` — Performance anti-patterns (premature optimization, N+1 queries)
+- `.cursor/rules/20-agents.mdc` — `@perf-optimizer` agent with complexity/database/caching focus
+- `docs/test-scenarios.md` — Test scenarios for performance optimization
 
 ## 34-ci.mdc — CI/CD standards: gates, supply chain, and rollout safety.
 - Globs: **/*
@@ -408,7 +999,7 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
   - Architecture dependency checks must pass (layer dependencies, cross-context imports).
   - Public API module exports must be documented (JSDoc/TSDoc headers present).
   - No cross-context domain/infra imports (must use public API modules).
-  - Path aliases must be used (no relative imports beyond 1 level).
+  - For TypeScript projects: path aliases must be used (no relative imports beyond 1 level). Other languages: enforce module/package boundaries using ecosystem-appropriate tools (Deptrac, package boundaries, etc.).
 - Pre-commit hooks:
   - Run architecture checks before commit (static analysis, dependency validation).
   - Block commits with violations (layer dependencies, cross-context imports, path alias violations).
@@ -658,6 +1249,7 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 
 ### [REJECTION CRITERIA]
 - **FORBIDDEN:** Business logic in controllers → **REJECT**, move to Application use cases.
+  - See `examples/refactoring/clean-architecture/fat-controller/` for before/after example.
 - **FORBIDDEN:** Controllers accessing repositories/ORM directly → **REJECT**, use Application use cases.
 - **FORBIDDEN:** Business logic in Infrastructure → **REJECT**, move to Domain/Application.
 - **FORBIDDEN:** Anemic domain models with logic in services → **REJECT**, use rich domain models.
@@ -665,6 +1257,11 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Direct use of external DTOs/entities inside Domain without mapping/ACL.
 - Cross-context database access or entity reuse.
 - Tier H services that depend heavily on frameworks or bypass ports/adapters.
+
+**See also:**
+- `.cursor/rules/45-solid-principles.mdc` — SOLID principles (SRP, DIP violations related to architecture)
+- `.cursor/rules/3A-anti-patterns.mdc` — Anti-patterns catalog (architecture anti-patterns)
+- `.cursor/rules/38-anti-corruption-events.mdc` — Anti-corruption layers and event schemas
 
 ### [DOCUMENTATION REQUIREMENTS]
 - Public API documentation:
@@ -859,6 +1456,347 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
   - Confirm metrics/logs/traces for new use cases exist or are extended.
   - Confirm new integrations respect mTLS/AuthN/AuthZ policies.
   - Confirm no new sensitive data is logged.
+
+## 3A-anti-patterns.mdc — Anti-patterns catalog — common mistakes and fixes.
+- Globs: src/**, app/**, domain/**, application/**, infrastructure/**, interface/**
+
+### [ANTI-PATTERNS CATALOG]
+
+This catalog consolidates common anti-patterns across SOLID, Clean Architecture, DDD, and general code quality. Each anti-pattern includes symptoms, fixes, and links to examples.
+
+### [ARCHITECTURE ANTI-PATTERNS]
+
+### Fat Controller
+**Symptom:** Controllers contain business logic, validation, persistence, and orchestration.
+**Violates:** Clean Architecture (business logic in Interface layer), SRP (multiple responsibilities).
+**Fix:** Move business logic to Application use cases; controllers only translate HTTP ↔ Application commands.
+**Example:** See `examples/refactoring/clean-architecture/fat-controller/`.
+
+### Anemic Domain Model
+**Symptom:** Domain entities are dumb data structures with getters/setters; all logic in services.
+**Violates:** DDD (rich domain models), SRP (logic separated from data).
+**Fix:** Move business logic into domain entities; use value objects for validation.
+**Example:**
+```typescript
+// ❌ BAD: Anemic domain model
+class User {
+  email: string;
+  password: string;
+}
+class UserService {
+  validateEmail(user: User): boolean {
+    return user.email.includes('@');
+  }
+}
+
+// ✅ GOOD: Rich domain model
+class UserEmail {
+  private constructor(private readonly value: string) {
+    if (!value.includes('@')) throw new Error('Invalid email');
+  }
+  static create(value: string): UserEmail {
+    return new UserEmail(value);
+  }
+}
+```
+
+### God Class/Service
+**Symptom:** Single class/service handles multiple unrelated responsibilities.
+**Violates:** SRP (multiple reasons to change).
+**Fix:** Split into focused classes/services, each with one responsibility.
+**Example:** See `examples/refactoring/srp-god-class/`.
+
+### Framework in Domain
+**Symptom:** Domain entities/use cases import framework classes (Laravel, Spring, ASP.NET).
+**Violates:** Clean Architecture (Domain must be framework-free), DIP (depends on concretions).
+**Fix:** Remove framework dependencies; use ports/adapters pattern.
+**Example:**
+```typescript
+// ❌ BAD: Framework in Domain
+import { Model } from 'laravel-eloquent';
+class User extends Model { }
+
+// ✅ GOOD: Framework-free Domain
+class User {
+  constructor(private readonly id: string, private readonly email: string) {}
+}
+```
+
+### Direct Cross-Context Imports
+**Symptom:** One context imports another context's Domain or Infrastructure directly.
+**Violates:** DDD (bounded context boundaries), Clean Architecture (context isolation).
+**Fix:** Use public API modules (facades) for cross-context imports.
+**Example:**
+```typescript
+// ❌ BAD: Direct Domain import
+import { User } from '@identity/domain/Entities/User.js';
+
+// ✅ GOOD: Public API module
+import { RegisterUser } from '@identity/app/index.js';
+```
+
+### Missing Bounded Contexts
+**Symptom:** Code organized by technical layers (models/, services/, controllers/) without bounded contexts.
+**Violates:** DDD (bounded contexts required).
+**Fix:** Organize code into bounded contexts (IdentityContext, OrdersContext, etc.).
+**Example:**
+```
+// ❌ BAD: Technical layers
+src/models/User.ts
+src/services/UserService.ts
+src/controllers/UserController.ts
+
+// ✅ GOOD: Bounded contexts
+src/IdentityContext/Domain/Entities/User.ts
+src/IdentityContext/Application/UseCases/RegisterUser.ts
+src/IdentityContext/Interface/Adapters/HttpHandlers.ts
+```
+
+### Missing Trust Tiers
+**Symptom:** Bounded contexts without assigned trust tiers (H/M/S).
+**Violates:** Context Map & Trust Tiers (every context must have a tier).
+**Fix:** Assign trust tier before implementation; document in context map.
+**Example:**
+- Tier H: IdentityContext (auth, tokens)
+- Tier M: OrdersContext (business workflows)
+- Tier S: WebBFF (UI/BFF, low impact)
+
+### [SOLID ANTI-PATTERNS]
+
+### Single Responsibility Violation
+**Symptom:** Class has multiple reasons to change (validation, persistence, formatting, email).
+**Violates:** SRP.
+**Fix:** Split into focused classes, each with one responsibility.
+**Example:** See `examples/refactoring/srp-god-class/`.
+
+### Open/Closed Violation
+**Symptom:** Modifying existing code to add new cases (if/switch on type).
+**Violates:** OCP.
+**Fix:** Use interfaces/strategies; extend via new implementations, not modification.
+**Example:**
+```typescript
+// ❌ BAD: Modification for new cases
+class PaymentProcessor {
+  process(type: string, amount: number) {
+    if (type === 'credit') { /* ... */ }
+    else if (type === 'paypal') { /* ... */ }
+    // Adding new type requires modification
+  }
+}
+
+// ✅ GOOD: Extension via interfaces
+interface PaymentMethod {
+  process(amount: number): Promise<void>;
+}
+class CreditCardPayment implements PaymentMethod { }
+class PayPalPayment implements PaymentMethod { }
+// Adding new type: implement interface, no modification needed
+```
+
+### Liskov Substitution Violation
+**Symptom:** Subtype doesn't satisfy base type contract (throws exceptions for valid inputs, returns different shapes).
+**Violates:** LSP.
+**Fix:** Ensure all implementations satisfy the same contract.
+**Example:**
+```typescript
+// ❌ BAD: Repository throws for valid input
+class UserRepository {
+  findById(id: string): Promise<User> {
+    if (!id) throw new Error('ID required'); // Widens precondition
+  }
+}
+
+// ✅ GOOD: Repository handles all valid inputs
+class UserRepository {
+  findById(id: string): Promise<User | null> {
+    if (!id) return null; // Same contract
+  }
+}
+```
+
+### Interface Segregation Violation
+**Symptom:** Large interface with many methods; clients depend on methods they don't use.
+**Violates:** ISP.
+**Fix:** Split into focused interfaces; clients depend only on what they need.
+**Example:**
+```typescript
+// ❌ BAD: Large interface
+interface UserService {
+  create(): void;
+  update(): void;
+  delete(): void;
+  validate(): void;
+  format(): void;
+  sendEmail(): void;
+}
+
+// ✅ GOOD: Focused interfaces
+interface UserRepository {
+  save(user: User): Promise<void>;
+  findById(id: string): Promise<User | null>;
+}
+interface EmailSender {
+  sendWelcomeEmail(email: string): Promise<void>;
+}
+```
+
+### Dependency Inversion Violation
+**Symptom:** High-level modules depend on low-level modules (use cases instantiate concrete repositories).
+**Violates:** DIP.
+**Fix:** Define ports (interfaces) in Domain/Application; inject dependencies via constructor.
+**Example:** See `examples/refactoring/dip-inversion/`.
+
+### [CODE QUALITY ANTI-PATTERNS]
+
+### Deep Relative Imports
+**Symptom:** Imports like `../../Domain/Entities/User` (beyond one level).
+**Violates:** Maintainability, path alias requirements (TypeScript).
+**Fix:** Use path aliases (`@identity/domain/Entities/User`).
+**Example:**
+```typescript
+// ❌ BAD: Deep relative import
+import { User } from '../../Domain/Entities/User.js';
+
+// ✅ GOOD: Path alias
+import { User } from '@identity/domain/Entities/User.js';
+```
+
+### Magic Numbers/Strings
+**Symptom:** Hard-coded numbers/strings without explanation.
+**Violates:** Readability, maintainability.
+**Fix:** Extract to named constants or configuration.
+**Example:**
+```typescript
+// ❌ BAD: Magic numbers
+if (password.length < 8) { }
+
+// ✅ GOOD: Named constant
+const MIN_PASSWORD_LENGTH = 8;
+if (password.length < MIN_PASSWORD_LENGTH) { }
+```
+
+### Copy-Paste Programming
+**Symptom:** Duplicated code across multiple files.
+**Violates:** DRY (Don't Repeat Yourself).
+**Fix:** Extract common logic to shared functions/modules (but avoid wrong abstraction).
+**Example:**
+```typescript
+// ❌ BAD: Duplicated validation
+function validateEmail(email: string): boolean {
+  return email.includes('@') && email.includes('.');
+}
+function validateUserEmail(email: string): boolean {
+  return email.includes('@') && email.includes('.');
+}
+
+// ✅ GOOD: Shared validation
+function validateEmail(email: string): boolean {
+  return email.includes('@') && email.includes('.');
+}
+```
+
+### Premature Optimization
+**Symptom:** Optimizing code before profiling or measuring.
+**Violates:** Performance best practices (measure first).
+**Fix:** Profile first; optimize only hot paths with evidence.
+**Example:**
+```typescript
+// ❌ BAD: Premature optimization
+const result = items.map(x => x.value).filter(x => x > 0).reduce((a, b) => a + b, 0);
+
+// ✅ GOOD: Measure first, then optimize if needed
+// (If profiling shows this is a bottleneck, then optimize)
+```
+
+### Missing Error Handling
+**Symptom:** Functions don't handle errors; exceptions bubble up uncaught.
+**Violates:** Reliability, observability.
+**Fix:** Handle errors at boundaries; log with context; return appropriate error responses.
+**Example:**
+```typescript
+// ❌ BAD: No error handling
+async function getUser(id: string) {
+  return await db.users.findById(id);
+}
+
+// ✅ GOOD: Error handling
+async function getUser(id: string): Promise<User | null> {
+  try {
+    return await db.users.findById(id);
+  } catch (error) {
+    logger.error({ event: 'get_user_failed', id, error });
+    return null;
+  }
+}
+```
+
+### [SECURITY ANTI-PATTERNS]
+
+### SQL Injection
+**Symptom:** User input concatenated into SQL queries.
+**Violates:** Security (OWASP A03:2021 – Injection).
+**Fix:** Use parameterized queries or ORM.
+**Example:** See `.cursor/rules/30-security.mdc` (A03:2021 – Injection).
+
+### XSS (Cross-Site Scripting)
+**Symptom:** Untrusted user input rendered in HTML without escaping.
+**Violates:** Security (OWASP A03:2021 – Injection).
+**Fix:** Escape output; use framework escaping; set CSP headers.
+**Example:** See `.cursor/rules/30-security.mdc` (Common Vulnerabilities Catalog).
+
+### Missing Authorization
+**Symptom:** Authorization checks only in UI, not in API/use cases.
+**Violates:** Security (OWASP A01:2021 – Broken Access Control).
+**Fix:** Authorize at API/use case boundaries, not just UI.
+**Example:** See `.cursor/rules/30-security.mdc` (A01:2021 – Broken Access Control).
+
+### Hardcoded Secrets
+**Symptom:** Secrets (API keys, passwords) hardcoded in source code.
+**Violates:** Security (OWASP A02:2021 – Cryptographic Failures).
+**Fix:** Use environment variables or secret managers.
+**Example:** See `.cursor/rules/30-security.mdc` (A02:2021 – Cryptographic Failures).
+
+### [INTEGRATION WITH SOLID, CLEAN ARCHITECTURE, DDD]
+
+- **SOLID violations:** See `examples/refactoring/` for SRP, DIP examples.
+- **Clean Architecture violations:** See `examples/refactoring/clean-architecture/` for fat controller, framework in domain examples.
+- **DDD violations:** See `.cursor/rules/36-architecture.mdc` for bounded context, trust tier examples.
+
+**See also:**
+- `.cursor/rules/45-solid-principles.mdc` — SOLID principles with architecture integration
+- `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns
+- `.cursor/rules/44-ddd.mdc` — Domain-Driven Design methodology
+- `examples/refactoring/` — Refactoring examples for each anti-pattern
+
+### [REFACTOR WORKFLOW INTEGRATION]
+
+- Each anti-pattern should have at least one before/after refactor example in `examples/refactoring/`.
+- Examples are usable by `@refactorer` and `@code-reviewer` agents.
+- Link from this rule file to examples directory.
+
+**Example locations:**
+- `examples/refactoring/srp-god-class/` — SRP violations ✅
+- `examples/refactoring/dip-inversion/` — DIP violations ✅
+- `examples/refactoring/clean-architecture/fat-controller/` — Clean Architecture violations ✅
+
+### [VERIFICATION]
+
+- For code reviews:
+  - Check for architecture anti-patterns (fat controller, anemic domain, framework in domain).
+  - Check for SOLID violations (SRP, OCP, LSP, ISP, DIP).
+  - Check for code quality anti-patterns (deep imports, magic numbers, copy-paste).
+  - Check for security anti-patterns (SQL injection, XSS, missing authorization).
+
+- For refactoring:
+  - Identify anti-patterns in current code.
+  - Propose fixes following examples in `examples/refactoring/`.
+  - Ensure fixes improve architecture compliance.
+
+### [AGENT GUIDANCE]
+
+- **@code-reviewer:** Flag anti-patterns; recommend fixes from examples.
+- **@refactorer:** Use anti-pattern catalog to identify issues; propose fixes.
+- **@architect:** Design to avoid anti-patterns; use bounded contexts, trust tiers, ports/adapters.
 
 [METHODOLOGIES] (ATDD/BDD/TDD/FDD/DDD)
 
@@ -1089,7 +2027,392 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
   - Contracts between contexts (APIs, events, schemas) are explicit and versioned.
   - Architecture docs (context maps, ADRs) are updated when boundaries or invariants change.
 
+## 45-solid-principles.mdc — SOLID principles — integration with Clean Architecture and DDD.
+- Globs: src/**, app/**, domain/**, application/**
+
+### [SOLID PRINCIPLES — INTEGRATION WITH CLEAN ARCHITECTURE & DDD]
+
+### [CORE MANDATE]
+- SOLID principles are foundational OO design defaults that align with Clean Architecture, Hexagonal Architecture, and DDD.
+- Use SOLID as a lens for design and refactoring; violations are often early signals of coupling and maintainability issues.
+- **This rule integrates with existing design principles** (see `docs/architecture/design-principles.md` and `docs/architecture/solid-principles.md`); it does not duplicate them.
+
+### [PRINCIPLES]
+
+### Single Responsibility Principle (SRP)
+- Each module/class should have **one reason to change**.
+- Split responsibilities such as persistence, validation, formatting, and orchestration into separate components.
+
+**Integration with Clean Architecture:**
+- Domain entities: one responsibility (encapsulate business invariants).
+- Application use cases: one responsibility (orchestrate one business operation).
+- Infrastructure adapters: one responsibility (implement one port interface).
+- Interface controllers: one responsibility (translate HTTP to Application commands).
+
+**Integration with DDD:**
+- Aggregates: one consistency boundary (one aggregate root per aggregate).
+- Value Objects: one concept (e.g., `UserEmail` encapsulates email validation and formatting).
+- Domain Services: one domain operation (e.g., `PasswordHasher` only hashes passwords).
+
+**Anti-patterns:**
+- God classes/services that mix multiple responsibilities (e.g., `UserService` that validates, persists, formats, and sends emails).
+- Controllers with business logic (violates SRP: controller should only translate HTTP ↔ Application).
+
+**Agent guidance:**
+- `@architect`: When designing modules, ensure each has a single, clear responsibility.
+- `@code-reviewer`: Flag classes/modules with multiple reasons to change; recommend splitting.
+- `@refactorer`: Extract separate classes/modules for distinct responsibilities.
+
+---
+
+### Open/Closed Principle (OCP)
+- Components should be **open for extension, closed for modification**.
+- Prefer composition, interfaces, and configuration over editing existing code paths for every new case.
+
+**Integration with Clean Architecture:**
+- Ports (interfaces) in Domain/Application: open for new implementations (new adapters), closed to modification.
+- Use cases: extend via new use cases, not by modifying existing ones.
+- Infrastructure adapters: add new adapters without changing Domain/Application.
+
+**Integration with DDD:**
+- Value Objects: extend via new value objects, not by modifying existing ones.
+- Domain Events: add new event types without modifying existing event handlers.
+- Repository interfaces: extend via new implementations, not by modifying the interface (unless breaking change is justified).
+
+**Anti-patterns:**
+- Modifying existing use cases to handle new cases (e.g., adding `if (type === 'new')` branches).
+- Modifying domain entities to support new business rules (prefer domain services or new aggregates).
+
+**Agent guidance:**
+- `@architect`: Design interfaces/ports that can be extended without modification.
+- `@code-reviewer`: Flag modifications to existing code that add new cases; recommend extension patterns.
+- `@refactorer`: Extract interfaces/strategies to enable extension without modification.
+
+---
+
+### Liskov Substitution Principle (LSP)
+- Subtypes must be usable anywhere their base type is expected without breaking behavior.
+- Avoid widening preconditions or weakening postconditions in subclasses.
+
+**Integration with Clean Architecture:**
+- Port implementations: all adapters implementing a port must satisfy the same contract.
+- Repository implementations: `InMemoryUserRepository` and `JpaUserRepository` must both satisfy `UserRepository` contract.
+- Use case dependencies: any implementation of a port should work with the use case.
+
+**Integration with DDD:**
+- Value Object subtypes: must preserve value object semantics (immutability, equality).
+- Aggregate subtypes: must preserve aggregate invariants.
+
+**Anti-patterns:**
+- Repository implementations that throw exceptions for valid inputs (widening preconditions).
+- Port adapters that return different data shapes than the interface promises (weakening postconditions).
+
+**Agent guidance:**
+- `@architect`: Ensure port implementations satisfy the same contract.
+- `@code-reviewer`: Verify that all implementations of an interface are substitutable.
+- `@refactorer`: When refactoring interfaces, ensure all implementations still satisfy the contract.
+
+---
+
+### Interface Segregation Principle (ISP)
+- Prefer many small, focused interfaces over large "god" interfaces.
+- Clients should not depend on methods they do not use.
+
+**Integration with Clean Architecture:**
+- Ports: define focused interfaces (e.g., `UserRepository` for persistence, `EventPublisher` for events, not `UserRepositoryAndEventPublisher`).
+- Use cases: depend only on the ports they need (e.g., `PlaceOrder` depends on `OrderRepository` and `EventPublisher`, not a monolithic `OrderService`).
+
+**Integration with DDD:**
+- Repository interfaces: focused on one aggregate (e.g., `UserRepository`, not `Repository` with methods for all entities).
+- Domain services: focused interfaces (e.g., `PasswordHasher`, not `SecurityService` with password, encryption, and token methods).
+
+**Anti-patterns:**
+- Large interfaces with many methods (e.g., `IUserService` with `create`, `update`, `delete`, `validate`, `format`, `sendEmail`).
+- Use cases depending on interfaces with methods they never call.
+
+**Agent guidance:**
+- `@architect`: Design small, focused interfaces per responsibility.
+- `@code-reviewer`: Flag large interfaces; recommend splitting into focused interfaces.
+- `@refactorer`: Split large interfaces into smaller, focused ones.
+
+---
+
+### Dependency Inversion Principle (DIP)
+- High-level modules should not depend on low-level modules; both depend on abstractions.
+- Depend on interfaces/ports; inject dependencies rather than constructing them inline.
+
+**Integration with Clean Architecture:**
+- Domain/Application depend on ports (interfaces), not Infrastructure implementations.
+- Use cases receive repositories/ports via constructor injection, not by instantiating concrete classes.
+- Infrastructure implements ports defined in Domain/Application (dependency points inward).
+
+**Integration with DDD:**
+- Aggregates depend on repository interfaces, not concrete repositories.
+- Domain services depend on port interfaces, not concrete adapters.
+- Application use cases depend on domain ports, not infrastructure adapters.
+
+**Anti-patterns:**
+- Use cases instantiating repositories directly (e.g., `new JpaUserRepository()` in a use case).
+- Domain entities depending on infrastructure classes (e.g., `User` importing `JpaUserRepository`).
+- Controllers instantiating use cases directly (should use dependency injection).
+
+**Agent guidance:**
+- `@architect`: Define ports in Domain/Application; implement in Infrastructure.
+- `@code-reviewer`: Flag direct dependencies on concrete classes in Domain/Application; require interfaces.
+- `@refactorer`: Extract interfaces and inject dependencies via constructor.
+
+---
+
+### [INTEGRATION WITH EXISTING RULES]
+
+- **Reference existing design principles:** See `docs/architecture/design-principles.md` for foundational software design principles (DRY, KISS, YAGNI, Tell Don't Ask, etc.).
+- **Reference existing architecture rules:** See `.cursor/rules/36-architecture.mdc` for Clean Architecture, Hexagonal Architecture, and DDD patterns.
+- **Reference existing SOLID docs:** See `docs/architecture/solid-principles.md` for concise SOLID overview.
+- **See also:**
+  - `.cursor/rules/3A-anti-patterns.mdc` — Anti-patterns catalog (includes SOLID violations)
+  - `.cursor/rules/37-code-structure.mdc` — Code structure standards
+  - `examples/refactoring/` — Refactoring examples demonstrating SOLID principles
+
+**This rule does NOT duplicate:**
+- General design principles (DRY, KISS, YAGNI) — see `docs/architecture/design-principles.md`.
+- Architecture patterns (Clean/Hex/DDD) — see `.cursor/rules/36-architecture.mdc`.
+- SOLID overview — see `docs/architecture/solid-principles.md`.
+
+**This rule DOES provide:**
+- Explicit integration of SOLID with Clean Architecture layers.
+- Explicit integration of SOLID with DDD building blocks.
+- Agent-specific guidance for applying SOLID.
+- Anti-patterns with architecture context.
+
+---
+
+### [REFACTOR WORKFLOW INTEGRATION]
+
+- Each principle should have at least one before/after refactor example in `examples/` directory.
+- Examples should be usable by `@refactorer` and `@code-reviewer` agents.
+- Link from this rule file to examples directory.
+
+**Example locations:**
+- `examples/refactoring/srp-god-class/` — SRP violations and fixes ✅
+- `examples/refactoring/dip-inversion/` — DIP dependency injection ✅
+- `examples/refactoring/clean-architecture/fat-controller/` — Clean Architecture: thin controllers ✅
+- `examples/refactoring/ocp-extension/` — OCP extension patterns (TODO)
+- `examples/refactoring/lsp-contracts/` — LSP contract preservation (TODO)
+- `examples/refactoring/isp-segregation/` — ISP interface splitting (TODO)
+
+---
+
+### [VERIFICATION]
+
+- For code reviews:
+  - Check that modules have single responsibilities (SRP).
+  - Check that new functionality extends via interfaces, not modification (OCP).
+  - Check that interface implementations are substitutable (LSP).
+  - Check that interfaces are focused and clients don't depend on unused methods (ISP).
+  - Check that Domain/Application depend on interfaces, not concrete classes (DIP).
+
+- For architecture reviews:
+  - Verify ports are defined in Domain/Application (DIP).
+  - Verify use cases have single responsibilities (SRP).
+  - Verify new adapters extend ports without modifying them (OCP).
+
+---
+
+### [AGENT GUIDANCE SUMMARY]
+
+- **@architect:** Apply SOLID when designing system architecture; ensure ports/interfaces enable extension (OCP, DIP).
+- **@code-reviewer:** Flag SOLID violations; recommend refactoring to align with SOLID.
+- **@refactorer:** Use SOLID as a guide for extracting interfaces, splitting responsibilities, and inverting dependencies.
+
 [LANGUAGE STANDARDS] (50-lang-*.mdc)
+
+## 50-lang-csharp.mdc — C# / .NET standards: idiomatic, typed, and architecture-enforced.
+- Globs: **/*.cs
+
+### [C# / .NET STANDARDS]
+- Stack: .NET 8+, C# 12+.
+- Style/lint: EditorConfig, StyleCop, Roslyn analyzers; command: `dotnet format --verify` and `dotnet build` (with analyzers enabled).
+- Errors: use exceptions appropriately; prefer `Option<T>` or nullable reference types over null returns; avoid `dynamic`.
+- Concurrency: `Task`, `async`/`await`, `IAsyncEnumerable`; use `SemaphoreSlim` for bounded concurrency; avoid `lock` where possible.
+- Safety: parameterized queries (Entity Framework, Dapper); validate inputs; avoid logging secrets; TLS for network calls; run `dotnet list package --vulnerable`.
+- Testing: xUnit, Moq, FluentAssertions; `dotnet test`; table-driven tests including negatives.
+- Performance: avoid unnecessary allocations; reuse pooled connections; prefer `Span<T>`/`Memory<T>` for zero-copy operations; use `IAsyncEnumerable` for streaming.
+- Verification artifact: `dotnet build && dotnet test && dotnet format --verify && dotnet list package --vulnerable`.
+
+### [ARCHITECTURE INTEGRATION — CLEAN + HEX + DDD]
+
+- **MANDATORY:** All C# backend code MUST follow Clean Architecture, Hexagonal Architecture, and DDD patterns as defined in `.cursor/rules/36-architecture.mdc`.
+
+- Project/Assembly Structure:
+  - Require separate projects/assemblies or folders per bounded context, and enforce namespace conventions accordingly.
+  - Example: `Company.IdentityContext.Domain`, `Company.IdentityContext.Application`, `Company.OrdersContext.Domain`.
+  - Each bounded context should be a separate .NET project (Class Library).
+  - Namespace structure: `{Company}.{Context}.{Layer}.{Feature}` (e.g., `Company.Identity.Domain.User`).
+
+- Domain layer (`{Context}.Domain` project/namespace):
+  - **FORBIDDEN:** No framework dependencies whatsoever.
+  - **FORBIDDEN:** `[Entity]`, `[Table]`, `[Key]`, `[Required]`, `[ApiController]`, `[Route]`, `[HttpPost]`, `[FromBody]`, `DbContext`, `DbSet`, or any ASP.NET Core/Entity Framework attributes/classes.
+  - **FORBIDDEN:** Entity Framework Core, ASP.NET Core, or any ORM frameworks in Domain.
+  - **FORBIDDEN:** `HttpRequest`, `HttpResponse`, `ControllerBase`, or any ASP.NET Core types.
+  - Contains:
+    - Entities (plain C# classes), Value Objects, Domain Services, Domain Events, Repository interfaces (plain interfaces).
+  - All business invariants live here.
+  - Example: `Company.Identity.Domain.User` (plain class), `Company.Identity.Domain.IUserRepository` (interface).
+
+- Application layer (`{Context}.Application` project/namespace):
+  - **FORBIDDEN:** Direct framework dependencies (same as Domain).
+  - **FORBIDDEN:** ASP.NET Core attributes (`[ApiController]`, `[Route]`, etc.).
+  - **FORBIDDEN:** Entity Framework Core (`DbContext`, `DbSet`, etc.).
+  - Use Cases, Commands/Queries, Application Services.
+  - Depends on Domain; can depend on simple DTOs and interfaces.
+  - No direct ORM/HTTP/framework usage; use ports (interfaces) defined in Domain/Application.
+  - Example: `Company.Identity.Application.RegisterUser` (use case), `Company.Identity.Application.Commands.RegisterUserCommand` (DTO).
+
+- **REJECTION CRITERIA:**
+  - Domain/Application code importing ASP.NET Core/Entity Framework classes → **REJECT**, use ports/adapters.
+  - Use case using `HttpRequest` or ASP.NET Core `[FromBody]` → **REJECT**, pass DTOs.
+  - Domain entity inheriting from `DbContext` or annotated with `[Entity]` → **REJECT**, use plain C# classes.
+  - Application use case annotated with `[ApiController]` → **REJECT**, use plain C# classes.
+
+- Interface layer (`{Context}.Interface` project/namespace, HTTP/CLI adapters):
+  - Controllers (`[ApiController]`), console commands, message consumers, view models.
+  - Maps HTTP/CLI → Application use cases (input DTOs) and maps results → HTTP/JSON/View models.
+  - **MANDATORY:** Controllers are thin; delegate to Application use cases.
+  - **FORBIDDEN:** Business logic in controllers → **REJECT**, move to Application use cases.
+  - Example: `Company.Identity.Interface.Http.IdentityController` (thin, delegates to `RegisterUser` use case).
+
+- Infrastructure layer (`{Context}.Infrastructure` project/namespace):
+  - Entity Framework entities, DbContext, external API clients, message publishers.
+  - Implements ports (interfaces) from Domain/Application.
+  - Contains ORM mappings, SDK usage, and technical glue.
+  - Example: `Company.Identity.Infrastructure.Persistence.EfUserRepository` (implements `IUserRepository` port).
+
+- Forbidden patterns:
+  - Business logic inside controllers, services with framework attributes, or Entity Framework entities in Domain.
+  - Domain code depending on ASP.NET Core attributes or framework-specific classes.
+  - Cross-context DB access or using one bounded context's entities in another.
+  - Controllers accessing repositories directly → **REJECT**, use Application use cases.
+
+### [ASP.NET CORE INTEGRATION]
+
+- ASP.NET Core is allowed in Infrastructure and Interface layers only.
+- Use ASP.NET Core for:
+  - Dependency injection (wiring Infrastructure adapters to Application use cases).
+  - HTTP controllers (`[ApiController]` in Interface layer).
+  - Database configuration (Entity Framework Core, connection pooling in Infrastructure).
+  - External service clients (HttpClient, IHttpClientFactory in Infrastructure).
+- **Domain/Application remain pure:**
+  - No ASP.NET Core attributes in Domain/Application projects.
+  - Use constructor injection in Application use cases (.NET DI provides dependencies, but use cases don't know about ASP.NET Core).
+  - Example: `RegisterUser` use case receives `IUserRepository` via constructor (.NET DI provides implementation, but use case doesn't import ASP.NET Core).
+
+### [.NET CORE CONVENTIONS]
+
+- Follow ASP.NET Core conventions by default; diverge only with strong reasons.
+- Controllers:
+  - Keep thin; delegate to Application use cases.
+  - Use dependency injection via constructor (.NET DI handles wiring).
+  - Example:
+    ```csharp
+    [ApiController]
+    [Route("api/identity")]
+    public class IdentityController : ControllerBase
+    {
+        private readonly RegisterUser _registerUser;
+        
+        public IdentityController(RegisterUser registerUser)
+        {
+            _registerUser = registerUser;
+        }
+        
+        [HttpPost("register")]
+        public IActionResult Register([FromBody] RegisterUserRequest request)
+        {
+            // Map HTTP → Command
+            var command = new RegisterUserCommand(request.Email, request.Password);
+            // Delegate to use case
+            _registerUser.Execute(command);
+            return Ok();
+        }
+    }
+    ```
+- Configuration:
+  - Use `Program.cs` or `Startup.cs` in Infrastructure/Interface layers for wiring.
+  - Wire Application use cases with Infrastructure adapters.
+  - Example:
+    ```csharp
+    // Program.cs
+    builder.Services.AddScoped<IUserRepository, EfUserRepository>();
+    builder.Services.AddScoped<RegisterUser>(sp =>
+    {
+        var repo = sp.GetRequiredService<IUserRepository>();
+        return new RegisterUser(repo, new BCryptPasswordHasher());
+    });
+    ```
+
+### [SECURITY & DATA SAFETY]
+
+- Input handling:
+  - Validate and sanitize all untrusted input; use Data Annotations (`[Required]`, `[EmailAddress]`, etc.) in Interface layer DTOs.
+  - Use ASP.NET Core Identity for authentication/authorization (in Interface/Infrastructure layers only).
+- Persistence:
+  - Use Entity Framework Core with parameterized queries; never build SQL via string concatenation.
+  - Avoid dynamic queries without parameter binding.
+- Secrets & credentials:
+  - Never hard-code secrets; use `IConfiguration` with environment variables or Azure Key Vault.
+- Authentication & authorization:
+  - Keep AuthN/AuthZ logic in appropriate contexts (IdentityContext, PolicyContext).
+  - Use ASP.NET Core Identity/Authorization in Interface layer; Domain/Application remain framework-free.
+
+### [PERFORMANCE & SCALABILITY]
+
+- Query behavior:
+  - Avoid N+1 queries; use `.Include()` or projection where necessary.
+  - Use pagination (`Skip`/`Take` or `IAsyncEnumerable`) for large result sets.
+- Caching:
+  - Use `IMemoryCache` or `IDistributedCache` in Infrastructure layer only (not Domain/Application).
+  - Invalidate cache explicitly on domain events or state changes.
+- Connection pooling:
+  - Configure connection pooling in `DbContext` options (Infrastructure layer).
+
+### [TESTING & TOOLING]
+
+- Testing:
+  - Use xUnit with:
+    - Unit tests for Domain and Application (no ASP.NET Core/EF Core).
+    - Integration tests for Infrastructure and Interface boundaries (use `WebApplicationFactory`).
+  - Mock external services; avoid real network calls in tests.
+  - Use TestContainers or in-memory databases for database integration tests.
+  - Ensure critical domain invariants are covered (happy path + edge cases + error paths).
+- Static analysis & QA:
+  - Run Roslyn analyzers: `dotnet build` (analyzers enabled by default).
+  - Run StyleCop: `dotnet format --verify` (if StyleCop is configured).
+  - Run dependency check: `dotnet list package --vulnerable`.
+- CI pipeline (baseline commands):
+  - `dotnet build`.
+  - `dotnet test`.
+  - `dotnet format --verify`.
+  - `dotnet list package --vulnerable`.
+
+### [ANTI-PATTERS]
+
+- Anemic models used as dumb structs while controllers hold all logic.
+- Direct use of ASP.NET Core attributes in Domain/Application code (`[ApiController]`, `[Route]`, `[FromBody]`).
+- Large God classes/services that mix responsibilities across multiple bounded contexts.
+- Inline SQL, hand-built JSON strings, or manual serialization where frameworks provide safe abstractions.
+- Copy-pasting validation rules or business logic across controllers instead of centralizing in Domain/Application.
+- Controllers accessing repositories directly (bypassing Application use cases).
+
+### [VERIFICATION]
+
+- For C# changes:
+  - Confirm Domain/Application projects have no ASP.NET Core/Entity Framework imports.
+  - Check that domain code is framework-free and follows Clean/Hex/DDD layering.
+  - Run the standard toolchain (build, test, format, dependency check).
+- For ASP.NET Core:
+  - Cross-check structure against `.cursor/rules/36-architecture.mdc`.
+  - Ensure controllers are thin and domain logic is in Domain/Application layers.
+  - Verify ASP.NET Core is only used in Infrastructure/Interface layers.
 
 ## 50-lang-css.mdc — CSS standards — architecture, naming, preprocessors, and performance for scalable styles.
 - Globs: src/**/*.css, src/**/*.scss, src/**/*.sass, src/**/*.pcss, frontend/**/*.css, frontend/**/*.scss, public/**/*.css, resources/**/*.css, resources/**/*.scss
@@ -1275,6 +2598,197 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
   - Pages have proper document skeleton and semantic landmarks.
   - Forms are labeled, errors are announced, and primary interactions are keyboard accessible.
   - No new inline JS/CSS has been introduced in production templates without explicit justification.
+
+## 50-lang-java.mdc — Java standards: idiomatic, typed, and architecture-enforced.
+- Globs: **/*.java
+
+### [JAVA STANDARDS]
+- Stack: Java 17+ (LTS), Maven/Gradle.
+- Style/lint: Google Java Style, Checkstyle, SpotBugs; command: `mvn checkstyle:check` or `./gradlew checkstyleMain`.
+- Errors: use checked exceptions appropriately; prefer `Optional` over null returns; no raw types.
+- Concurrency: `CompletableFuture`, `ExecutorService` with bounded pools; avoid `synchronized` blocks where possible; use `java.util.concurrent` primitives.
+- Safety: parameterized queries (JPA/Hibernate); validate inputs; avoid logging secrets; TLS for network calls; run `mvn dependency-check:check` or `./gradlew dependencyCheckAnalyze`.
+- Testing: JUnit 5, Mockito, TestContainers; `mvn test` or `./gradlew test`; table-driven tests including negatives.
+- Performance: avoid unnecessary object creation; reuse pooled connections; prefer streams for transformations; use `@Cacheable` judiciously.
+- Verification artifact: `mvn clean verify` or `./gradlew check && ./gradlew test && ./gradlew dependencyCheckAnalyze`.
+
+### [ARCHITECTURE INTEGRATION — CLEAN + HEX + DDD]
+
+- **MANDATORY:** All Java backend code MUST follow Clean Architecture, Hexagonal Architecture, and DDD patterns as defined in `.cursor/rules/36-architecture.mdc`.
+
+- Module/Project Structure:
+  - Require clear module/project boundaries (Maven/Gradle multi-module or equivalent) and consistent package namespaces per bounded context.
+  - Example: `com.company.identitycontext.domain`, `com.company.identitycontext.application`, `com.company.orderscontext.domain`.
+  - Each bounded context should be a separate Maven module or Gradle subproject.
+  - Package structure: `{base}.{context}.{layer}.{feature}` (e.g., `com.company.identity.domain.user`).
+
+- Domain layer (`{context}.domain` package):
+  - **FORBIDDEN:** No framework dependencies whatsoever.
+  - **FORBIDDEN:** `@Entity`, `@Table`, `@Repository`, `@Service`, `@Component`, `@Autowired`, `@RequestMapping`, `@RestController`, `@SpringBootApplication`, or any Spring/Jakarta EE annotation.
+  - **FORBIDDEN:** Spring Data JPA repositories, Hibernate annotations, or ORM frameworks in Domain.
+  - **FORBIDDEN:** `HttpServletRequest`, `HttpServletResponse`, or any servlet/Jakarta EE types.
+  - Contains:
+    - Entities (plain Java classes), Value Objects, Domain Services, Domain Events, Repository interfaces (plain interfaces).
+  - All business invariants live here.
+  - Example: `com.company.identity.domain.User` (plain POJO), `com.company.identity.domain.UserRepository` (interface).
+
+- Application layer (`{context}.application` package):
+  - **FORBIDDEN:** Direct framework dependencies (same as Domain).
+  - **FORBIDDEN:** Spring annotations (`@Service`, `@Component`, `@Autowired`, etc.).
+  - **FORBIDDEN:** Spring Data repositories or JPA repositories.
+  - Use Cases, Commands/Queries, Application Services.
+  - Depends on Domain; can depend on simple DTOs and interfaces.
+  - No direct ORM/HTTP/framework usage; use ports (interfaces) defined in Domain/Application.
+  - Example: `com.company.identity.application.RegisterUser` (use case), `com.company.identity.application.commands.RegisterUserCommand` (DTO).
+
+- **REJECTION CRITERIA:**
+  - Domain/Application code importing Spring/Jakarta EE classes → **REJECT**, use ports/adapters.
+  - Use case using `HttpServletRequest` or Spring `@Autowired` → **REJECT**, use dependency injection via constructor.
+  - Domain entity annotated with `@Entity` or `@Table` → **REJECT**, use plain Java classes.
+  - Application use case annotated with `@Service` → **REJECT**, use plain Java classes.
+
+- Interface layer (`{context}.interface` package, HTTP/CLI adapters):
+  - Controllers (`@RestController`), console commands, message consumers, view models.
+  - Maps HTTP/CLI → Application use cases (input DTOs) and maps results → HTTP/JSON/View models.
+  - **MANDATORY:** Controllers are thin; delegate to Application use cases.
+  - **FORBIDDEN:** Business logic in controllers → **REJECT**, move to Application use cases.
+  - Example: `com.company.identity.interface.http.IdentityController` (thin, delegates to `RegisterUser` use case).
+
+- Infrastructure layer (`{context}.infrastructure` package):
+  - JPA entities, Spring Data repositories, external API clients, message publishers.
+  - Implements ports (interfaces) from Domain/Application.
+  - Contains ORM mappings, SDK usage, and technical glue.
+  - Example: `com.company.identity.infrastructure.persistence.JpaUserRepository` (implements `UserRepository` port).
+
+- Forbidden patterns:
+  - Business logic inside controllers, services annotated with `@Service`, or JPA entities.
+  - Domain code depending on Spring annotations or framework-specific classes.
+  - Cross-context DB access or using one bounded context's entities in another.
+  - Controllers accessing repositories directly → **REJECT**, use Application use cases.
+
+### [SPRING BOOT INTEGRATION]
+
+- Spring Boot is allowed in Infrastructure and Interface layers only.
+- Use Spring Boot for:
+  - Dependency injection (wiring Infrastructure adapters to Application use cases).
+  - HTTP controllers (`@RestController` in Interface layer).
+  - Database configuration (JPA, connection pooling in Infrastructure).
+  - External service clients (REST templates, WebClient in Infrastructure).
+- **Domain/Application remain pure:**
+  - No Spring annotations in Domain/Application packages.
+  - Use constructor injection in Application use cases (Spring wires dependencies, but use cases don't know about Spring).
+  - Example: `RegisterUser` use case receives `UserRepository` via constructor (Spring provides implementation, but use case doesn't import Spring).
+
+### [LARAVEL CONVENTIONS]
+
+- Follow Spring Boot conventions by default; diverge only with strong reasons.
+- Controllers:
+  - Keep thin; delegate to Application use cases.
+  - Use dependency injection via constructor (Spring handles wiring).
+  - Example:
+    ```java
+    @RestController
+    @RequestMapping("/api/identity")
+    public class IdentityController {
+        private final RegisterUser registerUser;
+        
+        public IdentityController(RegisterUser registerUser) {
+            this.registerUser = registerUser;
+        }
+        
+        @PostMapping("/register")
+        public ResponseEntity<Void> register(@RequestBody RegisterUserRequest request) {
+            // Map HTTP → Command
+            var command = new RegisterUserCommand(request.email(), request.password());
+            // Delegate to use case
+            registerUser.execute(command);
+            return ResponseEntity.ok().build();
+        }
+    }
+    ```
+- Configuration:
+  - Use `@Configuration` classes in Infrastructure layer for wiring.
+  - Wire Application use cases with Infrastructure adapters.
+  - Example:
+    ```java
+    @Configuration
+    public class IdentityWiring {
+        @Bean
+        public UserRepository userRepository(JpaUserRepository jpaRepo) {
+            return new JpaUserRepositoryAdapter(jpaRepo);
+        }
+        
+        @Bean
+        public RegisterUser registerUser(UserRepository repo) {
+            return new RegisterUser(repo, new BCryptPasswordHasher());
+        }
+    }
+    ```
+
+### [SECURITY & DATA SAFETY]
+
+- Input handling:
+  - Validate and sanitize all untrusted input; use Bean Validation (`@Valid`, `@NotNull`, etc.) in Interface layer.
+  - Use Spring Security for authentication/authorization (in Interface/Infrastructure layers only).
+- Persistence:
+  - Use JPA/Hibernate with parameterized queries; never build SQL via string concatenation.
+  - Avoid dynamic queries without parameter binding.
+- Secrets & credentials:
+  - Never hard-code secrets; use Spring `@Value` with environment variables or Spring Cloud Config.
+- Authentication & authorization:
+  - Keep AuthN/AuthZ logic in appropriate contexts (IdentityContext, PolicyContext).
+  - Use Spring Security in Interface layer; Domain/Application remain framework-free.
+
+### [PERFORMANCE & SCALABILITY]
+
+- Query behavior:
+  - Avoid N+1 queries; use JPA `@EntityGraph` or `JOIN FETCH` where necessary.
+  - Use pagination (`Pageable`) for large result sets.
+- Caching:
+  - Use Spring `@Cacheable` in Infrastructure layer only (not Domain/Application).
+  - Invalidate cache explicitly on domain events or state changes.
+- Connection pooling:
+  - Configure HikariCP or equivalent in Infrastructure layer.
+
+### [TESTING & TOOLING]
+
+- Testing:
+  - Use JUnit 5 with:
+    - Unit tests for Domain and Application (no Spring context).
+    - Integration tests for Infrastructure and Interface boundaries (use `@SpringBootTest`).
+  - Mock external services; avoid real network calls in tests.
+  - Use TestContainers for database integration tests.
+  - Ensure critical domain invariants are covered (happy path + edge cases + error paths).
+- Static analysis & QA:
+  - Run Checkstyle: `mvn checkstyle:check` or `./gradlew checkstyleMain`.
+  - Run SpotBugs: `mvn spotbugs:check` or `./gradlew spotbugsMain`.
+  - Run dependency check: `mvn dependency-check:check` or `./gradlew dependencyCheckAnalyze`.
+- CI pipeline (baseline commands):
+  - `mvn clean verify` or `./gradlew clean build`.
+  - `mvn checkstyle:check` or `./gradlew checkstyleMain`.
+  - `mvn spotbugs:check` or `./gradlew spotbugsMain`.
+  - `mvn dependency-check:check` or `./gradlew dependencyCheckAnalyze`.
+  - `mvn test` or `./gradlew test`.
+
+### [ANTI-PATTERNS]
+
+- Anemic models used as dumb structs while controllers hold all logic.
+- Direct use of Spring annotations in Domain/Application code (`@Service`, `@Component`, `@Autowired`).
+- Large God classes/services that mix responsibilities across multiple bounded contexts.
+- Inline SQL, hand-built JSON strings, or manual serialization where frameworks provide safe abstractions.
+- Copy-pasting validation rules or business logic across controllers instead of centralizing in Domain/Application.
+- Controllers accessing repositories directly (bypassing Application use cases).
+
+### [VERIFICATION]
+
+- For Java changes:
+  - Confirm Domain/Application packages have no Spring/Jakarta EE imports.
+  - Check that domain code is framework-free and follows Clean/Hex/DDD layering.
+  - Run the standard toolchain (Checkstyle, SpotBugs, dependency check, tests).
+- For Spring Boot:
+  - Cross-check structure against `.cursor/rules/36-architecture.mdc`.
+  - Ensure controllers are thin and domain logic is in Domain/Application layers.
+  - Verify Spring is only used in Infrastructure/Interface layers.
 
 ## 50-lang-javascript.mdc — JavaScript/TypeScript standards — state, invariants, and UI behavior.
 - Globs: src/**/*.js, src/**/*.ts, frontend/**/*.js, frontend/**/*.ts, public/**/*.js

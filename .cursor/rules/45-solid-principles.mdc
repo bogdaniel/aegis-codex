@@ -1,0 +1,203 @@
+---
+description: "SOLID principles — integration with Clean Architecture and DDD."
+alwaysApply: true
+globs:
+  - "src/**"
+  - "app/**"
+  - "domain/**"
+  - "application/**"
+---
+
+[SOLID PRINCIPLES — INTEGRATION WITH CLEAN ARCHITECTURE & DDD]
+
+[CORE MANDATE]
+- SOLID principles are foundational OO design defaults that align with Clean Architecture, Hexagonal Architecture, and DDD.
+- Use SOLID as a lens for design and refactoring; violations are often early signals of coupling and maintainability issues.
+- **This rule integrates with existing design principles** (see `docs/architecture/design-principles.md` and `docs/architecture/solid-principles.md`); it does not duplicate them.
+
+[PRINCIPLES]
+
+### Single Responsibility Principle (SRP)
+- Each module/class should have **one reason to change**.
+- Split responsibilities such as persistence, validation, formatting, and orchestration into separate components.
+
+**Integration with Clean Architecture:**
+- Domain entities: one responsibility (encapsulate business invariants).
+- Application use cases: one responsibility (orchestrate one business operation).
+- Infrastructure adapters: one responsibility (implement one port interface).
+- Interface controllers: one responsibility (translate HTTP to Application commands).
+
+**Integration with DDD:**
+- Aggregates: one consistency boundary (one aggregate root per aggregate).
+- Value Objects: one concept (e.g., `UserEmail` encapsulates email validation and formatting).
+- Domain Services: one domain operation (e.g., `PasswordHasher` only hashes passwords).
+
+**Anti-patterns:**
+- God classes/services that mix multiple responsibilities (e.g., `UserService` that validates, persists, formats, and sends emails).
+- Controllers with business logic (violates SRP: controller should only translate HTTP ↔ Application).
+
+**Agent guidance:**
+- `@architect`: When designing modules, ensure each has a single, clear responsibility.
+- `@code-reviewer`: Flag classes/modules with multiple reasons to change; recommend splitting.
+- `@refactorer`: Extract separate classes/modules for distinct responsibilities.
+
+---
+
+### Open/Closed Principle (OCP)
+- Components should be **open for extension, closed for modification**.
+- Prefer composition, interfaces, and configuration over editing existing code paths for every new case.
+
+**Integration with Clean Architecture:**
+- Ports (interfaces) in Domain/Application: open for new implementations (new adapters), closed to modification.
+- Use cases: extend via new use cases, not by modifying existing ones.
+- Infrastructure adapters: add new adapters without changing Domain/Application.
+
+**Integration with DDD:**
+- Value Objects: extend via new value objects, not by modifying existing ones.
+- Domain Events: add new event types without modifying existing event handlers.
+- Repository interfaces: extend via new implementations, not by modifying the interface (unless breaking change is justified).
+
+**Anti-patterns:**
+- Modifying existing use cases to handle new cases (e.g., adding `if (type === 'new')` branches).
+- Modifying domain entities to support new business rules (prefer domain services or new aggregates).
+
+**Agent guidance:**
+- `@architect`: Design interfaces/ports that can be extended without modification.
+- `@code-reviewer`: Flag modifications to existing code that add new cases; recommend extension patterns.
+- `@refactorer`: Extract interfaces/strategies to enable extension without modification.
+
+---
+
+### Liskov Substitution Principle (LSP)
+- Subtypes must be usable anywhere their base type is expected without breaking behavior.
+- Avoid widening preconditions or weakening postconditions in subclasses.
+
+**Integration with Clean Architecture:**
+- Port implementations: all adapters implementing a port must satisfy the same contract.
+- Repository implementations: `InMemoryUserRepository` and `JpaUserRepository` must both satisfy `UserRepository` contract.
+- Use case dependencies: any implementation of a port should work with the use case.
+
+**Integration with DDD:**
+- Value Object subtypes: must preserve value object semantics (immutability, equality).
+- Aggregate subtypes: must preserve aggregate invariants.
+
+**Anti-patterns:**
+- Repository implementations that throw exceptions for valid inputs (widening preconditions).
+- Port adapters that return different data shapes than the interface promises (weakening postconditions).
+
+**Agent guidance:**
+- `@architect`: Ensure port implementations satisfy the same contract.
+- `@code-reviewer`: Verify that all implementations of an interface are substitutable.
+- `@refactorer`: When refactoring interfaces, ensure all implementations still satisfy the contract.
+
+---
+
+### Interface Segregation Principle (ISP)
+- Prefer many small, focused interfaces over large "god" interfaces.
+- Clients should not depend on methods they do not use.
+
+**Integration with Clean Architecture:**
+- Ports: define focused interfaces (e.g., `UserRepository` for persistence, `EventPublisher` for events, not `UserRepositoryAndEventPublisher`).
+- Use cases: depend only on the ports they need (e.g., `PlaceOrder` depends on `OrderRepository` and `EventPublisher`, not a monolithic `OrderService`).
+
+**Integration with DDD:**
+- Repository interfaces: focused on one aggregate (e.g., `UserRepository`, not `Repository` with methods for all entities).
+- Domain services: focused interfaces (e.g., `PasswordHasher`, not `SecurityService` with password, encryption, and token methods).
+
+**Anti-patterns:**
+- Large interfaces with many methods (e.g., `IUserService` with `create`, `update`, `delete`, `validate`, `format`, `sendEmail`).
+- Use cases depending on interfaces with methods they never call.
+
+**Agent guidance:**
+- `@architect`: Design small, focused interfaces per responsibility.
+- `@code-reviewer`: Flag large interfaces; recommend splitting into focused interfaces.
+- `@refactorer`: Split large interfaces into smaller, focused ones.
+
+---
+
+### Dependency Inversion Principle (DIP)
+- High-level modules should not depend on low-level modules; both depend on abstractions.
+- Depend on interfaces/ports; inject dependencies rather than constructing them inline.
+
+**Integration with Clean Architecture:**
+- Domain/Application depend on ports (interfaces), not Infrastructure implementations.
+- Use cases receive repositories/ports via constructor injection, not by instantiating concrete classes.
+- Infrastructure implements ports defined in Domain/Application (dependency points inward).
+
+**Integration with DDD:**
+- Aggregates depend on repository interfaces, not concrete repositories.
+- Domain services depend on port interfaces, not concrete adapters.
+- Application use cases depend on domain ports, not infrastructure adapters.
+
+**Anti-patterns:**
+- Use cases instantiating repositories directly (e.g., `new JpaUserRepository()` in a use case).
+- Domain entities depending on infrastructure classes (e.g., `User` importing `JpaUserRepository`).
+- Controllers instantiating use cases directly (should use dependency injection).
+
+**Agent guidance:**
+- `@architect`: Define ports in Domain/Application; implement in Infrastructure.
+- `@code-reviewer`: Flag direct dependencies on concrete classes in Domain/Application; require interfaces.
+- `@refactorer`: Extract interfaces and inject dependencies via constructor.
+
+---
+
+[INTEGRATION WITH EXISTING RULES]
+
+- **Reference existing design principles:** See `docs/architecture/design-principles.md` for foundational software design principles (DRY, KISS, YAGNI, Tell Don't Ask, etc.).
+- **Reference existing architecture rules:** See `.cursor/rules/36-architecture.mdc` for Clean Architecture, Hexagonal Architecture, and DDD patterns.
+- **Reference existing SOLID docs:** See `docs/architecture/solid-principles.md` for concise SOLID overview.
+- **See also:**
+  - `.cursor/rules/3A-anti-patterns.mdc` — Anti-patterns catalog (includes SOLID violations)
+  - `.cursor/rules/37-code-structure.mdc` — Code structure standards
+  - `examples/refactoring/` — Refactoring examples demonstrating SOLID principles
+
+**This rule does NOT duplicate:**
+- General design principles (DRY, KISS, YAGNI) — see `docs/architecture/design-principles.md`.
+- Architecture patterns (Clean/Hex/DDD) — see `.cursor/rules/36-architecture.mdc`.
+- SOLID overview — see `docs/architecture/solid-principles.md`.
+
+**This rule DOES provide:**
+- Explicit integration of SOLID with Clean Architecture layers.
+- Explicit integration of SOLID with DDD building blocks.
+- Agent-specific guidance for applying SOLID.
+- Anti-patterns with architecture context.
+
+---
+
+[REFACTOR WORKFLOW INTEGRATION]
+
+- Each principle should have at least one before/after refactor example in `examples/` directory.
+- Examples should be usable by `@refactorer` and `@code-reviewer` agents.
+- Link from this rule file to examples directory.
+
+**Example locations:**
+- `examples/refactoring/srp-god-class/` — SRP violations and fixes ✅
+- `examples/refactoring/dip-inversion/` — DIP dependency injection ✅
+- `examples/refactoring/clean-architecture/fat-controller/` — Clean Architecture: thin controllers ✅
+- `examples/refactoring/ocp-extension/` — OCP extension patterns ✅
+- `examples/refactoring/lsp-contracts/` — LSP contract preservation ✅
+- `examples/refactoring/isp-segregation/` — ISP interface splitting ✅
+
+---
+
+[VERIFICATION]
+
+- For code reviews:
+  - Check that modules have single responsibilities (SRP).
+  - Check that new functionality extends via interfaces, not modification (OCP).
+  - Check that interface implementations are substitutable (LSP).
+  - Check that interfaces are focused and clients don't depend on unused methods (ISP).
+  - Check that Domain/Application depend on interfaces, not concrete classes (DIP).
+
+- For architecture reviews:
+  - Verify ports are defined in Domain/Application (DIP).
+  - Verify use cases have single responsibilities (SRP).
+  - Verify new adapters extend ports without modifying them (OCP).
+
+---
+
+[AGENT GUIDANCE SUMMARY]
+
+- **@architect:** Apply SOLID when designing system architecture; ensure ports/interfaces enable extension (OCP, DIP).
+- **@code-reviewer:** Flag SOLID violations; recommend refactoring to align with SOLID.
+- **@refactorer:** Use SOLID as a guide for extracting interfaces, splitting responsibilities, and inverting dependencies.

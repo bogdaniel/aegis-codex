@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clean Architecture Demo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Clean Architecture Backend Demo</h1>
+    <p>IdentityContext (Tier H) + OrdersContext (Tier M)</p>
+  </header>
+
+  <main>
+    <section id="auth-section" class="section">
+      <h2>Identity Management</h2>
+      
+      <div class="card">
+        <h3>Register User</h3>
+        <form id="register-form">
+          <label for="register-email">Email:</label>
+          <input type="email" id="register-email" required>
+          
+          <label for="register-password">Password:</label>
+          <input type="password" id="register-password" required>
+          
+          <button type="submit">Register</button>
+        </form>
+        <div id="register-result" class="result"></div>
+      </div>
+
+      <div class="card">
+        <h3>Authenticate</h3>
+        <form id="auth-form">
+          <label for="auth-email">Email:</label>
+          <input type="email" id="auth-email" required>
+          
+          <label for="auth-password">Password:</label>
+          <input type="password" id="auth-password" required>
+          
+          <button type="submit">Login</button>
+        </form>
+        <div id="auth-result" class="result"></div>
+        <div id="current-user" class="user-info"></div>
+      </div>
+    </section>
+
+    <section id="orders-section" class="section">
+      <h2>Order Management</h2>
+      
+      <div class="card">
+        <h3>Place Order</h3>
+        <form id="place-order-form">
+          <label for="order-user-id">User ID:</label>
+          <input type="text" id="order-user-id" placeholder="Enter user ID from login" required>
+          
+          <fieldset>
+            <legend>Order Items</legend>
+            <div id="order-items">
+              <div class="order-item">
+                <label>Product ID:</label>
+                <input type="text" class="product-id" placeholder="prod_1" required>
+                <label>Quantity:</label>
+                <input type="number" class="quantity" min="1" value="1" required>
+                <label>Unit Price:</label>
+                <input type="number" class="unit-price" min="0" step="0.01" value="10.00" required>
+              </div>
+            </div>
+            <button type="button" id="add-item-btn">Add Item</button>
+          </fieldset>
+          
+          <button type="submit">Place Order</button>
+        </form>
+        <div id="place-order-result" class="result"></div>
+      </div>
+
+      <div class="card">
+        <h3>View Order</h3>
+        <form id="view-order-form">
+          <label for="view-order-id">Order ID:</label>
+          <input type="text" id="view-order-id" placeholder="Enter order ID" required>
+          
+          <label for="view-user-id">User ID:</label>
+          <input type="text" id="view-user-id" placeholder="Enter user ID" required>
+          
+          <button type="submit">Get Order Summary</button>
+        </form>
+        <div id="view-order-result" class="result"></div>
+      </div>
+
+      <div class="card">
+        <h3>Cancel Order</h3>
+        <form id="cancel-order-form">
+          <label for="cancel-order-id">Order ID:</label>
+          <input type="text" id="cancel-order-id" placeholder="Enter order ID" required>
+          
+          <label for="cancel-user-id">User ID:</label>
+          <input type="text" id="cancel-user-id" placeholder="Enter user ID" required>
+          
+          <button type="submit">Cancel Order</button>
+        </form>
+        <div id="cancel-order-result" class="result"></div>
+      </div>
+    </section>
+
+    <section id="events-section" class="section">
+      <h2>Domain Events</h2>
+      <div class="card">
+        <h3>Published Events</h3>
+        <div id="events-log" class="events-log"></div>
+        <button type="button" id="clear-events-btn">Clear Log</button>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
+

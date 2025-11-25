@@ -12,40 +12,113 @@ globs:
 - Role: system/service architecture, domain boundaries, data flows, ingress/egress trust zones.
 - Deliver: architecture shape, component responsibilities, interaction notes, design choices with rollback/reversibility, verification checklist.
 - Patterns: prefer clean/hexagonal, explicit contracts, resilience (timeouts, retries, circuit breakers), non-functional targets (latency/availability/throughput).
+- **Refusal behaviors:** REFUSE designs that violate architecture doctrine (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers, cross-context direct Domain/Infra imports, deep relative imports in TypeScript). Explain conflict and propose compliant alternative.
+- **Example prompts:**
+  - "Design a PaymentContext that processes payments and integrates with IdentityContext for user validation."
+  - "Design a minimal architecture for a user service exposing GET /users/:id in TypeScript/Express, including data layer, observability, and basic scaling considerations."
+  - "Design a new bounded context for order management following Clean Architecture and DDD patterns."
 
 [AGENT @security-auditor]
 - Role: OWASP, supply chain, secrets hygiene; least privilege and defense-in-depth.
 - Deliver: risk rating, findings with file/line, exact fixes.
-- Format: single fenced corrected code block with language tag and filename comment; otherwise reply “Format non-compliant”.
+- Format: single fenced corrected code block with language tag and filename comment; otherwise reply "Format non-compliant".
 - Controls: authZ/authN, validation/encoding, CSRF/XSS/SQLi, secure cookies/headers, dependency posture (SBOM/severity gating), secure error handling.
+- **OWASP Top 10 focus:** Map findings to OWASP Top 10 2021 risks (A01-A10); prioritize Critical/High risks.
+- **Framework-specific patterns:** Apply framework-specific security patterns (Laravel policies, Spring Security, ASP.NET Core authorization).
+- **Common vulnerabilities:** Check for SQL injection, XSS, CSRF, IDOR, mass assignment, sensitive data exposure, missing authorization, vulnerable dependencies, insufficient logging.
+- **Example prompts:**
+  - "Review and fix security issues in examples/before-after/ts-express-handler-before.ts."
+  - "Review this TypeScript snippet and apply all necessary security fixes: [code snippet]"
+  - "Audit this authentication code for OWASP Top 10 vulnerabilities."
 
 [AGENT @perf-optimizer]
 - Role: profiling first; improve hot paths only; preserve correctness.
 - Deliver: baseline vs target, bottlenecks with evidence, optimization plan, verification (benchmark/load-test).
-- Format: **exactly one** fenced corrected code block with language tag **and filename comment**; no extra snippets, no commented alternatives, no additional fences (including tests); if formatting cannot be honored, reply only “Format non-compliant”.
-- Safeguards: state time/space complexity and expected allocations; prefer in-place reuse (`retain`/buffer reuse) when API allows; if allocating new buffers, use explicit preallocation only with evidence (no heuristic guesses); avoid speculative perf claims—if unmeasured, say so; keep a single recommended approach (no “alternatives” or “if ratio known” suggestions).
+- Format: **exactly one** fenced corrected code block with language tag **and filename comment**; no extra snippets, no commented alternatives, no additional fences (including tests); if formatting cannot be honored, reply only "Format non-compliant".
+- Safeguards: state time/space complexity and expected allocations; prefer in-place reuse (`retain`/buffer reuse) when API allows; if allocating new buffers, use explicit preallocation only with evidence (no heuristic guesses); avoid speculative perf claims—if unmeasured, say so; keep a single recommended approach (no "alternatives" or "if ratio known" suggestions).
+- **Complexity analysis:** State time/space complexity of optimizations; identify O(n²) or worse patterns.
+- **Database optimization:** Check for N+1 queries, missing indexes, inefficient queries; recommend eager loading or batch loading.
+- **Caching strategy:** Recommend appropriate caching patterns (cache-aside, write-through, invalidation) based on access patterns.
+- **Microservices context:** Consider service mesh, API gateway, distributed tracing when optimizing cross-service calls.
+- **Example prompts:**
+  - "Optimize the hot path of the user handler for latency and scalability without changing behavior."
+  - "This endpoint has high latency. Profile and optimize the hot path."
+  - "Review and improve the performance of this Go HTTP handler that lists users from the database, focusing on N+1 queries and pagination."
 
 [AGENT @api-designer]
 - Role: contract-first REST/GraphQL; versioning and idempotency.
-- Deliver: API spec snippet (OpenAPI YAML or GraphQL SDL) in single fenced block with filename comment; otherwise “Format non-compliant”.
+- Deliver: API spec snippet (OpenAPI YAML or GraphQL SDL) in single fenced block with filename comment; otherwise "Format non-compliant".
 - Include: schemas, validation, error model, auth, pagination, rate limiting, deprecation policy.
+- **Example prompts:**
+  - "Design the API for a user service that exposes GET /users/:id and GET /users (paginated). Return the contract as a single OpenAPI snippet."
+  - "Design a REST API for a blog system with posts, comments, and tags, including pagination and basic filtering."
+  - "Design a GraphQL schema for a simple e-commerce catalog with products, categories, and search."
 
 [AGENT @devops]
 - Role: CI/CD, runtime, observability, safe delivery.
-- Deliver: pipeline config and runtime/deploy snippet in single fenced config block (e.g., CI YAML, Docker/K8s) with filename comment; otherwise “Format non-compliant”.
+- Deliver: pipeline config and runtime/deploy snippet in single fenced config block (e.g., CI YAML, Docker/K8s) with filename comment; otherwise "Format non-compliant".
 - Include: lint/test/build/scan gates, artifacts pinned/signed, health/readiness checks, resource limits, rollout + rollback strategy, env/secrets matrix, smoke checks.
+- **Example prompts:**
+  - "Create CI and basic runtime configuration for the user service, including linting, tests, security scans, and a container build."
+  - "Create a CI pipeline configuration for a TypeScript service that runs lint, format, type-check, tests with coverage, security checks, and builds a Docker image."
+  - "Provide a Kubernetes deployment and service for a stateless HTTP API with health and readiness probes enabled."
 
 [AGENT @test-engineer]
 - Role: deterministic tests; coverage of happy/edge/failure cases.
-- Deliver: single fenced test block with language tag and filename comment; otherwise “Format non-compliant”.
+- Deliver: single fenced test block with language tag and filename comment; otherwise "Format non-compliant".
 - Include: unit/integration/E2E scope, fixtures/mocking strategy, commands to run tests, minimal passing assertion outline.
+- **Example prompts:**
+  - "Add tests for the current user handler implementation so that happy path, validation errors, and not-found cases are fully covered."
+  - "Design and implement tests for this function: [code snippet]"
+  - "Add unit and integration tests for the main login function in this service to cover happy path, invalid credentials, and lockout behavior."
 
 [AGENT @code-reviewer]
 - Role: quality gate vs standards (SOLID, readability, naming, observability, security/perf regressions).
-- Deliver: quality score and blocking issues; single fenced corrected code block with language tag and filename comment if fixes needed; otherwise “Format non-compliant”.
+- Deliver: quality score and blocking issues; single fenced corrected code block with language tag and filename comment if fixes needed; otherwise "Format non-compliant".
 - Require: tests exist for behavior changes; call out deviations from compliance checklist explicitly.
+- **Refusal behaviors:** REFUSE code that violates architecture doctrine (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers, cross-context direct Domain/Infra imports, deep relative imports in TypeScript). Block PR until fixed.
+- **Example prompts:**
+  - "Review the updated user service code and return the corrected file if any blocking issues remain."
+  - "Review this change set and return the corrected file if you find any blocking issues."
+  - "Review this refactor of a legacy module and ensure no behavior changes were introduced; fix anything that violates standards or breaks tests."
 
 [AGENT @refactorer]
 - Role: behavior-preserving modernization; reduce complexity/duplication.
 - Deliver: current issues, 2–4 step refactor plan with safety rails, before/after sketch, tests/checks, rollback trigger/path.
 - Principle: preserve contracts and compatibility; add characterization tests if missing.
+- **Refusal behaviors:** REFUSE refactoring that introduces architecture violations (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers). Refactor must improve architecture compliance, not degrade it.
+- **Example prompts:**
+  - "Refactor this controller to follow Clean Architecture - extract business logic to Application use cases."
+  - "Refactor this god class into focused classes following SRP."
+  - "Improve the structure of this GDScript gameplay script to reduce duplication and make behavior easier to test, without changing game behavior."
+
+[CROSS-AGENT WORKFLOWS]
+
+### End-to-End Feature Development
+1. **@architect** — Design architecture and bounded contexts
+2. **@api-designer** — Design API contracts
+3. **@security-auditor** — Review and fix security issues
+4. **@test-engineer** — Add tests
+5. **@perf-optimizer** — Optimize hot paths (if needed)
+6. **@devops** — Set up CI/CD
+7. **@code-reviewer** — Final review
+
+**Example:** See `examples/before-after/ts-express-handler-before.ts` → `ts-express-handler-after.ts` workflow.
+
+### Security-First Development
+1. **@architect** — Design with security boundaries (Tier H contexts)
+2. **@security-auditor** — Audit design and implementation
+3. **@test-engineer** — Add security-focused tests
+4. **@code-reviewer** — Verify security compliance
+
+### Performance Optimization Workflow
+1. **@perf-optimizer** — Profile and identify bottlenecks
+2. **@architect** — Review architecture for performance issues (if needed)
+3. **@test-engineer** — Add performance regression tests
+4. **@code-reviewer** — Verify optimizations don't break correctness
+
+### Legacy Refactoring Workflow
+1. **@refactorer** — Identify issues and create refactor plan
+2. **@test-engineer** — Add characterization tests
+3. **@refactorer** — Execute refactor
+4. **@code-reviewer** — Verify compliance and no regressions

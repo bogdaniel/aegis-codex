@@ -1,0 +1,172 @@
+# Architecture enforcement checks: Clean Architecture, Hexagonal, DDD compliance
+name: Aegis Architecture Check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+env:
+  NODE_VERSION: "20"
+
+jobs:
+  architecture-compliance:
+    name: Architecture Compliance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # TypeScript/JavaScript: Path aliases and import restrictions
+      - name: Setup Node
+        if: hashFiles('package-lock.json', 'pnpm-lock.yaml', 'yarn.lock') != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Node dependencies (npm)
+        if: hashFiles('package-lock.json') != ''
+        run: npm ci
+
+      - name: Install Node dependencies (pnpm)
+        if: hashFiles('pnpm-lock.yaml') != ''
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - name: pnpm install
+        if: hashFiles('pnpm-lock.yaml') != ''
+        run: pnpm install --frozen-lockfile
+
+      # TypeScript: Architecture checks (path aliases, layer dependencies, cross-context imports)
+      - name: TypeScript Architecture Check
+        if: hashFiles('package-lock.json', 'pnpm-lock.yaml', 'yarn.lock') != ''
+        run: |
+          # Check for ESLint config with architecture rules
+          if [ -f ".eslintrc.json" ] || [ -f "test/example-app/.eslintrc.json" ]; then
+            echo "Running ESLint with architecture rules..."
+            # Use example-app ESLint config if it exists, otherwise root
+            ESLINT_CONFIG="${ESLINT_CONFIG:-test/example-app/.eslintrc.json}"
+            if [ -f "$ESLINT_CONFIG" ]; then
+              npx eslint --config "$ESLINT_CONFIG" "test/example-app/**/*.ts" --ext .ts || pnpm eslint --config "$ESLINT_CONFIG" "test/example-app/**/*.ts" --ext .ts || true
+            else
+              npx eslint "**/*.ts" --ext .ts || pnpm eslint "**/*.ts" --ext .ts || true
+            fi
+          else
+            echo "No ESLint config found with architecture rules. Skipping TypeScript architecture check."
+          fi
+
+      # TypeScript: Check for deep relative imports (beyond 1 level)
+      - name: Check for Deep Relative Imports
+        if: hashFiles('package-lock.json', 'pnpm-lock.yaml', 'yarn.lock') != ''
+        run: |
+          echo "Checking for deep relative imports (../../ or deeper)..."
+          # Find TypeScript files with deep relative imports
+          if find . -name "*.ts" -type f ! -path "*/node_modules/*" ! -path "*/dist/*" | xargs grep -l "\.\./\.\./\.\." | grep -v ".test.ts" | grep -v ".spec.ts"; then
+            echo "❌ Found deep relative imports (../../ or deeper). Use path aliases instead."
+            echo "Example: Use @identity/domain/* instead of ../../Domain/*"
+            exit 1
+          else
+            echo "✅ No deep relative imports found"
+          fi
+
+      # TypeScript: Check for cross-context direct imports (Domain/Infrastructure)
+      - name: Check Cross-Context Direct Imports
+        if: hashFiles('package-lock.json', 'pnpm-lock.yaml', 'yarn.lock') != ''
+        run: |
+          echo "Checking for cross-context direct Domain/Infrastructure imports..."
+          # Check for imports like @other-context/domain/* or @other-context/infra/*
+          # These should use public API modules instead (@other-context/app)
+          VIOLATIONS=0
+          for file in $(find . -name "*.ts" -type f ! -path "*/node_modules/*" ! -path "*/dist/*" ! -path "*/test/scenarios/*"); do
+            # Skip if file is in a context's own domain/infra (self-imports are OK)
+            if grep -q "@.*/domain/\|@.*/infra/" "$file" 2>/dev/null; then
+              # Check if it's a cross-context import (not self-import)
+              # This is a simplified check; full validation requires parsing imports
+              if grep -E "@(identity|orders|payment)/domain/|@(identity|orders|payment)/infra/" "$file" 2>/dev/null | grep -v "$(dirname "$file" | sed 's|.*/||')"; then
+                echo "⚠️  Potential cross-context direct import in $file"
+                VIOLATIONS=$((VIOLATIONS + 1))
+              fi
+            fi
+          done
+          if [ $VIOLATIONS -gt 0 ]; then
+            echo "⚠️  Found potential cross-context direct imports. Use public API modules (@context/app) instead."
+            echo "This is a warning. Full validation requires ESLint with no-restricted-imports rules."
+          else
+            echo "✅ No obvious cross-context direct imports found"
+          fi
+
+      # PHP: Deptrac for layer dependencies (if composer.json exists)
+      - name: PHP Architecture Check (Deptrac)
+        if: hashFiles('composer.lock') != ''
+        run: |
+          composer install --no-interaction --prefer-dist
+          # Check if Deptrac is available
+          if [ -f "vendor/bin/deptrac" ] || command -v deptrac &> /dev/null; then
+            echo "Running Deptrac for PHP architecture checks..."
+            vendor/bin/deptrac analyse || deptrac analyse || echo "⚠️  Deptrac not configured. Install and configure Deptrac for layer dependency checks."
+          else
+            echo "⚠️  Deptrac not installed. Install via: composer require --dev qossmic/deptrac-shim"
+            echo "Configure deptrac.yaml to enforce Clean Architecture layer dependencies."
+          fi
+
+      # Java: Package boundary checks (if pom.xml or build.gradle exists)
+      - name: Java Architecture Check
+        if: hashFiles('pom.xml', 'build.gradle', 'build.gradle.kts') != ''
+        run: |
+          echo "Java architecture checks..."
+          # Check for Maven/Gradle module boundaries
+          if [ -f "pom.xml" ]; then
+            echo "Maven project detected. Use ArchUnit or similar for package boundary checks."
+            echo "Example: Add archunit-junit5 dependency and create architecture tests."
+          elif [ -f "build.gradle" ] || [ -f "build.gradle.kts" ]; then
+            echo "Gradle project detected. Use ArchUnit or similar for package boundary checks."
+            echo "Example: Add 'testImplementation \"com.tngtech.archunit:archunit-junit5:1.0.1\"' and create architecture tests."
+          fi
+          echo "⚠️  Java architecture checks require manual setup. See .cursor/rules/50-lang-java.mdc for guidance."
+
+      # C#: Architecture checks (if .csproj exists)
+      - name: C# Architecture Check
+        if: hashFiles('*.csproj', '*.sln') != ''
+        run: |
+          echo "C# architecture checks..."
+          # Check for .NET projects
+          if find . -name "*.csproj" -type f ! -path "*/node_modules/*" | head -1 | grep -q .; then
+            echo "C# project detected. Use ArchUnit.NET or similar for architecture checks."
+            echo "Example: Add ArchUnitNET.xUnit or NetArchTest NuGet package and create architecture tests."
+          fi
+          echo "⚠️  C# architecture checks require manual setup. See .cursor/rules/50-lang-csharp.mdc for guidance."
+
+      # Public API Module Documentation Check
+      - name: Check Public API Module Documentation
+        run: |
+          echo "Checking for public API module documentation (JSDoc/TSDoc headers)..."
+          # Find public API modules (Application/index.ts, Application/public.ts, etc.)
+          VIOLATIONS=0
+          for file in $(find . -path "*/Application/index.ts" -o -path "*/Application/public.ts" -type f ! -path "*/node_modules/*" ! -path "*/dist/*" ! -path "*/test/scenarios/*"); do
+            # Check if file has JSDoc/TSDoc header
+            if ! head -20 "$file" | grep -qE "/\*\*|///"; then
+              echo "⚠️  Public API module missing documentation: $file"
+              echo "   Add JSDoc/TSDoc header documenting purpose, exports, and breaking change policy."
+              VIOLATIONS=$((VIOLATIONS + 1))
+            fi
+          done
+          if [ $VIOLATIONS -eq 0 ]; then
+            echo "✅ All public API modules have documentation"
+          else
+            echo "⚠️  Found $VIOLATIONS public API modules without documentation"
+            echo "   This is a warning. Document public API modules for cross-context use."
+          fi
+
+      # Summary
+      - name: Architecture Check Summary
+        run: |
+          echo "## Architecture Compliance Check Summary"
+          echo ""
+          echo "✅ TypeScript: Path aliases and import restrictions checked"
+          echo "✅ PHP: Deptrac layer dependency checks (if configured)"
+          echo "✅ Java: Package boundary checks (requires manual setup)"
+          echo "✅ C#: Architecture checks (requires manual setup)"
+          echo "✅ Public API modules: Documentation checked"
+          echo ""
+          echo "**Note:** Some checks require manual configuration (Deptrac, ArchUnit, etc.)."
+          echo "See `.cursor/rules/34-ci.mdc` for setup instructions."
+

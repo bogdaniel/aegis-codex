@@ -229,6 +229,11 @@ globs:
 
 [REJECTION CRITERIA]
 - **FORBIDDEN:** Business logic in controllers → **REJECT**, move to Application use cases.
+  - See `examples/refactoring/clean-architecture/fat-controller/` for before/after example.
+- **FORBIDDEN:** Framework dependencies in Domain/Application → **REJECT**, use ports/adapters pattern.
+  - See `examples/refactoring/clean-architecture/framework-in-domain/` for before/after example.
+- **FORBIDDEN:** Direct cross-context Domain/Infrastructure imports → **REJECT**, use public API modules.
+  - See `examples/refactoring/clean-architecture/cross-context-direct/` for before/after example.
 - **FORBIDDEN:** Controllers accessing repositories/ORM directly → **REJECT**, use Application use cases.
 - **FORBIDDEN:** Business logic in Infrastructure → **REJECT**, move to Domain/Application.
 - **FORBIDDEN:** Anemic domain models with logic in services → **REJECT**, use rich domain models.
@@ -236,6 +241,11 @@ globs:
 - Direct use of external DTOs/entities inside Domain without mapping/ACL.
 - Cross-context database access or entity reuse.
 - Tier H services that depend heavily on frameworks or bypass ports/adapters.
+
+**See also:**
+- `.cursor/rules/45-solid-principles.mdc` — SOLID principles (SRP, DIP violations related to architecture)
+- `.cursor/rules/3A-anti-patterns.mdc` — Anti-patterns catalog (architecture anti-patterns)
+- `.cursor/rules/38-anti-corruption-events.mdc` — Anti-corruption layers and event schemas
 
 [DOCUMENTATION REQUIREMENTS]
 - Public API documentation:

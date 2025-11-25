@@ -18,7 +18,7 @@ globs:
   - Architecture dependency checks must pass (layer dependencies, cross-context imports).
   - Public API module exports must be documented (JSDoc/TSDoc headers present).
   - No cross-context domain/infra imports (must use public API modules).
-  - Path aliases must be used (no relative imports beyond 1 level).
+  - For TypeScript projects: path aliases must be used (no relative imports beyond 1 level). Other languages: enforce module/package boundaries using ecosystem-appropriate tools (Deptrac, package boundaries, etc.).
 - Pre-commit hooks:
   - Run architecture checks before commit (static analysis, dependency validation).
   - Block commits with violations (layer dependencies, cross-context imports, path alias violations).
@@ -29,3 +29,75 @@ globs:
 
 [VERIFICATION]
 - Provide local pipeline command (e.g., `npm run lint && npm test`, `go test ./...`, `cargo fmt -- --check && cargo clippy && cargo test`) and reference CI workflow path.
+
+[CI/CD AUTOMATION]
+
+### GitHub Actions Workflows
+
+**Architecture Check Workflow:** `.github/workflows/aegis-architecture-check.yml`
+- Runs on: Pull requests and pushes to main branch
+- Checks:
+  - TypeScript: Path aliases, deep relative imports, cross-context imports
+  - PHP: Deptrac layer dependency checks (if configured)
+  - Java: Package boundary checks (requires ArchUnit setup)
+  - C#: Architecture checks (requires ArchUnit.NET setup)
+  - Public API module documentation (JSDoc/TSDoc headers)
+
+**Existing Workflows:**
+- `.github/workflows/aegis-ci.yml` — Lint, format, tests
+- `.github/workflows/aegis-security.yml` — Dependency audits, security scans
+- `.github/workflows/aegis-policy-check.yml` — Policy validation
+
+### Pre-Commit Hooks
+
+**Pre-Commit Configuration:** `.pre-commit-config.yaml`
+- Install: `pip install pre-commit && pre-commit install`
+- Run manually: `pre-commit run --all-files`
+- Hooks:
+  - ESLint with architecture rules (TypeScript)
+  - Deep relative import checks
+  - PHP: PHPCS + PHPStan
+  - Rust: fmt + clippy
+  - Go: fmt + vet
+  - Python: Black + Ruff
+
+**Standalone Script:** `scripts/pre-commit-architecture-check.sh`
+- Can be used as git pre-commit hook: `ln -s ../../scripts/pre-commit-architecture-check.sh .git/hooks/pre-commit`
+- Run manually: `./scripts/pre-commit-architecture-check.sh`
+- Checks:
+  - Deep relative imports (../../ or deeper)
+  - Cross-context direct imports
+  - Public API module documentation
+  - ESLint with architecture rules
+
+### Local Pipeline Commands
+
+**TypeScript/JavaScript:**
+```bash
+# Run architecture checks
+cd test/example-app
+npm run lint  # Uses .eslintrc.json with architecture rules
+npm run type-check
+npm test
+
+# Or use pre-commit
+pre-commit run --all-files
+```
+
+**PHP:**
+```bash
+# Run Deptrac (if configured)
+vendor/bin/deptrac analyse
+
+# Or use pre-commit
+pre-commit run --all-files
+```
+
+**All Languages:**
+```bash
+# Run pre-commit hooks
+pre-commit run --all-files
+
+# Or use standalone script
+./scripts/pre-commit-architecture-check.sh
+```
