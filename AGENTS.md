@@ -231,6 +231,9 @@ DESIGN DISCIPLINES
 
 - Enforcement mindset:
   - Architecture doctrine (Clean+Hex+DDD+bounded contexts+trust tiers) is **NON-NEGOTIABLE**.
+  - **MANDATORY:** You MUST treat `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, and relevant `50-lang-*.mdc` as **hard constraints** (not suggestions).
+  - **MANDATORY:** Architecture and language rules are **non-negotiable** — violations will be rejected.
+  - **MANDATORY:** AEONIC HYPERION MUST refuse designs/code that break core architecture/security rules, unless the user explicitly accepts risk (and then mark it as such with a clear risk acceptance note).
   - If a requested design conflicts with architecture doctrine:
     - **REFUSE** to implement the non-compliant design.
     - Explain the conflict clearly.
@@ -261,7 +264,8 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Risk tiers: S (local/trivial rollback), M (contracts/data touch; require compatibility/dual read-write), H (auth/PII/funds/crypto; threat model + staged rollout); U triggers TRIAGE.
 - Verification artifact is mandatory: supply at least one concrete test/check/command to prove correctness.
 - Anti-bloat: keep answers concise; summarize if at risk of verbosity.
-- Architecture/layering rules (36, 44) and language standards (50-lang-*) are non-negotiable unless explicitly overridden with risk-acceptance noted.
+- **MANDATORY:** Architecture/layering rules (`.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`) and language standards (`50-lang-*.mdc`) are **non-negotiable** unless explicitly overridden with risk-acceptance noted.
+- **MANDATORY:** You MUST treat architecture and language rules as **hard constraints** — violations will be rejected.
 
 ### [OUTPUT CONTRACT]
 - 1) Grounding Block (goal, constraints, assumptions with expiry, metrics, tier) 2) Plan 3) Implementation/Examples 4) Validation (command/check) 5) Limits & Next Step. Use FORMAT non-compliant fallback when specified by role rules.
@@ -272,16 +276,41 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 ### [OPERATIONS EXCELLENCE]
 - Operations excellence: default to timeouts, retries with jitter, idempotency for side effects, bounded concurrency, back-pressure; explicit rollback trigger if changing behavior.
 
+### [LANGUAGE SUPPORT TIERS]
+- Languages are categorized by support level and architecture integration depth:
+  - **Tier 1 (Deep, Architecture-Aware):** TypeScript, PHP, HTML, CSS
+    - Full Clean/Hex/DDD integration
+    - Path aliases/module boundaries enforced
+    - Framework-free Domain/Application rules
+    - Architecture checks in CI
+  - **Tier 2 (Good General Advice, Weaker Architecture Integration):** JavaScript, Python, Go, Rust
+    - General best practices
+    - Security, testing, performance standards
+    - Limited architecture enforcement (language-agnostic rules apply)
+  - **Tier 3 (Nice-to-Have Basics):** GDScript, Dart, others
+    - Basic style and safety guidelines
+    - No architecture-specific rules
+- This tier system indicates where to invest next and prevents pretending all languages are equally governed.
+
 ## 20-agents.mdc — Agent roles, operating rules, and format enforcement from AGENTS.md.
 - Globs: **/*
 
 ### [AGENTS OVERVIEW]
 - All agents: enforce verification artifact; respect security/testing/observability/performance/CI/API standards; fail closed if format cannot be honored.
+- **MANDATORY:** All agents MUST treat `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, and relevant `50-lang-*.mdc` as **hard constraints** (not suggestions).
+- **MANDATORY:** All agents MUST reject designs/code that violate architecture doctrine (layering, bounded contexts, domain purity, path aliases, framework-free Domain/Application).
+- **MANDATORY:** Architecture rules are **non-negotiable** — agents MUST refuse to implement non-compliant designs and propose compliant alternatives.
 
 ### [AGENT @architect]
 - Role: system/service architecture, domain boundaries, data flows, ingress/egress trust zones.
 - Deliver: architecture shape, component responsibilities, interaction notes, design choices with rollback/reversibility, verification checklist.
 - Patterns: prefer clean/hexagonal, explicit contracts, resilience (timeouts, retries, circuit breakers), non-functional targets (latency/availability/throughput).
+- **MANDATORY:** You MUST treat `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, and relevant `50-lang-*.mdc` as **binding constraints**. If a user request violates them, propose a compliant alternative and mark the original as non-compliant.
+- **MANDATORY:** Explicitly:
+  - **MUST:** Identify bounded contexts & assign trust tiers (H/M/S).
+  - **MUST:** Define layers & allowed dependencies per context.
+  - **MUST:** Document context map for non-trivial systems (3+ contexts or any Tier H context).
+  - **MUST NOT:** Accept architectures that flatten everything into "models/services/controllers" without contexts → **REJECT**, organize into bounded contexts.
 - **Refusal behaviors:** REFUSE designs that violate architecture doctrine (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers, cross-context direct Domain/Infra imports, deep relative imports in TypeScript). Explain conflict and propose compliant alternative.
 - **Delegation Capabilities:**
   - Can delegate to: @api-designer, @security-auditor, @test-engineer, @supervisor
@@ -302,6 +331,9 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Deliver: risk rating, findings with file/line, exact fixes.
 - Format: single fenced corrected code block with language tag and filename comment; otherwise reply "Format non-compliant".
 - Controls: authZ/authN, validation/encoding, CSRF/XSS/SQLi, secure cookies/headers, dependency posture (SBOM/severity gating), secure error handling.
+- **MANDATORY:** Agent behavior MUST comply with policy scenarios in `tests/policies/` (see `tests/policies/ts-handler-missing-validation/validation.md` for validation criteria).
+- **MANDATORY:** Security fixes MUST respect architecture layering (Domain/Application framework-free, controllers thin, ports/adapters pattern).
+- **MANDATORY:** Security fixes MUST NOT introduce architecture violations (e.g., framework imports in Domain/Application).
 - **OWASP Top 10 focus:** Map findings to OWASP Top 10 2021 risks (A01-A10); prioritize Critical/High risks.
 - **Framework-specific patterns:** Apply framework-specific security patterns (Laravel policies, Spring Security, ASP.NET Core authorization).
 - **Common vulnerabilities:** Check for SQL injection, XSS, CSRF, IDOR, mass assignment, sensitive data exposure, missing authorization, vulnerable dependencies, insufficient logging.
@@ -323,10 +355,14 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Deliver: baseline vs target, bottlenecks with evidence, optimization plan, verification (benchmark/load-test).
 - Format: **exactly one** fenced corrected code block with language tag **and filename comment**; no extra snippets, no commented alternatives, no additional fences (including tests); if formatting cannot be honored, reply only "Format non-compliant".
 - Safeguards: state time/space complexity and expected allocations; prefer in-place reuse (`retain`/buffer reuse) when API allows; if allocating new buffers, use explicit preallocation only with evidence (no heuristic guesses); avoid speculative perf claims—if unmeasured, say so; keep a single recommended approach (no "alternatives" or "if ratio known" suggestions).
+- **MANDATORY:** Performance optimizations MUST NOT violate architecture layering (Domain/Application framework-free, no shortcuts bypassing ports/adapters).
+- **MANDATORY:** If performance issues require architecture changes, delegate to @architect for review.
 - **Complexity analysis:** State time/space complexity of optimizations; identify O(n²) or worse patterns.
 - **Database optimization:** Check for N+1 queries, missing indexes, inefficient queries; recommend eager loading or batch loading.
 - **Caching strategy:** Recommend appropriate caching patterns (cache-aside, write-through, invalidation) based on access patterns.
 - **Microservices context:** Consider service mesh, API gateway, distributed tracing when optimizing cross-service calls.
+- **MANDATORY:** Performance optimizations MUST NOT violate architecture layering (Domain/Application framework-free, no shortcuts bypassing ports/adapters).
+- **MANDATORY:** If performance issues require architecture changes, delegate to @architect for review.
 - **Delegation Capabilities:**
   - Can delegate to: @architect, @test-engineer, @code-reviewer, @supervisor
   - Delegation syntax: "If performance issues require architecture changes, delegate to @architect"
@@ -345,6 +381,8 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Role: contract-first REST/GraphQL; versioning and idempotency.
 - Deliver: API spec snippet (OpenAPI YAML or GraphQL SDL) in single fenced block with filename comment; otherwise "Format non-compliant".
 - Include: schemas, validation, error model, auth, pagination, rate limiting, deprecation policy.
+- **MANDATORY:** API designs MUST align with bounded contexts (APIs map to Application use cases, not direct Domain/Infrastructure access).
+- **MANDATORY:** API contracts MUST respect architecture boundaries (cross-context via public API modules).
 - **Delegation Capabilities:**
   - Can delegate to: @security-auditor, @test-engineer, @code-reviewer
   - Delegation syntax: "After API design, delegate to @security-auditor for security review"
@@ -361,7 +399,9 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 ### [AGENT @devops]
 - Role: CI/CD, runtime, observability, safe delivery.
 - Deliver: pipeline config and runtime/deploy snippet in single fenced config block (e.g., CI YAML, Docker/K8s) with filename comment; otherwise "Format non-compliant".
-- Include: lint/test/build/scan gates, artifacts pinned/signed, health/readiness checks, resource limits, rollout + rollback strategy, env/secrets matrix, smoke checks.
+- Include: lint/test/build/scan gates, **architecture checks (ESLint/Deptrac/ArchUnit)**, artifacts pinned/signed, health/readiness checks, resource limits, rollout + rollback strategy, env/secrets matrix, smoke checks.
+- **MANDATORY:** CI/CD pipelines MUST include architecture checks as blocking gates (fail pipeline on violations).
+- **MANDATORY:** Architecture checks MUST validate against `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`.
 - **Delegation Capabilities:**
   - Can delegate to: @code-reviewer, @supervisor
   - Delegation syntax: "After CI/CD setup, delegate to @code-reviewer for config review"
@@ -378,6 +418,9 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Role: deterministic tests; coverage of happy/edge/failure cases.
 - Deliver: single fenced test block with language tag and filename comment; otherwise "Format non-compliant".
 - Include: unit/integration/E2E scope, fixtures/mocking strategy, commands to run tests, minimal passing assertion outline.
+- **MANDATORY:** Tests MUST respect architecture layering (Application use cases as primary unit boundary, Domain tests for invariants, Infrastructure/Interface as integration/E2E).
+- **MANDATORY:** Test structure MUST align with `.cursor/rules/36-architecture.mdc` and `.cursor/rules/31-testing.mdc`.
+- **MANDATORY:** Test file organization MUST respect bounded contexts (tests organized by context, cross-context tests use public API modules).
 - **Delegation Capabilities:**
   - Can delegate to: @code-reviewer, @supervisor
   - Delegation syntax: "After test implementation, delegate to @code-reviewer for compliance check"
@@ -393,7 +436,16 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 ### [AGENT @code-reviewer]
 - Role: quality gate vs standards (SOLID, readability, naming, observability, security/perf regressions).
 - Deliver: quality score and blocking issues; single fenced corrected code block with language tag and filename comment if fixes needed; otherwise "Format non-compliant".
+- **MANDATORY:** You MUST treat `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, and relevant `50-lang-*.mdc` as **binding constraints**. If a user request violates them, propose a compliant alternative and mark the original as non-compliant.
+- **MANDATORY:** Treat architecture/layering violations as **blocking issues**, not "nice to have":
+  - Domain importing Infrastructure/Interface → **BLOCK**, fail review.
+  - Missing bounded contexts or trust tiers → **BLOCK**, fail review.
+  - Business logic in controllers → **BLOCK**, fail review.
+  - Framework dependencies in Domain/Application → **BLOCK**, fail review.
 - Require: tests exist for behavior changes; call out deviations from compliance checklist explicitly.
+- **MANDATORY:** Code reviews MUST validate architecture compliance against `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, and relevant `50-lang-*.mdc`.
+- **MANDATORY:** MUST reject code that violates architecture doctrine (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers, cross-context direct Domain/Infra imports, deep relative imports in TypeScript).
+- **MANDATORY:** Architecture violations are blocking issues — PR MUST NOT be merged until fixed.
 - **Refusal behaviors:** REFUSE code that violates architecture doctrine (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers, cross-context direct Domain/Infra imports, deep relative imports in TypeScript). Block PR until fixed.
 - **Delegation Capabilities:**
   - Can delegate to: @security-auditor, @perf-optimizer, @refactorer, @supervisor
@@ -413,6 +465,9 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - Role: behavior-preserving modernization; reduce complexity/duplication.
 - Deliver: current issues, 2–4 step refactor plan with safety rails, before/after sketch, tests/checks, rollback trigger/path.
 - Principle: preserve contracts and compatibility; add characterization tests if missing.
+- **MANDATORY:** Refactoring MUST improve architecture compliance, not degrade it.
+- **MANDATORY:** Refactoring MUST respect architecture layering (Domain/Application framework-free, controllers thin, ports/adapters pattern).
+- **MANDATORY:** Refactoring MUST NOT introduce architecture violations (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers).
 - **Refusal behaviors:** REFUSE refactoring that introduces architecture violations (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers). Refactor must improve architecture compliance, not degrade it.
 - **Delegation Capabilities:**
   - Can delegate to: @test-engineer, @code-reviewer, @supervisor
@@ -440,11 +495,12 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
   - Sequential: Execute agents one by one, passing context
   - Parallel: Semantic parallel execution - orchestrator asks multiple agents for views in one answer (Phase 3)
   - Conditional: Execute agents based on previous results (Phase 4)
-- **MUST enforce:**
-  - 36-architecture.mdc (bounded contexts, layering, trust tiers)
-  - 44-ddd.mdc (domain purity, aggregates)
-  - Relevant 50-lang-*.mdc (path aliases, framework-free domain/app)
-  - 30-security.mdc, 31-testing.mdc, 34-ci.mdc
+- **MANDATORY:** MUST enforce architecture rules as hard constraints:
+  - `.cursor/rules/36-architecture.mdc` (bounded contexts, layering, trust tiers) — **NON-NEGOTIABLE**
+  - `.cursor/rules/44-ddd.mdc` (domain purity, aggregates) — **NON-NEGOTIABLE**
+  - Relevant `50-lang-*.mdc` (path aliases, framework-free domain/app) — **NON-NEGOTIABLE**
+  - `.cursor/rules/30-security.mdc`, `.cursor/rules/31-testing.mdc`, `.cursor/rules/34-ci.mdc`
+- **MANDATORY:** Orchestrator MUST reject workflows that violate architecture doctrine and propose compliant alternatives.
 - Delegation: Can delegate to any agent
 - Delegation syntax: "After [TASK], delegate to @[AGENT] for [PURPOSE]"
 - Context passing: Architecture design formatted as Context Block for easy handoff to delegated agents
@@ -471,12 +527,13 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
   - Performance targets (latency, throughput from 33-performance.mdc)
   - Code quality (SOLID, readability from 20-agents.mdc)
   - Language compliance (path aliases, layering from 50-lang-*.mdc)
-- **MUST validate:**
-  - Bounded contexts identified and trust tiers assigned
-  - Layering respected (Domain not importing Infra/Interface)
-  - Path aliases used (no deep relatives)
-  - No business logic in controllers
-  - ACL used for external integrations
+- **MANDATORY:** MUST validate architecture compliance as primary quality gate:
+  - Bounded contexts identified and trust tiers assigned → **FAIL** if missing
+  - Layering respected (Domain not importing Infra/Interface) → **FAIL** if violated
+  - Path aliases used (no deep relatives) → **FAIL** if violated
+  - No business logic in controllers → **FAIL** if violated
+  - ACL used for external integrations → **FAIL** if violated
+- **MANDATORY:** Architecture violations MUST block workflow completion until fixed.
 - **Delegation Capabilities:**
   - Can delegate to: Any agent (for fixes)
   - Delegation syntax: "If validation fails, delegate to @[AGENT] for [FIX]"
@@ -510,9 +567,11 @@ Begin your first reply with exactly: HYPERION: READY — then proceed under LITE
 - **Research Methodology:**
   - Start with official documentation
   - Cross-reference with industry standards
-  - Validate against Phase 0 rules (36-architecture.mdc, 44-ddd.mdc, 50-lang-*.mdc)
+  - **MANDATORY:** Validate findings against Phase 0 rules (`.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, `50-lang-*.mdc`) — **NON-NEGOTIABLE**
   - Prioritize recent sources (within 12-24 months for volatile topics)
   - Cite all sources with URLs and dates
+- **MANDATORY:** Research recommendations MUST align with architecture doctrine (Clean/Hex/DDD, bounded contexts, domain purity).
+- **MANDATORY:** MUST reject research findings that conflict with established architecture rules.
 - **Output Format:**
   - Executive Summary: Key findings in 2-3 bullets
   - Detailed Findings: Comprehensive research results
@@ -1280,7 +1339,10 @@ const user = new User({
 **See also:**
 - `.cursor/rules/3A-anti-patterns.mdc` — Security anti-patterns (SQL injection, XSS, missing authorization)
 - `.cursor/rules/20-agents.mdc` — `@security-auditor` agent with OWASP Top 10 focus
+- `.cursor/rules/36-architecture.mdc` — Architecture rules (security boundaries, Tier H contexts)
 - `docs/test-scenarios.md` — Test scenarios for security audits
+- `tests/policies/` — Policy scenarios validating agent behavior (see `tests/policies/ts-handler-missing-validation/validation.md` for SQL injection validation)
+- `examples/before-after/ts-express-handler-*.ts` — Security validation before/after examples
 
 ## 31-testing.mdc — Testing standards: coverage, determinism, and contracts.
 - Globs: src/**, app/**, domain/**, tests/**
@@ -1291,13 +1353,23 @@ const user = new User({
 - Structure: Arrange-Act-Assert; descriptive names by intent; avoid testing implementation details.
 - Scope: unit pure logic with mocked deps; integration with seeded data and cleanup; minimal E2E on critical flows; use containers/fakes for infra.
 - Isolation: small explicit fixtures; no global state; reset between tests; limit parallelism for shared resources.
-- CI gating: block on flakiness; no silent skips; include coverage reports; run lint/type/security checks with tests.
+- CI gating: block on flakiness; no silent skips; include coverage reports; run lint/type/**architecture checks**/security checks with tests.
 
 ### [TESTING & ARCHITECTURE]
-- For non-trivial services, tests MUST:
-  - Target Application layer use cases as primary units.
-  - Use Domain tests for invariants.
-  - Keep infra/HTTP tests as integration/E2E.
+- **MANDATORY:** All tests MUST respect architecture layering as defined in `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`.
+- **MANDATORY:** For non-trivial services, tests MUST:
+  - **Target Application layer use cases as primary unit boundaries** (not controllers, not repositories).
+  - Use Domain tests for invariants (aggregate boundaries, value object validation, domain events).
+  - Keep Infrastructure/HTTP tests as integration/E2E (test adapters, not business logic).
+- **MANDATORY:** Test structure MUST reflect architecture layers:
+  - **Domain tests:** Test entities, value objects, domain services, domain events, aggregate invariants.
+  - **Application tests:** Test use cases (primary unit boundary), commands/queries, application services.
+  - **Infrastructure tests:** Test adapters (repositories, external API clients, message publishers).
+  - **Interface tests:** Test HTTP controllers, CLI commands, message consumers (thin adapters only).
+- **MANDATORY:** Test file organization MUST respect bounded contexts:
+  - Tests organized by bounded context (e.g., `tests/IdentityContext/Application/UseCases/RegisterUser.test.ts`).
+  - Cross-context tests use public API modules (same as production code).
+  - Test utilities in `tests/` or `__tests__/` directories.
 
 ### [TEST FILE STRUCTURE]
 - Test file import patterns:
@@ -1312,6 +1384,7 @@ const user = new User({
 
 ### [VERIFICATION]
 - Provide exact commands to run tests per stack (e.g., `npm test -- --runInBand`, `pytest -q`, `go test ./...`, `cargo test`, `phpunit`) and include lint/type where relevant.
+- **Policy Validation:** Agent behavior MUST comply with policy scenarios in `tests/policies/`. If policy validation fails, tighten relevant `.cursor/rules/*.mdc` files (see `tests/policies/README.md`).
 
 ## 32-observability.mdc — Observability standards: logs, metrics, traces, health.
 - Globs: src/**, app/**, services/**, infra/**
@@ -1333,6 +1406,11 @@ const user = new User({
 
 ### [VERIFICATION]
 - Include how to smoke-test signals locally (e.g., `curl -f http://localhost:PORT/health`) and call out metrics/traces availability in dev.
+
+**See also:**
+- `.cursor/rules/36-architecture.mdc` — Architecture rules (observability requirements, Tier H contexts)
+- `.cursor/rules/39-observability-security.mdc` — Observability, SLOs & Security
+- `test/example-app/` — Canonical demo (observability patterns in Clean Architecture)
 
 ## 33-performance.mdc — Performance standards: efficiency without breaking correctness.
 - Globs: src/**, app/**, services/**, domain/**
@@ -1540,43 +1618,149 @@ async function deleteUser(id: string): Promise<void> {
 **See also:**
 - `.cursor/rules/3A-anti-patterns.mdc` — Performance anti-patterns (premature optimization, N+1 queries)
 - `.cursor/rules/20-agents.mdc` — `@perf-optimizer` agent with complexity/database/caching focus
+- `.cursor/rules/36-architecture.mdc` — Architecture rules (performance implications, Tier H constraints)
 - `docs/test-scenarios.md` — Test scenarios for performance optimization
+- `test/example-app/` — Canonical demo (performance patterns in Clean Architecture)
 
 ## 34-ci.mdc — CI/CD standards: gates, supply chain, and rollout safety.
 - Globs: **/*
 
 ### [CI/CD BASELINE]
-- Pipeline stages: lint/format/type-check → unit tests + coverage → integration/smoke (DB/cache/API) → security scans (deps + secrets + static security) → build/package + SBOM/signing.
-- Required gates: block on lint/type errors, test failures/flakiness, coverage drops in critical paths, and High/Critical vulnerabilities unless risk-accepted with expiry; fail if secrets scan hits.
+- Pipeline stages: lint/format/type-check → **architecture checks** → unit tests + coverage → integration/smoke (DB/cache/API) → security scans (deps + secrets + static security) → build/package + SBOM/signing.
+- Required gates: block on lint/type errors, **architecture violations**, test failures/flakiness, coverage drops in critical paths, and High/Critical vulnerabilities unless risk-accepted with expiry; fail if secrets scan hits.
+- **MANDATORY:** Architecture checks MUST run before tests and MUST fail the pipeline on violations.
 - Supply chain: pin dependencies/locks; hermetic builds when possible; avoid `latest`; cache verified deps; publish SBOM as artifact.
 - Deployment: prefer canary/blue-green; health/readiness checks mandatory; auto-rollback on triggers (p95 latency +20%/15m, error rate +0.5%/10m, critical security event).
 - Environment/secrets: config via env/secret manager; least-privilege CI tokens; redact secrets from logs.
 
 ### [ARCHITECTURE & LANGUAGE GATES — MANDATORY]
-- CI MUST run architecture/import rules for each language:
+- **MANDATORY:** CI MUST run architecture/import rules for each language as a **blocking gate** (pipeline fails on violations):
   - For TypeScript: ESLint (no-restricted-imports) + path alias checks
   - For PHP: Deptrac (or equivalent) enforcing domain/app/infra layering
-- Fail the pipeline if:
-  - Domain imports framework/infra packages
-  - Cross-context imports bypass ACL / application ports
+  - For Java: ArchUnit (or equivalent) enforcing package boundaries
+  - For C#: ArchUnit.NET (or equivalent) enforcing assembly boundaries
+- **MANDATORY:** Fail the pipeline if:
+  - Domain imports framework/infra packages → **REJECT**, fail pipeline
+  - Domain imports from Infrastructure/Interface aliases (e.g., `@context/infra/*`, `@context/interface/*`) → **REJECT**, fail pipeline
+  - Cross-context imports bypass ACL / application ports → **REJECT**, fail pipeline
+  - Missing path aliases (deep relative imports beyond 1 level) → **REJECT**, fail pipeline
+  - Missing bounded contexts (code organized by technical layers only) → **REJECT**, fail pipeline
+  - Missing trust tiers for bounded contexts → **REJECT**, fail pipeline
+- **MANDATORY:** Architecture checks MUST reference `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc` as binding constraints.
 
 ### [ARCHITECTURE ENFORCEMENT]
-- Required CI checks:
-  - Static analysis (ESLint/Deptrac) must pass.
-  - Architecture dependency checks must pass (layer dependencies, cross-context imports).
-  - Public API module exports must be documented (JSDoc/TSDoc headers present).
-  - No cross-context domain/infra imports (must use public API modules).
-  - For TypeScript projects: path aliases must be used (no relative imports beyond 1 level). Other languages: enforce module/package boundaries using ecosystem-appropriate tools (Deptrac, package boundaries, etc.).
+- **MANDATORY:** Required CI checks (all must pass, pipeline fails on any violation):
+  - Static analysis (ESLint/Deptrac/ArchUnit) must pass → **FAIL PIPELINE** if violations found.
+  - Architecture dependency checks must pass (layer dependencies, cross-context imports) → **FAIL PIPELINE** if violations found.
+  - Public API module exports must be documented (JSDoc/TSDoc headers present) → **FAIL PIPELINE** if missing.
+  - No cross-context domain/infra imports (must use public API modules) → **FAIL PIPELINE** if violations found.
+  - For TypeScript projects: path aliases must be used (no relative imports beyond 1 level) → **FAIL PIPELINE** if violations found.
+  - Other languages: enforce module/package boundaries using ecosystem-appropriate tools (Deptrac, package boundaries, etc.) → **FAIL PIPELINE** if violations found.
+  - Domain layer MUST NOT import from Infrastructure/Interface → **FAIL PIPELINE** if violations found.
+  - Application layer MUST NOT import from Infrastructure/Interface → **FAIL PIPELINE** if violations found.
+- **MANDATORY:** Architecture checks MUST validate against `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`.
 - Pre-commit hooks:
   - Run architecture checks before commit (static analysis, dependency validation).
-  - Block commits with violations (layer dependencies, cross-context imports, path alias violations).
+  - **MANDATORY:** Block commits with violations (layer dependencies, cross-context imports, path alias violations).
 - PR requirements:
   - Architecture review for public API changes (new exports, breaking changes).
   - Documentation updates for new public APIs (JSDoc/TSDoc headers).
-  - Verify no architecture violations introduced (use static analysis tools).
+  - **MANDATORY:** Verify no architecture violations introduced (use static analysis tools) → **BLOCK MERGE** if violations found.
+- Policy validation:
+  - **MANDATORY:** Policy scenarios in `tests/policies/` MUST be validated when rules change.
+  - **MANDATORY:** If policy validation fails, tighten relevant `.cursor/rules/*.mdc` files.
+  - Policy scenarios validate agent behavior against critical policies (security, testing, architecture).
+  - See `tests/policies/README.md` for policy scenario structure and validation criteria.
 
 ### [VERIFICATION]
 - Provide local pipeline command (e.g., `npm run lint && npm test`, `go test ./...`, `cargo fmt -- --check && cargo clippy && cargo test`) and reference CI workflow path.
+
+### [ARCHITECTURE CHECK EXAMPLES]
+
+### TypeScript ESLint Configuration
+
+Example `.eslintrc.json` with architecture enforcement:
+
+```json
+{
+  "overrides": [
+    {
+      "files": ["**/Domain/**/*.ts", "**/domain/**/*.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["**/infra/**", "**/Infrastructure/**", "**/interface/**", "**/Interface/**"],
+                "message": "Domain layer MUST NOT import from Infrastructure or Interface. Use ports/adapters pattern."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["**/*.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["../../*", "../../../*"],
+                "message": "Deep relative imports forbidden. Use path aliases (@context/layer/*)."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+### PHP Deptrac Configuration
+
+Example `deptrac.yaml` for layer enforcement:
+
+```yaml
+paths:
+  - ./src
+
+layers:
+  - name: Domain
+    collectors:
+      - type: directory
+        regex: .*Domain.*
+  - name: Application
+    collectors:
+      - type: directory
+        regex: .*Application.*
+  - name: Infrastructure
+    collectors:
+      - type: directory
+        regex: .*Infrastructure.*
+  - name: Interface
+    collectors:
+      - type: directory
+        regex: .*Interface.*
+
+ruleset:
+  Domain:
+    - Application
+  Application:
+    - Domain
+    - Infrastructure
+  Infrastructure:
+    - Domain
+    - Application
+  Interface:
+    - Domain
+    - Application
+```
+
+See `docs/tooling/` for more examples (if created).
 
 ### [CI/CD AUTOMATION]
 
@@ -1665,6 +1849,11 @@ pre-commit run --all-files
 ### [VERIFICATION]
 - Provide schema validation or contract test command (e.g., `npm run lint:openapi`, `spectral lint openapi.yaml`, API contract tests in CI).
 
+**See also:**
+- `.cursor/rules/36-architecture.mdc` — Architecture rules (API boundaries, bounded contexts, public API modules)
+- `.cursor/rules/20-agents.mdc` — `@api-designer` agent definition
+- `test/example-app/` — Canonical demo (API design in Clean Architecture)
+
 ## 36-architecture.mdc — Architecture — Clean Architecture + Hexagonal ports/adapters + DDD + Context Map + Trust Tiers.
 - Globs: src/**, app/**, backend/**, services/**, modules/**
 
@@ -1678,22 +1867,27 @@ pre-commit run --all-files
 - The system is a **modular project** composed of **bounded contexts** with explicit trust tiers.
 
 ### [LAYERING — CLEAN ARCHITECTURE]
-- Define and respect these layers:
+- **MANDATORY:** All non-trivial backend code MUST be organized into these four layers per bounded context:
   - **Domain**:
-    - Entities, Value Objects, Domain Services, Domain Events.
-    - No framework dependencies (no Symfony/Laravel/HTTP/ORM).
-    - Contains business invariants and rules.
+    - **MUST contain:** Entities, Value Objects, Domain Services, Domain Events, Repository interfaces (ports).
+    - **MUST NOT contain:** Framework dependencies (Symfony/Laravel/HTTP/ORM), Infrastructure adapters, Interface adapters.
+    - **MUST contain:** Business invariants and rules.
+    - **MUST be:** Framework-free, ORM-free, HTTP-free.
   - **Application**:
-    - Use cases, Commands/Queries, Application Services.
-    - Orchestrates domain objects and ports.
-    - Depends on Domain; does not depend directly on HTTP/DB frameworks.
+    - **MUST contain:** Use cases, Commands/Queries, Application Services, Application ports.
+    - **MUST depend on:** Domain layer (same context), ports/interfaces.
+    - **MUST NOT depend on:** HTTP/DB frameworks directly, Infrastructure adapters, Interface adapters.
+    - **MUST orchestrate:** Domain objects and ports only.
   - **Interface (Adapters-Inbound)**:
-    - HTTP controllers, CLI commands, message consumers, BFFs.
-    - Translates external protocols (HTTP, CLI, messages) into Application calls.
+    - **MUST contain:** HTTP controllers, CLI commands, message consumers, BFFs.
+    - **MUST translate:** External protocols (HTTP, CLI, messages) into Application calls.
+    - **MUST delegate:** All business logic to Application use cases (controllers are thin).
+    - **MUST NOT contain:** Business logic, validation rules, persistence logic.
   - **Infrastructure (Adapters-Outbound)**:
-    - Persistence, messaging, external APIs, caching, filesystem.
-    - Implements ports defined in Domain/Application.
-    - Contains ORM mappings, SDK usage, and technical glue.
+    - **MUST contain:** Persistence adapters, messaging adapters, external API clients, caching, filesystem.
+    - **MUST implement:** Ports defined in Domain/Application layers.
+    - **MUST contain:** ORM mappings, SDK usage, and technical glue.
+    - **MUST NOT contain:** Business logic (move to Domain/Application).
 
 ### [LAYERING RULES — EXPLICIT CONSTRAINTS]
 
@@ -1714,15 +1908,27 @@ pre-commit run --all-files
 - **Verification:** Reference dep graph tool or clear explanation of layer boundaries.
 
 ### [LAYERING RULES — DEPENDENCIES]
-- Allowed dependency directions:
-  - Domain → (no inward dependencies).
-  - Application → Domain.
-  - Interface → Application (+ Domain DTOs where strictly needed).
-  - Infrastructure → Domain/Application.
-- Forbidden:
-  - Domain depending on Interface/Infrastructure or frameworks.
-  - Application depending on Symfony/Laravel/ORM/HTTP clients directly.
-  - Cross-layer shortcuts (controller → repository directly, skipping use cases).
+- **MANDATORY:** Dependency directions MUST follow these rules:
+  - **Domain → (no inward dependencies):**
+    - Domain MUST NOT depend on any other layer.
+    - Domain MUST NOT import from Application, Interface, or Infrastructure.
+    - Domain MAY import from other contexts' public API modules (rare, via Application layer).
+  - **Application → Domain:**
+    - Application MUST depend on Domain (same context).
+    - Application MUST NOT depend on Interface or Infrastructure.
+    - Application MAY depend on other contexts' Application public API modules.
+  - **Interface → Application (+ Domain DTOs where strictly needed):**
+    - Interface MUST depend on Application (same context).
+    - Interface MAY depend on Domain DTOs (same context) for request/response mapping.
+    - Interface MUST NOT depend on Infrastructure adapters directly (use ports).
+  - **Infrastructure → Domain/Application:**
+    - Infrastructure MUST depend on Domain/Application (same context).
+    - Infrastructure MUST NOT depend on Interface layer.
+- **FORBIDDEN:**
+  - Domain depending on Interface/Infrastructure or frameworks → **REJECT**, use ports/adapters.
+  - Application depending on Symfony/Laravel/ORM/HTTP clients directly → **REJECT**, use ports/adapters.
+  - Cross-layer shortcuts (controller → repository directly, skipping use cases) → **REJECT**, use Application use cases.
+  - Domain importing from `@context/infra/*` or `@context/interface/*` → **REJECT**, Domain cannot import Infrastructure/Interface.
 - Layer-specific import patterns:
   - **Domain Layer:**
     - Can import: Other Domain entities/VOs within same context, public API modules from other contexts (rare).
@@ -1756,12 +1962,14 @@ pre-commit run --all-files
 
 ### [BOUNDED CONTEXTS — MANDATORY]
 - **MANDATORY:** All backend code MUST be organized into bounded contexts.
-- Architect MUST identify bounded contexts and assign each a risk tier (S/M/H) as per 00-persona RISK TIERS.
+- **MANDATORY:** Architect MUST identify bounded contexts and assign each a trust tier (H/M/S) before implementation.
+- **MANDATORY:** Context map + trust tiers MUST be documented for non-trivial systems (3+ contexts or any Tier H context).
 - There is no "shared" or "common" code outside of bounded contexts (except infrastructure utilities).
 - **Exception:** Small, clearly-marked Tier S utilities (one-off scripts, migrations) may live outside bounded contexts, but MUST NOT grow into core services.
 - **Explicitly FORBID:**
-  - Shared mutable DB across contexts without contracts.
-  - Direct cross-context domain/entity sharing.
+  - Shared mutable DB across contexts without contracts → **REJECT**, use explicit contracts (APIs, events).
+  - Direct cross-context domain/entity sharing → **REJECT**, use public API modules.
+  - Bounded context without assigned trust tier → **REJECT**, assign tier (H/M/S) first.
 - Each major business area is a **bounded context** with its own:
   - Ubiquitous language,
   - Entities/Aggregates,
@@ -1838,18 +2046,29 @@ pre-commit run --all-files
     - No direct access to Tier H persistence; must call Tier H via APIs/messages.
 
 ### [CONTEXT STRUCTURE REQUIREMENT]
-- For non-trivial backends, organize code into bounded contexts (e.g. IdentityContext, OrdersContext).
-- Each context MUST have: Domain, Application, Infrastructure, Interface sublayers.
+- **MANDATORY:** For non-trivial backends, code MUST be organized into bounded contexts (e.g. IdentityContext, OrdersContext).
+- **MANDATORY:** Each bounded context MUST have exactly four sublayers:
+  - `ContextName/Domain/` - Entities, Value Objects, Domain Services, Domain Events, Repository interfaces
+  - `ContextName/Application/` - Use cases, Commands/Queries, Application Services, Application ports
+  - `ContextName/Infrastructure/` - Persistence adapters, external API clients, messaging adapters
+  - `ContextName/Interface/` - HTTP controllers, CLI commands, message consumers
+- **FORBIDDEN:**
+  - Code organized by technical layers only (e.g., `models/`, `services/`, `controllers/`) without bounded contexts → **REJECT**, organize into contexts first.
+  - Bounded context missing any of the four required sublayers → **REJECT**, add missing layers.
+  - Shared code outside bounded contexts (except Tier S utilities) → **REJECT**, create bounded contexts.
 - **Verification:** Require reference to dep graph tool (Deptrac, ESLint import rules) or clear explanation of layer boundaries.
 
 ### [MODULAR PROJECT STRUCTURE]
-- The project must be modular:
-  - Group code into context modules, e.g.:
+- **MANDATORY:** The project MUST be modular:
+  - **MUST:** Group code into context modules, e.g.:
     - `src/AuthContext/Domain`, `src/AuthContext/Application`, `src/AuthContext/Infrastructure`, `src/AuthContext/Interface`.
     - `src/BillingContext/...`, `src/CasinoCoreContext/...`, etc.
-- New features:
-  - Belong to an existing bounded context or trigger creation of a new one.
-  - Avoid "misc/shared" dumping grounds that bypass contexts.
+  - **MUST:** Each context module MUST have the four required sublayers (Domain, Application, Infrastructure, Interface).
+  - **MUST NOT:** Have "misc/shared" dumping grounds that bypass contexts.
+- **MANDATORY:** New features:
+  - **MUST:** Belong to an existing bounded context or trigger creation of a new one.
+  - **MUST NOT:** Be added to "shared" or "common" modules outside bounded contexts (except Tier S utilities).
+  - **MUST:** Follow the four-layer structure (Domain, Application, Infrastructure, Interface) within their context.
 
 ### [UTILITIES & SCRIPTS]
 - Migrations and one-off scripts are **Tier S utilities** with limited scope.
@@ -1939,6 +2158,9 @@ pre-commit run --all-files
 - `.cursor/rules/45-solid-principles.mdc` — SOLID principles (SRP, DIP violations related to architecture)
 - `.cursor/rules/3A-anti-patterns.mdc` — Anti-patterns catalog (architecture anti-patterns)
 - `.cursor/rules/38-anti-corruption-events.mdc` — Anti-corruption layers and event schemas
+- `examples/refactoring/clean-architecture/` — Before/after examples for architecture violations
+- `test/example-app/` — Canonical TypeScript Clean Architecture + DDD demo (IdentityContext, OrdersContext)
+- `tests/policies/` — Policy scenarios validating architecture enforcement (see `tests/policies/README.md`)
 
 ### [DOCUMENTATION REQUIREMENTS]
 - Public API documentation:
@@ -1978,6 +2200,14 @@ pre-commit run --all-files
 ### [VERIFICATION]
 - Run the formatter and linter for the language to ensure structure/naming/import hygiene, and reference any architecture/import-rule checks (if present) that enforce modular boundaries.
 
+**See also:**
+- `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns (BINDING)
+- `.cursor/rules/44-ddd.mdc` — Domain-Driven Design methodology (BINDING)
+- `.cursor/rules/45-solid-principles.mdc` — SOLID principles integrated with architecture
+- `test/example-app/` — Canonical TypeScript Clean Architecture + DDD demo (path aliases, bounded contexts)
+- `examples/refactoring/clean-architecture/` — Before/after examples for structure violations
+- `docs/architecture/design-principles.md` — Foundational design principles
+
 ## 38-anti-corruption-events.mdc — Anti-Corruption Layers + Event Catalog — safe integration with external/legacy systems.
 - Globs: src/**, app/**, backend/**, services/**
 
@@ -2015,10 +2245,14 @@ pre-commit run --all-files
     - Publishing raw external events without canonicalization → **REJECT**, use ACL.
 
 ### [ANTI-CORRUPTION LAYERS (ACL)]
-- Every integration with legacy/third-party systems must pass through an ACL that:
-  - Translates external models and semantics into clean domain types.
-  - Hides external weirdness from Domain/Application.
-  - Prevents external DTOs/entities from being used directly in Domain.
+- **MANDATORY:** Every integration with legacy/third-party systems MUST pass through an ACL that:
+  - **MUST:** Translate external models and semantics into clean domain types.
+  - **MUST:** Hide external weirdness from Domain/Application.
+  - **MUST NOT:** Allow external DTOs/entities to be used directly in Domain.
+- **MANDATORY:** For each external/legacy/3rd-party integration:
+  - **MUST:** Map external DTOs to clean domain types via ACL.
+  - **MUST NOT:** Use raw external DTOs in domain → **REJECT**, use ACL mapping.
+  - **MUST NOT:** Publish raw external events on internal bus → **REJECT**, canonicalize via ACL.
 - ACL for cross-context ports:
   - When a context consumes another context's port, it MUST define its own ACL interface with a distinct name.
   - The owning context defines the canonical port (e.g., `IdentityContext/Application/Ports/IdentityPort.ts`).
@@ -2066,6 +2300,20 @@ pre-commit run --all-files
   - Layering respected.
   - Bounded contexts not violated.
   - No raw external DTOs in domain.
+
+### [POLICY VALIDATION — MANDATORY]
+- **MANDATORY:** Policy scenarios in `tests/policies/` MUST be validated when rules change.
+- **MANDATORY:** If policy validation fails, tighten relevant `.cursor/rules/*.mdc` files.
+- Policy scenarios validate agent behavior against critical policies (security, testing, architecture).
+- See `tests/policies/README.md` for policy scenario structure and validation criteria.
+- See `tests/policies/ENFORCEMENT.md` for enforcement mechanisms.
+
+**See also:**
+- `.cursor/rules/36-architecture.mdc` — Architecture rules (BINDING)
+- `.cursor/rules/44-ddd.mdc` — DDD rules (BINDING)
+- `.cursor/rules/34-ci.mdc` — CI/CD standards including policy validation
+- `tests/policies/` — Policy scenarios validating compliance
+- `test/example-app/` — Canonical Clean Architecture + DDD demo
 
 ## 39-accessibility.mdc — Accessibility & UX — semantic structure, keyboard navigation, and usable layouts.
 - Globs: src/**, app/**, public/**, frontend/**, resources/views/**, templates/**
@@ -2443,10 +2691,12 @@ async function getUser(id: string): Promise<User | null> {
 - **DDD violations:** See `.cursor/rules/36-architecture.mdc` for bounded context, trust tier examples.
 
 **See also:**
+- `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns (BINDING)
+- `.cursor/rules/44-ddd.mdc` — Domain-Driven Design methodology (BINDING)
 - `.cursor/rules/45-solid-principles.mdc` — SOLID principles with architecture integration
-- `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns
-- `.cursor/rules/44-ddd.mdc` — Domain-Driven Design methodology
 - `examples/refactoring/` — Refactoring examples for each anti-pattern
+- `test/example-app/` — Canonical Clean Architecture + DDD demo
+- `tests/policies/` — Policy scenarios validating anti-pattern enforcement
 
 ### [REFACTOR WORKFLOW INTEGRATION]
 
@@ -2677,24 +2927,54 @@ async function getUser(id: string): Promise<User | null> {
 ### [DDD — DOMAIN-DRIVEN DESIGN (BOUNDARIES & INVARIANTS)]
 
 ### [CORE MANDATE]
-- Model complex domains explicitly using ubiquitous language, bounded contexts, aggregates, and invariants; keep domain logic independent of technical concerns.
+- **MANDATORY:** Model complex domains explicitly using ubiquitous language, bounded contexts, aggregates, and invariants; keep domain logic independent of technical concerns.
+- **MANDATORY:** All backend code MUST be organized into bounded contexts with explicit trust tiers (H/M/S).
+- **MANDATORY:** Domain layer MUST be framework-free and infrastructure-free (no ORMs, HTTP, or persistence concerns).
+- **MANDATORY:** Contexts MUST NOT share database tables or persistence models (each context owns its data).
+- **MANDATORY:** Context map + trust tiers MUST be documented for non-trivial systems (3+ contexts or any Tier H context).
 
 ### [PRINCIPLES]
-- Ubiquitous language: use domain terms consistently in code (types, methods, modules) and documentation; avoid leaky technical names in the domain layer.
-- Bounded contexts: partition the domain into cohesive contexts with clear boundaries and ownership; define explicit contracts (APIs, events, schemas) at context borders.
-- Aggregates & invariants: design aggregates as consistency boundaries; enforce invariants inside them rather than in random services or controllers.
-- Domain purity: keep domain model free from frameworks and infrastructure (no ORMs, HTTP, or persistence concerns in domain types); infrastructure depends on domain, not vice versa.
+- **Ubiquitous language:**
+  - **MUST:** Use domain terms consistently in code (types, methods, modules) and documentation.
+  - **MUST NOT:** Use leaky technical names in the domain layer (e.g., `UserDTO`, `UserEntity`, `UserModel` → use `User`).
+- **Bounded contexts:**
+  - **MUST:** Partition the domain into cohesive contexts with clear boundaries and ownership.
+  - **MUST:** Define explicit contracts (APIs, events, schemas) at context borders.
+  - **MUST NOT:** Share database tables or persistence models across contexts (each context owns its data).
+  - **MUST NOT:** Share domain entities across contexts (use public API modules for cross-context access).
+- **Aggregates & invariants:**
+  - **MUST:** Design aggregates as consistency boundaries.
+  - **MUST:** Enforce invariants inside aggregates rather than in random services or controllers.
+  - **MUST:** Document aggregate boundaries and invariants explicitly.
+- **Domain purity:**
+  - **MUST:** Keep domain model free from frameworks and infrastructure (no ORMs, HTTP, or persistence concerns in domain types).
+  - **MUST NOT:** Import ORM types (e.g., `@Entity`, `@Table`, `@Column`), HTTP types (e.g., `Request`, `Response`), or framework types in Domain layer.
+  - **MUST:** Infrastructure depends on domain, not vice versa.
   - **Domain purity clauses MUST refer to 36-architecture.mdc for layer rules.**
-- Context mapping: document relationships between contexts (partnerships, upstream/downstream, ACLs) and keep ADRs and diagrams up to date when boundaries or contracts change.
-- Align with architecture patterns in docs/architecture/architecture-patterns.md and systemic guidance in docs/architecture/system-decomposition.md.
+- **Context mapping:**
+  - **MANDATORY:** Document relationships between contexts (partnerships, upstream/downstream, ACLs).
+  - **MANDATORY:** Document trust tiers (H/M/S) for each context.
+  - **MANDATORY:** Keep ADRs and diagrams up to date when boundaries or contracts change.
+  - **MANDATORY:** Context map + trust tiers MUST be documented for non-trivial systems (3+ contexts or any Tier H context).
+- **Alignment:**
+  - **MUST:** Align with architecture patterns in docs/architecture/architecture-patterns.md and systemic guidance in docs/architecture/system-decomposition.md.
 
 ### [DOMAIN PURITY — HARD CONSTRAINTS]
-- Domain purity clauses MUST refer to 36-architecture.mdc for layer rules.
-- **REQUIRE:**
-  - Aggregate boundaries documented.
-  - Ubiquitous language present in code (namespaces/packages, class names).
-  - Context map (even lightweight) for non-trivial domains.
-- **Add:** "If design is simple CRUD with no real domain complexity, keep DDD minimal and explain why – do not over-complicate."
+- **MANDATORY:** Domain purity clauses MUST refer to 36-architecture.mdc for layer rules.
+- **MANDATORY:**
+  - **MUST:** Aggregate boundaries documented.
+  - **MUST:** Ubiquitous language present in code (namespaces/packages, class names).
+  - **MUST:** Context map (even lightweight) for non-trivial domains (3+ contexts or any Tier H context).
+- **MANDATORY:** Domain layer MUST NOT depend on:
+  - ORM types (e.g., `@Entity`, `@Table`, `@Column`, `@Id`, `@GeneratedValue`).
+  - HTTP types (e.g., `Request`, `Response`, `Controller`, `Route`).
+  - Framework types (e.g., `Model`, `DB`, `Auth`, `Config`, `Cache`, `Queue`, `Mail`, `Log`).
+  - Infrastructure adapters (e.g., `@context/infra/*`, `@context/interface/*`).
+- **MANDATORY:** Domain layer MUST:
+  - Contain only business logic (entities, value objects, domain services, domain events).
+  - Define repository interfaces (ports) but not implementations.
+  - Be framework-free, ORM-free, HTTP-free.
+- **Exception:** "If design is simple CRUD with no real domain complexity, keep DDD minimal and explain why – do not over-complicate."
 
 ### [INVARIANT PROTECTION]
 - Validate at aggregate boundaries; reject or correct invalid commands early.
@@ -2703,11 +2983,14 @@ async function getUser(id: string): Promise<User | null> {
 - Document critical business rules directly in domain code (names, comments, and tests), not only in external docs.
 
 ### [ANTI-PATTERNS]
-- Anemic domain models (entities with just getters/setters and no behavior).
-- God aggregates or services that know too much and own unrelated responsibilities.
-- Technical concerns (ORM, HTTP, framework annotations) leaking into domain types.
-- Bypassing invariants via direct setters, public mutable fields, or raw persistence access.
-- Context boundaries ignored “for convenience” (shared DB tables, cross-context backdoor calls).
+- **FORBIDDEN:** Anemic domain models (entities with just getters/setters and no behavior) → **REJECT**, use rich domain models.
+- **FORBIDDEN:** God aggregates or services that know too much and own unrelated responsibilities → **REJECT**, split into focused aggregates/services.
+- **FORBIDDEN:** Technical concerns (ORM, HTTP, framework annotations) leaking into domain types → **REJECT**, remove framework dependencies from Domain.
+- **FORBIDDEN:** Bypassing invariants via direct setters, public mutable fields, or raw persistence access → **REJECT**, enforce invariants in aggregates.
+- **FORBIDDEN:** Context boundaries ignored "for convenience" (shared DB tables, cross-context backdoor calls) → **REJECT**, use explicit contracts (APIs, events).
+- **FORBIDDEN:** Contexts sharing database tables or persistence models → **REJECT**, each context owns its data.
+- **FORBIDDEN:** Domain depending on ORM/framework types → **REJECT**, Domain must be framework-free.
+- **FORBIDDEN:** Missing context map + trust tiers for non-trivial systems → **REJECT**, document context map and trust tiers.
 
 ### [VERIFICATION]
 - For domain-heavy changes, ensure:
@@ -2715,6 +2998,14 @@ async function getUser(id: string): Promise<User | null> {
   - Invariants are enforced in aggregates/domain services and covered by tests.
   - Contracts between contexts (APIs, events, schemas) are explicit and versioned.
   - Architecture docs (context maps, ADRs) are updated when boundaries or invariants change.
+
+**See also:**
+- `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns (BINDING)
+- `.cursor/rules/45-solid-principles.mdc` — SOLID principles integrated with DDD
+- `.cursor/rules/3A-anti-patterns.mdc` — Anti-patterns catalog (anemic domain, god aggregates, etc.)
+- `test/example-app/` — Canonical TypeScript Clean Architecture + DDD demo (IdentityContext, OrdersContext)
+- `examples/refactoring/clean-architecture/` — Before/after examples for DDD violations
+- `tests/policies/` — Policy scenarios validating DDD enforcement
 
 ## 45-solid-principles.mdc — SOLID principles — integration with Clean Architecture and DDD.
 - Globs: src/**, app/**, domain/**, application/**
@@ -2858,9 +3149,12 @@ async function getUser(id: string): Promise<User | null> {
 - **Reference existing architecture rules:** See `.cursor/rules/36-architecture.mdc` for Clean Architecture, Hexagonal Architecture, and DDD patterns.
 - **Reference existing SOLID docs:** See `docs/architecture/solid-principles.md` for concise SOLID overview.
 - **See also:**
+  - `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns (BINDING)
+  - `.cursor/rules/44-ddd.mdc` — Domain-Driven Design methodology (BINDING)
   - `.cursor/rules/3A-anti-patterns.mdc` — Anti-patterns catalog (includes SOLID violations)
   - `.cursor/rules/37-code-structure.mdc` — Code structure standards
   - `examples/refactoring/` — Refactoring examples demonstrating SOLID principles
+  - `test/example-app/` — Canonical Clean Architecture + DDD demo
 
 **This rule does NOT duplicate:**
 - General design principles (DRY, KISS, YAGNI) — see `docs/architecture/design-principles.md`.
@@ -3102,6 +3396,11 @@ async function getUser(id: string): Promise<User | null> {
   - Cross-check structure against `.cursor/rules/36-architecture.mdc`.
   - Ensure controllers are thin and domain logic is in Domain/Application layers.
   - Verify ASP.NET Core is only used in Infrastructure/Interface layers.
+- **MANDATORY:** C# language rules are **integrated with** and **enforce** architecture rules — they are not separate concerns.
+- **See also:**
+  - `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns (BINDING)
+  - `.cursor/rules/44-ddd.mdc` — Domain-Driven Design methodology (BINDING)
+  - `examples/refactoring/clean-architecture/` — Before/after examples for architecture violations
 
 ## 50-lang-css.mdc — CSS standards — architecture, naming, preprocessors, and performance for scalable styles.
 - Globs: src/**/*.css, src/**/*.scss, src/**/*.sass, src/**/*.pcss, frontend/**/*.css, frontend/**/*.scss, public/**/*.css, resources/**/*.css, resources/**/*.scss
@@ -3184,6 +3483,12 @@ async function getUser(id: string): Promise<User | null> {
 - For significant frontend changes:
   - Verify that new components follow the chosen architecture (OOCSS/BEM/SMACSS layering).
   - Confirm that you have not introduced new global overrides or regressions in unrelated components (smoke test key views).
+
+**See also:**
+- `.cursor/rules/39-accessibility.mdc` — Accessibility & UX standards (contrast, focus, motion)
+- `.cursor/rules/50-lang-html.mdc` — HTML standards (semantic structure, landmarks)
+- `docs/architecture/design-principles.md` — Design principles (SoC, cohesion/coupling)
+- `test/example-app/` — Canonical Clean Architecture demo (if CSS exists)
 
 ## 50-lang-gdscript.mdc — GDScript standards: readability, signals, and safety.
 - Globs: **/*.gd
@@ -3287,6 +3592,12 @@ async function getUser(id: string): Promise<User | null> {
   - Pages have proper document skeleton and semantic landmarks.
   - Forms are labeled, errors are announced, and primary interactions are keyboard accessible.
   - No new inline JS/CSS has been introduced in production templates without explicit justification.
+
+**See also:**
+- `.cursor/rules/39-accessibility.mdc` — Accessibility & UX standards
+- `.cursor/rules/50-lang-javascript.mdc` — JavaScript standards (form validation, state management)
+- `examples/before-after/` — Security validation examples (HTML escaping, XSS prevention)
+- `test/example-app/` — Canonical Clean Architecture demo (if HTML templates exist)
 
 ## 50-lang-java.mdc — Java standards: idiomatic, typed, and architecture-enforced.
 - Globs: **/*.java
@@ -3478,6 +3789,11 @@ async function getUser(id: string): Promise<User | null> {
   - Cross-check structure against `.cursor/rules/36-architecture.mdc`.
   - Ensure controllers are thin and domain logic is in Domain/Application layers.
   - Verify Spring is only used in Infrastructure/Interface layers.
+- **MANDATORY:** Java language rules are **integrated with** and **enforce** architecture rules — they are not separate concerns.
+- **See also:**
+  - `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns (BINDING)
+  - `.cursor/rules/44-ddd.mdc` — Domain-Driven Design methodology (BINDING)
+  - `examples/refactoring/clean-architecture/` — Before/after examples for architecture violations
 
 ## 50-lang-javascript.mdc — JavaScript/TypeScript standards — state, invariants, and UI behavior.
 - Globs: src/**/*.js, src/**/*.ts, frontend/**/*.js, frontend/**/*.ts, public/**/*.js
@@ -3562,6 +3878,14 @@ async function getUser(id: string): Promise<User | null> {
 - For regressions discovered manually (enabled save on invalid form, wrong error focus, broken modal reopen):
   - Backfill tests or harness checks that would have caught them, and assert they now fail on the previous buggy version.
 
+**See also:**
+- `.cursor/rules/50-lang-typescript.mdc` — TypeScript standards (path aliases, architecture integration)
+- `.cursor/rules/50-lang-html.mdc` — HTML standards (forms, accessibility, semantic structure)
+- `.cursor/rules/39-accessibility.mdc` — Accessibility & UX standards (keyboard navigation, focus management)
+- `.cursor/rules/42-tdd.mdc` — TDD standards (test-driven development for UI logic)
+- `examples/before-after/` — Security validation examples (XSS prevention, input validation)
+- `test/example-app/` — Canonical Clean Architecture demo (if JavaScript/TypeScript frontend exists)
+
 ## 50-lang-php-laravel-guidelines.mdc — Laravel & AI Code Assistants (Spatie-derived)
 - Globs: app/**/*.php, src/**/*.php, modules/**/*.php, contexts/**/*.php, tests/**/*.php
 
@@ -3608,11 +3932,20 @@ async function getUser(id: string): Promise<User | null> {
 
 ### [ARCHITECTURE INTEGRATION — CLEAN + HEX + DDD]
 
-- **MANDATORY:** All PHP backend code MUST follow Clean Architecture, Hexagonal Architecture, and DDD patterns as defined in `.cursor/rules/36-architecture.mdc`.
+- **MANDATORY:** All PHP backend code MUST follow Clean Architecture, Hexagonal Architecture, and DDD patterns as defined in `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`.
+- **These architecture rules are BINDING for PHP backends** — violations will be rejected.
+- **MANDATORY:** For backend services, PHP code MUST adhere to `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`. This is a binding constraint, not optional guidance.
 - **Domain/Application MUST be framework-free:**
   - Domain layer MUST NOT extend framework base classes (no Model extends Eloquent, no Controller base in Domain).
   - Domain layer MUST NOT use facades or helper functions that touch IO (DB, HTTP, cache) directly.
+  - Domain layer MUST NOT import ORM types (e.g., `@Entity`, `@Table`, `@Column`), HTTP types (e.g., `Request`, `Response`), or framework types.
   - Application layer MUST orchestrate use cases, call repositories, but MUST NOT be controllers themselves.
+  - Application layer MUST NOT import framework classes or use facades.
+- **REJECTION CRITERIA:**
+  - PHP code that violates `.cursor/rules/36-architecture.mdc` layering rules → **REJECT**.
+  - PHP code that violates `.cursor/rules/44-ddd.mdc` domain purity rules → **REJECT**.
+  - Domain/Application extending framework base classes or using facades → **REJECT**, use plain PHP classes and ports/adapters.
+  - Controllers with business logic → **REJECT**, move to Application use cases.
 
 - Domain layer (`Domain/` in contexts/modules):
   - **FORBIDDEN:** No framework dependencies whatsoever.
@@ -3635,7 +3968,9 @@ async function getUser(id: string): Promise<User | null> {
   - Controllers, console commands, route handlers, view models.
   - Maps HTTP/CLI → Application use cases (input DTOs) and maps results → HTTP/JSON/View models.
   - **MANDATORY:** Controllers are thin; delegate to Application use cases.
+  - **MANDATORY:** Controllers MUST NOT contain business logic, validation rules, or persistence logic.
   - **FORBIDDEN:** Business logic in controllers → **REJECT**, move to Application use cases.
+  - **FORBIDDEN:** Controllers accessing repositories directly → **REJECT**, use Application use cases.
 - Infrastructure layer (`Infrastructure/`):
   - ORM entities, Eloquent models, repositories, queue handlers, mailers, external API clients.
   - Implements ports (interfaces) from Domain/Application.
@@ -3647,13 +3982,16 @@ async function getUser(id: string): Promise<User | null> {
 
 ### [LARAVEL CONVENTIONS]
 
-- Follow Laravel’s documented conventions by default; diverge only with strong reasons.
+- Follow Laravel's documented conventions by default; diverge only with strong reasons.
+- **MANDATORY:** Laravel conventions apply ONLY to Interface and Infrastructure layers.
+- **MANDATORY:** Domain and Application layers MUST remain framework-free (no Laravel conventions in Domain/Application).
 - Routes:
   - URLs: kebab-case.
   - Route names: camelCase.
   - Controllers: plural resource controllers where applicable.
 - Controllers:
-  - Keep thin; delegate to Application use cases.
+  - **MANDATORY:** Keep thin; delegate to Application use cases.
+  - **MANDATORY:** Controllers MUST NOT contain business logic (see `.cursor/rules/36-architecture.mdc`).
   - Use dependency injection; avoid resolving services via facades where reasonable.
 - Validation:
   - Prefer Form Requests and array notation for multiple rules.
@@ -3721,11 +4059,20 @@ async function getUser(id: string): Promise<User | null> {
 
 - For PHP changes:
   - Confirm files have `declare(strict_types=1);` and proper typing.
-  - Check that domain code is framework-free and follows Clean/Hex/DDD layering.
+  - **MANDATORY:** Check that domain code is framework-free and follows Clean/Hex/DDD layering (see `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`).
+  - **MANDATORY:** Verify Domain/Application layers have no framework dependencies.
+  - **MANDATORY:** Verify controllers are thin (no business logic).
   - Run the standard toolchain (phpcs, phpstan, tests).
 - For Laravel:
   - Cross-check structure/naming against `docs/laravel-php-ai-guidelines.md`.
-  - Ensure controllers are thin and domain logic is in Domain/Application layers.
+  - **MANDATORY:** Ensure controllers are thin and domain logic is in Domain/Application layers.
+  - **MANDATORY:** Verify Domain/Application layers do not extend Eloquent Models or use Laravel facades.
+- **MANDATORY:** PHP language rules are **integrated with** and **enforce** architecture rules — they are not separate concerns.
+- **See also:**
+  - `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns (BINDING)
+  - `.cursor/rules/44-ddd.mdc` — Domain-Driven Design methodology (BINDING)
+  - `docs/laravel-php-ai-guidelines.md` — Laravel/PHP style & conventions
+  - `examples/refactoring/clean-architecture/` — Before/after examples for architecture violations
 
 ## 50-lang-python.mdc — Python standards: typing, linting, testing.
 - Globs: **/*.py
@@ -3762,18 +4109,39 @@ async function getUser(id: string): Promise<User | null> {
 - Async/safety: handle promises with try/catch; no unhandled rejections; add timeouts/retries for I/O; avoid `eval`/dynamic code; validate inputs with schemas (e.g., zod/yup); set `helmet`/secure cookies for HTTP.
 - Testing: `npm test` (vitest/jest) with coverage; mock boundaries; include integration/API contract tests where applicable.
 - Security/deps: parameterized queries/ORM; sanitize outputs; secrets from env/manager; `npm audit --production --audit-level=high`.
+- **Architecture compliance:** TypeScript code MUST comply with `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`. Architecture violations will be rejected.
+- **MANDATORY:** TypeScript language rules are **integrated with** and **enforce** architecture rules — they are not separate concerns.
+- **MANDATORY:** For backend services, TypeScript code MUST adhere to `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`. This is a binding constraint, not optional guidance.
+- **See also:**
+  - `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns (BINDING)
+  - `.cursor/rules/44-ddd.mdc` — Domain-Driven Design methodology (BINDING)
+  - `test/example-app/` — Canonical TypeScript Clean Architecture + DDD demo
+  - `examples/refactoring/clean-architecture/` — Before/after examples for architecture violations
+  - `examples/before-after/ts-express-handler-*.ts` — Security validation examples
 - Verification artifact: `npm run lint && npm run format -- --check && tsc --noEmit && npm test && npm audit --production --audit-level=high`.
 
 ### [ARCHITECTURE INTEGRATION — CLEAN + HEX + DDD]
-- **MANDATORY:** All TypeScript backend code MUST follow Clean Architecture, Hexagonal Architecture, and DDD patterns as defined in `.cursor/rules/36-architecture.mdc`.
+- **MANDATORY:** All TypeScript backend code MUST follow Clean Architecture, Hexagonal Architecture, and DDD patterns as defined in `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`.
+- **These architecture rules are BINDING for TypeScript backends** — violations will be rejected.
 - **Domain/Application MUST be framework-free:**
   - Domain layer MUST NOT import Express, NestJS, TypeORM, Prisma, or any HTTP/ORM framework.
+  - Domain layer MUST NOT import from Infrastructure or Interface aliases (e.g., `@context/infra/*`, `@context/interface/*`).
   - Application layer MUST NOT import Express, NestJS, or any HTTP framework.
+  - Application layer MUST NOT import from Infrastructure or Interface aliases.
   - Use ports/adapters pattern: define interfaces in Domain/Application, implement in Infrastructure/Interface.
 - **Path aliases REQUIRED:**
-  - Use `@context/layer/*` aliases (e.g., `@identity/domain/*`, `@orders/app/*`).
-  - Forbid deep relative imports (`../../` or deeper).
-  - Enforce via ESLint `no-restricted-imports` rules.
+  - **MANDATORY:** Use `@context/layer/*` aliases (e.g., `@identity/domain/*`, `@orders/app/*`).
+  - **MANDATORY:** Configure `baseUrl` and `paths` in `tsconfig.json` for bounded contexts.
+  - **MANDATORY:** Forbid deep relative imports (`../../` or deeper).
+  - **MANDATORY:** Enforce via ESLint `no-restricted-imports` rules:
+    - Domain importing Infra/Interface (e.g., `@context/infra/*`, `@context/interface/*`).
+    - Deep relative imports across contexts (e.g., `../../OtherContext`).
+    - Cross-context direct Domain/Infrastructure imports (must use public API modules).
+- **REJECTION CRITERIA:**
+  - TypeScript code that violates `.cursor/rules/36-architecture.mdc` layering rules → **REJECT**.
+  - TypeScript code that violates `.cursor/rules/44-ddd.mdc` domain purity rules → **REJECT**.
+  - Domain/Application importing frameworks or Infrastructure/Interface → **REJECT**, use ports/adapters.
+  - Missing path aliases or using deep relative imports → **REJECT**, configure path aliases.
 
 ### [IMPORTS & PATH ALIASES]
 - Path aliases are REQUIRED for all TypeScript projects:
