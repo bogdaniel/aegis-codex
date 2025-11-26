@@ -1,6 +1,8 @@
 ---
 description: "Architecture — Clean Architecture + Hexagonal ports/adapters + DDD + Context Map + Trust Tiers."
-alwaysApply: true
+required: true
+category: "topic"
+subcategory: "architecture"
 globs:
   - "src/**"
   - "app/**"

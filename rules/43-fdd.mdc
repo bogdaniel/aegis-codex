@@ -1,6 +1,8 @@
 ---
 description: "FDD — Feature-Driven Development (thin, reversible slices). Enforce small, safe, traceable increments."
-alwaysApply: true
+required: false
+category: "methodology"
+subcategory: "fdd"
 globs:
   - "features/**"
   - "tasks/**"

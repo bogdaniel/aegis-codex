@@ -14,9 +14,21 @@ This guide explains how to use Aegis Codex `.cursor/rules` and specialized agent
 
 ### Getting Started
 
-1. **Rules are automatically loaded** by Cursor when you open the workspace.
-2. **Agents are invoked** using `@agent-name` syntax (e.g., `@architect`, `@code-reviewer`).
-3. **Rules apply automatically** to code you write or edit (based on file globs).
+1. **Generate rules for your project** using the rule builder:
+   ```bash
+   # Choose an example config that matches your project
+   cp .aegis-rules.example-typescript-backend.json .aegis-rules.json
+   
+   # Generate .cursor/rules/ and AGENTS.md
+   node scripts/build-agents-doc.js --config .aegis-rules.json --both
+   ```
+   See the [Rule Builder](#rule-builder) section below for details.
+
+2. **Rules are automatically loaded** by Cursor when you open the workspace (`.cursor/rules/` must be at project root).
+
+3. **Agents are invoked** using `@agent-name` syntax (e.g., `@architect`, `@code-reviewer`).
+
+4. **Rules apply automatically** to code you write or edit (based on file globs).
 
 ### Using Agents
 
@@ -395,7 +407,8 @@ Expected: Architecture shape with Domain/Application/Infrastructure/Interface la
 - C#: `.cursor/rules/50-lang-csharp.mdc`
 
 ### Common Commands
-- Regenerate agents doc: `node scripts/build-agents-doc.js`
+- Generate rules and AGENTS.md: `node scripts/build-agents-doc.js --config .aegis-rules.json --both`
+- Regenerate after rule changes: `node scripts/build-agents-doc.js --config .aegis-rules.json --both`
 - Run tests: Language-specific (see `50-lang-*.mdc`)
 - Lint/format: Language-specific (see `50-lang-*.mdc`)
 
@@ -435,7 +448,253 @@ Aegis Codex categorizes languages by support level and architecture integration 
 - No architecture-specific rules
 - Minimal integration with core architecture doctrine
 
+---
+
+## Rule Builder
+
+The Aegis Codex rule builder allows you to select only the rules relevant to your project, preventing bloat from unrelated content.
+
+### Quick Start
+
+1. **Choose an example config** that matches your project type:
+   ```bash
+   # TypeScript backend
+   cp .aegis-rules.example-typescript-backend.json .aegis-rules.json
+   
+   # PHP/Laravel
+   cp .aegis-rules.example-php-laravel.json .aegis-rules.json
+   
+   # Full-stack (TypeScript/JavaScript/HTML/CSS)
+   cp .aegis-rules.example-full-stack.json .aegis-rules.json
+   
+   # Minimal (TypeScript-only)
+   cp .aegis-rules.example-minimal.json .aegis-rules.json
+   ```
+
+2. **Generate rules and AGENTS.md**:
+   ```bash
+   # Generate both .cursor/rules/ and AGENTS.md
+   node scripts/build-agents-doc.js --config .aegis-rules.json --both
+   
+   # Or generate only AGENTS.md
+   node scripts/build-agents-doc.js --config .aegis-rules.json --generate-agents
+   
+   # Or copy rules only
+   node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules
+   ```
+
+3. **Preview what will be included** (dry run):
+   ```bash
+   node scripts/build-agents-doc.js --config .aegis-rules.json --both --dry-run
+   ```
+
+### What Gets Included
+
+**Mandatory rules** (always included):
+- Persona, global invariants, agents, orchestration
+- Security, testing, observability, CI
+- Architecture (Clean/Hex/DDD), code structure
+- Anti-corruption layer, compliance
+- SOLID principles, anti-patterns
+
+**Optional rules** (selected by config):
+- **Topics**: Performance, API design, accessibility, extended observability-security
+- **Methodologies**: ATDD, BDD, TDD, FDD
+- **Languages**: TypeScript, JavaScript, PHP, Python, Go, Rust, Java, C#, HTML, CSS, GDScript
+- **Patterns**: Architectural-enterprise, behavioural, creational, structural (all or specific)
+
+### Configuration Structure
+
+```json
+{
+  "version": "1.0.0",
+  "optional": {
+    "topics": {
+      "performance": true,
+      "api": true,
+      "accessibility": false,
+      "observability-security": false
+    },
+    "methodologies": {
+      "atdd": true,
+      "bdd": true,
+      "tdd": true,
+      "fdd": true
+    },
+    "languages": {
+      "typescript": true,
+      "php": false
+    },
+    "patterns": {
+      "enabled": true,
+      "categories": {
+        "architectural-enterprise": true,
+        "behavioural": true,
+        "creational": true,
+        "structural": true
+      },
+      "specific": []
+    }
+  }
+}
+```
+
+### Backward Compatibility
+
+The builder supports the legacy `--langs` flag:
+```bash
+# Include TypeScript and PHP rules
+node scripts/build-agents-doc.js --langs typescript,php --both
+```
+
+### Available Example Configs
+
+- `.aegis-rules.example-minimal.json` - Minimal TypeScript-only
+- `.aegis-rules.example-typescript-backend.json` - TypeScript backend with patterns
+- `.aegis-rules.example-full-stack.json` - Full-stack TypeScript/JavaScript/HTML/CSS
+- `.aegis-rules.example-php-laravel.json` - PHP/Laravel backend
+- `.aegis-rules.example-java-spring.json` - Java/Spring Boot backend
+- `.aegis-rules.example-csharp-dotnet.json` - C#/.NET backend
+- `.aegis-rules.example-backend-only.json` - All backend languages
+- `.aegis-rules.example-patterns-specific.json` - TypeScript with specific patterns
+
+### Documentation
+
+- **Config Examples**: See `docs/rule-builder-config-examples.md` for detailed configuration documentation
+- **Testing Guide**: See `docs/rule-builder-testing.md` for comprehensive testing instructions
+- **Test Script**: Run `./scripts/test-rule-builder.sh` to validate the rule builder
+
+### Updating Rules
+
+After modifying rules in the `rules/` directory, regenerate `.cursor/rules/` and `AGENTS.md`:
+```bash
+node scripts/build-agents-doc.js --config .aegis-rules.json --both
+```
+
 **Note:** This tier system indicates where to invest next and prevents pretending all languages are equally governed. When adding new languages, prioritize Tier 1 for enterprise-critical stacks.
+
+---
+
+## Rule Builder
+
+The Aegis Codex rule builder allows you to select only the rules relevant to your project, preventing bloat from unrelated content.
+
+### Quick Start
+
+1. **Choose an example config** that matches your project type:
+   ```bash
+   # TypeScript backend
+   cp .aegis-rules.example-typescript-backend.json .aegis-rules.json
+   
+   # PHP/Laravel
+   cp .aegis-rules.example-php-laravel.json .aegis-rules.json
+   
+   # Full-stack (TypeScript/JavaScript/HTML/CSS)
+   cp .aegis-rules.example-full-stack.json .aegis-rules.json
+   
+   # Minimal (TypeScript-only)
+   cp .aegis-rules.example-minimal.json .aegis-rules.json
+   ```
+
+2. **Generate rules and AGENTS.md**:
+   ```bash
+   # Generate both .cursor/rules/ and AGENTS.md
+   node scripts/build-agents-doc.js --config .aegis-rules.json --both
+   
+   # Or generate only AGENTS.md
+   node scripts/build-agents-doc.js --config .aegis-rules.json --generate-agents
+   
+   # Or copy rules only
+   node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules
+   ```
+
+3. **Preview what will be included** (dry run):
+   ```bash
+   node scripts/build-agents-doc.js --config .aegis-rules.json --both --dry-run
+   ```
+
+### What Gets Included
+
+**Mandatory rules** (always included):
+- Persona, global invariants, agents, orchestration
+- Security, testing, observability, CI
+- Architecture (Clean/Hex/DDD), code structure
+- Anti-corruption layer, compliance
+- SOLID principles, anti-patterns
+
+**Optional rules** (selected by config):
+- **Topics**: Performance, API design, accessibility, extended observability-security
+- **Methodologies**: ATDD, BDD, TDD, FDD
+- **Languages**: TypeScript, JavaScript, PHP, Python, Go, Rust, Java, C#, HTML, CSS, GDScript
+- **Patterns**: Architectural-enterprise, behavioural, creational, structural (all or specific)
+
+### Configuration Structure
+
+```json
+{
+  "version": "1.0.0",
+  "optional": {
+    "topics": {
+      "performance": true,
+      "api": true,
+      "accessibility": false,
+      "observability-security": false
+    },
+    "methodologies": {
+      "atdd": true,
+      "bdd": true,
+      "tdd": true,
+      "fdd": true
+    },
+    "languages": {
+      "typescript": true,
+      "php": false
+    },
+    "patterns": {
+      "enabled": true,
+      "categories": {
+        "architectural-enterprise": true,
+        "behavioural": true,
+        "creational": true,
+        "structural": true
+      },
+      "specific": []
+    }
+  }
+}
+```
+
+### Backward Compatibility
+
+The builder supports the legacy `--langs` flag:
+```bash
+# Include TypeScript and PHP rules
+node scripts/build-agents-doc.js --langs typescript,php --both
+```
+
+### Available Example Configs
+
+- `.aegis-rules.example-minimal.json` - Minimal TypeScript-only
+- `.aegis-rules.example-typescript-backend.json` - TypeScript backend with patterns
+- `.aegis-rules.example-full-stack.json` - Full-stack TypeScript/JavaScript/HTML/CSS
+- `.aegis-rules.example-php-laravel.json` - PHP/Laravel backend
+- `.aegis-rules.example-java-spring.json` - Java/Spring Boot backend
+- `.aegis-rules.example-csharp-dotnet.json` - C#/.NET backend
+- `.aegis-rules.example-backend-only.json` - All backend languages
+- `.aegis-rules.example-patterns-specific.json` - TypeScript with specific patterns
+
+### Documentation
+
+- **Config Examples**: See `docs/rule-builder-config-examples.md` for detailed configuration documentation
+- **Testing Guide**: See `docs/rule-builder-testing.md` for comprehensive testing instructions
+- **Test Script**: Run `./scripts/test-rule-builder.sh` to validate the rule builder
+
+### Updating Rules
+
+After modifying rules in the `rules/` directory, regenerate `.cursor/rules/` and `AGENTS.md`:
+```bash
+node scripts/build-agents-doc.js --config .aegis-rules.json --both
+```
 
 ---
 

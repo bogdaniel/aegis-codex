@@ -1,6 +1,8 @@
 ---
 description: "API design standards: REST/GraphQL contracts and safety."
-alwaysApply: true
+required: false
+category: "topic"
+subcategory: "api"
 globs:
   - "api/**"
   - "src/**"

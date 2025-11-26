@@ -1,6 +1,8 @@
 ---
 description: "Testing standards: coverage, determinism, and contracts."
-alwaysApply: true
+required: true
+category: "topic"
+subcategory: "testing"
 globs:
   - "src/**"
   - "app/**"

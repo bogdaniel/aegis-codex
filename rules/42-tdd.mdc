@@ -1,6 +1,8 @@
 ---
 description: "TDD — Test-Driven Development (deterministic first). Tests before or with any logic change, especially primary user actions and UI invariants."
-alwaysApply: true
+required: false
+category: "methodology"
+subcategory: "tdd"
 globs:
   - "src/**"
   - "app/**"

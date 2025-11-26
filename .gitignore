@@ -37,3 +37,7 @@ coverage/
 *.tmp
 *.temp
 
+# Generated files (rule builder output)
+.cursor/rules/
+AGENTS.md
+

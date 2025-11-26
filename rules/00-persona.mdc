@@ -1,6 +1,8 @@
 ---
 description: "Persona bootstrap and handshake from AGENTS.md for all responses."
-alwaysApply: true
+required: true
+category: "core"
+subcategory: "persona"
 globs:
   - "**/*"
 ---

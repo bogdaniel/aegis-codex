@@ -1,6 +1,8 @@
 ---
 description: "SOLID principles — integration with Clean Architecture and DDD."
-alwaysApply: true
+required: true
+category: "topic"
+subcategory: "solid"
 globs:
   - "src/**"
   - "app/**"

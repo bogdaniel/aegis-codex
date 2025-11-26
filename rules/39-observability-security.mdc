@@ -1,6 +1,8 @@
 ---
 description: "Observability, SLOs & Security — non-functional architecture doctrine."
-alwaysApply: true
+required: false
+category: "topic"
+subcategory: "observability-security"
 globs:
   - "src/**"
   - "app/**"

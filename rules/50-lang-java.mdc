@@ -1,6 +1,8 @@
 ---
 description: "Java standards: idiomatic, typed, and architecture-enforced."
-alwaysApply: false
+required: false
+category: "language"
+subcategory: "java"
 globs:
   - "**/*.java"
 ---

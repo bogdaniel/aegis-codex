@@ -1,6 +1,8 @@
 ---
 description: "TypeScript standards: strict types, lint/format, testing."
-alwaysApply: true
+required: false
+category: "language"
+subcategory: "typescript"
 globs:
   - "**/*.ts"
   - "**/*.tsx"

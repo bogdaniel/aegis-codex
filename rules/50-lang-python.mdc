@@ -1,6 +1,8 @@
 ---
 description: "Python standards: typing, linting, testing."
-alwaysApply: true
+required: false
+category: "language"
+subcategory: "python"
 globs:
   - "**/*.py"
 ---

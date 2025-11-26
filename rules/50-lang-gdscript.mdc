@@ -1,6 +1,8 @@
 ---
 description: "GDScript standards: readability, signals, and safety."
-alwaysApply: true
+required: false
+category: "language"
+subcategory: "gdscript"
 globs:
   - "**/*.gd"
 ---

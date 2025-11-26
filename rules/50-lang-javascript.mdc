@@ -1,6 +1,8 @@
 ---
 description: "JavaScript/TypeScript standards — state, invariants, and UI behavior."
-alwaysApply: true
+required: false
+category: "language"
+subcategory: "javascript"
 globs:
   - "src/**/*.js"
   - "src/**/*.ts"

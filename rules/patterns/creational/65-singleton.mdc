@@ -1,6 +1,8 @@
 ---
 description: "Singleton pattern guidance."
-alwaysApply: false
+required: false
+category: "pattern"
+subcategory: "creational"
 globs:
   - "src/**"
   - "app/**"

@@ -1,6 +1,8 @@
 ---
 description: "Global invariants, safety, and output contract for all agents."
-alwaysApply: true
+required: true
+category: "core"
+subcategory: "global"
 globs:
   - "**/*"
 ---

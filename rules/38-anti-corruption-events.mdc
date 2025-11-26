@@ -1,6 +1,8 @@
 ---
 description: "Anti-Corruption Layers + Event Catalog — safe integration with external/legacy systems."
-alwaysApply: true
+required: true
+category: "topic"
+subcategory: "anti-corruption"
 globs:
   - "src/**"
   - "app/**"

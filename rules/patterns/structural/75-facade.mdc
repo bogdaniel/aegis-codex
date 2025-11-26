@@ -1,6 +1,8 @@
 ---
 description: "Facade pattern guidance."
-alwaysApply: false
+required: false
+category: "pattern"
+subcategory: "structural"
 globs:
   - "src/**"
   - "app/**"

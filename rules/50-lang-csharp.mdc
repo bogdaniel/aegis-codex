@@ -1,6 +1,8 @@
 ---
 description: "C# / .NET standards: idiomatic, typed, and architecture-enforced."
-alwaysApply: false
+required: false
+category: "language"
+subcategory: "csharp"
 globs:
   - "**/*.cs"
 ---

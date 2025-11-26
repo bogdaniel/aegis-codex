@@ -1,6 +1,8 @@
 ---
 description: "Pipeline / Filter pattern guidance."
-alwaysApply: false
+required: false
+category: "pattern"
+subcategory: "behavioural"
 globs:
   - "src/**"
   - "app/**"

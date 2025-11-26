@@ -1,6 +1,8 @@
 ---
 description: "PHP standards — modern, typed, Laravel-aligned, and architecture-safe."
-alwaysApply: true
+required: false
+category: "language"
+subcategory: "php"
 globs:
   - "src/**/*.php"
   - "app/**/*.php"

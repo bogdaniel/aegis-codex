@@ -1,6 +1,8 @@
 ---
 description: "Template Method pattern guidance."
-alwaysApply: false
+required: false
+category: "pattern"
+subcategory: "behavioural"
 globs:
   - "src/**"
   - "app/**"

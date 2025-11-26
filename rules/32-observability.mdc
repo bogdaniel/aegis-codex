@@ -1,6 +1,8 @@
 ---
 description: "Observability standards: logs, metrics, traces, health."
-alwaysApply: true
+required: true
+category: "topic"
+subcategory: "observability"
 globs:
   - "src/**"
   - "app/**"

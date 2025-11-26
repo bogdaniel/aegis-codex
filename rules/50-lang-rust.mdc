@@ -1,6 +1,8 @@
 ---
 description: "Rust standards: safety, correctness, and tooling."
-alwaysApply: true
+required: false
+category: "language"
+subcategory: "rust"
 globs:
   - "**/*.rs"
 ---

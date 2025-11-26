@@ -1,6 +1,8 @@
 ---
 description: "Anti-patterns catalog — common mistakes and fixes."
-alwaysApply: true
+required: true
+category: "topic"
+subcategory: "anti-patterns"
 globs:
   - "src/**"
   - "app/**"

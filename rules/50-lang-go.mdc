@@ -1,6 +1,8 @@
 ---
 description: "Go standards: idiomatic, typed, and checked."
-alwaysApply: true
+required: false
+category: "language"
+subcategory: "go"
 globs:
   - "**/*.go"
 ---

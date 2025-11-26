@@ -1,6 +1,8 @@
 ---
 description: "Decorator pattern guidance."
-alwaysApply: false
+required: false
+category: "pattern"
+subcategory: "structural"
 globs:
   - "src/**"
   - "app/**"

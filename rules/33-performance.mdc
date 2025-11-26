@@ -1,6 +1,8 @@
 ---
 description: "Performance standards: efficiency without breaking correctness."
-alwaysApply: true
+required: false
+category: "topic"
+subcategory: "performance"
 globs:
   - "src/**"
   - "app/**"

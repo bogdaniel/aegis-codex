@@ -1,6 +1,8 @@
 ---
 description: "Compliance checklist enforcement."
-alwaysApply: true
+required: true
+category: "topic"
+subcategory: "compliance"
 globs:
   - "**/*"
 ---

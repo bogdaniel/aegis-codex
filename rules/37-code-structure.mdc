@@ -1,6 +1,8 @@
 ---
 description: "Code structure and organization standards."
-alwaysApply: true
+required: true
+category: "topic"
+subcategory: "code-structure"
 globs:
   - "src/**"
   - "app/**"

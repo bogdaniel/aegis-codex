@@ -1,189 +1,213 @@
 #!/usr/bin/env node
 /**
- * Generate AGENTS.md from .cursor/rules/*.mdc so rules are single-sourced.
- * Usage: node scripts/build-agents-doc.js [--out AGENTS.md] [--src .cursor/rules]
+ * Aegis Codex Rule Builder - Catalog-level builder
+ * 
+ * Reads from rules/ (canonical source) and outputs to .cursor/rules/ (artifact/export)
+ * Generates AGENTS.md from selected rules based on configuration.
+ * 
+ * Usage:
+ *   node scripts/build-agents-doc.js [--config .aegis-rules.json] [--copy-rules] [--generate-agents] [--both] [--dry-run] [--langs typescript,php]
  */
 
 const fs = require("fs");
 const path = require("path");
-const readline = require("readline");
 
-function readFileSafe(filePath) {
-  return fs.readFileSync(filePath, "utf8");
-}
+// Import modules
+const ConfigParser = require("./lib/config/ConfigParser");
+const ConfigValidator = require("./lib/config/ConfigValidator");
+const RuleReader = require("./lib/rules/RuleReader");
+const RuleParser = require("./lib/rules/RuleParser");
+const RuleMetadata = require("./lib/rules/RuleMetadata");
+const RuleSelector = require("./lib/selection/RuleSelector");
+const DependencyResolver = require("./lib/selection/DependencyResolver");
+const RuleValidator = require("./lib/selection/RuleValidator");
+const RuleCopier = require("./lib/output/RuleCopier");
+const AgentsDocGenerator = require("./lib/output/AgentsDocGenerator");
 
-function parseFrontMatter(raw) {
-  const parts = raw.split(/^---\s*$/m);
-  if (parts.length < 3) {
-    return { body: raw, meta: {} };
-  }
-  const metaText = parts[1];
-  const body = parts.slice(2).join("---\n");
-  const meta = {};
-  const desc = metaText.match(/description:\s*"?(.+?)"?\s*$/m);
-  if (desc) meta.description = desc[1];
-  const globs = Array.from(metaText.matchAll(/-\s*"(.+?)"/g)).map((m) => m[1]);
-  if (globs.length) meta.globs = globs;
-  return { meta, body };
-}
-
-function parseSections(body) {
-  const lines = body.split(/\r?\n/);
-  const sections = [];
-  let current = null;
-  for (const line of lines) {
-    const header = line.match(/^\[(.+?)\]\s*$/);
-    if (header) {
-      current = { title: header[1], content: [] };
-      sections.push(current);
-      continue;
-    }
-    if (!current) continue;
-    current.content.push(line);
-  }
-  return sections;
-}
-
-function parseRule(filePath) {
-  const raw = readFileSafe(filePath);
-  const { meta, body } = parseFrontMatter(raw);
-  const sections = parseSections(body);
-  return { meta, sections };
-}
-
-function renderRule(name, rule) {
-  const lines = [];
-  const desc = rule.meta.description ? ` — ${rule.meta.description}` : "";
-  lines.push(`## ${name}${desc}`.trim());
-  if (rule.meta.globs && rule.meta.globs.length) {
-    lines.push(`- Globs: ${rule.meta.globs.join(", ")}`);
-  }
-  for (const section of rule.sections) {
-    lines.push("");
-    lines.push(`### [${section.title}]`);
-    const content = section.content.join("\n").trimEnd();
-    if (content) lines.push(content);
-  }
-  lines.push("");
-  return lines.join("\n");
-}
-
-function renderDocument(rules) {
-  const lines = [];
-  lines.push(`# AGENTS (generated from .cursor/rules)`);
-  lines.push(`> Do not edit by hand. Run: node scripts/build-agents-doc.js`);
-  lines.push("");
-
-  lines.push(`[RULE FILE ORDER]`);
-  lines.push(
-    "- Cursor loads rules by filename priority: `00-persona.mdc` (system bootstrap/handshake) → `10-global.mdc` → `20-agents.mdc` → `30-38*.mdc` (security, testing, observability, performance, CI, API, architecture, code-structure, compliance) → `40-44*.mdc` (ATDD, BDD, TDD, FDD, DDD) → `50-lang-*.mdc` (language-specific). Keep this ordering when adding/updating rules."
-  );
-  lines.push("");
-
-  const groups = [
-    { title: "[PERSONA/GLOBAL/AGENTS] (00-29)", match: (name) => /^0[0-9]-/.test(name) || /^1[0-9]-/.test(name) || /^20-/.test(name) },
-    { title: "[TOPIC STANDARDS] (LLM-facing mirrors in .cursor/rules/30-38)", match: (name) => /^3[0-8]-/.test(name) },
-    { title: "[METHODOLOGIES] (ATDD/BDD/TDD/FDD/DDD)", match: (name) => /^4[0-4]-/.test(name) },
-    { title: "[LANGUAGE STANDARDS] (50-lang-*.mdc)", match: (name) => /^50-lang-/.test(name) },
-  ];
-
-  let currentGroup = null;
-  for (const { name, data } of rules) {
-    const group = groups.find((g) => g.match(name));
-    if (group && group !== currentGroup) {
-      lines.push(group.title);
-      lines.push("");
-      currentGroup = group;
-    }
-    lines.push(renderRule(name, data));
-  }
-  return lines.join("\n");
-}
-
-async function promptLangs(available) {
-  return await new Promise((resolve) => {
-    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-    const prompt = `Select languages (comma-separated) from [${available.join(", ")}], or press Enter for all: `;
-    rl.question(prompt, (answer) => {
-      rl.close();
-      const trimmed = answer.trim();
-      if (!trimmed) return resolve(null);
-      const set = new Set(
-        trimmed
-          .split(/[,\s]+/)
-          .map((s) => s.trim())
-          .filter(Boolean)
-      );
-      resolve(set);
-    });
-  });
-}
-
-function resolveOutPath(args) {
-  const outIdx = args.indexOf("--out");
-  const candidate = outIdx !== -1 ? args[outIdx + 1] : null;
-  // If --out is provided without a value or followed by another flag, default to AGENTS.generated.md to avoid accidental overwrite.
-  if (outIdx !== -1 && (!candidate || candidate.startsWith("--"))) {
-    return path.resolve(process.cwd(), "AGENTS.generated.md");
-  }
-  if (candidate) return path.resolve(process.cwd(), candidate);
-  return path.resolve(process.cwd(), "AGENTS.md");
-}
-
-async function main() {
+/**
+ * Parse CLI arguments
+ * @returns {Object} Parsed arguments
+ */
+function parseArgs() {
   const args = process.argv.slice(2);
-  const srcIdx = args.indexOf("--src");
-  const langsIdx = args.indexOf("--langs");
-  const sourceDir = path.resolve(
-    process.cwd(),
-    srcIdx !== -1 && args[srcIdx + 1] ? args[srcIdx + 1] : ".cursor/rules"
-  );
-  const outPath = resolveOutPath(args);
+  const result = {
+    config: null,
+    copyRules: false,
+    generateAgents: false,
+    both: false,
+    dryRun: false,
+    langs: null,
+    src: null,
+    out: null,
+  };
 
-  const files = fs
-    .readdirSync(sourceDir)
-    .filter((f) => f.endsWith(".mdc"))
-    .sort();
-
-  const availableLangs = files
-    .map((f) => f.match(/^50-lang-(.+)\.mdc$/))
-    .filter(Boolean)
-    .map((m) => m[1]);
-
-  let requestedLangs = null;
-  if (langsIdx !== -1) {
-    const val = args[langsIdx + 1];
-    if (val && !val.startsWith("--")) {
-      requestedLangs = new Set(
-        val
-          .split(/[,\s]+/)
-          .map((s) => s.trim())
-          .filter(Boolean)
-      );
-    } else {
-      requestedLangs = await promptLangs(availableLangs);
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    switch (arg) {
+      case "--config":
+        result.config = args[++i];
+        break;
+      case "--copy-rules":
+        result.copyRules = true;
+        break;
+      case "--generate-agents":
+        result.generateAgents = true;
+        break;
+      case "--both":
+        result.both = true;
+        break;
+      case "--dry-run":
+        result.dryRun = true;
+        break;
+      case "--langs":
+        const langsValue = args[++i];
+        if (langsValue && !langsValue.startsWith("--")) {
+          result.langs = langsValue.split(/[,\s]+/).map((s) => s.trim()).filter(Boolean);
+        }
+        break;
+      case "--src":
+        result.src = args[++i];
+        break;
+      case "--out":
+        result.out = args[++i];
+        break;
     }
   }
 
-  const rules = files
-    .filter((file) => {
-      if (!requestedLangs) return true;
-      const langMatch = file.match(/^50-lang-(.+)\.mdc$/);
-      if (!langMatch) return true;
-      return requestedLangs.has(langMatch[1]);
-    })
-    .map((file) => {
-      const filePath = path.join(sourceDir, file);
-      return { name: file, data: parseRule(filePath) };
-    });
+  // Default behavior: if no output mode specified, generate AGENTS.md
+  if (!result.copyRules && !result.generateAgents && !result.both) {
+    result.generateAgents = true;
+  }
 
-  const output = renderDocument(rules);
-  fs.writeFileSync(outPath, output + "\n", "utf8");
-  const langNote = requestedLangs ? ` (langs: ${[...requestedLangs].join(", ") || "all"})` : "";
-  console.log(`Generated ${outPath} from ${rules.length} rule files${langNote}.`);
+  // If --both, enable both modes
+  if (result.both) {
+    result.copyRules = true;
+    result.generateAgents = true;
+  }
+
+  return result;
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+/**
+ * Main orchestration function
+ */
+async function main() {
+  try {
+    const args = parseArgs();
+
+    // Determine source and output directories
+    const root = process.cwd();
+    const sourceDir = args.src ? path.resolve(root, args.src) : path.resolve(root, "rules");
+    const outputDir = path.resolve(root, ".cursor/rules");
+    const agentsOutPath = args.out
+      ? path.resolve(root, args.out)
+      : path.resolve(root, "AGENTS.md");
+
+    console.log(`Aegis Codex Rule Builder`);
+    console.log(`Source: ${sourceDir}`);
+    console.log(`Output: ${outputDir}`);
+    console.log("");
+
+    // Step 1: Parse and validate config
+    console.log("Step 1: Parsing configuration...");
+    let config = ConfigParser.parseConfig(args.config);
+    if (args.langs) {
+      config = ConfigParser.mergeCliFlags(config, { langs: args.langs });
+    }
+
+    const validation = ConfigValidator.validateConfig(config);
+    if (!validation.valid) {
+      console.error("Config validation failed:");
+      validation.errors.forEach((err) => console.error(`  - ${err}`));
+      process.exit(1);
+    }
+    console.log("✓ Configuration valid");
+
+    // Step 2: Read all rule files
+    console.log("Step 2: Reading rule files...");
+    const ruleFiles = RuleReader.readRuleFiles(sourceDir);
+    console.log(`✓ Found ${ruleFiles.length} rule files`);
+
+    // Step 3: Parse rules and extract metadata
+    console.log("Step 3: Parsing rules and extracting metadata...");
+    const allRules = ruleFiles.map((file) => {
+      const content = RuleReader.readRuleFile(file.filePath);
+      const parsed = RuleParser.parseRule(file.filePath, content);
+      const metadata = RuleMetadata.extractMetadata(parsed, file.name);
+      return {
+        ...file,
+        meta: metadata,
+        data: parsed,
+      };
+    });
+    console.log(`✓ Parsed ${allRules.length} rules`);
+
+    // Step 4: Select rules based on config
+    console.log("Step 4: Selecting rules based on configuration...");
+    let selectedRules = RuleSelector.selectRules(allRules, config);
+    console.log(`✓ Selected ${selectedRules.length} rules`);
+
+    // Step 5: Resolve dependencies
+    console.log("Step 5: Resolving dependencies...");
+    selectedRules = DependencyResolver.resolveDependencies(selectedRules, allRules);
+    console.log(`✓ Resolved dependencies (${selectedRules.length} rules total)`);
+
+    // Step 6: Validate selected rules
+    console.log("Step 6: Validating selected rules...");
+    const ruleValidation = RuleValidator.validateRules(selectedRules, allRules);
+    if (!ruleValidation.valid) {
+      console.error("Rule validation failed:");
+      ruleValidation.errors.forEach((err) => console.error(`  - ${err}`));
+      process.exit(1);
+    }
+    if (ruleValidation.warnings.length > 0) {
+      console.warn("Warnings:");
+      ruleValidation.warnings.forEach((warn) => console.warn(`  - ${warn}`));
+    }
+    console.log("✓ Rules validated");
+
+    // Step 7: Copy rules (if requested)
+    if (args.copyRules) {
+      console.log("Step 7: Copying rules to .cursor/rules/...");
+      const copyResult = RuleCopier.copyRules(selectedRules, sourceDir, outputDir, args.dryRun);
+      if (copyResult.errors.length > 0) {
+        console.error("Copy errors:");
+        copyResult.errors.forEach((err) => console.error(`  - ${err}`));
+      }
+      console.log(
+        `✓ ${args.dryRun ? "[DRY RUN] Would copy" : "Copied"} ${copyResult.copied} rules (${copyResult.skipped} skipped)`
+      );
+    }
+
+    // Step 8: Generate AGENTS.md (if requested)
+    if (args.generateAgents) {
+      console.log("Step 8: Generating AGENTS.md...");
+      const rulesForDoc = selectedRules.map((rule) => ({
+        name: rule.relativePath,
+        data: rule.data,
+      }));
+      const agentsDoc = AgentsDocGenerator.generateAgentsDoc(rulesForDoc, outputDir);
+      
+      if (!args.dryRun) {
+        fs.writeFileSync(agentsOutPath, agentsDoc + "\n", "utf8");
+        console.log(`✓ Generated ${agentsOutPath}`);
+      } else {
+        console.log(`[DRY RUN] Would generate ${agentsOutPath}`);
+      }
+    }
+
+    console.log("");
+    console.log("✓ Build complete!");
+    if (args.dryRun) {
+      console.log("(Dry run mode - no files were modified)");
+    }
+  } catch (error) {
+    console.error("Error:", error.message);
+    if (process.env.DEBUG) {
+      console.error(error.stack);
+    }
+    process.exit(1);
+  }
+}
+
+main();

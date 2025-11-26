@@ -1,6 +1,8 @@
 ---
 description: "ATDD — Acceptance Test-Driven Development (done = proven). Define acceptance before implementation."
-alwaysApply: true
+required: false
+category: "methodology"
+subcategory: "atdd"
 globs:
   - "acceptance/**"
   - "src/**"

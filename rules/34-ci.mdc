@@ -1,6 +1,8 @@
 ---
 description: "CI/CD standards: gates, supply chain, and rollout safety."
-alwaysApply: true
+required: true
+category: "topic"
+subcategory: "ci"
 globs:
   - "**/*"
 ---

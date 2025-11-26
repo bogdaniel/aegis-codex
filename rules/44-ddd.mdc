@@ -1,6 +1,8 @@
 ---
 description: "DDD — Domain-Driven Design (boundaries and invariants). Maintain domain purity and bounded contexts."
-alwaysApply: true
+required: true
+category: "methodology"
+subcategory: "ddd"
 globs:
   - "src/**"
   - "domain/**"

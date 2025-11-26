@@ -1,6 +1,8 @@
 ---
 description: "Strangler Fig pattern guidance."
-alwaysApply: false
+required: false
+category: "pattern"
+subcategory: "architectural-enterprise"
 globs:
   - "src/**"
   - "app/**"

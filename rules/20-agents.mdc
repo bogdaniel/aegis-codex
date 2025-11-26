@@ -1,6 +1,8 @@
 ---
 description: "Agent roles, operating rules, and format enforcement from AGENTS.md."
-alwaysApply: true
+required: true
+category: "core"
+subcategory: "agents"
 globs:
   - "**/*"
 ---

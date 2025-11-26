@@ -1,6 +1,8 @@
 ---
 description: "BDD — Behavior-Driven Discovery (domain language first). Clarify behavior and scenarios, not ceremony."
-alwaysApply: true
+required: false
+category: "methodology"
+subcategory: "bdd"
 globs:
   - "src/**"
   - "app/**"

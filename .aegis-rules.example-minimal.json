@@ -1,0 +1,34 @@
+{
+  "version": "1.0.0",
+  "optional": {
+    "topics": {
+      "performance": false,
+      "api": false,
+      "accessibility": false,
+      "observability-security": false
+    },
+    "methodologies": {
+      "atdd": false,
+      "bdd": false,
+      "tdd": false,
+      "fdd": false
+    },
+    "languages": {
+      "typescript": true,
+      "php": false,
+      "javascript": false,
+      "python": false,
+      "go": false,
+      "rust": false,
+      "java": false,
+      "csharp": false,
+      "html": false,
+      "css": false,
+      "gdscript": false
+    },
+    "patterns": {
+      "enabled": false
+    }
+  }
+}
+

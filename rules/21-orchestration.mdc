@@ -1,6 +1,8 @@
 ---
 description: "Orchestration — How agents cooperate in multi-agent workflows."
-alwaysApply: true
+required: true
+category: "core"
+subcategory: "orchestration"
 globs:
   - "**/*"
 ---

@@ -1,6 +1,8 @@
 ---
 description: "Accessibility & UX — semantic structure, keyboard navigation, and usable layouts."
-alwaysApply: true
+required: false
+category: "topic"
+subcategory: "accessibility"
 globs:
   - "src/**"
   - "app/**"

@@ -1,6 +1,8 @@
 ---
 description: "HTML standards — semantic structure, accessibility, and head/document hygiene."
-alwaysApply: true
+required: false
+category: "language"
+subcategory: "html"
 globs:
   - "src/**/*.html"
   - "public/**/*.html"

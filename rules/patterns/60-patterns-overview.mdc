@@ -1,6 +1,8 @@
 ---
 description: "Overview of design pattern usage and guidance for Aegis Codex."
-alwaysApply: false
+required: false
+category: "pattern"
+subcategory: "overview"
 globs:
   - "src/**"
   - "app/**"

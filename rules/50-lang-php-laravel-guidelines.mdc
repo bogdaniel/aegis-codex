@@ -1,6 +1,8 @@
 ---
 description: "Laravel & AI Code Assistants (Spatie-derived)"
-alwaysApply: true
+required: false
+category: "language"
+subcategory: "php-laravel"
 globs:
   - "app/**/*.php"
   - "src/**/*.php"

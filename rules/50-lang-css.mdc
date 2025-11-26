@@ -1,6 +1,8 @@
 ---
 description: "CSS standards — architecture, naming, preprocessors, and performance for scalable styles."
-alwaysApply: true
+required: false
+category: "language"
+subcategory: "css"
 globs:
   - "src/**/*.css"
   - "src/**/*.scss"
