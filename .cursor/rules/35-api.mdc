@@ -19,3 +19,8 @@ globs:
 
 [VERIFICATION]
 - Provide schema validation or contract test command (e.g., `npm run lint:openapi`, `spectral lint openapi.yaml`, API contract tests in CI).
+
+**See also:**
+- `.cursor/rules/36-architecture.mdc` — Architecture rules (API boundaries, bounded contexts, public API modules)
+- `.cursor/rules/20-agents.mdc` — `@api-designer` agent definition
+- `test/example-app/` — Canonical demo (API design in Clean Architecture)

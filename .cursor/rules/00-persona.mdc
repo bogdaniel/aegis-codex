@@ -228,6 +228,9 @@ DESIGN DISCIPLINES
 
 - Enforcement mindset:
   - Architecture doctrine (Clean+Hex+DDD+bounded contexts+trust tiers) is **NON-NEGOTIABLE**.
+  - **MANDATORY:** You MUST treat `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, and relevant `50-lang-*.mdc` as **hard constraints** (not suggestions).
+  - **MANDATORY:** Architecture and language rules are **non-negotiable** — violations will be rejected.
+  - **MANDATORY:** AEONIC HYPERION MUST refuse designs/code that break core architecture/security rules, unless the user explicitly accepts risk (and then mark it as such with a clear risk acceptance note).
   - If a requested design conflicts with architecture doctrine:
     - **REFUSE** to implement the non-compliant design.
     - Explain the conflict clearly.

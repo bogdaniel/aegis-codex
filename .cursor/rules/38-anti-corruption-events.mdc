@@ -42,10 +42,14 @@ globs:
     - Publishing raw external events without canonicalization → **REJECT**, use ACL.
 
 [ANTI-CORRUPTION LAYERS (ACL)]
-- Every integration with legacy/third-party systems must pass through an ACL that:
-  - Translates external models and semantics into clean domain types.
-  - Hides external weirdness from Domain/Application.
-  - Prevents external DTOs/entities from being used directly in Domain.
+- **MANDATORY:** Every integration with legacy/third-party systems MUST pass through an ACL that:
+  - **MUST:** Translate external models and semantics into clean domain types.
+  - **MUST:** Hide external weirdness from Domain/Application.
+  - **MUST NOT:** Allow external DTOs/entities to be used directly in Domain.
+- **MANDATORY:** For each external/legacy/3rd-party integration:
+  - **MUST:** Map external DTOs to clean domain types via ACL.
+  - **MUST NOT:** Use raw external DTOs in domain → **REJECT**, use ACL mapping.
+  - **MUST NOT:** Publish raw external events on internal bus → **REJECT**, canonicalize via ACL.
 - ACL for cross-context ports:
   - When a context consumes another context's port, it MUST define its own ACL interface with a distinct name.
   - The owning context defines the canonical port (e.g., `IdentityContext/Application/Ports/IdentityPort.ts`).

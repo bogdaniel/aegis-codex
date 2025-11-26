@@ -84,3 +84,9 @@ globs:
   - Pages have proper document skeleton and semantic landmarks.
   - Forms are labeled, errors are announced, and primary interactions are keyboard accessible.
   - No new inline JS/CSS has been introduced in production templates without explicit justification.
+
+**See also:**
+- `.cursor/rules/39-accessibility.mdc` — Accessibility & UX standards
+- `.cursor/rules/50-lang-javascript.mdc` — JavaScript standards (form validation, state management)
+- `examples/before-after/` — Security validation examples (HTML escaping, XSS prevention)
+- `test/example-app/` — Canonical Clean Architecture demo (if HTML templates exist)

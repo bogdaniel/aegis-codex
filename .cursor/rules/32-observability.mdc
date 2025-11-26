@@ -25,3 +25,8 @@ globs:
 
 [VERIFICATION]
 - Include how to smoke-test signals locally (e.g., `curl -f http://localhost:PORT/health`) and call out metrics/traces availability in dev.
+
+**See also:**
+- `.cursor/rules/36-architecture.mdc` — Architecture rules (observability requirements, Tier H contexts)
+- `.cursor/rules/39-observability-security.mdc` — Observability, SLOs & Security
+- `test/example-app/` — Canonical demo (observability patterns in Clean Architecture)

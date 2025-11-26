@@ -19,3 +19,17 @@ globs:
   - Layering respected.
   - Bounded contexts not violated.
   - No raw external DTOs in domain.
+
+[POLICY VALIDATION — MANDATORY]
+- **MANDATORY:** Policy scenarios in `tests/policies/` MUST be validated when rules change.
+- **MANDATORY:** If policy validation fails, tighten relevant `.cursor/rules/*.mdc` files.
+- Policy scenarios validate agent behavior against critical policies (security, testing, architecture).
+- See `tests/policies/README.md` for policy scenario structure and validation criteria.
+- See `tests/policies/ENFORCEMENT.md` for enforcement mechanisms.
+
+**See also:**
+- `.cursor/rules/36-architecture.mdc` — Architecture rules (BINDING)
+- `.cursor/rules/44-ddd.mdc` — DDD rules (BINDING)
+- `.cursor/rules/34-ci.mdc` — CI/CD standards including policy validation
+- `tests/policies/` — Policy scenarios validating compliance
+- `test/example-app/` — Canonical Clean Architecture + DDD demo

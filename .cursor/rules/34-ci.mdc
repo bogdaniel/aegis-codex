@@ -6,37 +6,141 @@ globs:
 ---
 
 [CI/CD BASELINE]
-- Pipeline stages: lint/format/type-check → unit tests + coverage → integration/smoke (DB/cache/API) → security scans (deps + secrets + static security) → build/package + SBOM/signing.
-- Required gates: block on lint/type errors, test failures/flakiness, coverage drops in critical paths, and High/Critical vulnerabilities unless risk-accepted with expiry; fail if secrets scan hits.
+- Pipeline stages: lint/format/type-check → **architecture checks** → unit tests + coverage → integration/smoke (DB/cache/API) → security scans (deps + secrets + static security) → build/package + SBOM/signing.
+- Required gates: block on lint/type errors, **architecture violations**, test failures/flakiness, coverage drops in critical paths, and High/Critical vulnerabilities unless risk-accepted with expiry; fail if secrets scan hits.
+- **MANDATORY:** Architecture checks MUST run before tests and MUST fail the pipeline on violations.
 - Supply chain: pin dependencies/locks; hermetic builds when possible; avoid `latest`; cache verified deps; publish SBOM as artifact.
 - Deployment: prefer canary/blue-green; health/readiness checks mandatory; auto-rollback on triggers (p95 latency +20%/15m, error rate +0.5%/10m, critical security event).
 - Environment/secrets: config via env/secret manager; least-privilege CI tokens; redact secrets from logs.
 
 [ARCHITECTURE & LANGUAGE GATES — MANDATORY]
-- CI MUST run architecture/import rules for each language:
+- **MANDATORY:** CI MUST run architecture/import rules for each language as a **blocking gate** (pipeline fails on violations):
   - For TypeScript: ESLint (no-restricted-imports) + path alias checks
   - For PHP: Deptrac (or equivalent) enforcing domain/app/infra layering
-- Fail the pipeline if:
-  - Domain imports framework/infra packages
-  - Cross-context imports bypass ACL / application ports
+  - For Java: ArchUnit (or equivalent) enforcing package boundaries
+  - For C#: ArchUnit.NET (or equivalent) enforcing assembly boundaries
+- **MANDATORY:** Fail the pipeline if:
+  - Domain imports framework/infra packages → **REJECT**, fail pipeline
+  - Domain imports from Infrastructure/Interface aliases (e.g., `@context/infra/*`, `@context/interface/*`) → **REJECT**, fail pipeline
+  - Cross-context imports bypass ACL / application ports → **REJECT**, fail pipeline
+  - Missing path aliases (deep relative imports beyond 1 level) → **REJECT**, fail pipeline
+  - Missing bounded contexts (code organized by technical layers only) → **REJECT**, fail pipeline
+  - Missing trust tiers for bounded contexts → **REJECT**, fail pipeline
+- **MANDATORY:** Architecture checks MUST reference `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc` as binding constraints.
 
 [ARCHITECTURE ENFORCEMENT]
-- Required CI checks:
-  - Static analysis (ESLint/Deptrac) must pass.
-  - Architecture dependency checks must pass (layer dependencies, cross-context imports).
-  - Public API module exports must be documented (JSDoc/TSDoc headers present).
-  - No cross-context domain/infra imports (must use public API modules).
-  - For TypeScript projects: path aliases must be used (no relative imports beyond 1 level). Other languages: enforce module/package boundaries using ecosystem-appropriate tools (Deptrac, package boundaries, etc.).
+- **MANDATORY:** Required CI checks (all must pass, pipeline fails on any violation):
+  - Static analysis (ESLint/Deptrac/ArchUnit) must pass → **FAIL PIPELINE** if violations found.
+  - Architecture dependency checks must pass (layer dependencies, cross-context imports) → **FAIL PIPELINE** if violations found.
+  - Public API module exports must be documented (JSDoc/TSDoc headers present) → **FAIL PIPELINE** if missing.
+  - No cross-context domain/infra imports (must use public API modules) → **FAIL PIPELINE** if violations found.
+  - For TypeScript projects: path aliases must be used (no relative imports beyond 1 level) → **FAIL PIPELINE** if violations found.
+  - Other languages: enforce module/package boundaries using ecosystem-appropriate tools (Deptrac, package boundaries, etc.) → **FAIL PIPELINE** if violations found.
+  - Domain layer MUST NOT import from Infrastructure/Interface → **FAIL PIPELINE** if violations found.
+  - Application layer MUST NOT import from Infrastructure/Interface → **FAIL PIPELINE** if violations found.
+- **MANDATORY:** Architecture checks MUST validate against `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`.
 - Pre-commit hooks:
   - Run architecture checks before commit (static analysis, dependency validation).
-  - Block commits with violations (layer dependencies, cross-context imports, path alias violations).
+  - **MANDATORY:** Block commits with violations (layer dependencies, cross-context imports, path alias violations).
 - PR requirements:
   - Architecture review for public API changes (new exports, breaking changes).
   - Documentation updates for new public APIs (JSDoc/TSDoc headers).
-  - Verify no architecture violations introduced (use static analysis tools).
+  - **MANDATORY:** Verify no architecture violations introduced (use static analysis tools) → **BLOCK MERGE** if violations found.
+- Policy validation:
+  - **MANDATORY:** Policy scenarios in `tests/policies/` MUST be validated when rules change.
+  - **MANDATORY:** If policy validation fails, tighten relevant `.cursor/rules/*.mdc` files.
+  - Policy scenarios validate agent behavior against critical policies (security, testing, architecture).
+  - See `tests/policies/README.md` for policy scenario structure and validation criteria.
 
 [VERIFICATION]
 - Provide local pipeline command (e.g., `npm run lint && npm test`, `go test ./...`, `cargo fmt -- --check && cargo clippy && cargo test`) and reference CI workflow path.
+
+[ARCHITECTURE CHECK EXAMPLES]
+
+### TypeScript ESLint Configuration
+
+Example `.eslintrc.json` with architecture enforcement:
+
+```json
+{
+  "overrides": [
+    {
+      "files": ["**/Domain/**/*.ts", "**/domain/**/*.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["**/infra/**", "**/Infrastructure/**", "**/interface/**", "**/Interface/**"],
+                "message": "Domain layer MUST NOT import from Infrastructure or Interface. Use ports/adapters pattern."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["**/*.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["../../*", "../../../*"],
+                "message": "Deep relative imports forbidden. Use path aliases (@context/layer/*)."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+### PHP Deptrac Configuration
+
+Example `deptrac.yaml` for layer enforcement:
+
+```yaml
+paths:
+  - ./src
+
+layers:
+  - name: Domain
+    collectors:
+      - type: directory
+        regex: .*Domain.*
+  - name: Application
+    collectors:
+      - type: directory
+        regex: .*Application.*
+  - name: Infrastructure
+    collectors:
+      - type: directory
+        regex: .*Infrastructure.*
+  - name: Interface
+    collectors:
+      - type: directory
+        regex: .*Interface.*
+
+ruleset:
+  Domain:
+    - Application
+  Application:
+    - Domain
+    - Infrastructure
+  Infrastructure:
+    - Domain
+    - Application
+  Interface:
+    - Domain
+    - Application
+```
+
+See `docs/tooling/` for more examples (if created).
 
 [CI/CD AUTOMATION]
 

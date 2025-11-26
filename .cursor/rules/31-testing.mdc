@@ -14,13 +14,23 @@ globs:
 - Structure: Arrange-Act-Assert; descriptive names by intent; avoid testing implementation details.
 - Scope: unit pure logic with mocked deps; integration with seeded data and cleanup; minimal E2E on critical flows; use containers/fakes for infra.
 - Isolation: small explicit fixtures; no global state; reset between tests; limit parallelism for shared resources.
-- CI gating: block on flakiness; no silent skips; include coverage reports; run lint/type/security checks with tests.
+- CI gating: block on flakiness; no silent skips; include coverage reports; run lint/type/**architecture checks**/security checks with tests.
 
 [TESTING & ARCHITECTURE]
-- For non-trivial services, tests MUST:
-  - Target Application layer use cases as primary units.
-  - Use Domain tests for invariants.
-  - Keep infra/HTTP tests as integration/E2E.
+- **MANDATORY:** All tests MUST respect architecture layering as defined in `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`.
+- **MANDATORY:** For non-trivial services, tests MUST:
+  - **Target Application layer use cases as primary unit boundaries** (not controllers, not repositories).
+  - Use Domain tests for invariants (aggregate boundaries, value object validation, domain events).
+  - Keep Infrastructure/HTTP tests as integration/E2E (test adapters, not business logic).
+- **MANDATORY:** Test structure MUST reflect architecture layers:
+  - **Domain tests:** Test entities, value objects, domain services, domain events, aggregate invariants.
+  - **Application tests:** Test use cases (primary unit boundary), commands/queries, application services.
+  - **Infrastructure tests:** Test adapters (repositories, external API clients, message publishers).
+  - **Interface tests:** Test HTTP controllers, CLI commands, message consumers (thin adapters only).
+- **MANDATORY:** Test file organization MUST respect bounded contexts:
+  - Tests organized by bounded context (e.g., `tests/IdentityContext/Application/UseCases/RegisterUser.test.ts`).
+  - Cross-context tests use public API modules (same as production code).
+  - Test utilities in `tests/` or `__tests__/` directories.
 
 [TEST FILE STRUCTURE]
 - Test file import patterns:
@@ -35,3 +45,4 @@ globs:
 
 [VERIFICATION]
 - Provide exact commands to run tests per stack (e.g., `npm test -- --runInBand`, `pytest -q`, `go test ./...`, `cargo test`, `phpunit`) and include lint/type where relevant.
+- **Policy Validation:** Agent behavior MUST comply with policy scenarios in `tests/policies/`. If policy validation fails, tighten relevant `.cursor/rules/*.mdc` files (see `tests/policies/README.md`).

@@ -19,22 +19,27 @@ globs:
 - The system is a **modular project** composed of **bounded contexts** with explicit trust tiers.
 
 [LAYERING — CLEAN ARCHITECTURE]
-- Define and respect these layers:
+- **MANDATORY:** All non-trivial backend code MUST be organized into these four layers per bounded context:
   - **Domain**:
-    - Entities, Value Objects, Domain Services, Domain Events.
-    - No framework dependencies (no Symfony/Laravel/HTTP/ORM).
-    - Contains business invariants and rules.
+    - **MUST contain:** Entities, Value Objects, Domain Services, Domain Events, Repository interfaces (ports).
+    - **MUST NOT contain:** Framework dependencies (Symfony/Laravel/HTTP/ORM), Infrastructure adapters, Interface adapters.
+    - **MUST contain:** Business invariants and rules.
+    - **MUST be:** Framework-free, ORM-free, HTTP-free.
   - **Application**:
-    - Use cases, Commands/Queries, Application Services.
-    - Orchestrates domain objects and ports.
-    - Depends on Domain; does not depend directly on HTTP/DB frameworks.
+    - **MUST contain:** Use cases, Commands/Queries, Application Services, Application ports.
+    - **MUST depend on:** Domain layer (same context), ports/interfaces.
+    - **MUST NOT depend on:** HTTP/DB frameworks directly, Infrastructure adapters, Interface adapters.
+    - **MUST orchestrate:** Domain objects and ports only.
   - **Interface (Adapters-Inbound)**:
-    - HTTP controllers, CLI commands, message consumers, BFFs.
-    - Translates external protocols (HTTP, CLI, messages) into Application calls.
+    - **MUST contain:** HTTP controllers, CLI commands, message consumers, BFFs.
+    - **MUST translate:** External protocols (HTTP, CLI, messages) into Application calls.
+    - **MUST delegate:** All business logic to Application use cases (controllers are thin).
+    - **MUST NOT contain:** Business logic, validation rules, persistence logic.
   - **Infrastructure (Adapters-Outbound)**:
-    - Persistence, messaging, external APIs, caching, filesystem.
-    - Implements ports defined in Domain/Application.
-    - Contains ORM mappings, SDK usage, and technical glue.
+    - **MUST contain:** Persistence adapters, messaging adapters, external API clients, caching, filesystem.
+    - **MUST implement:** Ports defined in Domain/Application layers.
+    - **MUST contain:** ORM mappings, SDK usage, and technical glue.
+    - **MUST NOT contain:** Business logic (move to Domain/Application).
 
 [LAYERING RULES — EXPLICIT CONSTRAINTS]
 
@@ -55,15 +60,27 @@ globs:
 - **Verification:** Reference dep graph tool or clear explanation of layer boundaries.
 
 [LAYERING RULES — DEPENDENCIES]
-- Allowed dependency directions:
-  - Domain → (no inward dependencies).
-  - Application → Domain.
-  - Interface → Application (+ Domain DTOs where strictly needed).
-  - Infrastructure → Domain/Application.
-- Forbidden:
-  - Domain depending on Interface/Infrastructure or frameworks.
-  - Application depending on Symfony/Laravel/ORM/HTTP clients directly.
-  - Cross-layer shortcuts (controller → repository directly, skipping use cases).
+- **MANDATORY:** Dependency directions MUST follow these rules:
+  - **Domain → (no inward dependencies):**
+    - Domain MUST NOT depend on any other layer.
+    - Domain MUST NOT import from Application, Interface, or Infrastructure.
+    - Domain MAY import from other contexts' public API modules (rare, via Application layer).
+  - **Application → Domain:**
+    - Application MUST depend on Domain (same context).
+    - Application MUST NOT depend on Interface or Infrastructure.
+    - Application MAY depend on other contexts' Application public API modules.
+  - **Interface → Application (+ Domain DTOs where strictly needed):**
+    - Interface MUST depend on Application (same context).
+    - Interface MAY depend on Domain DTOs (same context) for request/response mapping.
+    - Interface MUST NOT depend on Infrastructure adapters directly (use ports).
+  - **Infrastructure → Domain/Application:**
+    - Infrastructure MUST depend on Domain/Application (same context).
+    - Infrastructure MUST NOT depend on Interface layer.
+- **FORBIDDEN:**
+  - Domain depending on Interface/Infrastructure or frameworks → **REJECT**, use ports/adapters.
+  - Application depending on Symfony/Laravel/ORM/HTTP clients directly → **REJECT**, use ports/adapters.
+  - Cross-layer shortcuts (controller → repository directly, skipping use cases) → **REJECT**, use Application use cases.
+  - Domain importing from `@context/infra/*` or `@context/interface/*` → **REJECT**, Domain cannot import Infrastructure/Interface.
 - Layer-specific import patterns:
   - **Domain Layer:**
     - Can import: Other Domain entities/VOs within same context, public API modules from other contexts (rare).
@@ -97,12 +114,14 @@ globs:
 
 [BOUNDED CONTEXTS — MANDATORY]
 - **MANDATORY:** All backend code MUST be organized into bounded contexts.
-- Architect MUST identify bounded contexts and assign each a risk tier (S/M/H) as per 00-persona RISK TIERS.
+- **MANDATORY:** Architect MUST identify bounded contexts and assign each a trust tier (H/M/S) before implementation.
+- **MANDATORY:** Context map + trust tiers MUST be documented for non-trivial systems (3+ contexts or any Tier H context).
 - There is no "shared" or "common" code outside of bounded contexts (except infrastructure utilities).
 - **Exception:** Small, clearly-marked Tier S utilities (one-off scripts, migrations) may live outside bounded contexts, but MUST NOT grow into core services.
 - **Explicitly FORBID:**
-  - Shared mutable DB across contexts without contracts.
-  - Direct cross-context domain/entity sharing.
+  - Shared mutable DB across contexts without contracts → **REJECT**, use explicit contracts (APIs, events).
+  - Direct cross-context domain/entity sharing → **REJECT**, use public API modules.
+  - Bounded context without assigned trust tier → **REJECT**, assign tier (H/M/S) first.
 - Each major business area is a **bounded context** with its own:
   - Ubiquitous language,
   - Entities/Aggregates,
@@ -179,18 +198,29 @@ globs:
     - No direct access to Tier H persistence; must call Tier H via APIs/messages.
 
 [CONTEXT STRUCTURE REQUIREMENT]
-- For non-trivial backends, organize code into bounded contexts (e.g. IdentityContext, OrdersContext).
-- Each context MUST have: Domain, Application, Infrastructure, Interface sublayers.
+- **MANDATORY:** For non-trivial backends, code MUST be organized into bounded contexts (e.g. IdentityContext, OrdersContext).
+- **MANDATORY:** Each bounded context MUST have exactly four sublayers:
+  - `ContextName/Domain/` - Entities, Value Objects, Domain Services, Domain Events, Repository interfaces
+  - `ContextName/Application/` - Use cases, Commands/Queries, Application Services, Application ports
+  - `ContextName/Infrastructure/` - Persistence adapters, external API clients, messaging adapters
+  - `ContextName/Interface/` - HTTP controllers, CLI commands, message consumers
+- **FORBIDDEN:**
+  - Code organized by technical layers only (e.g., `models/`, `services/`, `controllers/`) without bounded contexts → **REJECT**, organize into contexts first.
+  - Bounded context missing any of the four required sublayers → **REJECT**, add missing layers.
+  - Shared code outside bounded contexts (except Tier S utilities) → **REJECT**, create bounded contexts.
 - **Verification:** Require reference to dep graph tool (Deptrac, ESLint import rules) or clear explanation of layer boundaries.
 
 [MODULAR PROJECT STRUCTURE]
-- The project must be modular:
-  - Group code into context modules, e.g.:
+- **MANDATORY:** The project MUST be modular:
+  - **MUST:** Group code into context modules, e.g.:
     - `src/AuthContext/Domain`, `src/AuthContext/Application`, `src/AuthContext/Infrastructure`, `src/AuthContext/Interface`.
     - `src/BillingContext/...`, `src/CasinoCoreContext/...`, etc.
-- New features:
-  - Belong to an existing bounded context or trigger creation of a new one.
-  - Avoid "misc/shared" dumping grounds that bypass contexts.
+  - **MUST:** Each context module MUST have the four required sublayers (Domain, Application, Infrastructure, Interface).
+  - **MUST NOT:** Have "misc/shared" dumping grounds that bypass contexts.
+- **MANDATORY:** New features:
+  - **MUST:** Belong to an existing bounded context or trigger creation of a new one.
+  - **MUST NOT:** Be added to "shared" or "common" modules outside bounded contexts (except Tier S utilities).
+  - **MUST:** Follow the four-layer structure (Domain, Application, Infrastructure, Interface) within their context.
 
 [UTILITIES & SCRIPTS]
 - Migrations and one-off scripts are **Tier S utilities** with limited scope.
@@ -280,6 +310,9 @@ globs:
 - `.cursor/rules/45-solid-principles.mdc` — SOLID principles (SRP, DIP violations related to architecture)
 - `.cursor/rules/3A-anti-patterns.mdc` — Anti-patterns catalog (architecture anti-patterns)
 - `.cursor/rules/38-anti-corruption-events.mdc` — Anti-corruption layers and event schemas
+- `examples/refactoring/clean-architecture/` — Before/after examples for architecture violations
+- `test/example-app/` — Canonical TypeScript Clean Architecture + DDD demo (IdentityContext, OrdersContext)
+- `tests/policies/` — Policy scenarios validating architecture enforcement (see `tests/policies/README.md`)
 
 [DOCUMENTATION REQUIREMENTS]
 - Public API documentation:

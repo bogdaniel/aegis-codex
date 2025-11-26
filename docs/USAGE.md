@@ -401,6 +401,44 @@ Expected: Architecture shape with Domain/Application/Infrastructure/Interface la
 
 ---
 
+## Language Support Tiers
+
+Aegis Codex categorizes languages by support level and architecture integration depth:
+
+### Tier 1: Deep, Architecture-Aware
+**Languages:** TypeScript, PHP, HTML, CSS
+
+**Features:**
+- Full Clean/Hex/DDD integration
+- Path aliases/module boundaries enforced (TypeScript)
+- Framework-free Domain/Application rules
+- Architecture checks in CI (ESLint, Deptrac)
+- Explicit bounded context and trust tier requirements
+
+**Example:** TypeScript rules enforce `@context/layer/*` path aliases and forbid Domain importing Infrastructure/Interface.
+
+### Tier 2: Good General Advice, Weaker Architecture Integration
+**Languages:** JavaScript, Python, Go, Rust
+
+**Features:**
+- General best practices (style, security, testing, performance)
+- Language-specific standards
+- Limited architecture enforcement (language-agnostic rules from 36-architecture.mdc apply)
+
+**Example:** Go rules enforce `gofmt`, `staticcheck`, security, but don't enforce Clean Architecture layering.
+
+### Tier 3: Nice-to-Have Basics
+**Languages:** GDScript, Dart, others
+
+**Features:**
+- Basic style and safety guidelines
+- No architecture-specific rules
+- Minimal integration with core architecture doctrine
+
+**Note:** This tier system indicates where to invest next and prevents pretending all languages are equally governed. When adding new languages, prioritize Tier 1 for enterprise-critical stacks.
+
+---
+
 **Last Updated:** 2024-01-XX
 **Version:** 1.0.0
 

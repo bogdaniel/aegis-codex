@@ -299,10 +299,12 @@ async function getUser(id: string): Promise<User | null> {
 - **DDD violations:** See `.cursor/rules/36-architecture.mdc` for bounded context, trust tier examples.
 
 **See also:**
+- `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns (BINDING)
+- `.cursor/rules/44-ddd.mdc` — Domain-Driven Design methodology (BINDING)
 - `.cursor/rules/45-solid-principles.mdc` — SOLID principles with architecture integration
-- `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns
-- `.cursor/rules/44-ddd.mdc` — Domain-Driven Design methodology
 - `examples/refactoring/` — Refactoring examples for each anti-pattern
+- `test/example-app/` — Canonical Clean Architecture + DDD demo
+- `tests/policies/` — Policy scenarios validating anti-pattern enforcement
 
 [REFACTOR WORKFLOW INTEGRATION]
 

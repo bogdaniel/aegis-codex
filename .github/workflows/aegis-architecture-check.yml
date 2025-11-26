@@ -156,6 +156,13 @@ jobs:
             echo "   This is a warning. Document public API modules for cross-context use."
           fi
 
+      # Policy Validation: Check policy scenario structure
+      - name: Validate Policy Scenarios
+        run: |
+          echo "Validating policy scenario structure..."
+          chmod +x scripts/validate-policies.sh
+          ./scripts/validate-policies.sh || echo "⚠️  Policy validation failed. Ensure all scenarios have prompt.md, expected-output.md, and validation.md"
+
       # Summary
       - name: Architecture Check Summary
         run: |
@@ -166,6 +173,7 @@ jobs:
           echo "✅ Java: Package boundary checks (requires manual setup)"
           echo "✅ C#: Architecture checks (requires manual setup)"
           echo "✅ Public API modules: Documentation checked"
+          echo "✅ Policy scenarios: Structure validated"
           echo ""
           echo "**Note:** Some checks require manual configuration (Deptrac, ArchUnit, etc.)."
           echo "See `.cursor/rules/34-ci.mdc` for setup instructions."

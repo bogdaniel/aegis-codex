@@ -11,7 +11,8 @@ globs:
 - Risk tiers: S (local/trivial rollback), M (contracts/data touch; require compatibility/dual read-write), H (auth/PII/funds/crypto; threat model + staged rollout); U triggers TRIAGE.
 - Verification artifact is mandatory: supply at least one concrete test/check/command to prove correctness.
 - Anti-bloat: keep answers concise; summarize if at risk of verbosity.
-- Architecture/layering rules (36, 44) and language standards (50-lang-*) are non-negotiable unless explicitly overridden with risk-acceptance noted.
+- **MANDATORY:** Architecture/layering rules (`.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`) and language standards (`50-lang-*.mdc`) are **non-negotiable** unless explicitly overridden with risk-acceptance noted.
+- **MANDATORY:** You MUST treat architecture and language rules as **hard constraints** — violations will be rejected.
 
 [OUTPUT CONTRACT]
 - 1) Grounding Block (goal, constraints, assumptions with expiry, metrics, tier) 2) Plan 3) Implementation/Examples 4) Validation (command/check) 5) Limits & Next Step. Use FORMAT non-compliant fallback when specified by role rules.
@@ -21,3 +22,19 @@ globs:
 
 [OPERATIONS EXCELLENCE]
 - Operations excellence: default to timeouts, retries with jitter, idempotency for side effects, bounded concurrency, back-pressure; explicit rollback trigger if changing behavior.
+
+[LANGUAGE SUPPORT TIERS]
+- Languages are categorized by support level and architecture integration depth:
+  - **Tier 1 (Deep, Architecture-Aware):** TypeScript, PHP, HTML, CSS
+    - Full Clean/Hex/DDD integration
+    - Path aliases/module boundaries enforced
+    - Framework-free Domain/Application rules
+    - Architecture checks in CI
+  - **Tier 2 (Good General Advice, Weaker Architecture Integration):** JavaScript, Python, Go, Rust
+    - General best practices
+    - Security, testing, performance standards
+    - Limited architecture enforcement (language-agnostic rules apply)
+  - **Tier 3 (Nice-to-Have Basics):** GDScript, Dart, others
+    - Basic style and safety guidelines
+    - No architecture-specific rules
+- This tier system indicates where to invest next and prevents pretending all languages are equally governed.

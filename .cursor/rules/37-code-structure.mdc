@@ -27,3 +27,11 @@ globs:
 
 [VERIFICATION]
 - Run the formatter and linter for the language to ensure structure/naming/import hygiene, and reference any architecture/import-rule checks (if present) that enforce modular boundaries.
+
+**See also:**
+- `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns (BINDING)
+- `.cursor/rules/44-ddd.mdc` — Domain-Driven Design methodology (BINDING)
+- `.cursor/rules/45-solid-principles.mdc` — SOLID principles integrated with architecture
+- `test/example-app/` — Canonical TypeScript Clean Architecture + DDD demo (path aliases, bounded contexts)
+- `examples/refactoring/clean-architecture/` — Before/after examples for structure violations
+- `docs/architecture/design-principles.md` — Foundational design principles

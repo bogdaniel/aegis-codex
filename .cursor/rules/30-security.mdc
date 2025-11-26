@@ -361,4 +361,7 @@ const user = new User({
 **See also:**
 - `.cursor/rules/3A-anti-patterns.mdc` — Security anti-patterns (SQL injection, XSS, missing authorization)
 - `.cursor/rules/20-agents.mdc` — `@security-auditor` agent with OWASP Top 10 focus
+- `.cursor/rules/36-architecture.mdc` — Architecture rules (security boundaries, Tier H contexts)
 - `docs/test-scenarios.md` — Test scenarios for security audits
+- `tests/policies/` — Policy scenarios validating agent behavior (see `tests/policies/ts-handler-missing-validation/validation.md` for SQL injection validation)
+- `examples/before-after/ts-express-handler-*.ts` — Security validation before/after examples

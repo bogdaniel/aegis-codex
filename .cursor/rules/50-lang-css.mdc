@@ -91,3 +91,9 @@ globs:
 - For significant frontend changes:
   - Verify that new components follow the chosen architecture (OOCSS/BEM/SMACSS layering).
   - Confirm that you have not introduced new global overrides or regressions in unrelated components (smoke test key views).
+
+**See also:**
+- `.cursor/rules/39-accessibility.mdc` — Accessibility & UX standards (contrast, focus, motion)
+- `.cursor/rules/50-lang-html.mdc` — HTML standards (semantic structure, landmarks)
+- `docs/architecture/design-principles.md` — Design principles (SoC, cohesion/coupling)
+- `test/example-app/` — Canonical Clean Architecture demo (if CSS exists)

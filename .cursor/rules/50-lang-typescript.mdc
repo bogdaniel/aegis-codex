@@ -13,18 +13,39 @@ globs:
 - Async/safety: handle promises with try/catch; no unhandled rejections; add timeouts/retries for I/O; avoid `eval`/dynamic code; validate inputs with schemas (e.g., zod/yup); set `helmet`/secure cookies for HTTP.
 - Testing: `npm test` (vitest/jest) with coverage; mock boundaries; include integration/API contract tests where applicable.
 - Security/deps: parameterized queries/ORM; sanitize outputs; secrets from env/manager; `npm audit --production --audit-level=high`.
+- **Architecture compliance:** TypeScript code MUST comply with `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`. Architecture violations will be rejected.
+- **MANDATORY:** TypeScript language rules are **integrated with** and **enforce** architecture rules — they are not separate concerns.
+- **MANDATORY:** For backend services, TypeScript code MUST adhere to `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`. This is a binding constraint, not optional guidance.
+- **See also:**
+  - `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns (BINDING)
+  - `.cursor/rules/44-ddd.mdc` — Domain-Driven Design methodology (BINDING)
+  - `test/example-app/` — Canonical TypeScript Clean Architecture + DDD demo
+  - `examples/refactoring/clean-architecture/` — Before/after examples for architecture violations
+  - `examples/before-after/ts-express-handler-*.ts` — Security validation examples
 - Verification artifact: `npm run lint && npm run format -- --check && tsc --noEmit && npm test && npm audit --production --audit-level=high`.
 
 [ARCHITECTURE INTEGRATION — CLEAN + HEX + DDD]
-- **MANDATORY:** All TypeScript backend code MUST follow Clean Architecture, Hexagonal Architecture, and DDD patterns as defined in `.cursor/rules/36-architecture.mdc`.
+- **MANDATORY:** All TypeScript backend code MUST follow Clean Architecture, Hexagonal Architecture, and DDD patterns as defined in `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`.
+- **These architecture rules are BINDING for TypeScript backends** — violations will be rejected.
 - **Domain/Application MUST be framework-free:**
   - Domain layer MUST NOT import Express, NestJS, TypeORM, Prisma, or any HTTP/ORM framework.
+  - Domain layer MUST NOT import from Infrastructure or Interface aliases (e.g., `@context/infra/*`, `@context/interface/*`).
   - Application layer MUST NOT import Express, NestJS, or any HTTP framework.
+  - Application layer MUST NOT import from Infrastructure or Interface aliases.
   - Use ports/adapters pattern: define interfaces in Domain/Application, implement in Infrastructure/Interface.
 - **Path aliases REQUIRED:**
-  - Use `@context/layer/*` aliases (e.g., `@identity/domain/*`, `@orders/app/*`).
-  - Forbid deep relative imports (`../../` or deeper).
-  - Enforce via ESLint `no-restricted-imports` rules.
+  - **MANDATORY:** Use `@context/layer/*` aliases (e.g., `@identity/domain/*`, `@orders/app/*`).
+  - **MANDATORY:** Configure `baseUrl` and `paths` in `tsconfig.json` for bounded contexts.
+  - **MANDATORY:** Forbid deep relative imports (`../../` or deeper).
+  - **MANDATORY:** Enforce via ESLint `no-restricted-imports` rules:
+    - Domain importing Infra/Interface (e.g., `@context/infra/*`, `@context/interface/*`).
+    - Deep relative imports across contexts (e.g., `../../OtherContext`).
+    - Cross-context direct Domain/Infrastructure imports (must use public API modules).
+- **REJECTION CRITERIA:**
+  - TypeScript code that violates `.cursor/rules/36-architecture.mdc` layering rules → **REJECT**.
+  - TypeScript code that violates `.cursor/rules/44-ddd.mdc` domain purity rules → **REJECT**.
+  - Domain/Application importing frameworks or Infrastructure/Interface → **REJECT**, use ports/adapters.
+  - Missing path aliases or using deep relative imports → **REJECT**, configure path aliases.
 
 [IMPORTS & PATH ALIASES]
 - Path aliases are REQUIRED for all TypeScript projects:

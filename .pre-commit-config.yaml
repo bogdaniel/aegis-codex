@@ -106,4 +106,15 @@ repos:
         args: ['--fix']
         exclude: ^(node_modules|vendor|\.git)/
 
+  # Policy validation: Check policy scenario structure
+  - repo: local
+    hooks:
+      - id: validate-policies
+        name: Validate Policy Scenarios
+        entry: bash -c './scripts/validate-policies.sh'
+        language: system
+        types: [file]
+        files: ^tests/policies/.*\.md$
+        pass_filenames: false
+
 

@@ -211,4 +211,6 @@ async function deleteUser(id: string): Promise<void> {
 **See also:**
 - `.cursor/rules/3A-anti-patterns.mdc` — Performance anti-patterns (premature optimization, N+1 queries)
 - `.cursor/rules/20-agents.mdc` — `@perf-optimizer` agent with complexity/database/caching focus
+- `.cursor/rules/36-architecture.mdc` — Architecture rules (performance implications, Tier H constraints)
 - `docs/test-scenarios.md` — Test scenarios for performance optimization
+- `test/example-app/` — Canonical demo (performance patterns in Clean Architecture)

@@ -192,3 +192,8 @@ globs:
   - Cross-check structure against `.cursor/rules/36-architecture.mdc`.
   - Ensure controllers are thin and domain logic is in Domain/Application layers.
   - Verify Spring is only used in Infrastructure/Interface layers.
+- **MANDATORY:** Java language rules are **integrated with** and **enforce** architecture rules — they are not separate concerns.
+- **See also:**
+  - `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns (BINDING)
+  - `.cursor/rules/44-ddd.mdc` — Domain-Driven Design methodology (BINDING)
+  - `examples/refactoring/clean-architecture/` — Before/after examples for architecture violations

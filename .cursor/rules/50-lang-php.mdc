@@ -49,11 +49,20 @@ globs:
 
 [ARCHITECTURE INTEGRATION — CLEAN + HEX + DDD]
 
-- **MANDATORY:** All PHP backend code MUST follow Clean Architecture, Hexagonal Architecture, and DDD patterns as defined in `.cursor/rules/36-architecture.mdc`.
+- **MANDATORY:** All PHP backend code MUST follow Clean Architecture, Hexagonal Architecture, and DDD patterns as defined in `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`.
+- **These architecture rules are BINDING for PHP backends** — violations will be rejected.
+- **MANDATORY:** For backend services, PHP code MUST adhere to `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`. This is a binding constraint, not optional guidance.
 - **Domain/Application MUST be framework-free:**
   - Domain layer MUST NOT extend framework base classes (no Model extends Eloquent, no Controller base in Domain).
   - Domain layer MUST NOT use facades or helper functions that touch IO (DB, HTTP, cache) directly.
+  - Domain layer MUST NOT import ORM types (e.g., `@Entity`, `@Table`, `@Column`), HTTP types (e.g., `Request`, `Response`), or framework types.
   - Application layer MUST orchestrate use cases, call repositories, but MUST NOT be controllers themselves.
+  - Application layer MUST NOT import framework classes or use facades.
+- **REJECTION CRITERIA:**
+  - PHP code that violates `.cursor/rules/36-architecture.mdc` layering rules → **REJECT**.
+  - PHP code that violates `.cursor/rules/44-ddd.mdc` domain purity rules → **REJECT**.
+  - Domain/Application extending framework base classes or using facades → **REJECT**, use plain PHP classes and ports/adapters.
+  - Controllers with business logic → **REJECT**, move to Application use cases.
 
 - Domain layer (`Domain/` in contexts/modules):
   - **FORBIDDEN:** No framework dependencies whatsoever.
@@ -76,7 +85,9 @@ globs:
   - Controllers, console commands, route handlers, view models.
   - Maps HTTP/CLI → Application use cases (input DTOs) and maps results → HTTP/JSON/View models.
   - **MANDATORY:** Controllers are thin; delegate to Application use cases.
+  - **MANDATORY:** Controllers MUST NOT contain business logic, validation rules, or persistence logic.
   - **FORBIDDEN:** Business logic in controllers → **REJECT**, move to Application use cases.
+  - **FORBIDDEN:** Controllers accessing repositories directly → **REJECT**, use Application use cases.
 - Infrastructure layer (`Infrastructure/`):
   - ORM entities, Eloquent models, repositories, queue handlers, mailers, external API clients.
   - Implements ports (interfaces) from Domain/Application.
@@ -88,13 +99,16 @@ globs:
 
 [LARAVEL CONVENTIONS]
 
-- Follow Laravel’s documented conventions by default; diverge only with strong reasons.
+- Follow Laravel's documented conventions by default; diverge only with strong reasons.
+- **MANDATORY:** Laravel conventions apply ONLY to Interface and Infrastructure layers.
+- **MANDATORY:** Domain and Application layers MUST remain framework-free (no Laravel conventions in Domain/Application).
 - Routes:
   - URLs: kebab-case.
   - Route names: camelCase.
   - Controllers: plural resource controllers where applicable.
 - Controllers:
-  - Keep thin; delegate to Application use cases.
+  - **MANDATORY:** Keep thin; delegate to Application use cases.
+  - **MANDATORY:** Controllers MUST NOT contain business logic (see `.cursor/rules/36-architecture.mdc`).
   - Use dependency injection; avoid resolving services via facades where reasonable.
 - Validation:
   - Prefer Form Requests and array notation for multiple rules.
@@ -162,8 +176,17 @@ globs:
 
 - For PHP changes:
   - Confirm files have `declare(strict_types=1);` and proper typing.
-  - Check that domain code is framework-free and follows Clean/Hex/DDD layering.
+  - **MANDATORY:** Check that domain code is framework-free and follows Clean/Hex/DDD layering (see `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`).
+  - **MANDATORY:** Verify Domain/Application layers have no framework dependencies.
+  - **MANDATORY:** Verify controllers are thin (no business logic).
   - Run the standard toolchain (phpcs, phpstan, tests).
 - For Laravel:
   - Cross-check structure/naming against `docs/laravel-php-ai-guidelines.md`.
-  - Ensure controllers are thin and domain logic is in Domain/Application layers.
+  - **MANDATORY:** Ensure controllers are thin and domain logic is in Domain/Application layers.
+  - **MANDATORY:** Verify Domain/Application layers do not extend Eloquent Models or use Laravel facades.
+- **MANDATORY:** PHP language rules are **integrated with** and **enforce** architecture rules — they are not separate concerns.
+- **See also:**
+  - `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns (BINDING)
+  - `.cursor/rules/44-ddd.mdc` — Domain-Driven Design methodology (BINDING)
+  - `docs/laravel-php-ai-guidelines.md` — Laravel/PHP style & conventions
+  - `examples/refactoring/clean-architecture/` — Before/after examples for architecture violations

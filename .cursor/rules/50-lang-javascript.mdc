@@ -88,3 +88,11 @@ globs:
     - Add an Aegis demo harness that asserts key invariants when enabled.
 - For regressions discovered manually (enabled save on invalid form, wrong error focus, broken modal reopen):
   - Backfill tests or harness checks that would have caught them, and assert they now fail on the previous buggy version.
+
+**See also:**
+- `.cursor/rules/50-lang-typescript.mdc` — TypeScript standards (path aliases, architecture integration)
+- `.cursor/rules/50-lang-html.mdc` — HTML standards (forms, accessibility, semantic structure)
+- `.cursor/rules/39-accessibility.mdc` — Accessibility & UX standards (keyboard navigation, focus management)
+- `.cursor/rules/42-tdd.mdc` — TDD standards (test-driven development for UI logic)
+- `examples/before-after/` — Security validation examples (XSS prevention, input validation)
+- `test/example-app/` — Canonical Clean Architecture demo (if JavaScript/TypeScript frontend exists)

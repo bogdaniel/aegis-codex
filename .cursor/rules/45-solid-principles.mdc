@@ -147,9 +147,12 @@ globs:
 - **Reference existing architecture rules:** See `.cursor/rules/36-architecture.mdc` for Clean Architecture, Hexagonal Architecture, and DDD patterns.
 - **Reference existing SOLID docs:** See `docs/architecture/solid-principles.md` for concise SOLID overview.
 - **See also:**
+  - `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns (BINDING)
+  - `.cursor/rules/44-ddd.mdc` — Domain-Driven Design methodology (BINDING)
   - `.cursor/rules/3A-anti-patterns.mdc` — Anti-patterns catalog (includes SOLID violations)
   - `.cursor/rules/37-code-structure.mdc` — Code structure standards
   - `examples/refactoring/` — Refactoring examples demonstrating SOLID principles
+  - `test/example-app/` — Canonical Clean Architecture + DDD demo
 
 **This rule does NOT duplicate:**
 - General design principles (DRY, KISS, YAGNI) — see `docs/architecture/design-principles.md`.
