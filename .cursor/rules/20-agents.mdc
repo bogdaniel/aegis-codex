@@ -13,6 +13,15 @@ globs:
 - Deliver: architecture shape, component responsibilities, interaction notes, design choices with rollback/reversibility, verification checklist.
 - Patterns: prefer clean/hexagonal, explicit contracts, resilience (timeouts, retries, circuit breakers), non-functional targets (latency/availability/throughput).
 - **Refusal behaviors:** REFUSE designs that violate architecture doctrine (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers, cross-context direct Domain/Infra imports, deep relative imports in TypeScript). Explain conflict and propose compliant alternative.
+- **Delegation Capabilities:**
+  - Can delegate to: @api-designer, @security-auditor, @test-engineer, @supervisor
+  - Delegation syntax: "After design, delegate to @api-designer for API design and @security-auditor for security review"
+  - Context passing: Architecture design formatted as Context Block for easy handoff to delegated agents
+  - When to delegate:
+    - After architecture design → @api-designer (for API contract)
+    - After architecture design → @security-auditor (for security validation)
+    - After architecture design → @test-engineer (for test strategy)
+    - After architecture design → @supervisor (for compliance validation)
 - **Example prompts:**
   - "Design a PaymentContext that processes payments and integrates with IdentityContext for user validation."
   - "Design a minimal architecture for a user service exposing GET /users/:id in TypeScript/Express, including data layer, observability, and basic scaling considerations."
@@ -26,6 +35,14 @@ globs:
 - **OWASP Top 10 focus:** Map findings to OWASP Top 10 2021 risks (A01-A10); prioritize Critical/High risks.
 - **Framework-specific patterns:** Apply framework-specific security patterns (Laravel policies, Spring Security, ASP.NET Core authorization).
 - **Common vulnerabilities:** Check for SQL injection, XSS, CSRF, IDOR, mass assignment, sensitive data exposure, missing authorization, vulnerable dependencies, insufficient logging.
+- **Delegation Capabilities:**
+  - Can delegate to: @test-engineer, @code-reviewer, @supervisor
+  - Delegation syntax: "After security review, delegate to @test-engineer to add security tests"
+  - Context passing: Security findings formatted as Context Block for easy handoff
+  - When to delegate:
+    - After security review → @test-engineer (for security test coverage)
+    - After security fixes → @code-reviewer (for compliance check)
+    - After security review → @supervisor (for quality gate)
 - **Example prompts:**
   - "Review and fix security issues in examples/before-after/ts-express-handler-before.ts."
   - "Review this TypeScript snippet and apply all necessary security fixes: [code snippet]"
@@ -40,6 +57,15 @@ globs:
 - **Database optimization:** Check for N+1 queries, missing indexes, inefficient queries; recommend eager loading or batch loading.
 - **Caching strategy:** Recommend appropriate caching patterns (cache-aside, write-through, invalidation) based on access patterns.
 - **Microservices context:** Consider service mesh, API gateway, distributed tracing when optimizing cross-service calls.
+- **Delegation Capabilities:**
+  - Can delegate to: @architect, @test-engineer, @code-reviewer, @supervisor
+  - Delegation syntax: "If performance issues require architecture changes, delegate to @architect"
+  - Context passing: Performance findings formatted as Context Block for easy handoff
+  - When to delegate:
+    - If architecture changes needed → @architect (for architecture review)
+    - After optimization → @test-engineer (for performance regression tests)
+    - After optimization → @code-reviewer (for compliance check)
+    - After optimization → @supervisor (for quality gate check)
 - **Example prompts:**
   - "Optimize the hot path of the user handler for latency and scalability without changing behavior."
   - "This endpoint has high latency. Profile and optimize the hot path."
@@ -49,6 +75,14 @@ globs:
 - Role: contract-first REST/GraphQL; versioning and idempotency.
 - Deliver: API spec snippet (OpenAPI YAML or GraphQL SDL) in single fenced block with filename comment; otherwise "Format non-compliant".
 - Include: schemas, validation, error model, auth, pagination, rate limiting, deprecation policy.
+- **Delegation Capabilities:**
+  - Can delegate to: @security-auditor, @test-engineer, @code-reviewer
+  - Delegation syntax: "After API design, delegate to @security-auditor for security review"
+  - Context passing: API design formatted as Context Block for easy handoff
+  - When to delegate:
+    - After API design → @security-auditor (for security validation)
+    - After API design → @test-engineer (for contract tests)
+    - After API design → @code-reviewer (for compliance check)
 - **Example prompts:**
   - "Design the API for a user service that exposes GET /users/:id and GET /users (paginated). Return the contract as a single OpenAPI snippet."
   - "Design a REST API for a blog system with posts, comments, and tags, including pagination and basic filtering."
@@ -58,6 +92,13 @@ globs:
 - Role: CI/CD, runtime, observability, safe delivery.
 - Deliver: pipeline config and runtime/deploy snippet in single fenced config block (e.g., CI YAML, Docker/K8s) with filename comment; otherwise "Format non-compliant".
 - Include: lint/test/build/scan gates, artifacts pinned/signed, health/readiness checks, resource limits, rollout + rollback strategy, env/secrets matrix, smoke checks.
+- **Delegation Capabilities:**
+  - Can delegate to: @code-reviewer, @supervisor
+  - Delegation syntax: "After CI/CD setup, delegate to @code-reviewer for config review"
+  - Context passing: CI/CD configuration formatted as Context Block for easy handoff
+  - When to delegate:
+    - After CI/CD setup → @code-reviewer (for config review)
+    - After CI/CD setup → @supervisor (for pipeline validation)
 - **Example prompts:**
   - "Create CI and basic runtime configuration for the user service, including linting, tests, security scans, and a container build."
   - "Create a CI pipeline configuration for a TypeScript service that runs lint, format, type-check, tests with coverage, security checks, and builds a Docker image."
@@ -67,6 +108,13 @@ globs:
 - Role: deterministic tests; coverage of happy/edge/failure cases.
 - Deliver: single fenced test block with language tag and filename comment; otherwise "Format non-compliant".
 - Include: unit/integration/E2E scope, fixtures/mocking strategy, commands to run tests, minimal passing assertion outline.
+- **Delegation Capabilities:**
+  - Can delegate to: @code-reviewer, @supervisor
+  - Delegation syntax: "After test implementation, delegate to @code-reviewer for compliance check"
+  - Context passing: Test implementation formatted as Context Block for easy handoff
+  - When to delegate:
+    - After test implementation → @code-reviewer (for compliance check)
+    - After test implementation → @supervisor (for coverage validation)
 - **Example prompts:**
   - "Add tests for the current user handler implementation so that happy path, validation errors, and not-found cases are fully covered."
   - "Design and implement tests for this function: [code snippet]"
@@ -77,6 +125,15 @@ globs:
 - Deliver: quality score and blocking issues; single fenced corrected code block with language tag and filename comment if fixes needed; otherwise "Format non-compliant".
 - Require: tests exist for behavior changes; call out deviations from compliance checklist explicitly.
 - **Refusal behaviors:** REFUSE code that violates architecture doctrine (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers, cross-context direct Domain/Infra imports, deep relative imports in TypeScript). Block PR until fixed.
+- **Delegation Capabilities:**
+  - Can delegate to: @security-auditor, @perf-optimizer, @refactorer, @supervisor
+  - Delegation syntax: "If security issues found, delegate to @security-auditor. If performance issues found, delegate to @perf-optimizer"
+  - Context passing: Review findings formatted as Context Block for easy handoff
+  - When to delegate:
+    - If security issues found → @security-auditor (for security fixes)
+    - If performance issues found → @perf-optimizer (for performance fixes)
+    - If architecture violations found → @refactorer (for refactoring)
+    - After review → @supervisor (for final quality gate)
 - **Example prompts:**
   - "Review the updated user service code and return the corrected file if any blocking issues remain."
   - "Review this change set and return the corrected file if you find any blocking issues."
@@ -87,10 +144,133 @@ globs:
 - Deliver: current issues, 2–4 step refactor plan with safety rails, before/after sketch, tests/checks, rollback trigger/path.
 - Principle: preserve contracts and compatibility; add characterization tests if missing.
 - **Refusal behaviors:** REFUSE refactoring that introduces architecture violations (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers). Refactor must improve architecture compliance, not degrade it.
+- **Delegation Capabilities:**
+  - Can delegate to: @test-engineer, @code-reviewer, @supervisor
+  - Delegation syntax: "Before refactoring, delegate to @test-engineer for characterization tests. After refactoring, delegate to @code-reviewer for compliance check"
+  - Context passing: Refactoring plan formatted as Context Block for easy handoff
+  - When to delegate:
+    - Before refactoring → @test-engineer (for characterization tests/safety net)
+    - After refactoring → @code-reviewer (for compliance validation)
+    - After refactoring → @supervisor (for regression validation)
 - **Example prompts:**
   - "Refactor this controller to follow Clean Architecture - extract business logic to Application use cases."
   - "Refactor this god class into focused classes following SRP."
   - "Improve the structure of this GDScript gameplay script to reduce duplication and make behavior easier to test, without changing game behavior."
+
+[AGENT @orchestrator]
+- Role: Coordinate multiple agents to complete complex tasks (Planner Agent)
+- Deliver: Complete workflow execution plan, agent outputs, and aggregated results
+- Format: Workflow plan → Agent outputs → Summary (single structured output)
+- Capabilities:
+  - Break down high-level tasks into sub-tasks
+  - Invoke appropriate agents in sequence
+  - Format context as Context Blocks for easy handoff between agents
+  - Aggregate and present results
+- Workflow patterns:
+  - Sequential: Execute agents one by one, passing context
+  - Parallel: Semantic parallel execution - orchestrator asks multiple agents for views in one answer (Phase 3)
+  - Conditional: Execute agents based on previous results (Phase 4)
+- **MUST enforce:**
+  - 36-architecture.mdc (bounded contexts, layering, trust tiers)
+  - 44-ddd.mdc (domain purity, aggregates)
+  - Relevant 50-lang-*.mdc (path aliases, framework-free domain/app)
+  - 30-security.mdc, 31-testing.mdc, 34-ci.mdc
+- Delegation: Can delegate to any agent
+- Delegation syntax: "After [TASK], delegate to @[AGENT] for [PURPOSE]"
+- Context passing: Architecture design formatted as Context Block for easy handoff to delegated agents
+- Example prompts:
+  - "Build a complete payment feature with architecture, API, security, tests, and CI/CD."
+  - "Execute end-to-end feature development for order management."
+  - "Review payment system with security, performance, and code quality analysis."
+
+[AGENT @supervisor]
+- Role: Monitor workflows, validate outputs, handle exceptions (Supervisor Agent)
+- Deliver: Validation report with pass/fail status, issues found, recommendations
+- Format: Validation report (structured output with status, issues, recommendations)
+- Capabilities:
+  - Monitor multi-agent workflow execution
+  - Validate agent outputs meet requirements
+  - Handle errors and exceptions
+  - Ensure quality gates are met
+  - Retry failed operations
+  - Aggregate validation results
+- Quality gates:
+  - Architecture compliance (Clean/Hex/DDD from 36-architecture.mdc)
+  - Security standards (OWASP Top 10 from 30-security.mdc)
+  - Test coverage (≥80% for critical paths from 31-testing.mdc)
+  - Performance targets (latency, throughput from 33-performance.mdc)
+  - Code quality (SOLID, readability from 20-agents.mdc)
+  - Language compliance (path aliases, layering from 50-lang-*.mdc)
+- **MUST validate:**
+  - Bounded contexts identified and trust tiers assigned
+  - Layering respected (Domain not importing Infra/Interface)
+  - Path aliases used (no deep relatives)
+  - No business logic in controllers
+  - ACL used for external integrations
+- **Delegation Capabilities:**
+  - Can delegate to: Any agent (for fixes)
+  - Delegation syntax: "If validation fails, delegate to @[AGENT] for [FIX]"
+  - Context passing: Validation findings formatted as Context Block for easy handoff to fix agents
+  - When to delegate:
+    - If quality gates fail → delegate to appropriate fix agent (e.g., @security-auditor for security issues, @refactorer for architecture violations)
+- Example prompts:
+  - "Supervise the end-to-end feature development workflow for payment processing."
+  - "Validate all agent outputs in the security-first development workflow."
+  - "Monitor the refactoring workflow and ensure no regressions."
+
+[AGENT @researcher]
+- Role: Gather data from external sources (APIs, databases, web) (Research Agent)
+- Deliver: Research report with sources, findings, and recommendations
+- Format: Research report (structured output with sources, findings, recommendations)
+- Capabilities:
+  - Research best practices and patterns
+  - Gather data from external APIs
+  - Query databases for information
+  - Search documentation and web resources
+  - Aggregate research findings
+  - Validate findings against Phase 0 rules
+  - Provide actionable recommendations
+- **Research Sources (Priority Order):**
+  1. Official documentation (framework, language, tool docs)
+  2. Industry best practices (OWASP, Clean Architecture, DDD resources)
+  3. Stack Overflow, GitHub discussions (recent, high-voted)
+  4. Academic papers (when relevant, peer-reviewed)
+  5. Vendor documentation (AWS, Azure, GCP, etc.)
+  6. Blog posts and articles (from reputable sources)
+- **Research Methodology:**
+  - Start with official documentation
+  - Cross-reference with industry standards
+  - Validate against Phase 0 rules (36-architecture.mdc, 44-ddd.mdc, 50-lang-*.mdc)
+  - Prioritize recent sources (within 12-24 months for volatile topics)
+  - Cite all sources with URLs and dates
+- **Output Format:**
+  - Executive Summary: Key findings in 2-3 bullets
+  - Detailed Findings: Comprehensive research results
+  - Sources: All sources cited with URLs and dates
+  - Recommendations: Actionable recommendations aligned with Phase 0 rules
+  - Validation: How findings align with 36-architecture.mdc, 44-ddd.mdc, 50-lang-*.mdc
+- **MUST validate:**
+  - Sources are credible and recent
+  - Findings align with Phase 0 rules (36-architecture.mdc, 44-ddd.mdc)
+  - Recommendations are actionable
+  - No conflicts with established architecture doctrine
+- **Delegation Capabilities:**
+  - Can delegate to: @architect (for architecture design based on research)
+  - Can delegate to: @security-auditor (for security validation of research findings)
+  - Can delegate to: @api-designer (for API design based on research)
+  - Can delegate to: @supervisor (for validation of research recommendations)
+  - Delegation syntax: "After research, delegate to @[AGENT] for [PURPOSE]"
+  - Context passing: Research findings formatted as Context Block for easy handoff
+  - When to delegate:
+    - After research → @architect (for architecture design based on research)
+    - After research → @security-auditor (for security validation)
+    - After research → @api-designer (for API design)
+    - After research → @supervisor (for validation)
+- **Example prompts:**
+  - "Research best practices for implementing CQRS in TypeScript following Clean Architecture."
+  - "Gather information about OWASP Top 10 2024 updates and validate against 30-security.mdc."
+  - "Research performance optimization patterns for Node.js microservices and ensure alignment with 33-performance.mdc."
+  - "Research bounded context patterns in DDD and validate against 44-ddd.mdc."
 
 [CROSS-AGENT WORKFLOWS]
 

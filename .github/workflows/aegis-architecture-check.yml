@@ -170,3 +170,4 @@ jobs:
           echo "**Note:** Some checks require manual configuration (Deptrac, ArchUnit, etc.)."
           echo "See `.cursor/rules/34-ci.mdc` for setup instructions."
 
+

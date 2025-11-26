@@ -21,8 +21,17 @@ globs:
 - Bounded contexts: partition the domain into cohesive contexts with clear boundaries and ownership; define explicit contracts (APIs, events, schemas) at context borders.
 - Aggregates & invariants: design aggregates as consistency boundaries; enforce invariants inside them rather than in random services or controllers.
 - Domain purity: keep domain model free from frameworks and infrastructure (no ORMs, HTTP, or persistence concerns in domain types); infrastructure depends on domain, not vice versa.
+  - **Domain purity clauses MUST refer to 36-architecture.mdc for layer rules.**
 - Context mapping: document relationships between contexts (partnerships, upstream/downstream, ACLs) and keep ADRs and diagrams up to date when boundaries or contracts change.
 - Align with architecture patterns in docs/architecture/architecture-patterns.md and systemic guidance in docs/architecture/system-decomposition.md.
+
+[DOMAIN PURITY — HARD CONSTRAINTS]
+- Domain purity clauses MUST refer to 36-architecture.mdc for layer rules.
+- **REQUIRE:**
+  - Aggregate boundaries documented.
+  - Ubiquitous language present in code (namespaces/packages, class names).
+  - Context map (even lightweight) for non-trivial domains.
+- **Add:** "If design is simple CRUD with no real domain complexity, keep DDD minimal and explain why – do not over-complicate."
 
 [INVARIANT PROTECTION]
 - Validate at aggregate boundaries; reject or correct invalid commands early.

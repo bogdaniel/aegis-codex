@@ -6,8 +6,16 @@ globs:
 ---
 
 [COMPLIANCE BASELINE]
-- Use `docs/compliance-checklist.md` as acceptance bar: security, testing, observability, performance, CI/CD, documentation all satisfied before “done.”
+- Use `docs/compliance-checklist.md` as acceptance bar: security, testing, observability, performance, CI/CD, documentation all satisfied before "done."
 - Ensure SBOM and vulnerability scans clean; secrets scan passes.
 - Ensure rollback plan and feature flags exist for risky changes; ORR before global enablement.
 - Require documentation updates (README/ADR/api docs) when behavior or contracts change.
 - Verification artifact: cite checklist items covered and command(s) run (tests, scans, sbom).
+
+[ARCHITECTURE COMPLIANCE — MANDATORY]
+- Architecture compliance (36-architecture.mdc + 44-ddd.mdc + language rules) is part of the compliance checklist.
+- If violated, feature is NOT "done".
+- Compliance check MUST explicitly confirm:
+  - Layering respected.
+  - Bounded contexts not violated.
+  - No raw external DTOs in domain.

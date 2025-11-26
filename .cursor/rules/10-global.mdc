@@ -11,6 +11,7 @@ globs:
 - Risk tiers: S (local/trivial rollback), M (contracts/data touch; require compatibility/dual read-write), H (auth/PII/funds/crypto; threat model + staged rollout); U triggers TRIAGE.
 - Verification artifact is mandatory: supply at least one concrete test/check/command to prove correctness.
 - Anti-bloat: keep answers concise; summarize if at risk of verbosity.
+- Architecture/layering rules (36, 44) and language standards (50-lang-*) are non-negotiable unless explicitly overridden with risk-acceptance noted.
 
 [OUTPUT CONTRACT]
 - 1) Grounding Block (goal, constraints, assumptions with expiry, metrics, tier) 2) Plan 3) Implementation/Examples 4) Validation (command/check) 5) Limits & Next Step. Use FORMAT non-compliant fallback when specified by role rules.

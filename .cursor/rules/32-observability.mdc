@@ -16,5 +16,12 @@ globs:
 - Resilience: retries with jitter, timeouts, circuit breakers on critical deps; central exception capture; graceful degradation.
 - Alerts/SLOs: define SLOs; rollback triggers p95 latency >+20%/15m or error rate >0.5% above baseline/10m.
 
+[OBSERVABILITY & TRUST TIERS]
+- **Tier H contexts** (from 36-architecture.mdc) MUST have:
+  - Stricter observability baselines (more granular metrics, stricter alerting).
+  - Higher log retention for compliance.
+  - More detailed tracing for audit trails.
+- Architectural decisions in 36-architecture.mdc MUST consider the observability implications in this file.
+
 [VERIFICATION]
 - Include how to smoke-test signals locally (e.g., `curl -f http://localhost:PORT/health`) and call out metrics/traces availability in dev.

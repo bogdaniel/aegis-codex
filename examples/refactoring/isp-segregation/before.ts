@@ -69,3 +69,4 @@ class EmailNotificationService {
 // Problem: Any change to UserService affects all clients, even if they don't use that method
 // Problem: Clients are tightly coupled to methods they don't need
 
+

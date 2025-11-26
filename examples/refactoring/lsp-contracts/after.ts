@@ -79,3 +79,4 @@ await processUser(jpaRepo, 'user-1');
 
 // ✅ Liskov Substitution: subtypes are truly substitutable
 
+

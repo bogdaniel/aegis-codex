@@ -25,3 +25,4 @@ Split into focused interfaces:
 - **SRP:** Each interface has one responsibility
 - **Clean Architecture:** Ports are focused and cohesive
 
+

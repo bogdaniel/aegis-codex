@@ -28,3 +28,4 @@ Remove all framework dependencies from Domain:
 - **Hexagonal Architecture:** Ports in Domain, adapters in Infrastructure
 - **DIP:** Domain depends on abstractions (ports), not concretions (frameworks)
 
+

@@ -9,3 +9,5 @@ How to use:
 Scenarios:
 - `ts-handler-missing-validation.md`
 - `missing-tests-for-change.md`
+
+**Note:** If an agent's output does not meet this scenario's expectations, tighten the relevant `.cursor/rules/*.mdc` (security, testing, architecture) and re-run.

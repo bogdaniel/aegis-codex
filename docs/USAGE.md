@@ -98,6 +98,34 @@ This guide explains how to use Aegis Codex `.cursor/rules` and specialized agent
 - Baseline vs target metrics
 - Bottlenecks with evidence
 - Optimization plan
+
+#### @orchestrator
+**When to use:** Complex multi-step tasks requiring coordination of multiple agents.
+
+**Example:**
+```
+@orchestrator Build a complete payment feature with architecture, API, security, tests, and CI/CD.
+```
+
+**What you get:**
+- Complete workflow execution plan
+- Agent outputs aggregated
+- Summary of all work completed
+
+**Note:** The orchestrator formats context as Context Blocks for easy handoff between agents. You (the user) manually pass context to the next agent in Cursor.
+
+#### @supervisor
+**When to use:** Validating multi-agent workflows, ensuring quality gates are met.
+
+**Example:**
+```
+@supervisor Validate all agent outputs in the security-first development workflow.
+```
+
+**What you get:**
+- Validation report with pass/fail status
+- Issues found with recommendations
+- Quality gate compliance check
 - Benchmark/load-test verification
 
 #### @api-designer
@@ -140,6 +168,48 @@ This guide explains how to use Aegis Codex `.cursor/rules` and specialized agent
 **Rule Application:**
 - Rules with `alwaysApply: true` apply to all matching files (based on globs).
 - Rules with `alwaysApply: false` are available but not automatically enforced (e.g., design patterns).
+
+## Multi-Agent Usage
+
+See `docs/multi-agent/overview.md` for comprehensive guide.
+
+### Quick Start
+
+```
+@orchestrator Build a complete [FEATURE] with architecture, API, security, tests, and CI/CD.
+```
+
+### Key Agents
+
+- **@orchestrator** — Coordinates multiple agents for complex tasks
+- **@supervisor** — Validates outputs and ensures quality gates
+- **@researcher** — Gathers data from external sources (APIs, databases, web)
+
+### Workflow Patterns
+
+- **Sequential:** Agents execute one by one, passing context
+- **Parallel:** Semantic parallel execution - orchestrator asks multiple agents for views in one structured answer
+- **Conditional:** Orchestrator describes branches, but user controls execution
+
+### Context Passing
+
+- Context is formatted as Context Blocks for easy handoff
+- You (the user) manually copy the Context Block and pass it to the next agent in Cursor
+- This is a convention, not automatic
+
+### Templates
+
+See `docs/agent-prompts/templates.md` for complete templates including:
+- Orchestrator templates (End-to-End Feature Development, Security-First, Parallel Review)
+- Supervisor templates (Validate Multi-Agent Workflow, Validate Specific Output)
+- Delegation examples
+- Conditional execution templates
+
+### Test Scenarios
+
+See `tests/multi-agent/` for test scenarios validating multi-agent workflows.
+
+---
 
 ### Common Workflows
 
@@ -297,6 +367,9 @@ Expected: Architecture shape with Domain/Application/Infrastructure/Interface la
 
 ### Agent Invocation
 ```
+@orchestrator <complex multi-agent task>
+@supervisor <validation request>
+@researcher <research request>
 @architect <design request>
 @code-reviewer <review request>
 @security-auditor <security review>

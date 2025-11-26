@@ -36,6 +36,24 @@ globs:
     - Implements ports defined in Domain/Application.
     - Contains ORM mappings, SDK usage, and technical glue.
 
+[LAYERING RULES — EXPLICIT CONSTRAINTS]
+
+**Domain Layer:**
+- **MAY depend on:** Domain entities, value objects, domain services, domain events in same bounded context.
+- **MUST NOT depend on:** Frameworks (HTTP, ORM, UI), infrastructure, interface/adapters, other bounded contexts' domain/infrastructure.
+- **Verification:** Reference dep graph tool (Deptrac, ESLint import rules) or clear explanation of layer boundaries.
+
+**Application Layer:**
+- **MAY depend on:** Domain layer (same context), ports/interfaces, DTOs/commands/queries.
+- **MAY depend on:** Other bounded contexts only via their application ports / published events.
+- **MUST NOT depend on:** Other contexts' domain/infrastructure, shared DB tables, raw external DTOs.
+- **Verification:** Reference dep graph tool or clear explanation of layer boundaries.
+
+**Interface/Infrastructure Layers:**
+- **MAY depend on:** Application + domain (same context).
+- **MUST NOT depend on:** Other contexts' infra directly; must go through ACL or explicit contracts.
+- **Verification:** Reference dep graph tool or clear explanation of layer boundaries.
+
 [LAYERING RULES — DEPENDENCIES]
 - Allowed dependency directions:
   - Domain → (no inward dependencies).
@@ -77,10 +95,14 @@ globs:
   - Forbidden: Multiple contexts defining ports with the same name but different contracts (e.g., both `IdentityContext` and `OrdersContext` having `IdentityPort`).
   - ACL adapter in Infrastructure layer translates between the ACL interface and the canonical port.
 
-[DDD — BOUNDED CONTEXTS & MODELLING]
+[BOUNDED CONTEXTS — MANDATORY]
 - **MANDATORY:** All backend code MUST be organized into bounded contexts.
+- Architect MUST identify bounded contexts and assign each a risk tier (S/M/H) as per 00-persona RISK TIERS.
 - There is no "shared" or "common" code outside of bounded contexts (except infrastructure utilities).
 - **Exception:** Small, clearly-marked Tier S utilities (one-off scripts, migrations) may live outside bounded contexts, but MUST NOT grow into core services.
+- **Explicitly FORBID:**
+  - Shared mutable DB across contexts without contracts.
+  - Direct cross-context domain/entity sharing.
 - Each major business area is a **bounded context** with its own:
   - Ubiquitous language,
   - Entities/Aggregates,
@@ -92,6 +114,9 @@ globs:
 - Cross-context interactions:
   - Must go through explicit contracts (APIs, messages).
   - Never share persistence models across bounded contexts.
+
+[DDD — BOUNDED CONTEXTS & MODELLING]
+- **MANDATORY:** All backend code MUST be organized into bounded contexts.
 - **REJECTION CRITERIA:**
   - Code organized by technical layers only (e.g., `models/`, `services/`, `controllers/`) without bounded contexts → **REJECT**.
   - "Shared" domain models used across multiple business areas → **REJECT**, create bounded contexts.
@@ -127,6 +152,7 @@ globs:
 
 [CONTEXT MAP & TRUST TIERS (H/M/S)]
 - **MANDATORY:** Every bounded context MUST be assigned a trust tier before implementation.
+- Architect MUST identify bounded contexts and assign each a risk tier (S/M/H) as per 00-persona RISK TIERS.
 - **REJECTION CRITERIA:**
   - Bounded context without assigned trust tier → **REJECT**, assign tier (H/M/S) first.
   - Tier H contexts with heavy framework dependencies → **REJECT**, use ports/adapters.
@@ -139,8 +165,11 @@ globs:
   - Documented relationships in a **context map** (who can call whom, sync vs async).
 - Tier rules:
   - Tier H:
+    - **MUST:** Minimize moving parts.
+    - **MUST:** Avoid unnecessary services.
+    - **MUST:** Have stricter observability & security baselines (tie to 30-security.mdc / 32-observability.mdc).
     - Minimal dependencies; strong isolation.
-    - Strict Clean/Hex; no “shortcut” access to DBs or external services.
+    - Strict Clean/Hex; no "shortcut" access to DBs or external services.
     - Higher test coverage, property-based tests for invariants where applicable.
   - Tier M:
     - Clean/Hex/DDD applied pragmatically.
@@ -148,6 +177,11 @@ globs:
   - Tier S:
     - Mainly orchestration and presentation.
     - No direct access to Tier H persistence; must call Tier H via APIs/messages.
+
+[CONTEXT STRUCTURE REQUIREMENT]
+- For non-trivial backends, organize code into bounded contexts (e.g. IdentityContext, OrdersContext).
+- Each context MUST have: Domain, Application, Infrastructure, Interface sublayers.
+- **Verification:** Require reference to dep graph tool (Deptrac, ESLint import rules) or clear explanation of layer boundaries.
 
 [MODULAR PROJECT STRUCTURE]
 - The project must be modular:

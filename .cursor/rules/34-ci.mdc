@@ -12,6 +12,14 @@ globs:
 - Deployment: prefer canary/blue-green; health/readiness checks mandatory; auto-rollback on triggers (p95 latency +20%/15m, error rate +0.5%/10m, critical security event).
 - Environment/secrets: config via env/secret manager; least-privilege CI tokens; redact secrets from logs.
 
+[ARCHITECTURE & LANGUAGE GATES — MANDATORY]
+- CI MUST run architecture/import rules for each language:
+  - For TypeScript: ESLint (no-restricted-imports) + path alias checks
+  - For PHP: Deptrac (or equivalent) enforcing domain/app/infra layering
+- Fail the pipeline if:
+  - Domain imports framework/infra packages
+  - Cross-context imports bypass ACL / application ports
+
 [ARCHITECTURE ENFORCEMENT]
 - Required CI checks:
   - Static analysis (ESLint/Deptrac) must pass.

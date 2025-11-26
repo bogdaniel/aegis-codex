@@ -61,3 +61,4 @@ export class UserRegisteredEvent {
 // - Domain is tightly coupled to infrastructure
 // - Changes to framework affect Domain
 
+

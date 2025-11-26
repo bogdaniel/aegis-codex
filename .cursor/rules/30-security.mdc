@@ -21,6 +21,14 @@ globs:
 - Logging/error handling: structured logs with correlation/request IDs; separate 4xx vs 5xx; no stack traces to clients; no sensitive data in logs.
 - Data handling: classify data; minimize collection; enforce content-type/size checks; use monotonic clocks for ordering-sensitive logic.
 
+[SECURITY & TRUST TIERS]
+- **Tier H contexts** (from 36-architecture.mdc) MUST satisfy stronger controls:
+  - MFA for operations.
+  - Stricter tokens (shorter TTL, narrower scopes).
+  - More frequent vulnerability scans.
+  - Stricter dependency gating.
+- Architectural decisions in 36-architecture.mdc MUST consider the security implications in this file.
+
 [OWASP TOP 10 2021 MAPPING]
 
 ### A01:2021 – Broken Access Control

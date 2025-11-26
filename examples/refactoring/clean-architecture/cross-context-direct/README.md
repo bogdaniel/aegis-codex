@@ -29,3 +29,4 @@ Use public API modules (facades) for cross-context communication:
 - **ACL Pattern:** Anti-Corruption Layer shields contexts from each other
 - **Hexagonal Architecture:** Ports and adapters for cross-context communication
 
+

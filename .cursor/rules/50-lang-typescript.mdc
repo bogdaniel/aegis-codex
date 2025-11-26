@@ -15,6 +15,17 @@ globs:
 - Security/deps: parameterized queries/ORM; sanitize outputs; secrets from env/manager; `npm audit --production --audit-level=high`.
 - Verification artifact: `npm run lint && npm run format -- --check && tsc --noEmit && npm test && npm audit --production --audit-level=high`.
 
+[ARCHITECTURE INTEGRATION — CLEAN + HEX + DDD]
+- **MANDATORY:** All TypeScript backend code MUST follow Clean Architecture, Hexagonal Architecture, and DDD patterns as defined in `.cursor/rules/36-architecture.mdc`.
+- **Domain/Application MUST be framework-free:**
+  - Domain layer MUST NOT import Express, NestJS, TypeORM, Prisma, or any HTTP/ORM framework.
+  - Application layer MUST NOT import Express, NestJS, or any HTTP framework.
+  - Use ports/adapters pattern: define interfaces in Domain/Application, implement in Infrastructure/Interface.
+- **Path aliases REQUIRED:**
+  - Use `@context/layer/*` aliases (e.g., `@identity/domain/*`, `@orders/app/*`).
+  - Forbid deep relative imports (`../../` or deeper).
+  - Enforce via ESLint `no-restricted-imports` rules.
+
 [IMPORTS & PATH ALIASES]
 - Path aliases are REQUIRED for all TypeScript projects:
   - Use path aliases instead of relative imports (`../../`) for maintainability and clarity.

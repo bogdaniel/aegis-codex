@@ -39,10 +39,13 @@ Rules are ordered by filename to ensure persona/bootstrap runs first, then globa
 - `@api-designer` — REST/GraphQL API contracts.
 - `@devops` — CI/CD and runtime configuration.
 - `@refactorer` — Behavior‑preserving refactors.
+- `@orchestrator` — Coordinate multiple agents for complex tasks (multi-agent).
+- `@supervisor` — Monitor workflows, validate outputs, handle exceptions (multi-agent).
+- `@researcher` — Gather data from external sources (APIs, databases, web).
 
 Each agent has:
 - Clear role and operating rules.
-- Strict `[FORMAT]` section (single fenced block or “Format non-compliant”).
+- Strict `[FORMAT]` section (single fenced block or "Format non-compliant").
 - Outputs that always include at least one verification step (tests/checks/commands).
 
 ## Modes: Light, Standard, Full
@@ -60,6 +63,104 @@ Each agent has:
    - `Act as the @security-auditor. Audit this handler and apply fixes.`
    - `Act as the @test-engineer. Add tests for this function.`
 5. The rules auto-apply security/testing/observability/performance/CI/API standards and enforce single-block outputs plus verification commands.
+
+## Multi-Agent Tutorial
+
+Aegis Codex supports **multi-agent workflows** where agents coordinate to complete complex tasks. Use `@orchestrator` to manage workflows and `@supervisor` to validate outputs.
+
+### Basic Multi-Agent Workflow
+
+**Example: Build a complete feature end-to-end**
+
+```
+@orchestrator Build a complete payment feature with architecture, API, security, tests, and CI/CD.
+```
+
+The orchestrator will:
+1. Break down the task into sub-tasks
+2. Invoke agents in sequence: `@architect` → `@api-designer` → `@security-auditor` → `@test-engineer` → `@devops`
+3. Format context as **Context Blocks** for easy handoff between agents
+4. Aggregate results into a unified output
+
+**Note:** Context passing is **manual** — the orchestrator formats context as a Context Block, and you copy/paste it to the next agent in Cursor. This is a convention, not automatic.
+
+### Parallel Execution
+
+Get multiple perspectives on the same artifact simultaneously:
+
+```
+@orchestrator Review payment feature with parallel analysis:
+- @security-auditor: Security perspective
+- @perf-optimizer: Performance perspective
+- @code-reviewer: Code quality perspective
+```
+
+**Note:** "Parallel" is semantic — the orchestrator asks multiple agents for views in one structured answer. Nothing guarantees real concurrency; it's a convention for aggregating perspectives.
+
+### Conditional Workflows
+
+Handle different scenarios with conditional execution:
+
+```
+@orchestrator Review payment feature. If security issues found, delegate to @security-auditor for fixes. If performance issues found, delegate to @perf-optimizer for optimization.
+```
+
+The orchestrator describes branches, but **you control execution** — you approve which conditional paths to execute.
+
+### Supervisor Validation
+
+Use `@supervisor` to validate all agent outputs meet quality gates:
+
+```
+@supervisor Validate all agent outputs in the end-to-end payment feature development workflow.
+```
+
+The supervisor checks:
+- Architecture compliance (Clean/Hex/DDD)
+- Security standards (OWASP Top 10)
+- Test coverage (≥80% for critical paths)
+- Performance targets
+- Code quality (SOLID, readability)
+- Language compliance (path aliases, layering)
+
+### Agent Delegation
+
+Agents can delegate to other agents:
+
+```
+@architect Design payment context. After design, delegate to @api-designer for API design and @security-auditor for security review.
+```
+
+**Context Passing:** The delegating agent formats context as a Context Block. You manually copy it and pass it to the delegated agent in Cursor.
+
+### Common Multi-Agent Patterns
+
+**End-to-End Feature Development:**
+```
+@orchestrator Build [FEATURE] with architecture, API, security, tests, and CI/CD.
+```
+
+**Security-First Development:**
+```
+@orchestrator Build [FEATURE] with security-first approach.
+```
+
+**Parallel Review:**
+```
+@orchestrator Review [FEATURE] with parallel @security-auditor, @perf-optimizer, @code-reviewer.
+```
+
+**Refactoring Workflow:**
+```
+@orchestrator Refactor [LEGACY_MODULE] following Clean Architecture.
+```
+
+### Learn More
+
+- **Full Documentation:** See `docs/multi-agent/overview.md` for comprehensive multi-agent usage guide
+- **Templates:** See `docs/agent-prompts/templates.md` for 30+ reusable prompt templates
+- **Test Scenarios:** See `tests/multi-agent/` for validation scenarios
+- **Delegation Matrix:** See `docs/multi-agent/delegation-matrix.md` for which agents can delegate to which
 
 ## Using With Other Tools
 For tools that can’t read `.cursor/rules` directly:

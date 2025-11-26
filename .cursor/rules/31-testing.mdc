@@ -16,6 +16,12 @@ globs:
 - Isolation: small explicit fixtures; no global state; reset between tests; limit parallelism for shared resources.
 - CI gating: block on flakiness; no silent skips; include coverage reports; run lint/type/security checks with tests.
 
+[TESTING & ARCHITECTURE]
+- For non-trivial services, tests MUST:
+  - Target Application layer use cases as primary units.
+  - Use Domain tests for invariants.
+  - Keep infra/HTTP tests as integration/E2E.
+
 [TEST FILE STRUCTURE]
 - Test file import patterns:
   - Can import from any layer within their context (for testing purposes).

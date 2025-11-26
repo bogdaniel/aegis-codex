@@ -72,7 +72,6 @@ example-app/
 - `QUICKSTART.md` - Quick start guide
 - `FRONTEND.md` - Frontend documentation
 - `PATH_ALIASES.md` - Path alias explanation
-- `COMPLIANCE_SUMMARY.md` - Rule compliance summary
 
 ## Testing
 
@@ -106,4 +105,4 @@ This example application is **fully compliant** with all Aegis Codex rules:
 - Domain/Application framework-free
 - ESLint rules enforced
 
-See `COMPLIANCE_SUMMARY.md` for detailed compliance report.
+See `ARCHITECTURE.md` and `PATH_ALIASES.md` for architecture and compliance details.

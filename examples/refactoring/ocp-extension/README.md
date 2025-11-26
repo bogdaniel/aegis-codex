@@ -26,3 +26,4 @@ Extend via interfaces:
 - **DIP:** Depend on abstractions (PaymentMethod interface)
 - **Strategy Pattern:** Each payment method is a strategy
 
+

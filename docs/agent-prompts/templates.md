@@ -749,6 +749,539 @@ export function findDuplicates(values: string[]): string[] {
 
 ---
 
+## 🎯 @orchestrator Templates
+
+**Note:** The orchestrator formats context as Context Blocks for easy handoff. You (the user) manually copy the Context Block and pass it to the next agent in Cursor.
+
+### Template 1: End-to-End Feature Development
+
+```
+@orchestrator Build a complete [FEATURE] with architecture, API, security, tests, and CI/CD.
+
+Workflow:
+1. @architect Design [FEATURE] context following Clean Architecture + DDD (enforce 36-architecture.mdc)
+2. @api-designer Design REST/GraphQL API for [FEATURE]
+3. @security-auditor Review and fix security issues (enforce 30-security.mdc)
+4. @test-engineer Add comprehensive tests (enforce 31-testing.mdc)
+5. @devops Set up CI/CD pipeline (enforce 34-ci.mdc)
+6. @supervisor Validate all outputs meet quality gates
+7. @code-reviewer Final compliance review
+```
+
+**Example:**
+```
+@orchestrator Build a complete payment processing feature with architecture, API, security, tests, and CI/CD.
+```
+
+**When to use:**
+- Complete feature development
+- New service creation
+- Full workflow execution
+
+---
+
+### Template 2: Security-First Development
+
+```
+@orchestrator Build [FEATURE] with security-first approach.
+
+Workflow:
+1. @architect Design with security boundaries (Tier H contexts, enforce 36-architecture.mdc)
+2. @security-auditor Audit design and implementation (enforce 30-security.mdc)
+3. @test-engineer Add security-focused tests (enforce 31-testing.mdc)
+4. @supervisor Validate security compliance
+5. @code-reviewer Verify security compliance
+```
+
+**Example:**
+```
+@orchestrator Build authentication system with security-first approach.
+```
+
+**When to use:**
+- Security-critical features
+- Authentication/authorization
+- Compliance requirements
+
+---
+
+### Template 3: Parallel Review
+
+```
+@orchestrator Review [FEATURE] with parallel analysis.
+
+Parallel agents:
+- @security-auditor: Security review (enforce 30-security.mdc)
+- @perf-optimizer: Performance analysis (enforce 33-performance.mdc)
+- @code-reviewer: Code quality review (enforce 20-agents.mdc)
+
+Aggregate results at end.
+@supervisor Validate all parallel outputs.
+```
+
+**Example:**
+```
+@orchestrator Review payment handler with parallel analysis from security, performance, and code quality perspectives.
+```
+
+**When to use:**
+- Comprehensive reviews
+- Multi-perspective analysis
+- Quality assurance
+
+**Note:** Parallel execution is semantic - orchestrator asks multiple agents for views in one structured answer. User passes Context Block to each agent manually.
+
+---
+
+### Template 4: Parallel Audit
+
+```
+@orchestrator Audit [MODULE] with parallel security and performance review.
+
+Parallel agents:
+- @security-auditor: Security audit (enforce 30-security.mdc)
+- @perf-optimizer: Performance audit (enforce 33-performance.mdc)
+
+@supervisor Aggregate and validate results.
+```
+
+**Example:**
+```
+@orchestrator Audit payment module with parallel security and performance review.
+```
+
+**When to use:**
+- Security audits
+- Performance audits
+- Compliance audits
+
+**Note:** Parallel execution is semantic - orchestrator aggregates multiple perspectives into unified output.
+
+---
+
+### Template 5: Parallel Validation Suite
+
+```
+@orchestrator Validate [FEATURE] with parallel checks.
+
+Parallel agents:
+- @supervisor: Quality gates (enforce all Phase 0 rules)
+- @code-reviewer: Standards compliance (enforce 20-agents.mdc)
+- @test-engineer: Test coverage (enforce 31-testing.mdc)
+
+Aggregate into comprehensive validation report.
+```
+
+**Example:**
+```
+@orchestrator Validate payment feature with parallel quality gates, standards compliance, and test coverage checks.
+```
+
+**When to use:**
+- Pre-merge validation
+- Release validation
+- Quality assurance
+
+**Note:** Parallel execution enables multiple validation checks on same output simultaneously.
+
+---
+
+## 👁️ @supervisor Templates
+
+### Template 1: Validate Multi-Agent Workflow
+
+```
+@supervisor Validate all agent outputs in the [WORKFLOW_NAME] workflow.
+
+Quality gates:
+- Architecture compliance (36-architecture.mdc)
+- Security standards (30-security.mdc)
+- Test coverage (31-testing.mdc)
+- Code quality (20-agents.mdc)
+```
+
+**Example:**
+```
+@supervisor Validate all agent outputs in the end-to-end payment feature development workflow.
+```
+
+**When to use:**
+- After multi-agent workflows
+- Quality assurance
+- Compliance validation
+
+---
+
+### Template 2: Validate Specific Output
+
+```
+@supervisor Validate [AGENT] output for [FEATURE].
+
+Check:
+- Architecture compliance
+- Security standards
+- Test coverage
+- Code quality
+```
+
+**Example:**
+```
+@supervisor Validate @architect output for payment processing context.
+```
+
+**When to use:**
+- Single agent output validation
+- Quality gate check
+- Pre-merge validation
+
+---
+
+### Template 3: Monitor Refactoring Workflow
+
+```
+@supervisor Monitor the refactoring workflow for [MODULE] and ensure no regressions.
+
+Validate:
+- Behavior preserved
+- Architecture compliance maintained
+- Tests pass
+- No performance regressions
+```
+
+**Example:**
+```
+@supervisor Monitor the refactoring workflow for UserService and ensure no regressions.
+```
+
+**When to use:**
+- Refactoring projects
+- Legacy modernization
+- Technical debt reduction
+
+---
+
+## 🔗 Agent Delegation Examples
+
+**Note:** Delegation uses Context Blocks for easy handoff. You (the user) manually copy the Context Block and pass it to the next agent in Cursor.
+
+### Example 1: Architect Delegates to API Designer
+
+```
+@architect Design payment context. After design, delegate to @api-designer for API design.
+```
+
+**Context Passed:**
+- Architecture design (bounded context, trust tier, layers)
+- Integration points
+- Constraints and assumptions
+
+**Expected Output:**
+- @architect: Architecture design with Context Block
+- User copies Context Block and passes to @api-designer
+- @api-designer: API contract using architecture context
+
+---
+
+### Example 2: Security Auditor Delegates to Test Engineer
+
+```
+@security-auditor Review payment handler for security issues. After review, delegate to @test-engineer to add security tests.
+```
+
+**Context Passed:**
+- Security findings
+- Vulnerabilities identified
+- Fixes applied
+
+**Expected Output:**
+- @security-auditor: Security review and fixes with Context Block
+- User copies Context Block and passes to @test-engineer
+- @test-engineer: Security-focused tests
+
+---
+
+### Example 3: Refactorer Delegates to Multiple Agents
+
+```
+@refactorer Refactor UserService following SRP. After refactor, delegate to @test-engineer for tests and @code-reviewer for compliance check.
+```
+
+**Context Passed:**
+- Refactoring plan
+- Changes made
+- Behavior preserved
+
+**Expected Output:**
+- @refactorer: Refactored code with Context Block
+- User copies Context Block and passes to @test-engineer and @code-reviewer
+- @test-engineer: Characterization tests
+- @code-reviewer: Compliance validation
+
+---
+
+### Example 4: Code Reviewer Delegates Conditionally
+
+```
+@code-reviewer Review payment handler. If security issues found, delegate to @security-auditor. If performance issues found, delegate to @perf-optimizer.
+```
+
+**Context Passed:**
+- Review findings
+- Issues identified
+- Conditional branches
+
+**Expected Output:**
+- @code-reviewer: Review report with conditional delegation
+- User evaluates conditions and passes Context Block to appropriate agent
+- @security-auditor: Security fixes (if issues found)
+- @perf-optimizer: Performance fixes (if issues found)
+
+---
+
+### Example 5: Orchestrator Delegates to Multiple Agents
+
+```
+@orchestrator Build payment feature. Delegate to @architect for design, then @api-designer for API, then @security-auditor for security.
+```
+
+**Context Passed:**
+- Full workflow context
+- Previous agent outputs
+- Quality gates
+
+**Expected Output:**
+- @orchestrator: Workflow plan with Context Blocks
+- User passes Context Blocks sequentially to each agent
+- @architect: Architecture design
+- @api-designer: API contract
+- @security-auditor: Security review
+- Aggregated results
+
+---
+
+## 📊 Delegation Capability Matrix Reference
+
+See `.cursor/rules/21-orchestration.mdc` and `docs/multi-agent/delegation-matrix.md` for the complete delegation capability matrix showing:
+- Which agents can delegate to which other agents
+- Purpose of each delegation
+- When to use each delegation pattern
+- Delegation constraints and rules
+
+---
+
+## 🔗 Agent Delegation Examples
+
+**Note:** Delegation uses Context Blocks for easy handoff. You (the user) manually copy the Context Block and pass it to the next agent in Cursor.
+
+### Example 1: Architect Delegates to API Designer
+
+```
+@architect Design payment context. After design, delegate to @api-designer for API design.
+```
+
+**Context Passed:**
+- Architecture design (bounded context, trust tier, layers)
+- Integration points
+- Constraints and assumptions
+
+**Expected Output:**
+- @architect: Architecture design with Context Block
+- User copies Context Block and passes to @api-designer
+- @api-designer: API contract using architecture context
+
+---
+
+### Example 2: Security Auditor Delegates to Test Engineer
+
+```
+@security-auditor Review payment handler for security issues. After review, delegate to @test-engineer to add security tests.
+```
+
+**Context Passed:**
+- Security findings
+- Vulnerabilities identified
+- Fixes applied
+
+**Expected Output:**
+- @security-auditor: Security review and fixes with Context Block
+- User copies Context Block and passes to @test-engineer
+- @test-engineer: Security-focused tests
+
+---
+
+### Example 3: Refactorer Delegates to Multiple Agents
+
+```
+@refactorer Refactor UserService following SRP. After refactor, delegate to @test-engineer for tests and @code-reviewer for compliance check.
+```
+
+**Context Passed:**
+- Refactoring plan
+- Changes made
+- Behavior preserved
+
+**Expected Output:**
+- @refactorer: Refactored code with Context Block
+- User copies Context Block and passes to @test-engineer and @code-reviewer
+- @test-engineer: Characterization tests
+- @code-reviewer: Compliance validation
+
+---
+
+### Example 4: Code Reviewer Delegates Conditionally
+
+```
+@code-reviewer Review payment handler. If security issues found, delegate to @security-auditor. If performance issues found, delegate to @perf-optimizer.
+```
+
+**Context Passed:**
+- Review findings
+- Issues identified
+- Conditional branches
+
+**Expected Output:**
+- @code-reviewer: Review report with conditional delegation
+- User evaluates conditions and passes Context Block to appropriate agent
+- @security-auditor: Security fixes (if issues found)
+- @perf-optimizer: Performance fixes (if issues found)
+
+---
+
+### Example 5: Orchestrator Delegates to Multiple Agents
+
+```
+@orchestrator Build payment feature. Delegate to @architect for design, then @api-designer for API, then @security-auditor for security.
+```
+
+**Context Passed:**
+- Full workflow context
+- Previous agent outputs
+- Quality gates
+
+**Expected Output:**
+- @orchestrator: Workflow plan with Context Blocks
+- User passes Context Blocks sequentially to each agent
+- @architect: Architecture design
+- @api-designer: API contract
+- @security-auditor: Security review
+- Aggregated results
+
+---
+
+## 📊 Delegation Capability Matrix Reference
+
+See `.cursor/rules/21-orchestration.mdc` and `docs/multi-agent/delegation-matrix.md` for the complete delegation capability matrix showing:
+- Which agents can delegate to which other agents
+- Purpose of each delegation
+- When to use each delegation pattern
+- Delegation constraints and rules
+
+---
+
+## 🔀 Conditional Execution Templates
+
+**Note:** Conditional execution means describing branches, but user controls execution. Orchestrator presents conditional plan, user approves, then execution proceeds.
+
+### Template 1: Conditional Security Fix
+
+```
+@orchestrator Review [FEATURE]. If security issues found, delegate to @security-auditor for fixes.
+
+Workflow:
+1. @code-reviewer reviews code
+2. (conditional) If security issues found → @security-auditor fixes
+3. @supervisor validates all outputs
+```
+
+**Example:**
+```
+@orchestrator Review payment handler. If security issues found, delegate to @security-auditor for fixes.
+```
+
+**When to use:**
+- Code reviews with potential security issues
+- Conditional security fixes
+- Security-first workflows
+
+**Note:** User must approve conditional branch before execution.
+
+---
+
+### Template 2: Conditional Performance Optimization
+
+```
+@orchestrator Review [FEATURE]. If performance issues found (p95 > 200ms), delegate to @perf-optimizer.
+
+Workflow:
+1. @perf-optimizer analyzes performance
+2. (conditional) If p95 latency > 200ms → @perf-optimizer optimizes
+3. @supervisor validates optimizations
+```
+
+**Example:**
+```
+@orchestrator Review payment feature. If performance issues found (p95 > 200ms), delegate to @perf-optimizer.
+```
+
+**When to use:**
+- Performance reviews with conditional optimization
+- Metric-based conditional workflows
+- Performance-first workflows
+
+**Note:** Conditions must be explicit and measurable (e.g., p95 > 200ms).
+
+---
+
+### Template 3: Conditional Refactoring
+
+```
+@orchestrator Review [MODULE]. If architecture violations found, delegate to @refactorer for refactoring.
+
+Workflow:
+1. @supervisor validates architecture compliance
+2. (conditional) If architecture violations found → @refactorer refactors
+3. @supervisor validates all changes
+```
+
+**Example:**
+```
+@orchestrator Review payment module. If architecture violations found, delegate to @refactorer for refactoring.
+```
+
+**When to use:**
+- Compliance reviews with conditional refactoring
+- Architecture-first workflows
+- Technical debt reduction
+
+**Note:** Supervisor validates compliance before conditional branch.
+
+---
+
+### Template 4: Multi-Conditional Workflow
+
+```
+@orchestrator Review [FEATURE] with conditional fixes:
+- @code-reviewer reviews code
+- (conditional) If security issues found → @security-auditor fixes
+- (conditional) If performance issues found → @perf-optimizer fixes
+- (conditional) If architecture violations found → @refactorer refactors
+- @supervisor validates all outputs
+```
+
+**Example:**
+```
+@orchestrator Review payment feature with conditional fixes for security, performance, and architecture issues.
+```
+
+**When to use:**
+- Comprehensive reviews with multiple conditional branches
+- Multi-perspective conditional workflows
+- Quality assurance workflows
+
+**Note:** Maximum 3-4 conditional branches to avoid complexity.
+
+---
+
 ## 🔍 Common Patterns
 
 ### Pattern 1: Quick Fix
@@ -774,6 +1307,211 @@ export function findDuplicates(values: string[]): string[] {
 @test-engineer Add tests for [FEATURE].
 @perf-optimizer Optimize hot paths if needed.
 ```
+
+---
+
+## Research Agent Templates
+
+### Template 1: Best Practices Research
+
+```
+@researcher Research best practices for [TOPIC] in [LANGUAGE/FRAMEWORK].
+
+Research Focus:
+- Current industry standards (last 12-24 months)
+- Recommended patterns aligned with Clean Architecture + DDD
+- Common pitfalls and anti-patterns
+- Performance considerations
+- Security implications
+
+Sources:
+- Official documentation (priority)
+- Industry standards (OWASP, Clean Architecture, DDD)
+- Recent Stack Overflow/GitHub discussions
+- Vendor documentation
+
+Validation:
+- Align with 36-architecture.mdc (Clean/Hex/DDD)
+- Align with 44-ddd.mdc (bounded contexts, domain purity)
+- Align with 50-lang-*.mdc (language-specific rules)
+- Ensure recommendations are actionable
+
+Output Format:
+- Executive Summary (2-3 bullets)
+- Detailed Findings
+- Sources (URLs + dates)
+- Recommendations
+- Validation against Phase 0 rules
+```
+
+**Example:**
+```
+@researcher Research best practices for implementing CQRS in TypeScript following Clean Architecture.
+```
+
+**When to use:**
+- Exploring new patterns or technologies
+- Validating approach against industry standards
+- Finding implementation examples aligned with architecture doctrine
+
+---
+
+### Template 2: Security Research
+
+```
+@researcher Research [SECURITY_TOPIC] including latest updates and best practices.
+
+Research Focus:
+- Latest vulnerabilities (last 6-12 months)
+- Mitigation strategies
+- Framework-specific guidance
+- Compliance requirements
+- OWASP Top 10 alignment
+
+Sources:
+- OWASP official documentation
+- CVE databases
+- Framework security guides
+- Industry security standards
+
+Validation:
+- Align with 30-security.mdc (OWASP Top 10, defense-in-depth)
+- Align with 36-architecture.mdc (security boundaries, Tier H contexts)
+- Ensure recommendations are actionable
+
+Output Format:
+- Executive Summary (2-3 bullets)
+- Detailed Findings
+- Sources (URLs + dates)
+- Recommendations
+- Validation against 30-security.mdc and 36-architecture.mdc
+```
+
+**Example:**
+```
+@researcher Research OWASP Top 10 2024 updates and validate against 30-security.mdc.
+```
+
+**When to use:**
+- Security vulnerability research
+- Framework security updates
+- Compliance requirement research
+- Security pattern validation
+
+---
+
+### Template 3: Technology Research
+
+```
+@researcher Research [TECHNOLOGY] including features, limitations, and integration patterns.
+
+Research Focus:
+- Core features and capabilities
+- Use cases and when to use
+- Integration patterns with Clean Architecture
+- Limitations and trade-offs
+- Performance characteristics
+
+Sources:
+- Official documentation
+- Industry best practices
+- GitHub discussions
+- Vendor documentation
+
+Validation:
+- Align with 36-architecture.mdc (ports/adapters, bounded contexts)
+- Align with 44-ddd.mdc (domain purity, context boundaries)
+- Ensure integration respects architecture doctrine
+
+Output Format:
+- Executive Summary (2-3 bullets)
+- Detailed Findings
+- Sources (URLs + dates)
+- Recommendations
+- Validation against Phase 0 rules
+```
+
+**Example:**
+```
+@researcher Research Event Sourcing patterns and validate integration with Clean Architecture + DDD.
+```
+
+**When to use:**
+- Technology evaluation
+- Integration pattern research
+- Architecture pattern validation
+- Technology comparison
+
+---
+
+### Template 4: Architecture Pattern Research
+
+```
+@researcher Research [ARCHITECTURE_PATTERN] and validate against Aegis Codex architecture doctrine.
+
+Research Focus:
+- Pattern definition and principles
+- Implementation examples
+- Alignment with Clean Architecture + Hexagonal + DDD
+- Integration with bounded contexts
+- Trust tier considerations
+
+Sources:
+- Architecture pattern documentation
+- Industry best practices
+- Implementation examples
+
+Validation:
+- Must align with 36-architecture.mdc
+- Must align with 44-ddd.mdc
+- Must respect trust tiers (H/M/S)
+- Must support ports/adapters pattern
+
+Output Format:
+- Executive Summary (2-3 bullets)
+- Detailed Findings
+- Sources (URLs + dates)
+- Recommendations
+- Validation against 36-architecture.mdc and 44-ddd.mdc
+```
+
+**Example:**
+```
+@researcher Research Saga pattern and validate against Aegis Codex architecture doctrine.
+```
+
+**When to use:**
+- Architecture pattern evaluation
+- Pattern integration with existing architecture
+- Pattern validation against Phase 0 rules
+
+---
+
+### Template 5: Research with Delegation
+
+```
+@researcher Research [TOPIC] and delegate to appropriate agent for implementation.
+
+Research Focus:
+- [TOPIC] best practices
+- Alignment with Phase 0 rules
+
+After research:
+- Delegate to @architect (if architecture design needed)
+- Delegate to @security-auditor (if security validation needed)
+- Delegate to @api-designer (if API design needed)
+- Delegate to @supervisor (for validation)
+```
+
+**Example:**
+```
+@researcher Research CQRS implementation patterns in TypeScript. After research, delegate to @architect for architecture design.
+```
+
+**When to use:**
+- Research followed by implementation
+- Multi-step workflows starting with research
+- Research-driven design decisions
 
 ---
 

@@ -49,6 +49,12 @@ globs:
 
 [ARCHITECTURE INTEGRATION — CLEAN + HEX + DDD]
 
+- **MANDATORY:** All PHP backend code MUST follow Clean Architecture, Hexagonal Architecture, and DDD patterns as defined in `.cursor/rules/36-architecture.mdc`.
+- **Domain/Application MUST be framework-free:**
+  - Domain layer MUST NOT extend framework base classes (no Model extends Eloquent, no Controller base in Domain).
+  - Domain layer MUST NOT use facades or helper functions that touch IO (DB, HTTP, cache) directly.
+  - Application layer MUST orchestrate use cases, call repositories, but MUST NOT be controllers themselves.
+
 - Domain layer (`Domain/` in contexts/modules):
   - **FORBIDDEN:** No framework dependencies whatsoever.
   - **FORBIDDEN:** `Request`, `Response`, `Controller`, `Model`, `DB`, `Auth`, `Config`, `Cache`, `Queue`, `Mail`, `Log`, `Validator`, `Gate`, `Policy`, `Route`, `Schema`, `Migration`, or any Laravel/Symfony class.
@@ -69,13 +75,16 @@ globs:
 - Interface layer (`Interface/`, HTTP/CLI adapters):
   - Controllers, console commands, route handlers, view models.
   - Maps HTTP/CLI → Application use cases (input DTOs) and maps results → HTTP/JSON/View models.
+  - **MANDATORY:** Controllers are thin; delegate to Application use cases.
+  - **FORBIDDEN:** Business logic in controllers → **REJECT**, move to Application use cases.
 - Infrastructure layer (`Infrastructure/`):
   - ORM entities, Eloquent models, repositories, queue handlers, mailers, external API clients.
   - Implements ports (interfaces) from Domain/Application.
 - Forbidden patterns:
   - Business logic inside controllers, jobs, listeners, or Eloquent models.
   - Domain code depending on Laravel facades or framework-specific classes.
-  - Cross-context DB access or using one bounded context’s models in another.
+  - Cross-context DB access or using one bounded context's models in another.
+  - Controllers accessing repositories directly → **REJECT**, use Application use cases.
 
 [LARAVEL CONVENTIONS]
 

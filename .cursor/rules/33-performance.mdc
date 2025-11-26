@@ -17,6 +17,12 @@ globs:
 - Caching: safe caching for idempotent reads; define TTL and invalidation; respect consistency.
 - Resource management: close/cleanup handles; cap memory/FD/thread use; avoid per-request allocations in tight loops.
 
+[PERFORMANCE & TRUST TIERS]
+- **Tier H contexts** (from 36-architecture.mdc):
+  - Do NOT introduce complexity (e.g., caching, sharding) into Tier H contexts unless justified by SLO.
+  - Prefer simple, auditable designs.
+- Architectural decisions in 36-architecture.mdc MUST consider the performance implications in this file.
+
 [COMPLEXITY ANALYSIS]
 
 ### Time Complexity

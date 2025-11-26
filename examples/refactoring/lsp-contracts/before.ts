@@ -65,3 +65,4 @@ class JpaUserRepository implements UserRepository {
 // Usage: These implementations cannot be safely substituted
 // If code expects UserRepository contract, these will break
 
+

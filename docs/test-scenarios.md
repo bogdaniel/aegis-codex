@@ -238,6 +238,36 @@ public function update(Request $request, $id) {
 
 ---
 
+## Multi-Agent Workflow Scenarios
+
+For comprehensive multi-agent workflow testing, see `tests/multi-agent/` directory.
+
+### Multi-Agent Scenarios
+
+- **Scenario 1: Orchestrator End-to-End** — Full feature development workflow
+  - See `tests/multi-agent/scenario-1-orchestrator-end-to-end/`
+- **Scenario 2: Agent Delegation** — Agent-to-agent delegation with context passing
+  - See `tests/multi-agent/scenario-2-agent-delegation/`
+- **Scenario 3: Parallel Execution** — Semantic parallel execution with multiple perspectives
+  - See `tests/multi-agent/scenario-3-parallel-execution/`
+- **Scenario 4: Conditional Workflow** — Conditional agent execution with user approval
+  - See `tests/multi-agent/scenario-4-conditional-workflow/`
+- **Scenario 5: Supervisor Validation** — Supervisor quality gate validation
+  - See `tests/multi-agent/scenario-5-supervisor-validation/`
+
+Each multi-agent scenario includes:
+- `prompt.md` — The prompt to run in Cursor
+- `expected-output.md` — Expected agent behavior
+- `validation.md` — Acceptance criteria
+
+**See Also:**
+- `docs/multi-agent/overview.md` — Multi-agent system overview
+- `docs/multi-agent/delegation-matrix.md` — Delegation capabilities
+- `docs/multi-agent/parallel-semantics.md` — Parallel execution semantics
+- `docs/multi-agent/conditional-semantics.md` — Conditional workflow semantics
+
+---
+
 ## Validation Checklist
 
 For each scenario, verify:
