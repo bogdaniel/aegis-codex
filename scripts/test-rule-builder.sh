@@ -70,14 +70,14 @@ echo ""
 echo "Test 2: Example Config Files"
 echo "----------------------------"
 CONFIGS=(
-    ".aegis-rules.example-minimal.json"
-    ".aegis-rules.example-typescript-backend.json"
-    ".aegis-rules.example-full-stack.json"
-    ".aegis-rules.example-php-laravel.json"
-    ".aegis-rules.example-java-spring.json"
-    ".aegis-rules.example-csharp-dotnet.json"
-    ".aegis-rules.example-backend-only.json"
-    ".aegis-rules.example-patterns-specific.json"
+    "docs/.aegis-rules.example-minimal.json"
+    "docs/.aegis-rules.example-typescript-backend.json"
+    "docs/.aegis-rules.example-full-stack.json"
+    "docs/.aegis-rules.example-php-laravel.json"
+    "docs/.aegis-rules.example-java-spring.json"
+    "docs/.aegis-rules.example-csharp-dotnet.json"
+    "docs/.aegis-rules.example-backend-only.json"
+    "docs/.aegis-rules.example-patterns-specific.json"
 )
 
 MISSING_CONFIGS=0
@@ -183,7 +183,7 @@ if [ "$NODE_AVAILABLE" = true ]; then
     echo "  Testing config parsing..."
     if $NODE_PATH -e "
         const ConfigParser = require('./scripts/lib/config/ConfigParser');
-        const config = ConfigParser.readConfig('.aegis-rules.example-minimal.json');
+        const config = ConfigParser.readConfig('docs/.aegis-rules.example-minimal.json');
         console.log('    ✓ Config parsed successfully');
         console.log('    ✓ Version:', config.version);
         console.log('    ✓ Optional topics:', Object.keys(config.optional.topics).length);
@@ -241,14 +241,14 @@ if [ "$NODE_AVAILABLE" = true ]; then
     echo -e "${GREEN}✅ Node.js tests: PASSED${NC}"
     echo ""
     echo "Next steps:"
-    echo "  1. Test with example config: node scripts/build-agents-doc.js --config .aegis-rules.example-minimal.json --dry-run"
-    echo "  2. Generate rules: node scripts/build-agents-doc.js --config .aegis-rules.example-minimal.json --both"
+    echo "  1. Test with example config: node scripts/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --dry-run"
+    echo "  2. Generate rules: node scripts/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --both"
 else
     echo -e "${YELLOW}⚠️  Node.js tests: SKIPPED (Node.js not available)${NC}"
     echo ""
     echo "To run full tests, install Node.js and run:"
     echo "  export PATH=\"/Users/m3tagh0st/.nvm/versions/node/v22.18.0/bin:\$PATH\""
-    echo "  node scripts/build-agents-doc.js --config .aegis-rules.example-minimal.json --dry-run"
+    echo "  node scripts/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --dry-run"
 fi
 echo ""
 

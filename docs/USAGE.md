@@ -14,10 +14,19 @@ This guide explains how to use Aegis Codex `.cursor/rules` and specialized agent
 
 ### Getting Started
 
+**Option 1: Interactive Mode (Easiest)**
+
+```bash
+# Interactive prompts guide you through rule selection
+node scripts/build-agents-doc.js --interactive --both
+```
+
+**Option 2: Use Example Config**
+
 1. **Generate rules for your project** using the rule builder:
    ```bash
    # Choose an example config that matches your project
-   cp .aegis-rules.example-typescript-backend.json .aegis-rules.json
+   cp docs/.aegis-rules.example-typescript-backend.json .aegis-rules.json
    
    # Generate .cursor/rules/ and AGENTS.md
    node scripts/build-agents-doc.js --config .aegis-rules.json --both
@@ -459,16 +468,16 @@ The Aegis Codex rule builder allows you to select only the rules relevant to you
 1. **Choose an example config** that matches your project type:
    ```bash
    # TypeScript backend
-   cp .aegis-rules.example-typescript-backend.json .aegis-rules.json
+   cp docs/.aegis-rules.example-typescript-backend.json .aegis-rules.json
    
    # PHP/Laravel
-   cp .aegis-rules.example-php-laravel.json .aegis-rules.json
+   cp docs/.aegis-rules.example-php-laravel.json .aegis-rules.json
    
    # Full-stack (TypeScript/JavaScript/HTML/CSS)
-   cp .aegis-rules.example-full-stack.json .aegis-rules.json
+   cp docs/.aegis-rules.example-full-stack.json .aegis-rules.json
    
    # Minimal (TypeScript-only)
-   cp .aegis-rules.example-minimal.json .aegis-rules.json
+   cp docs/.aegis-rules.example-minimal.json .aegis-rules.json
    ```
 
 2. **Generate rules and AGENTS.md**:
@@ -549,14 +558,14 @@ node scripts/build-agents-doc.js --langs typescript,php --both
 
 ### Available Example Configs
 
-- `.aegis-rules.example-minimal.json` - Minimal TypeScript-only
-- `.aegis-rules.example-typescript-backend.json` - TypeScript backend with patterns
-- `.aegis-rules.example-full-stack.json` - Full-stack TypeScript/JavaScript/HTML/CSS
-- `.aegis-rules.example-php-laravel.json` - PHP/Laravel backend
-- `.aegis-rules.example-java-spring.json` - Java/Spring Boot backend
-- `.aegis-rules.example-csharp-dotnet.json` - C#/.NET backend
-- `.aegis-rules.example-backend-only.json` - All backend languages
-- `.aegis-rules.example-patterns-specific.json` - TypeScript with specific patterns
+- `docs/.aegis-rules.example-minimal.json` - Minimal TypeScript-only
+- `docs/.aegis-rules.example-typescript-backend.json` - TypeScript backend with patterns
+- `docs/.aegis-rules.example-full-stack.json` - Full-stack TypeScript/JavaScript/HTML/CSS
+- `docs/.aegis-rules.example-php-laravel.json` - PHP/Laravel backend
+- `docs/.aegis-rules.example-java-spring.json` - Java/Spring Boot backend
+- `docs/.aegis-rules.example-csharp-dotnet.json` - C#/.NET backend
+- `docs/.aegis-rules.example-backend-only.json` - All backend languages
+- `docs/.aegis-rules.example-patterns-specific.json` - TypeScript with specific patterns
 
 ### Documentation
 
@@ -584,16 +593,16 @@ The Aegis Codex rule builder allows you to select only the rules relevant to you
 1. **Choose an example config** that matches your project type:
    ```bash
    # TypeScript backend
-   cp .aegis-rules.example-typescript-backend.json .aegis-rules.json
+   cp docs/.aegis-rules.example-typescript-backend.json .aegis-rules.json
    
    # PHP/Laravel
-   cp .aegis-rules.example-php-laravel.json .aegis-rules.json
+   cp docs/.aegis-rules.example-php-laravel.json .aegis-rules.json
    
    # Full-stack (TypeScript/JavaScript/HTML/CSS)
-   cp .aegis-rules.example-full-stack.json .aegis-rules.json
+   cp docs/.aegis-rules.example-full-stack.json .aegis-rules.json
    
    # Minimal (TypeScript-only)
-   cp .aegis-rules.example-minimal.json .aegis-rules.json
+   cp docs/.aegis-rules.example-minimal.json .aegis-rules.json
    ```
 
 2. **Generate rules and AGENTS.md**:
@@ -674,14 +683,14 @@ node scripts/build-agents-doc.js --langs typescript,php --both
 
 ### Available Example Configs
 
-- `.aegis-rules.example-minimal.json` - Minimal TypeScript-only
-- `.aegis-rules.example-typescript-backend.json` - TypeScript backend with patterns
-- `.aegis-rules.example-full-stack.json` - Full-stack TypeScript/JavaScript/HTML/CSS
-- `.aegis-rules.example-php-laravel.json` - PHP/Laravel backend
-- `.aegis-rules.example-java-spring.json` - Java/Spring Boot backend
-- `.aegis-rules.example-csharp-dotnet.json` - C#/.NET backend
-- `.aegis-rules.example-backend-only.json` - All backend languages
-- `.aegis-rules.example-patterns-specific.json` - TypeScript with specific patterns
+- `docs/.aegis-rules.example-minimal.json` - Minimal TypeScript-only
+- `docs/.aegis-rules.example-typescript-backend.json` - TypeScript backend with patterns
+- `docs/.aegis-rules.example-full-stack.json` - Full-stack TypeScript/JavaScript/HTML/CSS
+- `docs/.aegis-rules.example-php-laravel.json` - PHP/Laravel backend
+- `docs/.aegis-rules.example-java-spring.json` - Java/Spring Boot backend
+- `docs/.aegis-rules.example-csharp-dotnet.json` - C#/.NET backend
+- `docs/.aegis-rules.example-backend-only.json` - All backend languages
+- `docs/.aegis-rules.example-patterns-specific.json` - TypeScript with specific patterns
 
 ### Documentation
 

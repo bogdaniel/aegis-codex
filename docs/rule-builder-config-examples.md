@@ -4,14 +4,14 @@ This document provides example configuration files for the Aegis Codex rule buil
 
 ## Available Examples
 
-1. **`.aegis-rules.example-minimal.json`** - Minimal TypeScript-only setup
-2. **`.aegis-rules.example-typescript-backend.json`** - TypeScript backend with patterns
-3. **`.aegis-rules.example-full-stack.json`** - Full-stack TypeScript/JavaScript/HTML/CSS
-4. **`.aegis-rules.example-php-laravel.json`** - PHP/Laravel backend
-5. **`.aegis-rules.example-java-spring.json`** - Java/Spring Boot backend
-6. **`.aegis-rules.example-csharp-dotnet.json`** - C#/.NET backend
-7. **`.aegis-rules.example-backend-only.json`** - All backend languages (no frontend)
-8. **`.aegis-rules.example-patterns-specific.json`** - TypeScript with specific architectural patterns only
+1. **`docs/.aegis-rules.example-minimal.json`** - Minimal TypeScript-only setup
+2. **`docs/.aegis-rules.example-typescript-backend.json`** - TypeScript backend with patterns
+3. **`docs/.aegis-rules.example-full-stack.json`** - Full-stack TypeScript/JavaScript/HTML/CSS
+4. **`docs/.aegis-rules.example-php-laravel.json`** - PHP/Laravel backend
+5. **`docs/.aegis-rules.example-java-spring.json`** - Java/Spring Boot backend
+6. **`docs/.aegis-rules.example-csharp-dotnet.json`** - C#/.NET backend
+7. **`docs/.aegis-rules.example-backend-only.json`** - All backend languages (no frontend)
+8. **`docs/.aegis-rules.example-patterns-specific.json`** - TypeScript with specific architectural patterns only
 
 ## Usage
 
@@ -19,13 +19,13 @@ This document provides example configuration files for the Aegis Codex rule buil
 
 ```bash
 # For a TypeScript backend project
-cp .aegis-rules.example-typescript-backend.json .aegis-rules.json
+cp docs/.aegis-rules.example-typescript-backend.json .aegis-rules.json
 
 # For a PHP/Laravel project
-cp .aegis-rules.example-php-laravel.json .aegis-rules.json
+cp docs/.aegis-rules.example-php-laravel.json .aegis-rules.json
 
 # For a full-stack project
-cp .aegis-rules.example-full-stack.json .aegis-rules.json
+cp docs/.aegis-rules.example-full-stack.json .aegis-rules.json
 ```
 
 ### Run the builder:

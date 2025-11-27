@@ -173,19 +173,28 @@ Aegis Codex includes a **rule builder** that lets you select only the rules rele
 
 ### Quick Start
 
+**Option 1: Interactive Mode (Easiest)**
+
+```bash
+# Interactive prompts guide you through rule selection
+node scripts/build-agents-doc.js --interactive --both
+```
+
+**Option 2: Use Example Config**
+
 1. **Choose an example config** that matches your project:
    ```bash
    # For TypeScript backend
-   cp .aegis-rules.example-typescript-backend.json .aegis-rules.json
+   cp docs/.aegis-rules.example-typescript-backend.json .aegis-rules.json
    
    # For PHP/Laravel
-   cp .aegis-rules.example-php-laravel.json .aegis-rules.json
+   cp docs/.aegis-rules.example-php-laravel.json .aegis-rules.json
    
    # For full-stack TypeScript/JavaScript/HTML/CSS
-   cp .aegis-rules.example-full-stack.json .aegis-rules.json
+   cp docs/.aegis-rules.example-full-stack.json .aegis-rules.json
    
    # For minimal TypeScript-only
-   cp .aegis-rules.example-minimal.json .aegis-rules.json
+   cp docs/.aegis-rules.example-minimal.json .aegis-rules.json
    ```
 
 2. **Generate rules and AGENTS.md**:
@@ -216,7 +225,7 @@ The rule builder supports selecting:
 
 ### Example Configurations
 
-See `.aegis-rules.example-*.json` files in the repository root for:
+See `docs/.aegis-rules.example-*.json` files for:
 - **Minimal**: TypeScript-only with mandatory rules
 - **TypeScript Backend**: TypeScript + all topics + methodologies + all patterns
 - **Full Stack**: TypeScript, JavaScript, HTML, CSS + all topics
@@ -291,7 +300,7 @@ See `docs/rule-builder-testing.md` for comprehensive testing guide.
 1) Clone/open this repo in Cursor.
 2) **Generate rules for your project** (see [Rule Builder](#rule-builder) section):
    ```bash
-   cp .aegis-rules.example-typescript-backend.json .aegis-rules.json
+   cp docs/.aegis-rules.example-typescript-backend.json .aegis-rules.json
    node scripts/build-agents-doc.js --config .aegis-rules.json --both
    ```
    This creates `.cursor/rules/` and `AGENTS.md` at the project root.
