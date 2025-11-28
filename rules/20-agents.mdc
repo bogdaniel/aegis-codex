@@ -18,6 +18,15 @@ globs:
 - Deliver: architecture shape, component responsibilities, interaction notes, design choices with rollback/reversibility, verification checklist.
 - Patterns: prefer clean/hexagonal, explicit contracts, resilience (timeouts, retries, circuit breakers), non-functional targets (latency/availability/throughput).
 - **MANDATORY:** You MUST treat `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, and relevant `50-lang-*.mdc` as **binding constraints**. If a user request violates them, propose a compliant alternative and mark the original as non-compliant.
+- **MANDATORY:** Before designing architecture, you MUST:
+  1. Read `.cursor/rules/36-architecture.mdc` - Understand Clean Architecture, Hexagonal, DDD
+  2. Read `.cursor/rules/44-ddd.mdc` - Understand bounded contexts, domain purity
+  3. Read relevant `50-lang-*.mdc` - Understand language-specific requirements (path aliases, etc.)
+  4. Check existing code patterns - If existing code violates rules, DO NOT copy it; fix it in the design
+- **MANDATORY:** Architecture design MUST include:
+  - Path alias configuration requirements (for TypeScript/JavaScript)
+  - ESLint configuration requirements (to enforce rules)
+  - Validation workflow (check rules before writing code)
 - **MANDATORY:** Explicitly:
   - **MUST:** Identify bounded contexts & assign trust tiers (H/M/S).
   - **MUST:** Define layers & allowed dependencies per context.
@@ -149,11 +158,23 @@ globs:
 - Role: quality gate vs standards (SOLID, readability, naming, observability, security/perf regressions).
 - Deliver: quality score and blocking issues; single fenced corrected code block with language tag and filename comment if fixes needed; otherwise "Format non-compliant".
 - **MANDATORY:** You MUST treat `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, and relevant `50-lang-*.mdc` as **binding constraints**. If a user request violates them, propose a compliant alternative and mark the original as non-compliant.
+- **MANDATORY:** Before reviewing code, check:
+  1. Read relevant `.cursor/rules/*.mdc` files for the language/architecture
+  2. Verify imports use path aliases (no deep relative imports)
+  3. Verify architecture compliance (layering, bounded contexts)
+  4. Check if code copied existing violations (if yes, reject)
 - **MANDATORY:** Treat architecture/layering violations as **blocking issues**, not "nice to have":
   - Domain importing Infrastructure/Interface → **BLOCK**, fail review.
   - Missing bounded contexts or trust tiers → **BLOCK**, fail review.
   - Business logic in controllers → **BLOCK**, fail review.
   - Framework dependencies in Domain/Application → **BLOCK**, fail review.
+  - Deep relative imports (`../../` or deeper) → **BLOCK**, fail review.
+  - Code that copies existing violations → **BLOCK**, fail review.
+- **MANDATORY:** Reject code with explanation if:
+  - Code was written without checking rules first
+  - Code copies existing violations
+  - Code prioritizes functionality over architecture
+  - Developer excuse is "I prioritized functionality" or "I didn't check rules"
 - Require: tests exist for behavior changes; call out deviations from compliance checklist explicitly.
 - **MANDATORY:** Code reviews MUST validate architecture compliance against `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, and relevant `50-lang-*.mdc`.
 - **MANDATORY:** MUST reject code that violates architecture doctrine (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers, cross-context direct Domain/Infra imports, deep relative imports in TypeScript).

@@ -6,7 +6,17 @@
  * Generates AGENTS.md from selected rules based on configuration.
  * 
  * Usage:
- *   node scripts/build-agents-doc.js [--config .aegis-rules.json] [--copy-rules] [--generate-agents] [--both] [--dry-run] [--langs typescript,php] [--interactive]
+ *   node scripts/build-agents-doc.js [--config .aegis-rules.json] [--copy-rules|--generate-agents|--both] [--cleanup] [--dry-run] [--langs typescript,php] [--interactive]
+ * 
+ * Output modes (choose one):
+ *   --copy-rules      Copy rules to .cursor/rules/ (for Cursor IDE)
+ *   --generate-agents Generate AGENTS.md (human-readable summary)
+ *   --both            Generate both (not recommended for Cursor IDE)
+ * 
+ * Options:
+ *   --cleanup         Remove builder-related files after generation
+ *   --interactive     Interactive rule selection
+ *   --dry-run         Preview without making changes
  */
 
 const fs = require("fs");
@@ -25,6 +35,7 @@ const RuleCopier = require("./lib/output/RuleCopier");
 const AgentsDocGenerator = require("./lib/output/AgentsDocGenerator");
 const InteractivePrompter = require("./lib/interactive/InteractivePrompter");
 const ConfigWriter = require("./lib/interactive/ConfigWriter");
+const RepositoryCleaner = require("./lib/cleanup/RepositoryCleaner");
 
 /**
  * Parse CLI arguments
@@ -42,6 +53,7 @@ function parseArgs() {
     src: null,
     out: null,
     interactive: false,
+    cleanup: false,
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -77,18 +89,32 @@ function parseArgs() {
       case "--interactive":
         result.interactive = true;
         break;
+      case "--cleanup":
+        result.cleanup = true;
+        break;
     }
   }
 
-  // Default behavior: if no output mode specified, generate AGENTS.md
+  // Default behavior: require explicit choice between AGENTS.md and .cursor/rules
+  // Don't default to both to avoid loading both in Cursor IDE
   if (!result.copyRules && !result.generateAgents && !result.both) {
-    result.generateAgents = true;
+    console.error("Error: You must specify an output mode:");
+    console.error("  --copy-rules      Copy rules to .cursor/rules/ (for Cursor IDE)");
+    console.error("  --generate-agents Generate AGENTS.md (human-readable summary)");
+    console.error("  --both            Generate both (not recommended for Cursor IDE)");
+    console.error("");
+    console.error("Note: Using --both will load both .cursor/rules/ and AGENTS.md in Cursor IDE.");
+    console.error("      For Cursor IDE, use --copy-rules only.");
+    process.exit(1);
   }
 
-  // If --both, enable both modes
+  // If --both, enable both modes but warn
   if (result.both) {
     result.copyRules = true;
     result.generateAgents = true;
+    console.warn("⚠ Warning: --both will generate both .cursor/rules/ and AGENTS.md");
+    console.warn("  Cursor IDE will load .cursor/rules/ automatically.");
+    console.warn("  Consider using --copy-rules only for Cursor IDE projects.\n");
   }
 
   return result;
@@ -271,10 +297,41 @@ async function main() {
       }
     }
 
+    // Step 8/9: Cleanup repository (if requested)
+    if (args.cleanup) {
+      const stepNumCleanup = args.interactive ? "Step 8" : "Step 9";
+      console.log(`${stepNumCleanup}: Cleaning up repository...`);
+      
+      const cleanupResult = RepositoryCleaner.cleanRepository(root, args.dryRun);
+      RepositoryCleaner.updateReadme(root, args.dryRun);
+      
+      if (cleanupResult.errors.length > 0) {
+        console.warn("Cleanup warnings:");
+        cleanupResult.errors.forEach((err) => console.warn(`  - ${err}`));
+      }
+      
+      console.log(
+        `✓ ${args.dryRun ? "[DRY RUN] Would remove" : "Removed"} ${cleanupResult.removed} items`
+      );
+    }
+
     console.log("");
     console.log("✓ Build complete!");
     if (args.dryRun) {
       console.log("(Dry run mode - no files were modified)");
+    } else {
+      if (args.copyRules) {
+        console.log(`✓ Rules copied to .cursor/rules/`);
+        console.log(`  Cursor IDE will automatically load these rules.`);
+      }
+      if (args.generateAgents) {
+        console.log(`✓ AGENTS.md generated`);
+        console.log(`  This is a human-readable summary of your rules.`);
+      }
+      if (args.cleanup) {
+        console.log(`✓ Repository cleaned up`);
+        console.log(`  Builder-related files have been removed.`);
+      }
     }
   } catch (error) {
     console.error("Error:", error.message);

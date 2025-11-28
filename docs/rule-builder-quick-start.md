@@ -54,13 +54,27 @@ The rule builder lets you select which rules to include in your project. You hav
    }
    ```
 
-3. **Generate rules** using the config:
+3. **Choose output mode** (important: choose one to avoid loading both in Cursor IDE):
    ```bash
-   # Preview what will be included (dry run)
-   node scripts/build-agents-doc.js --config .aegis-rules.json --both --dry-run
+   # For Cursor IDE: Copy rules to .cursor/rules/ (recommended)
+   node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules
    
-   # Actually generate .cursor/rules/ and AGENTS.md
+   # For human-readable summary: Generate AGENTS.md only
+   node scripts/build-agents-doc.js --config .aegis-rules.json --generate-agents
+   
+   # Generate both (not recommended - Cursor IDE will load .cursor/rules/ automatically)
    node scripts/build-agents-doc.js --config .aegis-rules.json --both
+   ```
+
+4. **Clean up repository** (remove builder files after generation):
+   ```bash
+   # Generate rules and clean up in one command
+   node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules --cleanup
+   ```
+
+5. **Preview what will be included** (dry run):
+   ```bash
+   node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules --cleanup --dry-run
    ```
 
 ### Option 2: Using --interactive Flag (Interactive Selection)
@@ -69,7 +83,11 @@ For interactive rule selection with prompts:
 
 ```bash
 # Interactive mode - prompts you to select rules
-node scripts/build-agents-doc.js --interactive --both
+# Choose output mode: --copy-rules (for Cursor IDE) or --generate-agents (for summary)
+node scripts/build-agents-doc.js --interactive --copy-rules
+
+# With cleanup (removes builder files after generation)
+node scripts/build-agents-doc.js --interactive --copy-rules --cleanup
 ```
 
 The interactive mode will:

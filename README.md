@@ -177,7 +177,11 @@ Aegis Codex includes a **rule builder** that lets you select only the rules rele
 
 ```bash
 # Interactive prompts guide you through rule selection
-node scripts/build-agents-doc.js --interactive --both
+# Choose output mode: --copy-rules (for Cursor IDE) or --generate-agents (for summary)
+node scripts/build-agents-doc.js --interactive --copy-rules
+
+# With cleanup (removes builder files after generation)
+node scripts/build-agents-doc.js --interactive --copy-rules --cleanup
 ```
 
 **Option 2: Use Example Config**
@@ -197,21 +201,27 @@ node scripts/build-agents-doc.js --interactive --both
    cp docs/.aegis-rules.example-minimal.json .aegis-rules.json
    ```
 
-2. **Generate rules and AGENTS.md**:
+2. **Choose output mode** (important: choose one to avoid loading both in Cursor IDE):
    ```bash
-   # Generate both .cursor/rules/ and AGENTS.md
-   node scripts/build-agents-doc.js --config .aegis-rules.json --both
+   # For Cursor IDE: Copy rules to .cursor/rules/ (recommended)
+   node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules
    
-   # Or generate only AGENTS.md
+   # For human-readable summary: Generate AGENTS.md only
    node scripts/build-agents-doc.js --config .aegis-rules.json --generate-agents
    
-   # Or copy rules only
-   node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules
+   # Generate both (not recommended - Cursor IDE will load .cursor/rules/ automatically)
+   node scripts/build-agents-doc.js --config .aegis-rules.json --both
    ```
 
-3. **Preview what will be included** (dry run):
+3. **Clean up repository** (remove builder files after generation):
    ```bash
-   node scripts/build-agents-doc.js --config .aegis-rules.json --both --dry-run
+   # Generate rules and clean up in one command
+   node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules --cleanup
+   ```
+
+4. **Preview what will be included** (dry run):
+   ```bash
+   node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules --cleanup --dry-run
    ```
 
 ### Configuration Options

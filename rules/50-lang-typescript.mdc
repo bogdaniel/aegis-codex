@@ -8,6 +8,24 @@ globs:
   - "**/*.tsx"
 ---
 
+[MANDATORY WORKFLOW — CHECK RULES FIRST]
+- **MANDATORY:** Before writing ANY TypeScript code, you MUST:
+  1. **Read `.cursor/rules/50-lang-typescript.mdc`** - Understand import rules, path aliases, architecture requirements
+  2. **Read `.cursor/rules/36-architecture.mdc`** - Understand Clean Architecture, layering, bounded contexts
+  3. **Read `.cursor/rules/44-ddd.mdc`** - Understand DDD patterns, domain purity
+  4. **Check `tsconfig.json`** - Verify path aliases are configured
+  5. **Check ESLint config** - Verify `no-restricted-imports` rule is configured
+  6. **Review existing code patterns** - If existing code violates rules, DO NOT copy it; fix it instead
+- **MANDATORY:** Do NOT prioritize functionality over architecture. Architecture compliance is NON-NEGOTIABLE.
+- **MANDATORY:** Do NOT copy existing violations. If you see deep relative imports in existing code, that code is WRONG and must be fixed, not copied.
+- **MANDATORY:** Validate imports BEFORE writing code. Check that path aliases exist and are correctly configured.
+- **MANDATORY:** After writing code, validate against rules:
+  1. Check all imports use path aliases (no `../../` or deeper)
+  2. Check Domain/Application layers don't import from Infrastructure/Interface
+  3. Check cross-context imports use public API modules
+  4. Run `npm run lint` to catch violations
+- **REJECTION CRITERIA:** Code written without checking rules first → **REJECT**. Code that copies existing violations → **REJECT**. Code that prioritizes functionality over architecture → **REJECT**.
+
 [TYPESCRIPT STANDARDS]
 - Stack: Node 20+; ESM preferred; `tsconfig` strict (`noImplicitAny`, `noUncheckedIndexedAccess`) and path aliases REQUIRED (see IMPORTS & PATH ALIASES section); avoid default exports for shared libs.
 - Style/lint: ESLint (typescript-eslint) + Prettier; `npm run lint && npm run format -- --check`; keep imports ordered and unused removed.

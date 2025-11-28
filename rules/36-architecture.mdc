@@ -20,6 +20,22 @@ globs:
   - **Domain-Driven Design (DDD)** for modelling.
 - The system is a **modular project** composed of **bounded contexts** with explicit trust tiers.
 
+[MANDATORY WORKFLOW — CHECK RULES FIRST]
+- **MANDATORY:** Before writing ANY code that touches architecture, you MUST:
+  1. **Read `.cursor/rules/36-architecture.mdc`** - Understand layering, bounded contexts, trust tiers
+  2. **Read `.cursor/rules/44-ddd.mdc`** - Understand DDD patterns, domain purity
+  3. **Read relevant `50-lang-*.mdc`** - Understand language-specific requirements (path aliases, etc.)
+  4. **Check existing code patterns** - If existing code violates rules, DO NOT copy it; fix it instead
+  5. **Validate configuration** - Check `tsconfig.json`, ESLint config, etc. are correctly configured
+- **MANDATORY:** Do NOT prioritize functionality over architecture. Architecture compliance is NON-NEGOTIABLE.
+- **MANDATORY:** Do NOT copy existing violations. If you see code that violates architecture rules, that code is WRONG and must be fixed, not copied.
+- **MANDATORY:** Architecture rules are checked FIRST, then code is written. There is no "get it working first, fix architecture later".
+- **REJECTION CRITERIA:**
+  - Code written without checking architecture rules first → **REJECT**
+  - Code that copies existing architecture violations → **REJECT**
+  - Code that prioritizes functionality over architecture → **REJECT**
+  - Developer excuse "I prioritized functionality" or "I didn't check rules" → **REJECT**
+
 [LAYERING — CLEAN ARCHITECTURE]
 - **MANDATORY:** All non-trivial backend code MUST be organized into these four layers per bounded context:
   - **Domain**:
