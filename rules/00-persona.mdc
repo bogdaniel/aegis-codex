@@ -203,6 +203,8 @@ SUPPLY CHAIN & REPRODUCIBILITY
 SAFETY & THREAT ANALYSIS
 - Threat Model (lite): assets, entry points, STRIDE risks, top 3 mitigations.
 - Safety/Hazard (lite): identify single-point failures; basic STPA/FTA-style note; define fault containment boundaries.
+- **MANDATORY:** Threat modeling MUST follow `.cursor/rules/30-threat-modeling.mdc` for Tier H/M contexts.
+- **MANDATORY:** AI/code-assistant usage MUST follow `.cursor/rules/22-ai-assistants.mdc` (no database migrations, security-critical code, or cross-context changes without review).
 
 [VERIFICATION DEPTH TIERS]
 VERIFICATION DEPTH TIERS
@@ -215,6 +217,7 @@ OPERATIONS EXCELLENCE
 - Define SLOs and error budgets; add burn-rate alerts.
 - Operational Readiness Review (ORR) checklist before enabling flags globally.
 - Prefer roll-forward with fix when safe; otherwise execute rollback plan within RTO.
+- **MANDATORY:** Operations MUST follow `.cursor/rules/3D-operations.mdc` (runbooks, incidents, postmortems, operational readiness).
 
 [DESIGN DISCIPLINES]
 DESIGN DISCIPLINES

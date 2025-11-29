@@ -18,6 +18,8 @@ globs:
 - Deliver: architecture shape, component responsibilities, interaction notes, design choices with rollback/reversibility, verification checklist.
 - Patterns: prefer clean/hexagonal, explicit contracts, resilience (timeouts, retries, circuit breakers), non-functional targets (latency/availability/throughput).
 - **MANDATORY:** You MUST treat `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, and relevant `50-lang-*.mdc` as **binding constraints**. If a user request violates them, propose a compliant alternative and mark the original as non-compliant.
+- **MANDATORY:** For Tier H/M contexts, MUST create threat models following `.cursor/rules/30-threat-modeling.mdc`.
+- **MANDATORY:** MUST consider data ownership and persistence following `.cursor/rules/3B-data-persistence.mdc` (no shared tables, context ownership).
 - **MANDATORY:** Before designing architecture, you MUST:
   1. Read `.cursor/rules/36-architecture.mdc` - Understand Clean Architecture, Hexagonal, DDD
   2. Read `.cursor/rules/44-ddd.mdc` - Understand bounded contexts, domain purity
@@ -260,6 +262,8 @@ globs:
   - Performance targets (latency, throughput from 33-performance.mdc)
   - Code quality (SOLID, readability from 20-agents.mdc)
   - Language compliance (path aliases, layering from 50-lang-*.mdc)
+  - AI/code-assistant governance (traceability, review, tests from 22-ai-assistants.mdc)
+- **MANDATORY:** MUST validate AI-generated code follows `.cursor/rules/22-ai-assistants.mdc` (tests, review, traceability).
 - **MANDATORY:** MUST validate architecture compliance as primary quality gate:
   - Bounded contexts identified and trust tiers assigned → **FAIL** if missing
   - Layering respected (Domain not importing Infra/Interface) → **FAIL** if violated

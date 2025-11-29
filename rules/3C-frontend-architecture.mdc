@@ -1,0 +1,196 @@
+---
+description: "SPA/frontend application architecture: structure, state management, error handling, observability."
+required: true
+category: "topic"
+subcategory: "frontend"
+globs:
+  - "src/**"
+  - "app/**"
+  - "frontend/**"
+  - "public/**"
+  - "resources/views/**"
+  - "templates/**"
+---
+
+[FRONTEND ARCHITECTURE BASELINE]
+
+### [SPA/FRAMEWORK ARCHITECTURE]
+
+#### Feature-Based/Module-Based Structure
+- **MANDATORY:** Frontend code MUST be organized by features/modules, not flat "components/" mess:
+  - **MUST:** Group code by feature (e.g., `features/orders/`, `features/users/`).
+  - **MUST:** Each feature module contains: components, hooks, services, types.
+  - **MUST NOT:** Flatten everything into `components/`, `utils/`, `services/` directories.
+- **MANDATORY:** Feature modules MUST map to backend bounded contexts:
+  - **MUST:** Frontend features align with backend contexts (e.g., `IdentityContext` → `features/auth/`).
+  - **MUST NOT:** Create "one giant frontend context" that leaks everywhere.
+  - **MUST:** Document frontend-backend context mapping.
+- **Verification:** Check that frontend is organized by features; features map to backend contexts.
+
+#### Separation of View Components vs State/Logic
+- **MANDATORY:** Separate concerns:
+  - **View components:** Presentational components (UI only; no business logic).
+  - **State/logic:** Custom hooks, services, stores (business logic, state management).
+- **MANDATORY:** View components MUST be:
+  - **Thin:** Only handle UI rendering and user interactions.
+  - **Stateless:** Receive props/state from parent or hooks.
+  - **Reusable:** No business logic embedded in components.
+- **MANDATORY:** Business logic MUST be:
+  - **In hooks:** Custom hooks for component-level logic (data fetching, form handling).
+  - **In services:** Services for cross-component logic (API clients, validation).
+  - **In stores:** Global stores for shared state (if needed).
+- **Verification:** Check that components are thin; business logic is in hooks/services/stores.
+
+#### Framework Patterns
+- **React:** Use functional components, hooks, context API (or state management library).
+- **Vue:** Use composition API, composables, Pinia/Vuex for global state.
+- **Angular:** Use components, services, RxJS for reactive state.
+- **MANDATORY:** Framework patterns MUST align with architecture rules (no framework-specific shortcuts that violate separation of concerns).
+- **Verification:** Check that framework patterns align with architecture rules.
+
+### [STATE MANAGEMENT]
+
+#### Local State vs Global Store vs Server State
+- **MANDATORY:** Choose state management strategy based on scope:
+  - **Local state:** Component-level state (use `useState`, component state).
+  - **Global store:** Shared state across features (use Redux, Zustand, Pinia, or context API).
+  - **Server state:** Data from APIs (use React Query, SWR, Apollo Client, or equivalent).
+- **MANDATORY:** State management MUST be:
+  - **Explicit:** Clear rules for when to use local vs global vs server state.
+  - **Documented:** State management strategy documented per feature.
+  - **Consistent:** Same patterns used across features.
+- **MANDATORY:** Clear rules against ad-hoc "god store":
+  - **MUST NOT:** Create single global store with all application state.
+  - **MUST:** Split stores by feature/domain (feature-based stores).
+  - **MUST:** Use server state libraries for API data (React Query, SWR, etc.).
+- **Verification:** Check that state management strategy is documented; no "god store" patterns.
+
+#### Server State Management
+- **MANDATORY:** API data MUST use server state libraries:
+  - **React:** React Query, SWR, Apollo Client.
+  - **Vue:** Vue Query, SWR, Apollo Client.
+  - **Angular:** Angular Query, Apollo Client.
+- **MANDATORY:** Server state MUST handle:
+  - **Caching:** Automatic caching with TTL/invalidation.
+  - **Refetching:** Automatic refetching on focus/stale.
+  - **Error handling:** Global error handling for API failures.
+- **Verification:** Check that API data uses server state libraries; caching/error handling is configured.
+
+### [ERROR HANDLING]
+
+#### Global Error Boundary / Error Overlays
+- **MANDATORY:** Frontend applications MUST have:
+  - **Error boundaries:** React Error Boundaries, Vue error handlers, Angular error handlers.
+  - **Global error handlers:** Unhandled promise rejections, network errors.
+  - **Error overlays:** User-friendly error surfaces (not raw stack traces).
+- **MANDATORY:** Error handling MUST be:
+  - **User-friendly:** Show actionable error messages (not technical details).
+  - **Contextual:** Different error messages for network/domain/validation failures.
+  - **Recoverable:** Allow users to retry or navigate away.
+- **Verification:** Check that error boundaries are implemented; error messages are user-friendly.
+
+#### Network/Domain Failure Handling
+- **MANDATORY:** Network failures MUST be handled:
+  - **Retry logic:** Automatic retry with exponential backoff (for transient failures).
+  - **Offline detection:** Detect offline state; show appropriate messages.
+  - **Timeout handling:** Handle request timeouts gracefully.
+- **MANDATORY:** Domain failures MUST be handled:
+  - **Validation errors:** Show field-level validation errors.
+  - **Business rule violations:** Show user-friendly business error messages.
+  - **Authorization errors:** Redirect to login or show access denied.
+- **Verification:** Check that network/domain failures are handled; error messages are user-friendly.
+
+### [FRONTEND OBSERVABILITY]
+
+#### Basic Metrics
+- **MANDATORY:** Frontend applications MUST track:
+  - **Page loads:** Time to first byte (TTFB), time to interactive (TTI).
+  - **Key actions:** User actions (clicks, form submissions, navigation).
+  - **Error rates:** Client-side errors, API failures.
+- **MANDATORY:** Metrics MUST be:
+  - **Structured:** Use structured logging (JSON) with correlation IDs.
+  - **Sampled:** Sample high-volume metrics (avoid overwhelming backend).
+  - **Privacy-aware:** No PII in metrics (hash or redact sensitive data).
+- **Verification:** Check that frontend tracks metrics; metrics are structured and privacy-aware.
+
+#### Logging for Client-Side Failures
+- **MANDATORY:** Client-side failures MUST be logged:
+  - **JavaScript errors:** Unhandled exceptions, promise rejections.
+  - **API failures:** Failed API requests (status codes, error messages).
+  - **User actions:** Critical user actions (login, payment, etc.) with correlation IDs.
+- **MANDATORY:** Logging MUST follow PII guidance:
+  - **MUST NOT:** Log passwords, tokens, or sensitive PII.
+  - **MUST:** Hash or redact sensitive data (emails, user IDs).
+  - **MUST:** Include correlation IDs for traceability.
+- **Verification:** Check that client-side failures are logged; PII is redacted.
+
+### [AUTH & SECURITY]
+
+#### Session/Token Handling
+- **MANDATORY:** Session/token handling MUST be:
+  - **Secure:** Store tokens in httpOnly cookies (preferred) or secure storage (localStorage with XSS protection).
+  - **Short-lived:** Use short-lived access tokens with refresh tokens.
+  - **Validated:** Validate tokens client-side (expiry, signature) before API calls.
+- **MANDATORY:** Token refresh MUST be:
+  - **Automatic:** Refresh tokens before expiry (use interceptors/middleware).
+  - **Handled:** Handle refresh failures gracefully (redirect to login).
+- **Verification:** Check that tokens are stored securely; refresh logic is implemented.
+
+#### No Secrets in Client Bundles
+- **MANDATORY:** Client bundles MUST NOT contain:
+  - **API keys:** Public API keys are acceptable; private keys are forbidden.
+  - **Secrets:** No secrets, passwords, or private tokens.
+  - **Internal URLs:** Use environment variables for API endpoints (not hardcoded).
+- **MANDATORY:** Environment variables MUST be:
+  - **Public:** Only public configuration (API endpoints, feature flags).
+  - **Build-time:** Injected at build time (not runtime secrets).
+- **Verification:** Check that client bundles don't contain secrets; environment variables are public.
+
+#### Respect Backend Trust Tiers
+- **MANDATORY:** Frontend MUST respect backend trust tiers:
+  - **Tier H contexts:** Require MFA, stricter token validation, additional security checks.
+  - **Tier M contexts:** Standard authentication/authorization.
+  - **Tier S contexts:** Basic authentication (if needed).
+- **MANDATORY:** Frontend MUST enforce:
+  - **Authorization:** Check permissions before rendering sensitive UI (fail closed).
+  - **Rate limiting:** Respect rate limits from backend (show appropriate messages).
+- **Verification:** Check that frontend respects backend trust tiers; authorization is enforced.
+
+### [INTEGRATION WITH EXISTING RULES]
+
+#### HTML/CSS Rules
+- **MANDATORY:** Frontend architecture MUST align with `.cursor/rules/50-lang-html.mdc` and `.cursor/rules/50-lang-css.mdc`:
+  - **MUST:** Use semantic HTML elements.
+  - **MUST:** Follow accessibility guidelines (WCAG AA).
+  - **MUST:** Use CSS best practices (BEM, CSS modules, or equivalent).
+- **Verification:** Check that HTML/CSS follows language rules; accessibility is maintained.
+
+#### Observability Rules
+- **MANDATORY:** Frontend observability MUST align with `.cursor/rules/32-observability.mdc`:
+  - **MUST:** Use structured logging with correlation IDs.
+  - **MUST:** Track metrics (page loads, key actions).
+  - **MUST:** Handle errors gracefully (no stack traces to users).
+- **Verification:** Check that frontend observability aligns with observability rules.
+
+#### Security Rules
+- **MANDATORY:** Frontend security MUST align with `.cursor/rules/30-security.mdc`:
+  - **MUST:** Validate inputs client-side (but never trust client-side validation alone).
+  - **MUST:** Encode outputs (prevent XSS).
+  - **MUST:** Use secure cookies (HttpOnly, Secure, SameSite).
+- **Verification:** Check that frontend security aligns with security rules.
+
+### [VERIFICATION]
+
+- **Structure:** Check that frontend is organized by features; features map to backend contexts.
+- **State management:** Check that state management strategy is documented; no "god store" patterns.
+- **Error handling:** Check that error boundaries are implemented; error messages are user-friendly.
+- **Observability:** Check that frontend tracks metrics; client-side failures are logged.
+- **Security:** Check that tokens are stored securely; no secrets in client bundles.
+
+**See also:**
+- `.cursor/rules/50-lang-html.mdc` — HTML standards (semantic structure, accessibility)
+- `.cursor/rules/50-lang-css.mdc` — CSS standards (BEM, modules, accessibility)
+- `.cursor/rules/30-security.mdc` — Security standards (XSS, CSRF, secure cookies)
+- `.cursor/rules/32-observability.mdc` — Observability standards (logging, metrics, traces)
+- `.cursor/rules/36-architecture.mdc` — Architecture rules (bounded contexts, trust tiers)
+- `test/example-app/FRONTEND.md` — Canonical demo (frontend architecture patterns)
