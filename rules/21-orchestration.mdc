@@ -342,6 +342,23 @@ Output: Comprehensive validation report
 **Security Workflow:**
 - @security-auditor → @test-engineer → @code-reviewer → @supervisor
 
+**Change-Control Workflow:**
+- @orchestrator → @architect (confirm impact and stable surface identification)
+- @orchestrator → @architect (draft ADR for breaking changes, if needed)
+- @orchestrator → @refactorer (implement change with proper classification)
+- @orchestrator → @code-reviewer (validate change type, ADR compliance, contract preservation)
+- @orchestrator → @supervisor (final validation of change-control compliance)
+
+**Pattern:**
+```
+@orchestrator Review change to stable code with change-control workflow:
+- @architect confirms impact and identifies stable surfaces
+- If breaking change → @architect drafts ADR-1p
+- @refactorer implements change with proper classification
+- @code-reviewer validates change-control compliance
+- @supervisor validates final compliance
+```
+
 [DELEGATION CONSTRAINTS]
 - Maximum delegation depth: 3 levels (to avoid deep chains)
 - Circular delegation forbidden (A → B → A)

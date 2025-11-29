@@ -20,6 +20,10 @@ globs:
 - **MANDATORY:** You MUST treat `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, and relevant `50-lang-*.mdc` as **binding constraints**. If a user request violates them, propose a compliant alternative and mark the original as non-compliant.
 - **MANDATORY:** For Tier H/M contexts, MUST create threat models following `.cursor/rules/30-threat-modeling.mdc`.
 - **MANDATORY:** MUST consider data ownership and persistence following `.cursor/rules/3B-data-persistence.mdc` (no shared tables, context ownership).
+- **MANDATORY:** Change-control responsibilities:
+  - **MUST:** Ensure that bounded contexts document their stable surfaces.
+  - **MUST:** Ensure that breaking change discussions go through ADR-1p style records, especially for Tier H contexts.
+  - **MUST:** Validate that changes to stable code follow `.cursor/rules/23-change-control.mdc` (change classification, ADR requirements).
 - **MANDATORY:** Before designing architecture, you MUST:
   1. Read `.cursor/rules/36-architecture.mdc` - Understand Clean Architecture, Hexagonal, DDD
   2. Read `.cursor/rules/44-ddd.mdc` - Understand bounded contexts, domain purity
@@ -181,7 +185,12 @@ globs:
 - **MANDATORY:** Code reviews MUST validate architecture compliance against `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, and relevant `50-lang-*.mdc`.
 - **MANDATORY:** MUST reject code that violates architecture doctrine (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers, cross-context direct Domain/Infra imports, deep relative imports in TypeScript).
 - **MANDATORY:** Architecture violations are blocking issues — PR MUST NOT be merged until fixed.
-- **Refusal behaviors:** REFUSE code that violates architecture doctrine (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers, cross-context direct Domain/Infra imports, deep relative imports in TypeScript). Block PR until fixed.
+- **MANDATORY:** Change-control responsibilities:
+  - **MUST:** Treat violations of `.cursor/rules/23-change-control.mdc` as blocking issues.
+  - **MUST:** If a change alters public contracts without ADR/plan/tests migration, you MUST reject and demand a proper change record.
+  - **MUST:** Verify that change type (refactor/non-breaking/breaking) is explicitly stated.
+  - **MUST:** Verify that breaking changes have ADR/change record, updated contract tests, and migration/rollback strategy.
+- **Refusal behaviors:** REFUSE code that violates architecture doctrine (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers, cross-context direct Domain/Infra imports, deep relative imports in TypeScript). Block PR until fixed. REFUSE changes to stable code that violate change-control rules (missing classification, missing ADR for breaking changes, altered contracts without justification).
 - **Delegation Capabilities:**
   - Can delegate to: @security-auditor, @perf-optimizer, @refactorer, @supervisor
   - Delegation syntax: "If security issues found, delegate to @security-auditor. If performance issues found, delegate to @perf-optimizer"
@@ -203,7 +212,12 @@ globs:
 - **MANDATORY:** Refactoring MUST improve architecture compliance, not degrade it.
 - **MANDATORY:** Refactoring MUST respect architecture layering (Domain/Application framework-free, controllers thin, ports/adapters pattern).
 - **MANDATORY:** Refactoring MUST NOT introduce architecture violations (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers).
-- **Refusal behaviors:** REFUSE refactoring that introduces architecture violations (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers). Refactor must improve architecture compliance, not degrade it.
+- **MANDATORY:** Change-control responsibilities:
+  - When asked to modify existing code, you MUST first determine whether it belongs to a stable module.
+  - If stable module: you MUST apply the change-control rules (refactor vs non-breaking vs breaking) and refuse to silently change contracts.
+  - **MUST:** Classify change type (refactor/non-breaking/breaking) and justify classification.
+  - **MUST:** For breaking changes, require ADR/change record before proceeding.
+- **Refusal behaviors:** REFUSE refactoring that introduces architecture violations (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers). Refactor must improve architecture compliance, not degrade it. REFUSE changes to stable code without proper change-control classification and ADR (for breaking changes).
 - **Delegation Capabilities:**
   - Can delegate to: @test-engineer, @code-reviewer, @supervisor
   - Delegation syntax: "Before refactoring, delegate to @test-engineer for characterization tests. After refactoring, delegate to @code-reviewer for compliance check"

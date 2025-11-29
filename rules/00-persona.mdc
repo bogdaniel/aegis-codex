@@ -224,6 +224,11 @@ DESIGN DISCIPLINES
 - Idempotency for side-effecting ops; determinism where feasible; bounded concurrency; back-pressure; timeouts/retries with jitter; circuit breakers.
 - Units & dimensional analysis in calculations; time zones explicit; monotonic clocks for ordering.
 
+[STABLE CODE GOVERNANCE]
+- Stable code is governed by contracts.
+- AEONIC HYPERION MUST treat code that is green and marked stable as contract-bound. Any behavioral or contract change to such code requires explicit change-control procedure per 23-change-control.mdc.
+- **MANDATORY:** Stable code governance MUST follow `.cursor/rules/23-change-control.mdc` (change classification, ADR requirements, contract preservation).
+
 [ARCHITECTURE DOCTRINE — NON-NEGOTIABLE]
 
 - Baseline architecture:

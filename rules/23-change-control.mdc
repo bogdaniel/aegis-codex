@@ -1,0 +1,175 @@
+---
+description: "Change-control for stable code: contracts, ADRs, and blast-radius discipline."
+required: true
+category: "governance"
+subcategory: "change-control"
+globs:
+  - "src/**"
+  - "app/**"
+  - "domain/**"
+  - "api/**"
+  - "services/**"
+---
+
+[CHANGE-CONTROL FOR STABLE CODE BASELINE]
+
+### [CONCEPTS]
+
+#### Stable Surface
+- **Definition:** Any public API, domain contract, or module that:
+  - Has passing tests,
+  - Is used by other bounded contexts or external clients,
+  - And is marked as stable via docs or annotations (e.g. ADR, README, or `@stable` metadata).
+- **MANDATORY:** Stable surfaces are **governed by contracts and records, not vibes**.
+- **MANDATORY:** Stability MUST be explicitly marked (see Marking Stable Code section).
+
+#### Internal Implementation
+- **Definition:** Private code behind a stable surface, not directly depended on by other contexts/clients.
+- **MANDATORY:** Internal implementation MAY be refactored more freely, but MUST preserve public contracts.
+
+#### Change Types
+- **MANDATORY:** Every change to stable code MUST be classified as:
+  - **Refactor:** No behavioral change, contracts preserved.
+  - **Non-breaking change:** Extensions that preserve existing behavior/contracts.
+  - **Breaking change:** Changes behavior or contracts for existing consumers.
+
+### [BASE RULES]
+
+#### Stable Code Governance
+- **MANDATORY:** Stable code is **governed by contracts and records, not vibes**:
+  - **MUST:** Treat green, stable code as a contract.
+  - **MUST NOT:** Change stable contracts casually, even if you "see a better design."
+  - **MAY:** Refactor internals of stable modules only if:
+    - You preserve public contracts,
+    - You keep tests passing,
+    - You do not widen blast radius without documenting it.
+
+#### Change Type Classification
+- **MANDATORY:** Change type MUST be explicit:
+  - Every change to stable code MUST be classified as: Refactor, Non-breaking change, or Breaking change.
+  - **MUST:** State this classification clearly in your plan/ADR and justify it.
+  - **MUST NOT:** Make changes without explicit classification.
+
+### [PROCEDURES FOR STABLE CODE]
+
+#### Refactor (Contract Preserved)
+- **Allowed if:**
+  - All existing tests stay green,
+  - No public signatures or domain contracts change,
+  - No new external dependencies across bounded contexts are introduced.
+- **MANDATORY:** You MUST:
+  - Run at least the tests of the affected module + dependent modules.
+  - Update internal docs/comments if the internal design changed in a meaningful way.
+  - Explicitly state: "Behavior and contracts unchanged; refactor only."
+
+#### Non-Breaking Change (Extensions)
+- **Examples:**
+  - Adding optional fields to responses,
+  - New API endpoints that don't change existing behavior,
+  - Adding optional parameters with safe defaults.
+- **MANDATORY:** You MUST:
+  - Extend or add tests covering the new behavior,
+  - Ensure existing tests remain green,
+  - Document the new surface in API docs and/or module README,
+  - Update any relevant ADR if this significantly extends module responsibility.
+
+#### Breaking Change (Contracts or Behavior Change)
+- **HIGH RISK by default, especially for Tier H/M bounded contexts.**
+- **MANDATORY:** You MUST NOT make breaking changes to stable code unless:
+  - There is an explicit change record (ADR, CHANGE.md section, or equivalent),
+  - The user explicitly accepts the risk and the migration path,
+  - You define a migration/compatibility strategy (versioned API, feature flags, or controlled rollout).
+- **MANDATORY:** You MUST:
+  - Create or update an ADR-1p entry describing:
+    - The previous contract and why it is insufficient,
+    - The new contract,
+    - Impacted bounded contexts and trust tiers,
+    - Migration/rollback plan.
+  - Add or update contract tests that encode the new behavior.
+  - Run an expanded test suite for affected contexts (not just the changed file).
+  - Clearly mark the change as breaking in code comments/commit/PR description.
+
+### [AGENT BEHAVIOR]
+
+#### Silent Changes Prohibition
+- **MANDATORY:** You MUST NOT silently change stable, tested code:
+  - If asked to "fix" or "improve" a stable module:
+    - **MUST:** First, identify whether you are touching:
+      - Internal implementation only, or
+      - Public/contract surfaces.
+    - If public/contract surfaces:
+      - **MUST:** Propose a change plan,
+      - **MUST:** Classify the change type,
+      - **MUST:** Ask the user to confirm acceptance of risk and migration cost.
+
+#### Friction Surface
+- **MANDATORY:** You MUST surface friction instead of indulging casual edits:
+  - If the user casually requests a breaking change:
+    - **MUST:** Explain the contract and stability implications,
+    - **MUST:** Propose a safer alternative (e.g. additive endpoint, adaptor, version bump),
+    - **MUST:** Ask for explicit confirmation if they still want the break.
+
+#### Bounded Contexts and Trust Tiers
+- **MANDATORY:** You MUST respect bounded contexts and trust tiers:
+  - Changes to Tier H contexts or cross-context contracts require:
+    - Stronger justification,
+    - Stricter migration/rollback planning,
+    - More extensive testing (domain + integration).
+
+### [MARKING STABLE CODE]
+
+#### Stability Indicators
+- **MANDATORY:** Stability MUST be explicitly marked using one of these conventions:
+  - **Module README:** Contains a "Stability" section: `Status: Stable (Tier M)` / `Status: Experimental`.
+  - **Annotations/Comments:** `// @stable` on key files, or per package in `package.json` / `composer.json` metadata.
+  - **Directory structure:** `src/stable/**` vs `src/experimental/**`.
+- **MANDATORY:** Agents MUST:
+  - Treat anything marked stable as governed by this rule (`23-change-control.mdc`).
+  - Treat unmarked/experimental code with more freedom (still under architecture/security rules).
+
+### [VERIFICATION / CHECKS]
+
+#### For @code-reviewer and @architect
+- **MANDATORY:** Check that:
+  - The change type (refactor/non-breaking/breaking) is explicitly stated.
+  - Contracts and public APIs are not altered "by accident."
+  - Breaking changes have:
+    - An ADR/change record,
+    - Updated contract tests,
+    - Migration/rollback strategy described.
+  - For Tier H/M contexts:
+    - The blast radius is understood and justified,
+    - No unexpected cross-context dependencies were introduced.
+- **MANDATORY:** If any of these conditions are not met, you MUST treat the change as non-compliant and reject it or request revisions.
+
+### [INTEGRATION WITH EXISTING RULES]
+
+#### Architecture Rules
+- **MANDATORY:** Change-control MUST align with `.cursor/rules/36-architecture.mdc`:
+  - **MUST:** Respect bounded context boundaries (cross-context changes require ADR).
+  - **MUST:** Respect trust tiers (Tier H/M contexts require stricter change-control).
+  - **MUST:** Respect public API modules (changes to public APIs require ADR).
+
+#### DDD Rules
+- **MANDATORY:** Change-control MUST align with `.cursor/rules/44-ddd.mdc`:
+  - **MUST:** Respect domain contracts (domain entity changes require ADR).
+  - **MUST:** Respect aggregate boundaries (aggregate changes require ADR).
+
+#### Testing Rules
+- **MANDATORY:** Change-control MUST align with `.cursor/rules/31-testing.mdc`:
+  - **MUST:** All changes require tests (refactor: existing tests pass; non-breaking: new tests; breaking: updated tests).
+  - **MUST:** Contract tests encode stable contracts.
+
+### [VERIFICATION]
+
+- **Change classification:** Check that every change to stable code is explicitly classified (refactor/non-breaking/breaking).
+- **Contract preservation:** Check that refactors preserve contracts; non-breaking changes extend contracts; breaking changes have ADR.
+- **ADR compliance:** Check that breaking changes have ADR/change record, migration plan, and updated tests.
+- **Blast radius:** Check that Tier H/M context changes have justified blast radius and no unexpected dependencies.
+
+**See also:**
+- `.cursor/rules/36-architecture.mdc` — Architecture rules (bounded contexts, trust tiers, public API modules)
+- `.cursor/rules/44-ddd.mdc` — DDD rules (domain contracts, aggregate boundaries)
+- `.cursor/rules/31-testing.mdc` — Testing standards (contract tests, test coverage)
+- `.cursor/rules/00-persona.mdc` — Persona expectations (stable code governance)
+- `.cursor/rules/20-agents.mdc` — Agent responsibilities (change-control enforcement)
