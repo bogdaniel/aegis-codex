@@ -53,6 +53,9 @@ globs:
   - Application layer MUST NOT import Express, NestJS, or any HTTP framework.
   - Application layer MUST NOT import from Infrastructure or Interface aliases.
   - Use ports/adapters pattern: define interfaces in Domain/Application, implement in Infrastructure/Interface.
+
+[FRONTEND & SPA INTEGRATION]
+- **MANDATORY:** For frontend/SPA TypeScript code (e.g., `src/frontend/**`, `frontend/**`, `app/**`, `public/**`), agents MUST follow `.cursor/rules/3C-frontend-architecture.mdc` (feature-based/module-based structure, view vs state/logic separation, state management, error handling, frontend observability & auth).
 - **Path aliases REQUIRED:**
   - **MANDATORY:** Use `@context/layer/*` aliases (e.g., `@identity/domain/*`, `@orders/app/*`).
   - **MANDATORY:** Configure `baseUrl` and `paths` in `tsconfig.json` for bounded contexts.

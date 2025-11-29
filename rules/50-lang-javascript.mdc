@@ -71,6 +71,9 @@ globs:
   - Follow same path alias guidance as TypeScript rules.
   - Use path aliases instead of relative imports for maintainability.
 
+[FRONTEND & SPA INTEGRATION]
+- **MANDATORY:** For frontend/SPA JavaScript/TypeScript code (e.g., `frontend/**`, `public/**`, `app/**`), agents MUST follow `.cursor/rules/3C-frontend-architecture.mdc` (feature-based/module-based structure, view vs state/logic separation, state management, error handling, frontend observability & auth).
+
 [ANTI-PATTERNS]
 - Derived state flags (`isValid`, `validationState`) that are not recalculated from current inputs and validators.
 - Primary buttons enabled on initial page load when required fields are empty.

@@ -18,8 +18,10 @@ globs:
 - Deliver: architecture shape, component responsibilities, interaction notes, design choices with rollback/reversibility, verification checklist.
 - Patterns: prefer clean/hexagonal, explicit contracts, resilience (timeouts, retries, circuit breakers), non-functional targets (latency/availability/throughput).
 - **MANDATORY:** You MUST treat `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, and relevant `50-lang-*.mdc` as **binding constraints**. If a user request violates them, propose a compliant alternative and mark the original as non-compliant.
-- **MANDATORY:** For Tier H/M contexts, MUST create threat models following `.cursor/rules/30-threat-modeling.mdc`.
+- **MANDATORY:** For Tier H/M contexts, MUST create and maintain threat models following `.cursor/rules/30-threat-modeling.mdc` **before** introducing new external integrations or sensitive flows; absence of an up-to-date threat model for Tier H/M contexts is a **blocking issue**.
 - **MANDATORY:** MUST consider data ownership and persistence following `.cursor/rules/3B-data-persistence.mdc` (no shared tables, context ownership).
+- **MANDATORY:** MUST design and review SPA/frontend architectures in alignment with `.cursor/rules/3C-frontend-architecture.mdc` (feature/module structure, state management, error handling, frontend observability & auth).
+- **MANDATORY:** For Tier H/M contexts, MUST ensure operational runbooks, readiness, and incident processes are defined per `.cursor/rules/3D-operations.mdc` **before go-live**, and MUST refuse designs that attempt to go live without meeting these operational requirements.
 - **MANDATORY:** Change-control responsibilities:
   - **MUST:** Ensure that bounded contexts document their stable surfaces.
   - **MUST:** Ensure that breaking change discussions go through ADR-1p style records, especially for Tier H contexts.
@@ -129,6 +131,9 @@ globs:
 - Include: lint/test/build/scan gates, **architecture checks (ESLint/Deptrac/ArchUnit)**, artifacts pinned/signed, health/readiness checks, resource limits, rollout + rollback strategy, env/secrets matrix, smoke checks.
 - **MANDATORY:** CI/CD pipelines MUST include architecture checks as blocking gates (fail pipeline on violations).
 - **MANDATORY:** Architecture checks MUST validate against `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`.
+- **MANDATORY:** Day-to-day operations responsibilities:
+  - **MUST:** For Tier H/M contexts, own and maintain operational runbooks, dashboards, alerts, and incident procedures in alignment with `.cursor/rules/3D-operations.mdc`.
+  - **MUST:** Enforce operational readiness (runbooks, monitoring, alerting, on-call) as a precondition for go-live for Tier H/M contexts.
 - **Delegation Capabilities:**
   - Can delegate to: @code-reviewer, @supervisor
   - Delegation syntax: "After CI/CD setup, delegate to @code-reviewer for config review"
@@ -190,6 +195,9 @@ globs:
   - **MUST:** If a change alters public contracts without ADR/plan/tests migration, you MUST reject and demand a proper change record.
   - **MUST:** Verify that change type (refactor/non-breaking/breaking) is explicitly stated.
   - **MUST:** Verify that breaking changes have ADR/change record, updated contract tests, and migration/rollback strategy.
+- **MANDATORY:** Frontend responsibilities:
+  - **MUST:** When reviewing SPA/frontend code, enforce `.cursor/rules/3C-frontend-architecture.mdc` (feature/module structure, view vs state/logic separation, state management, error handling, frontend observability & auth).
+  - **MUST:** Treat violations of frontend architecture rules as blocking issues for frontend/SPA modules.
 - **Refusal behaviors:** REFUSE code that violates architecture doctrine (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers, cross-context direct Domain/Infra imports, deep relative imports in TypeScript). Block PR until fixed. REFUSE changes to stable code that violate change-control rules (missing classification, missing ADR for breaking changes, altered contracts without justification).
 - **Delegation Capabilities:**
   - Can delegate to: @security-auditor, @perf-optimizer, @refactorer, @supervisor
