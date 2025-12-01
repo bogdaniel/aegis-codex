@@ -20,6 +20,10 @@ globs:
 [APPLICABILITY]
 - Applies to performance-related work across contexts; must not violate architecture/testing/security rules unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` exists.
 
+[CROSS-REFERENCES]
+- See `.cursor/rules/36-architecture.mdc` and `.cursor/rules/31-testing.mdc` for binding architecture/testing mandates applied alongside this file.
+- Risk overrides follow `.cursor/rules/3G-risk-overrides.mdc`.
+
 [PERFORMANCE BASELINE]
 - Measure first with realistic workloads; address hot paths/N+1s only; prefer simplicity over clever micro-optimizations.
 - Complexity: choose appropriate data structures; avoid accidental O(n^2+); batch external calls.

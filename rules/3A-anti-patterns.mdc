@@ -22,6 +22,10 @@ globs:
 [APPLICABILITY]
 - Applies to all code/agents; anti-patterns are blocking unless explicit risk override per `.cursor/rules/3G-risk-overrides.mdc`.
 
+[CROSS-REFERENCES]
+- See `.cursor/rules/36-architecture.mdc` and `.cursor/rules/31-testing.mdc` for binding architecture/testing mandates applied alongside this file.
+- Risk overrides follow `.cursor/rules/3G-risk-overrides.mdc`.
+
 [ANTI-PATTERNS CATALOG]
 
 This catalog consolidates common anti-patterns across SOLID, Clean Architecture, DDD, and general code quality. Each anti-pattern includes symptoms, fixes, and links to examples.

@@ -60,6 +60,7 @@
 - Added `[INTENT]` and `[APPLICABILITY]` to `rules/50-lang-{java,csharp,html,css,gdscript}.mdc` to clarify scope/purpose without altering mandates.
 - Added `[INTENT]` and `[APPLICABILITY]` to `rules/32-observability.mdc`, `rules/3D-operations.mdc`, `rules/3E-config-environments.mdc`, `rules/3F-feature-flags-rollouts.mdc`, `rules/3B-data-persistence.mdc`, `rules/45-bugfix-protocol.mdc`, `rules/46-regression-discipline.mdc`, `rules/47-diff-discipline.mdc`, `rules/48-doc-sync.mdc`, and `rules/40-atdd.mdc` to clarify scope/purpose without altering mandates.
 - Added `[INTENT]` and `[APPLICABILITY]` to remaining high-value files: `rules/00-persona.mdc`, `rules/30-threat-modeling.mdc`, `rules/35-api.mdc` (legacy note), `rules/38-compliance.mdc`, `rules/41-bdd.mdc`, `rules/42-tdd.mdc`, `rules/43-fdd.mdc`, `rules/45-solid-principles.mdc`, and `rules/50-lang-typescript.mdc` to clarify scope/purpose without altering mandates.
+- Added `[CROSS-REFERENCES]` blocks to `rules/41-bdd.mdc`, `rules/42-tdd.mdc`, `rules/43-fdd.mdc`, `rules/45-solid-principles.mdc`, `rules/3A-anti-patterns.mdc`, `rules/39-accessibility.mdc`, `rules/3C-frontend-architecture.mdc`, `rules/33-performance.mdc`, `rules/37-code-structure.mdc`, and `rules/35-api-lifecycle.mdc` pointing to canonical architecture/testing and risk override rules; no semantic changes.
 
 [NEXT TARGETS]
 - Optional: Normalize section scaffolding (`[INTENT]`, `[APPLICABILITY]`, `[MANDATORY RULES]`, `[CROSS-REFERENCES]`) in high-read files (e.g., `rules/20-agents.mdc`, `rules/10-global.mdc`) without altering mandates.

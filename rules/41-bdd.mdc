@@ -21,6 +21,10 @@ globs:
 [APPLICABILITY]
 - Applies to behavior specifications/tests where BDD is used; guidance binding unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
 
+[CROSS-REFERENCES]
+- See `.cursor/rules/36-architecture.mdc` and `.cursor/rules/31-testing.mdc` for binding architecture/testing mandates applied alongside this file.
+- Risk overrides follow `.cursor/rules/3G-risk-overrides.mdc`.
+
 [BDD — BEHAVIOR-DRIVEN DISCOVERY (DOMAIN LANGUAGE FIRST)]
 
 [CORE MANDATE]

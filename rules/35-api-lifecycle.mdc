@@ -20,6 +20,10 @@ globs:
 [APPLICABILITY]
 - Applies to all public/cross-context APIs and events; requirements are binding unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicit.
 
+[CROSS-REFERENCES]
+- See `.cursor/rules/36-architecture.mdc` and `.cursor/rules/31-testing.mdc` for binding architecture/testing mandates applied alongside this file.
+- Risk overrides follow `.cursor/rules/3G-risk-overrides.mdc`.
+
 [SCOPE]
 - Applicability:
   - This rule applies to:

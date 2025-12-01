@@ -22,6 +22,10 @@ globs:
 [APPLICABILITY]
 - Applies to frontend/SPAs and BFFs; non-negotiable unless explicit risk override per `.cursor/rules/3G-risk-overrides.mdc`.
 
+[CROSS-REFERENCES]
+- See `.cursor/rules/36-architecture.mdc` and `.cursor/rules/31-testing.mdc` for binding architecture/testing mandates applied alongside this file.
+- Risk overrides follow `.cursor/rules/3G-risk-overrides.mdc`.
+
 [FRONTEND ARCHITECTURE BASELINE]
 
 ### [SPA/FRAMEWORK ARCHITECTURE]
