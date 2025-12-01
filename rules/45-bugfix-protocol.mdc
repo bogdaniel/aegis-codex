@@ -13,6 +13,12 @@ globs:
 - Editable source: `rules/45-bugfix-protocol.mdc`
 - Generated/consumed copy: `.cursor/rules/45-bugfix-protocol.mdc` (keep references intact)
 
+[INTENT]
+- Define the mandatory bugfix protocol: reproduce, confirm failing test, fix, guard.
+
+[APPLICABILITY]
+- Applies to all bugfixes in non-Tier-S code; requirements are binding unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
+
 [CONCEPTS]
 - Bug:
   - A bug is any deviation between actual behavior and the behavior defined by specs, tests, or domain rules, including incorrect results, crashes, missing validations, or security/observability breaches.

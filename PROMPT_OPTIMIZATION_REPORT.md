@@ -58,6 +58,7 @@
 - Added `[INTENT]` and `[APPLICABILITY]` to `rules/33-performance.mdc` and `rules/37-code-structure.mdc` to clarify scope/purpose without altering mandates.
 - Added `[INTENT]` and `[APPLICABILITY]` to `rules/39-accessibility.mdc`, `rules/39-observability-security.mdc`, `rules/3C-frontend-architecture.mdc`, `rules/3A-anti-patterns.mdc`, and language guides `rules/50-lang-{javascript,php,php-laravel-guidelines,python,go,rust}.mdc` to clarify scope/purpose without altering mandates.
 - Added `[INTENT]` and `[APPLICABILITY]` to `rules/50-lang-{java,csharp,html,css,gdscript}.mdc` to clarify scope/purpose without altering mandates.
+- Added `[INTENT]` and `[APPLICABILITY]` to `rules/32-observability.mdc`, `rules/3D-operations.mdc`, `rules/3E-config-environments.mdc`, `rules/3F-feature-flags-rollouts.mdc`, `rules/3B-data-persistence.mdc`, `rules/45-bugfix-protocol.mdc`, `rules/46-regression-discipline.mdc`, `rules/47-diff-discipline.mdc`, `rules/48-doc-sync.mdc`, and `rules/40-atdd.mdc` to clarify scope/purpose without altering mandates.
 
 [NEXT TARGETS]
 - Optional: Normalize section scaffolding (`[INTENT]`, `[APPLICABILITY]`, `[MANDATORY RULES]`, `[CROSS-REFERENCES]`) in high-read files (e.g., `rules/20-agents.mdc`, `rules/10-global.mdc`) without altering mandates.

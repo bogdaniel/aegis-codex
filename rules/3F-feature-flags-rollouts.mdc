@@ -14,6 +14,12 @@ globs:
 - Editable source: `rules/3F-feature-flags-rollouts.mdc`
 - Generated/consumed copy: `.cursor/rules/3F-feature-flags-rollouts.mdc` (keep references intact)
 
+[INTENT]
+- Define feature flags and rollout/rollback standards.
+
+[APPLICABILITY]
+- Applies to risky/cross-context changes and experiments; requirements are binding unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
+
 [CONCEPTS]
 - Feature flags:
   - Feature flags are configuration-controlled switches that change behavior at runtime without redeploying, including:

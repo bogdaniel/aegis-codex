@@ -15,6 +15,12 @@ globs:
 - Editable source: `rules/3B-data-persistence.mdc`
 - Generated/consumed copy: `.cursor/rules/3B-data-persistence.mdc` (keep references intact)
 
+[INTENT]
+- Define data persistence rules: ownership, no shared tables, context boundaries.
+
+[APPLICABILITY]
+- Applies to all data persistence decisions; requirements are binding unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
+
 [DATA & PERSISTENCE BASELINE]
 
 ### [RELATIONAL SCHEMA DESIGN]

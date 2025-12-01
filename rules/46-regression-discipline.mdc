@@ -13,6 +13,12 @@ globs:
 - Editable source: `rules/46-regression-discipline.mdc`
 - Generated/consumed copy: `.cursor/rules/46-regression-discipline.mdc` (keep references intact)
 
+[INTENT]
+- Define regression discipline: tests as contracts, no weakening/removal without control.
+
+[APPLICABILITY]
+- Applies to all changes affecting tests/contracts; requirements are binding unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
+
 [CONCEPTS]
 - Tests as contracts:
   - A passing test suite defines the expected behavior of the system at a given point in time; changing tests is equivalent to changing contracts.

@@ -10,6 +10,16 @@ globs:
   - "tests/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/40-atdd.mdc`
+- Generated/consumed copy: `.cursor/rules/40-atdd.mdc` (keep references intact)
+
+[INTENT]
+- Define Acceptance Test-Driven Development expectations (define acceptance before implementation).
+
+[APPLICABILITY]
+- Applies to acceptance-level specs/tests; guidance binding unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
+
 [ATDD — ACCEPTANCE TEST-DRIVEN DEVELOPMENT (DONE = PROVEN)]
 
 [CORE MANDATE]
