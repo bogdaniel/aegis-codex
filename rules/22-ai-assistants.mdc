@@ -17,6 +17,11 @@ globs:
 [APPLICABILITY]
 - Applies to all AI/code-assistant usage; requirements are binding unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicit.
 
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+
 [AI/CODE ASSISTANT USAGE GOVERNANCE BASELINE]
 
 ### [ALLOWED OPERATIONS]

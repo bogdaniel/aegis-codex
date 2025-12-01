@@ -19,6 +19,11 @@ globs:
 [APPLICABILITY]
 - Applies to all diffs; scope/boundary rules are binding unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
 
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+
 [CONCEPTS]
 - Change scope:
   - Change scope is the minimal set of files, modules, and behaviors that must change to accomplish a specific, clearly stated goal (e.g., fix a specific bug, add a small feature, refactor one module).

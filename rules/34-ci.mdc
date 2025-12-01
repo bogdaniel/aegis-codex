@@ -17,6 +17,11 @@ globs:
 [APPLICABILITY]
 - Applies to all CI/CD pipelines; gates are blocking unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicit.
 
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+
 [CI/CD BASELINE]
 - Pipeline stages: lint/format/type-check → **architecture checks** → unit tests + coverage → integration/smoke (DB/cache/API) → security scans (deps + secrets + static security) → build/package + SBOM/signing.
 - Required gates: block on lint/type errors, **architecture violations**, test failures/flakiness, coverage drops in critical paths, and High/Critical vulnerabilities unless risk-accepted with expiry; fail if secrets scan hits.

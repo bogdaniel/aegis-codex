@@ -20,6 +20,11 @@ globs:
 [APPLICABILITY]
 - Applies to code emitting logs/metrics/traces in sensitive contexts; must align with security/observability spine unless explicit risk override per `.cursor/rules/3G-risk-overrides.mdc`.
 
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+
 [OBSERVABILITY]
 - Each bounded context must:
   - Expose request metrics (latency, throughput, error rates).

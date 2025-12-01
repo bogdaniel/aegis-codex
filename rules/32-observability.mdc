@@ -20,6 +20,11 @@ globs:
 [APPLICABILITY]
 - Applies to all services/contexts; observability requirements are binding unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
 
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+
 [OBSERVABILITY BASELINE]
 - Logging: structured (JSON) with level, UTC timestamp, correlation/request ID, and sanitized context; redact PII/secrets; stable event names; cap cardinality; no stack traces to clients.
 - Metrics: RED/USE (rate, errors, duration; utilization/saturation/errors) per endpoint/task with units/tags (service, endpoint, status, region); bounded cardinality; track p50/p95/p99.

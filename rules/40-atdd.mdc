@@ -20,6 +20,11 @@ globs:
 [APPLICABILITY]
 - Applies to acceptance-level specs/tests; guidance binding unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
 
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+
 [ATDD — ACCEPTANCE TEST-DRIVEN DEVELOPMENT (DONE = PROVEN)]
 
 [CORE MANDATE]
