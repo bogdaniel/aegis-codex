@@ -11,6 +11,10 @@ globs:
   - "tests/**/*.php"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/50-lang-php.mdc`
+- Generated/consumed copy: `.cursor/rules/50-lang-php.mdc` (keep references intact)
+
 [PHP — SCOPE]
 
 - Applies to all first-party PHP code (domain, application, controllers, console commands, jobs, tests).

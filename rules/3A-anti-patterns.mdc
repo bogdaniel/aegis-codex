@@ -12,6 +12,10 @@ globs:
   - "interface/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/3A-anti-patterns.mdc`
+- Generated/consumed copy: `.cursor/rules/3A-anti-patterns.mdc` (keep references intact)
+
 [ANTI-PATTERNS CATALOG]
 
 This catalog consolidates common anti-patterns across SOLID, Clean Architecture, DDD, and general code quality. Each anti-pattern includes symptoms, fixes, and links to examples.

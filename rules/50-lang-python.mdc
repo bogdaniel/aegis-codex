@@ -7,6 +7,10 @@ globs:
   - "**/*.py"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/50-lang-python.mdc`
+- Generated/consumed copy: `.cursor/rules/50-lang-python.mdc` (keep references intact)
+
 [PYTHON STANDARDS]
 - Stack: Python 3.11+ with venv/uv/poetry; pin deps in `pyproject` + lock; avoid unpinned `pip install -r` without hashes.
 - Style/lint: `ruff check .` plus `black --check .` and `isort .`; fix unused imports/code.

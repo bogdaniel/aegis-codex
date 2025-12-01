@@ -10,6 +10,10 @@ globs:
   - "scripts/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/3D-operations.mdc`
+- Generated/consumed copy: `.cursor/rules/3D-operations.mdc` (keep references intact)
+
 [OPERATIONS & INCIDENT MANAGEMENT BASELINE]
 
 ### [RUNBOOKS]

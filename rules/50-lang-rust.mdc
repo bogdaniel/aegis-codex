@@ -7,6 +7,10 @@ globs:
   - "**/*.rs"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/50-lang-rust.mdc`
+- Generated/consumed copy: `.cursor/rules/50-lang-rust.mdc` (keep references intact)
+
 [RUST STANDARDS]
 - Toolchain: stable Rust 2021+; pin via `rust-toolchain.toml`; prefer workspaces for multi-crate setups.
 - Style/lint: `cargo fmt --all -- --check`; `cargo clippy --all-targets --all-features -D warnings`; avoid unwarranted `clone`.

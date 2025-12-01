@@ -7,6 +7,10 @@ globs:
   - "**/*"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/3G-risk-overrides.mdc`
+- Generated/consumed copy: `.cursor/rules/3G-risk-overrides.mdc` (keep references intact)
+
 [CONCEPTS]
 - Risk override:
   - A risk override is an explicit, temporary exception to one or more core rules (architecture, security, change-discipline, data, config, etc.) that would otherwise be treated as non-negotiable.

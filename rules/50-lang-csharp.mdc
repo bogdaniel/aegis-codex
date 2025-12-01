@@ -7,6 +7,10 @@ globs:
   - "**/*.cs"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/50-lang-csharp.mdc`
+- Generated/consumed copy: `.cursor/rules/50-lang-csharp.mdc` (keep references intact)
+
 [C# / .NET STANDARDS]
 - Stack: .NET 8+, C# 12+.
 - Style/lint: EditorConfig, StyleCop, Roslyn analyzers; command: `dotnet format --verify` and `dotnet build` (with analyzers enabled).

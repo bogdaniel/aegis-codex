@@ -10,6 +10,10 @@ globs:
   - "scripts/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/3E-config-environments.mdc`
+- Generated/consumed copy: `.cursor/rules/3E-config-environments.mdc` (keep references intact)
+
 [CONCEPTS]
 - Configuration:
   - Configuration is any value that changes per environment, deployment, or tenant without requiring a code change (URLs, credentials, feature toggles, limits, timeouts, etc.).

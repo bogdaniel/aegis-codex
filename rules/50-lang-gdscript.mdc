@@ -7,6 +7,10 @@ globs:
   - "**/*.gd"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/50-lang-gdscript.mdc`
+- Generated/consumed copy: `.cursor/rules/50-lang-gdscript.mdc` (keep references intact)
+
 [GDSCRIPT STANDARDS]
 - Style: typed GDScript; snake_case; one class per file with file named after class/scene; avoid global state; keep scripts small per node responsibility; prefer composition via nodes/scenes over inheritance.
 - Signals: use signals for decoupling instead of direct node coupling; check node existence before use.

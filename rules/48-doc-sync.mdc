@@ -11,6 +11,10 @@ globs:
   - "architecture/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/48-doc-sync.mdc`
+- Generated/consumed copy: `.cursor/rules/48-doc-sync.mdc` (keep references intact)
+
 [CONCEPTS]
 - Spec artifacts:
   - Spec artifacts are the authoritative descriptions of system behavior, structure, and operations, including:

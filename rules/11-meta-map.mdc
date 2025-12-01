@@ -7,6 +7,10 @@ globs:
   - "**/*"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/11-meta-map.mdc`
+- Generated/consumed copy: `.cursor/rules/11-meta-map.mdc` (keep references intact)
+
 [CONCEPTS]
 - Rule groups:
   - Rules are organized into coherent groups (architecture, security, change-discipline, data, config/env, flags/rollouts, observability/ops, AI governance/multi-agent, language/stack) that together define the Aegis Codex.
@@ -73,7 +77,7 @@ globs:
     - `.cursor/rules/39-accessibility.mdc`
   - Frontend code MUST still respect security and data-handling requirements from `.cursor/rules/30-security.mdc` and `.cursor/rules/3B-data-persistence.mdc` (no leaking secrets, no unsafe inline scripts that break backend guarantees).
 - **MANDATORY:** In case of conflict:
-  - Architecture & DDD (36/44/38), Security & Threat Modeling & AI Governance (30/30-threat-modeling/22), and Change Discipline (23/45/46/47/48/35) ALWAYS override style or ergonomics preferences defined in language rules.
+  - Architecture & DDD (36/44/38), Security/Threat Modeling & AI Governance (30/30-threat-modeling/22), and Change Discipline (23/45/46/47/48/35) ALWAYS override style or ergonomics preferences defined in language rules.
 
 
 [RULE BUILDER PROFILES]
@@ -91,4 +95,3 @@ globs:
     - AI Governance & Multi-Agent: `00-persona.mdc`, `10-global.mdc`, `11-meta-map.mdc`, `20-agents.mdc`, `21-orchestration.mdc`, `3G-risk-overrides.mdc`
     - Appropriate `50-lang-*.mdc` files for the stack.
 - **MANDATORY:** A project CANNOT claim Aegis Codex compliance for backend services if any of the above are disabled or treated as "optional suggestions" in its profile.
-

@@ -7,6 +7,10 @@ globs:
   - "**/*"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/21-orchestration.mdc`
+- Generated/consumed copy: `.cursor/rules/21-orchestration.mdc` (keep references intact)
+
 [ORCHESTRATION — HOW AGENTS COOPERATE]
 
 [CORE PRINCIPLES]

@@ -7,6 +7,10 @@ globs:
   - "**/*"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/34-ci.mdc`
+- Generated/consumed copy: `.cursor/rules/34-ci.mdc` (keep references intact)
+
 [CI/CD BASELINE]
 - Pipeline stages: lint/format/type-check → **architecture checks** → unit tests + coverage → integration/smoke (DB/cache/API) → security scans (deps + secrets + static security) → build/package + SBOM/signing.
 - Required gates: block on lint/type errors, **architecture violations**, test failures/flakiness, coverage drops in critical paths, and High/Critical vulnerabilities unless risk-accepted with expiry; fail if secrets scan hits.

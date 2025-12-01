@@ -11,6 +11,10 @@ globs:
   - "migrations/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/3B-data-persistence.mdc`
+- Generated/consumed copy: `.cursor/rules/3B-data-persistence.mdc` (keep references intact)
+
 [DATA & PERSISTENCE BASELINE]
 
 ### [RELATIONAL SCHEMA DESIGN]

@@ -12,6 +12,10 @@ globs:
   - "tests/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/30-security.mdc`
+- Generated/consumed copy: `.cursor/rules/30-security.mdc` (keep references intact)
+
 [SECURITY BASELINE]
 - Input/output hygiene: validate and normalize all external inputs (type/length/range/charset); prefer allowlists; encode/escape outputs for sink; block inline scripts.
 - AuthN/AuthZ: require authenticated identity for non-public actions; authorize at boundaries with deny-by-default; short-lived tokens validated server-side (audience/issuer); separate user/service identities.

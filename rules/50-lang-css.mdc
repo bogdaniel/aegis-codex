@@ -15,6 +15,10 @@ globs:
   - "resources/**/*.scss"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/50-lang-css.mdc`
+- Generated/consumed copy: `.cursor/rules/50-lang-css.mdc` (keep references intact)
+
 [CSS — ARCHITECTURE & BEST PRACTICES]
 
 [BASELINE]

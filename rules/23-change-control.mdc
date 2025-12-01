@@ -11,6 +11,10 @@ globs:
   - "services/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/23-change-control.mdc`
+- Generated/consumed copy: `.cursor/rules/23-change-control.mdc` (keep references intact)
+
 [CHANGE-CONTROL FOR STABLE CODE BASELINE]
 
 ### [CONCEPTS]

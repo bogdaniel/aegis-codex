@@ -13,6 +13,10 @@ globs:
   - "docs/adr/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/44-ddd.mdc`
+- Generated/consumed copy: `.cursor/rules/44-ddd.mdc` (keep references intact)
+
 [DDD — DOMAIN-DRIVEN DESIGN (BOUNDARIES & INVARIANTS)]
 
 [CORE MANDATE]

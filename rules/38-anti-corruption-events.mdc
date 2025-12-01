@@ -10,6 +10,10 @@ globs:
   - "services/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/38-anti-corruption-events.mdc`
+- Generated/consumed copy: `.cursor/rules/38-anti-corruption-events.mdc` (keep references intact)
+
 [ANTI-CORRUPTION LAYERS & EVENT CATALOG]
 
 [CORE MANDATE]

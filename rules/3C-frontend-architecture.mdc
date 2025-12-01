@@ -12,6 +12,10 @@ globs:
   - "templates/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/3C-frontend-architecture.mdc`
+- Generated/consumed copy: `.cursor/rules/3C-frontend-architecture.mdc` (keep references intact)
+
 [FRONTEND ARCHITECTURE BASELINE]
 
 ### [SPA/FRAMEWORK ARCHITECTURE]

@@ -9,6 +9,10 @@ globs:
   - "app/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/46-regression-discipline.mdc`
+- Generated/consumed copy: `.cursor/rules/46-regression-discipline.mdc` (keep references intact)
+
 [CONCEPTS]
 - Tests as contracts:
   - A passing test suite defines the expected behavior of the system at a given point in time; changing tests is equivalent to changing contracts.

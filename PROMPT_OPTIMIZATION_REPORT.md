@@ -40,6 +40,13 @@
 - Deduplicated the public API module structure in `rules/36-architecture.mdc` (single canonical statement + cross-reference).
 - Simplified `rules/50-lang-typescript.mdc` to point public-API requirements to the canonical rule in `rules/36-architecture.mdc` while keeping the mandate.
 - Reduced repeated testing-gate wording in `rules/20-agents.mdc` for @implementer, @test-engineer, and @code-reviewer, consolidating to `rules/31-testing.mdc` + change-discipline spine with explicit “BLOCKER unless 3G override” language preserved.
+- Added source-of-truth notes to `rules/11-meta-map.mdc` and `rules/21-orchestration.mdc` (editable `rules/` → generated `.cursor/rules/`) without changing semantics.
+- Added source-of-truth notes to `rules/30-security.mdc`, `rules/31-testing.mdc`, and `rules/3G-risk-overrides.mdc` (editable `rules/` → generated `.cursor/rules/`) for consistency; no semantic changes.
+- Added source-of-truth notes to `rules/23-change-control.mdc`, `rules/34-ci.mdc`, `rules/36-architecture.mdc`, and `rules/44-ddd.mdc` (editable `rules/` → generated `.cursor/rules/`); no semantic changes.
+- Added source-of-truth notes to `rules/32-observability.mdc`, `rules/3D-operations.mdc`, `rules/3E-config-environments.mdc`, `rules/3F-feature-flags-rollouts.mdc`, `rules/35-api-lifecycle.mdc`, `rules/38-anti-corruption-events.mdc`, and `rules/3B-data-persistence.mdc` (editable `rules/` → generated `.cursor/rules/`); no semantic changes.
+- Added source-of-truth notes to `rules/22-ai-assistants.mdc` and `rules/50-lang-typescript.mdc` (editable `rules/` → generated `.cursor/rules/`); no semantic changes.
+- Added source-of-truth notes to change-discipline cluster files `rules/45-bugfix-protocol.mdc`, `rules/46-regression-discipline.mdc`, `rules/47-diff-discipline.mdc`, and `rules/48-doc-sync.mdc` (editable `rules/` → generated `.cursor/rules/`); no semantic changes.
+- Added source-of-truth notes to remaining topic/language files: `rules/33-performance.mdc`, `rules/37-code-structure.mdc`, `rules/39-accessibility.mdc`, `rules/39-observability-security.mdc`, `rules/3C-frontend-architecture.mdc`, `rules/3A-anti-patterns.mdc`, and language guides (`rules/50-lang-*.mdc`) for JS, PHP (+ Laravel), Python, Go, Rust, Java, C#, HTML, CSS, GDScript; no semantic changes.
 
 [CHANGES]
 - Analysis only; no rule text modified yet.

@@ -10,6 +10,10 @@ globs:
   - "services/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/39-observability-security.mdc`
+- Generated/consumed copy: `.cursor/rules/39-observability-security.mdc` (keep references intact)
+
 [OBSERVABILITY]
 - Each bounded context must:
   - Expose request metrics (latency, throughput, error rates).

@@ -10,6 +10,10 @@ globs:
   - "backend/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/3F-feature-flags-rollouts.mdc`
+- Generated/consumed copy: `.cursor/rules/3F-feature-flags-rollouts.mdc` (keep references intact)
+
 [CONCEPTS]
 - Feature flags:
   - Feature flags are configuration-controlled switches that change behavior at runtime without redeploying, including:

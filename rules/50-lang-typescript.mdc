@@ -8,6 +8,10 @@ globs:
   - "**/*.tsx"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/50-lang-typescript.mdc`
+- Generated/consumed copy: `.cursor/rules/50-lang-typescript.mdc` (keep references intact)
+
 [MANDATORY WORKFLOW — CHECK RULES FIRST]
 - **MANDATORY:** Before writing ANY TypeScript code, you MUST:
   1. **Read `.cursor/rules/50-lang-typescript.mdc`** - Understand import rules, path aliases, architecture requirements

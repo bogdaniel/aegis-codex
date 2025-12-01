@@ -11,6 +11,10 @@ globs:
   - "frontend/**/*.html"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/50-lang-html.mdc`
+- Generated/consumed copy: `.cursor/rules/50-lang-html.mdc` (keep references intact)
+
 [HTML — SEMANTICS, ACCESSIBILITY & DOCUMENT STRUCTURE]
 
 [BASELINE]

@@ -9,6 +9,10 @@ globs:
   - "tests/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/45-bugfix-protocol.mdc`
+- Generated/consumed copy: `.cursor/rules/45-bugfix-protocol.mdc` (keep references intact)
+
 [CONCEPTS]
 - Bug:
   - A bug is any deviation between actual behavior and the behavior defined by specs, tests, or domain rules, including incorrect results, crashes, missing validations, or security/observability breaches.

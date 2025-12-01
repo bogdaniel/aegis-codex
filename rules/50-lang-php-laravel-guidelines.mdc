@@ -11,6 +11,10 @@ globs:
   - "tests/**/*.php"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/50-lang-php-laravel-guidelines.mdc`
+- Generated/consumed copy: `.cursor/rules/50-lang-php-laravel-guidelines.mdc` (keep references intact)
+
 # Laravel for AI Code Assistants
 
 This file contains Laravel standards optimized for AI code assistants like Claude Code, GitHub Copilot, and Cursor. These guidelines are derived from Spatie's comprehensive Laravel & PHP standards.

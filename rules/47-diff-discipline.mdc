@@ -9,6 +9,10 @@ globs:
   - "tests/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/47-diff-discipline.mdc`
+- Generated/consumed copy: `.cursor/rules/47-diff-discipline.mdc` (keep references intact)
+
 [CONCEPTS]
 - Change scope:
   - Change scope is the minimal set of files, modules, and behaviors that must change to accomplish a specific, clearly stated goal (e.g., fix a specific bug, add a small feature, refactor one module).

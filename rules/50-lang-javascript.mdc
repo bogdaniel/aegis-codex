@@ -11,6 +11,10 @@ globs:
   - "public/**/*.js"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/50-lang-javascript.mdc`
+- Generated/consumed copy: `.cursor/rules/50-lang-javascript.mdc` (keep references intact)
+
 [JAVASCRIPT / TYPESCRIPT — STATE & UI BEHAVIOR]
 
 [BASELINE]

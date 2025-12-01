@@ -7,6 +7,10 @@ globs:
   - "**/*"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/22-ai-assistants.mdc`
+- Generated/consumed copy: `.cursor/rules/22-ai-assistants.mdc` (keep references intact)
+
 [AI/CODE ASSISTANT USAGE GOVERNANCE BASELINE]
 
 ### [ALLOWED OPERATIONS]

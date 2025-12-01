@@ -10,6 +10,10 @@ globs:
   - "domain/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/33-performance.mdc`
+- Generated/consumed copy: `.cursor/rules/33-performance.mdc` (keep references intact)
+
 [PERFORMANCE BASELINE]
 - Measure first with realistic workloads; address hot paths/N+1s only; prefer simplicity over clever micro-optimizations.
 - Complexity: choose appropriate data structures; avoid accidental O(n^2+); batch external calls.

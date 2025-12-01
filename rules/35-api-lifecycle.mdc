@@ -10,6 +10,10 @@ globs:
   - "services/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/35-api-lifecycle.mdc`
+- Generated/consumed copy: `.cursor/rules/35-api-lifecycle.mdc` (keep references intact)
+
 [SCOPE]
 - Applicability:
   - This rule applies to:

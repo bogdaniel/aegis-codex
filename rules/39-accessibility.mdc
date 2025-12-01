@@ -12,6 +12,10 @@ globs:
   - "templates/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/39-accessibility.mdc`
+- Generated/consumed copy: `.cursor/rules/39-accessibility.mdc` (keep references intact)
+
 [ACCESSIBILITY & UX BASELINE]
 
 [CORE MANDATE]

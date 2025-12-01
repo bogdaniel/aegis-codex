@@ -11,6 +11,10 @@ globs:
   - "modules/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/36-architecture.mdc`
+- Generated/consumed copy: `.cursor/rules/36-architecture.mdc` (keep references intact)
+
 [ARCHITECTURE — CLEAN + HEXAGONAL + DDD + MODULAR CONTEXTS]
 
 [SCOPE]

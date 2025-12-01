@@ -10,6 +10,10 @@ globs:
   - "infra/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/32-observability.mdc`
+- Generated/consumed copy: `.cursor/rules/32-observability.mdc` (keep references intact)
+
 [OBSERVABILITY BASELINE]
 - Logging: structured (JSON) with level, UTC timestamp, correlation/request ID, and sanitized context; redact PII/secrets; stable event names; cap cardinality; no stack traces to clients.
 - Metrics: RED/USE (rate, errors, duration; utilization/saturation/errors) per endpoint/task with units/tags (service, endpoint, status, region); bounded cardinality; track p50/p95/p99.
