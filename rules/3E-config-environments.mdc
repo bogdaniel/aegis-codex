@@ -1,0 +1,95 @@
+---
+description: "Configuration & environment strategy: single source of truth, secrets, and parity."
+category: "topic"
+subcategory: "config-environments"
+required: true
+globs:
+  - "config/**"
+  - "env/**"
+  - "infrastructure/config/**"
+  - "scripts/**"
+---
+
+[CONCEPTS]
+- Configuration:
+  - Configuration is any value that changes per environment, deployment, or tenant without requiring a code change (URLs, credentials, feature toggles, limits, timeouts, etc.).
+  - Configuration MAY come from environment variables, config files, secret managers, service discovery, or orchestration platforms, but MUST have a single authoritative source per deployed service.
+  - Sensitive configuration (secrets, credentials, keys, tokens, PII-related endpoints) MUST be treated as secrets; non-sensitive configuration (timeouts, feature percentages, log levels) MUST still be change-controlled.
+- Environments:
+  - Environments include, at minimum, local/dev, automated testing, staging/pre-production, and production; additional environments (sandbox, perf, DR) MAY exist but MUST be documented.
+  - Environment meaning and topology (what runs where, which bounded contexts are present) MUST align with the context map and trust tiers defined in `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`.
+  - Tier H and Tier M bounded contexts (see `.cursor/rules/36-architecture.mdc`) MUST have explicitly documented environment behavior, dependencies, and configuration responsibilities.
+- Sensitive vs non-sensitive config:
+  - Sensitive config includes anything that would meaningfully increase security or privacy risk if disclosed: secrets, credentials, tokens, internal service URLs for Tier H/M contexts, KMS keys, encryption parameters, and any configuration that affects access control or data classification (see `.cursor/rules/30-security.mdc` and `.cursor/rules/3B-data-persistence.mdc`).
+  - Non-sensitive config includes tunables such as cache TTLs, max page sizes, timeout thresholds, log levels, and feature rollout percentages, but MUST still be validated and change-controlled for safety and reliability.
+
+
+[CONFIG SOURCES & SINGLE SOURCE OF TRUTH]
+- Single config mechanism:
+  - Each service or bounded context MUST define and document a single primary configuration mechanism (e.g., env vars + config loader module) and MUST NOT introduce ad-hoc, competing mechanisms without an ADR per `.cursor/rules/23-change-control.mdc`.
+  - Configuration MUST be loaded through a dedicated configuration layer/module (e.g., config adapter in Infrastructure or wiring) that is responsible for reading from environment/config sources and mapping into strongly-typed configuration structures.
+  - Domain and Application layers MUST NOT read from raw configuration sources directly (e.g., MUST NOT call `process.env` or framework config APIs); instead, they MUST depend on explicit configuration interfaces/ports as defined in `.cursor/rules/36-architecture.mdc`.
+- Access patterns:
+  - Configuration access in Domain/Application MUST be via injected configuration value objects or ports defined in those layers, consistent with Clean Architecture and DDD rules in `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`.
+  - Interface and Infrastructure layers MAY read from environment or framework-specific configuration APIs, but MUST centralize this into reusable adapters instead of scattering configuration lookups across random files.
+  - Configuration that affects security behavior (CORS, cookie properties, TLS, auth providers, token lifetimes, rate limits) MUST be surfaced through clearly named configuration constructs and MUST be validated according to `.cursor/rules/30-security.mdc`.
+- Explicit config contracts:
+  - All required configuration keys for a service (including secrets) MUST be enumerated in a documented contract (e.g., README/env template or infra config spec) with name, type, default/required status, and environment scope.
+  - Configuration keys MUST use stable, descriptive names; renames or semantic changes MUST be treated as contract changes and governed by `.cursor/rules/23-change-control.mdc`.
+  - Behavior that clearly belongs in configuration (timeouts, URLs, feature rollouts, resource limits, external endpoints) MUST NOT be encoded as "magic constants" in code; such constants MUST be replaced by configuration parameters in the proper layer.
+
+
+[ENVIRONMENTS & PARITY]
+- Environment parity:
+  - Non-trivial services (especially Tier H/M contexts) MUST maintain as much parity as practical across dev, test, stage, and prod in terms of enabled features, configuration structure, and infrastructure topology, consistent with `.cursor/rules/3D-operations.mdc`.
+  - Dev/test/stage environments MUST use the same configuration keys and shapes as production; environment-specific overrides MUST be implemented via environment-specific values, not divergent schemas or code paths.
+  - "Dev-only" code branches (e.g., `if (env === 'dev') doSomethingTotallyDifferent()`) MUST NOT change business logic semantics or security posture; environment-specific behavior MUST be expressed via configuration/feature flags and MUST be traceable to requirements.
+- Expressing environment differences:
+  - Environment-specific differences (e.g., endpoints, resource limits, logging levels) MUST be expressed via configuration or feature flags defined in the configuration mechanism, not via scattered ad-hoc conditionals.
+  - Risky environment differences (especially in Tier H/M contexts) MUST be documented in architecture/operations docs (context map, runbooks) and MUST have clear rationale and rollback plans per `.cursor/rules/3D-operations.mdc`.
+  - Observability configuration (log level, sampling rate, metrics/tracing endpoints) MUST be part of the configuration model and MUST support environment-specific tuning while preserving the required observability baselines in `.cursor/rules/32-observability.mdc`.
+- Testing and validation:
+  - Automated tests and CI pipelines MUST exercise configuration loading and validation for at least one non-prod environment, and SHOULD prevent deployment when required configuration is missing or malformed.
+  - Configuration validation failures MUST fail-fast at startup with clear, non-sensitive error messages and MUST be observable via logs/metrics as per `.cursor/rules/32-observability.mdc`.
+
+
+[SECRETS & SENSITIVE CONFIG]
+- Secret storage:
+  - Secrets and sensitive configuration MUST NOT be hard-coded in code, test fixtures, or config files committed to version control (including examples); placeholder values MUST be clearly fake and MUST follow the secrecy rules in `.cursor/rules/30-security.mdc`.
+  - Secrets MUST be stored in environment variables, secret managers, or platform-specific secret stores with appropriate access control; local development MAY use environment files that are excluded from version control and documented via templates.
+  - Configuration files under version control MUST only contain non-sensitive defaults and MUST explicitly document which keys are expected to be populated from secret stores or environment variables.
+- Secret access and propagation:
+  - Domain and Application layers MUST NOT depend on secret-storage APIs or raw secret formats; instead they MUST receive already-resolved, high-level configuration values (e.g., "token TTL in seconds") through ports or configuration objects.
+  - Infrastructure adapters that access external systems (DBs, queues, third-party APIs) MUST retrieve secrets via the standardized mechanism and MUST NOT cache raw secret values longer than necessary or log them.
+  - Logging and tracing MUST NOT record secrets, access tokens, passwords, or any sensitive configuration; observability MUST redact such values as required by `.cursor/rules/30-security.mdc` and `.cursor/rules/32-observability.mdc`.
+- Rotation and lifecycle:
+  - Configuration design MUST allow secret rotation without requiring code changes or downtime whenever supported by the platform; this includes using indirection (e.g., key IDs, aliases) where appropriate.
+  - Changes to security-sensitive configuration (e.g., cipher suites, token TTLs, CORS policies) MUST be treated as security changes and MUST follow the controls and verification steps in `.cursor/rules/30-security.mdc` and `.cursor/rules/23-change-control.mdc`.
+
+
+[AGENT BEHAVIOR]
+- Configuration modeling:
+  - Agents (including AEONIC HYPERION) MUST route new configuration needs through the standardized configuration mechanism for the service, rather than introducing ad-hoc `process.env` reads or framework-specific calls deep inside Domain/Application.
+  - When adding behavior that clearly needs configuration (e.g., timeouts, limits, external endpoints, rollout percentages), agents MUST propose explicit configuration keys, their types, defaults, and environment-specific considerations, and MUST update or create documentation accordingly.
+  - Agents MUST ensure that configuration dependencies in Domain/Application are modeled as interfaces/ports or value objects in those layers, not as direct dependencies on Infrastructure/framework APIs, in line with `.cursor/rules/36-architecture.mdc`.
+- Secrets and sensitive data:
+  - Agents MUST refuse to introduce real-looking secrets, keys, or credentials in any code, config, or documentation, and MUST instead use clearly fake placeholders and reference `.cursor/rules/30-security.mdc` for secret handling.
+  - When an implementation requires new secrets or sensitive configuration, agents MUST specify how those secrets are provisioned (e.g., secret manager, env var), how they are referenced in code, and how they are protected in each environment.
+- Environment behavior:
+  - When designing or modifying services, agents MUST define the configuration model and per-environment story (what differs between dev/test/stage/prod, what must be identical, and how this is represented in configuration).
+  - Agents MUST highlight and, where appropriate, refuse designs that require materially different behavior across environments that cannot be represented via configuration/feature flags and that would break parity or violate `.cursor/rules/3D-operations.mdc`.
+
+
+[VERIFICATION / CHECKS]
+- For `@architect`:
+  - MUST verify that each service or bounded context has a documented configuration model (keys, types, defaults, environment scope) and that configuration access respects the layer boundaries in `.cursor/rules/36-architecture.mdc`.
+  - MUST check that sensitive configuration is clearly identified, sourced from appropriate secret stores, and handled according to `.cursor/rules/30-security.mdc` and `.cursor/rules/3B-data-persistence.mdc`.
+  - MUST ensure that environment-specific behavior (especially in Tier H/M contexts) is configuration/flag-driven, documented in architecture/operations docs, and consistent with context maps and trust tiers in `.cursor/rules/36-architecture.mdc` and `.cursor/rules/3D-operations.mdc`.
+- For `@code-reviewer`:
+  - MUST block changes that introduce new secrets or sensitive config directly into code or committed config files; secrets MUST be moved into the standardized secret mechanisms before approval.
+  - MUST check that new or changed configuration accesses do not violate layer boundaries (no direct `process.env` or framework config in Domain/Application) and that configuration values are validated and have clear defaults where appropriate.
+  - MUST ensure that new environment-dependent behavior is expressed via configuration or feature flags, is documented, and does not undermine observability or security baselines defined in `.cursor/rules/32-observability.mdc` and `.cursor/rules/30-security.mdc`.
+- For `@supervisor` and CI/policy checks:
+  - SHOULD enforce automated checks (linters, scanners, or custom scripts) that detect hard-coded secrets, unknown configuration keys, and missing configuration documentation for new services.
+  - SHOULD validate that deployment manifests and runtime configuration for critical services (Tier H/M) are consistent across environments and that configuration drift is monitored and controlled per `.cursor/rules/3D-operations.mdc`.
+

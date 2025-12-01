@@ -1,8 +1,8 @@
 ---
-description: "API design standards: REST/GraphQL contracts and safety."
+description: "DEPRECATED: see rules/35-api-lifecycle.mdc for canonical API lifecycle and design rules."
 required: false
 category: "topic"
-subcategory: "api"
+subcategory: "api-deprecated"
 globs:
   - "api/**"
   - "src/**"
@@ -10,19 +10,5 @@ globs:
   - "services/**"
 ---
 
-[API BASELINE]
-- Versioning: explicit versions (/v1 or Accept header); document deprecation timelines; avoid breaking changes without migration path.
-- URIs/methods: predictable RESTful URIs; standard methods (GET/POST/PUT/PATCH/DELETE); consistent status codes (2xx/4xx/5xx with 400/401/403/404/409/422 norms); JSON `Content-Type` by default.
-- Contracts: validated request/response schemas; consistent error envelope with code/message/details and trace ID; structured errors only (no HTML).
-- Pagination/filtering: required pagination with limits; cursor preferred for large sets; allowlisted filters/sorts; include pagination metadata (next cursor/hasMore/total when feasible).
-- Safety: authN/authZ by default; rate limiting/abuse protections; idempotency keys for non-idempotent POST when needed; avoid sensitive fields leakage; field-level filtering where appropriate.
-- GraphQL (if used): well-defined schema; avoid unbounded lists; use connections/cursors; avoid generic catch-all fields.
-- Observability: log request IDs/status/latency; metrics per route; propagate trace context.
+This file is kept only for backward compatibility and references; all constraints are preserved and extended in `rules/35-api-lifecycle.mdc`.
 
-[VERIFICATION]
-- Provide schema validation or contract test command (e.g., `npm run lint:openapi`, `spectral lint openapi.yaml`, API contract tests in CI).
-
-**See also:**
-- `.cursor/rules/36-architecture.mdc` — Architecture rules (API boundaries, bounded contexts, public API modules)
-- `.cursor/rules/20-agents.mdc` — `@api-designer` agent definition
-- `test/example-app/` — Canonical demo (API design in Clean Architecture)

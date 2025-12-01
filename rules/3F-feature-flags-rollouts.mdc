@@ -1,0 +1,97 @@
+---
+description: "Feature flags & rollout strategies for safe change management."
+category: "topic"
+subcategory: "feature-flags-rollouts"
+required: true
+globs:
+  - "src/**"
+  - "app/**"
+  - "services/**"
+  - "backend/**"
+---
+
+[CONCEPTS]
+- Feature flags:
+  - Feature flags are configuration-controlled switches that change behavior at runtime without redeploying, including:
+    - Boolean flags (on/off),
+    - Multivariant flags (A/B/n variants, config-valued),
+    - Kill switches (immediate disablement of behavior or dependency).
+  - Flags MUST be treated as part of the configuration model for a service and MUST follow the configuration and environment strategy rules in `.cursor/rules/3E-config-environments.mdc`.
+- Rollout types:
+  - Canary rollout: enabling a change for a small subset of traffic, tenants, or regions before broader rollout.
+  - Gradual rollout: increasing exposure over time (percentage-based, cohort-based, or region-based).
+  - Dark launch: exercising new paths and collecting observability signals while keeping user-visible behavior unchanged.
+  - Rollback: disabling or reverting a change quickly via flags or controlled deployment strategies as defined in `.cursor/rules/3D-operations.mdc`.
+- Trust tiers and flags:
+  - Tier H contexts (safety kernel: auth, policy, ledger, risk, compliance) as defined in `.cursor/rules/36-architecture.mdc` MUST use flags and careful rollout planning for non-trivial behavior changes, and MUST prefer simple, auditable flag logic.
+  - Tier M contexts SHOULD use feature flags for meaningful behavior changes that affect business outcomes or cross-context interactions.
+  - Tier S contexts MAY use flags more aggressively for UX experiments, but MUST NOT use flags to bypass safety or security rules defined in `.cursor/rules/30-security.mdc`.
+
+
+[WHEN TO USE FLAGS]
+- High-risk and cross-context changes:
+  - Changes that affect Tier H contexts, critical business invariants, or cross-context contracts (APIs/events) MUST be evaluated for flag-based rollout; big-bang deployment of such changes without rollback mechanisms MUST be treated as an exception and documented with explicit risk acceptance.
+  - Schema migrations, new flows, and cross-context behavior changes SHOULD use flags or similar mechanisms (e.g., dual-write/read, shadow traffic) to separate deployment from activation, aligning with `.cursor/rules/38-anti-corruption-events.mdc` and `.cursor/rules/3B-data-persistence.mdc`.
+  - Flags MUST NOT be used to hide or defer compliance, security, or data protection work; any flag that materially weakens controls in `.cursor/rules/30-security.mdc` or `.cursor/rules/3B-data-persistence.mdc` MUST be treated as a temporary emergency control with strict time bounds and explicit approval.
+- Experiments and incremental delivery:
+  - For product experiments (A/B tests, UX changes), flags SHOULD be used to control exposure, but MUST still respect architecture boundaries and domain invariants as per `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`.
+  - For incremental delivery of large features, flags SHOULD gate user-visible behavior while keeping back-end contracts stable and backward compatible where possible, consistent with `.cursor/rules/35-api-lifecycle.mdc` and `.cursor/rules/23-change-control.mdc`.
+- When not to use flags:
+  - Flags MUST NOT be used as a long-term substitute for architecture or infrastructure separation (e.g., "temporary" bypasses that never get removed).
+  - Flags MUST NOT permanently encode different business rules per environment; environment-specific differences MUST be expressed as configuration or domain-level rules with clear justification per `.cursor/rules/3E-config-environments.mdc` and `.cursor/rules/3D-operations.mdc`.
+
+
+[FLAG DESIGN & HYGIENE]
+- Ownership and metadata:
+  - Each feature flag MUST have a clearly identified owner (team or role), documented purpose, and a defined expiry/cleanup plan; flags without owners or cleanup plans MUST be treated as policy violations.
+  - Flag definitions (name, type, default value, owner, intended lifetime) MUST be stored in a canonical location (config, flag service manifest, or dedicated docs) and MUST NOT be defined solely in scattered in-code comments.
+  - Flags that control Tier H or Tier M behavior MUST be documented in architecture or operations artifacts (context map, ADR, runbooks) as required by `.cursor/rules/36-architecture.mdc` and `.cursor/rules/3D-operations.mdc`.
+- Evaluation and layering:
+  - Flag evaluation MUST occur in a consistent layer; controllers or application services MAY evaluate flags and branch into different use cases, but Domain entities and value objects MUST NOT depend on flag APIs directly.
+  - Domain behavior that depends on flags MUST be modeled via explicit inputs or policies passed into aggregates/services, rather than direct calls to flag SDKs, preserving domain purity in `.cursor/rules/44-ddd.mdc`.
+  - Flag client SDKs, storage adapters, or external flag services MUST be integrated via ports/adapters in Infrastructure, not directly in Domain/Application, following `.cursor/rules/36-architecture.mdc` and `.cursor/rules/7B-anti-corruption-layer.mdc`.
+- Hygiene and lifecycle:
+  - Flags MUST be treated as temporary code paths unless explicitly documented as permanent configuration; "zombie" flags without a clear plan for removal MUST be identified and scheduled for cleanup.
+  - When a flag-controlled feature is fully rolled out and stable, the flag and its dead code paths SHOULD be removed in a follow-up change, governed by `.cursor/rules/23-change-control.mdc` and documented in compliance with `.cursor/rules/38-compliance.mdc`.
+
+
+[ROLLOUT & ROLLBACK]
+- Rollout planning:
+  - For risky changes (especially in Tier H/M contexts), a concrete rollout plan (canary/gradual/dark launch) MUST be defined before merging and MUST specify:
+    - Initial exposure scope (percentage, tenant set, region),
+    - Observability signals and thresholds (metrics/logs/traces) per `.cursor/rules/32-observability.mdc`,
+    - Explicit rollback triggers and steps per `.cursor/rules/3D-operations.mdc`.
+  - Rollout plans MUST treat API and event contract changes as lifecycle changes subject to `.cursor/rules/35-api-lifecycle.mdc` and `.cursor/rules/38-anti-corruption-events.mdc`, including dual-version or dual-path strategies where needed.
+- Observability and SLO alignment:
+  - Flagged rollouts MUST emit observability signals (metrics/tags, logs, and traces) that distinguish flag states and allow correlation of regressions with specific flags, consistent with `.cursor/rules/32-observability.mdc`.
+  - Tier H rollouts MUST have SLO-aware monitoring configured (error rate, latency, correctness indicators) and MUST define explicit rollback triggers consistent with `.cursor/rules/3D-operations.mdc` and the global rollback triggers in `.cursor/rules/10-global.mdc`.
+- Rollback mechanisms:
+  - Any flagged change MUST support fast, low-risk rollback via flag disablement or routing changes without requiring immediate code redeploy, wherever the platform allows.
+  - Rollback procedures (who can flip flags, where, and under what conditions) MUST be documented in runbooks and MUST respect least privilege, change-control, and auditability standards from `.cursor/rules/23-change-control.mdc` and `.cursor/rules/30-security.mdc`.
+
+
+[AGENT BEHAVIOR]
+- Planning and design:
+  - When proposing or implementing high-risk changes (Tier H/M contexts, cross-context APIs/events, data model changes), agents MUST default to suggesting feature flags and safe rollout strategies instead of single-step big-bang deployments.
+  - Agents MUST explicitly call out when a requested change is risky enough to merit a feature flag and MUST outline how that flag is defined, evaluated, and removed, consistent with this rule and `.cursor/rules/3E-config-environments.mdc`.
+  - When designing new APIs or workflows, agents MUST consider how feature flags interact with API lifecycle guarantees in `.cursor/rules/35-api-lifecycle.mdc` and MUST avoid creating permanent inconsistencies across clients.
+- Implementation:
+  - Agents MUST NOT introduce flag evaluation logic into Domain entities or value objects; they MUST model domain decisions as parameters or policies that can be derived from flags in outer layers.
+  - Agents MUST ensure that any integration with external flagging systems is done via ports/adapters and anti-corruption layers in Infrastructure, aligned with `.cursor/rules/36-architecture.mdc` and `.cursor/rules/7B-anti-corruption-layer.mdc`.
+- Cleanup:
+  - Agents SHOULD proactively identify obsolete flags and propose cleanup work, including removal of dead code paths and documentation updates, as part of ongoing refactoring in alignment with `.cursor/rules/3A-anti-patterns.mdc`.
+
+
+[VERIFICATION / CHECKS]
+- For `@architect` / service owners:
+  - MUST verify that high-risk changes (Tier H/M, cross-context, data model) include an explicit rollout and rollback plan, or else are justified with explicit risk acceptance per `.cursor/rules/23-change-control.mdc`.
+  - MUST ensure that flags used in Tier H/M contexts have clearly defined owners, purposes, and cleanup plans, and that their evaluation does not violate domain purity or architecture boundaries.
+  - MUST ensure that rollout metrics and logs are defined for critical flags, and that they integrate with existing SLOs and alerting as specified in `.cursor/rules/32-observability.mdc` and `.cursor/rules/3D-operations.mdc`.
+- For `@code-reviewer`:
+  - MUST block changes that introduce flags without owners, documentation, or cleanup plans, or that place flag evaluation inside Domain entities in violation of `.cursor/rules/44-ddd.mdc`.
+  - MUST ensure that flag-controlled code paths are testable and that tests cover both enabled and disabled behavior where behavior differences are significant.
+  - SHOULD encourage the removal of obsolete flags and their code paths when features are fully rolled out and stable.
+- For `@supervisor` and CI/policy checks:
+  - SHOULD verify that policy scenarios for high-risk changes include feature-flagged rollout options or other safe deployment strategies.
+  - SHOULD validate that breaking changes to APIs or events are not silently gated behind flags without corresponding lifecycle documentation and client communication per `.cursor/rules/35-api-lifecycle.mdc` and `.cursor/rules/38-anti-corruption-events.mdc`.
+
