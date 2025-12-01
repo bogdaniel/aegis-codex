@@ -47,6 +47,7 @@
 - Added source-of-truth notes to `rules/22-ai-assistants.mdc` and `rules/50-lang-typescript.mdc` (editable `rules/` → generated `.cursor/rules/`); no semantic changes.
 - Added source-of-truth notes to change-discipline cluster files `rules/45-bugfix-protocol.mdc`, `rules/46-regression-discipline.mdc`, `rules/47-diff-discipline.mdc`, and `rules/48-doc-sync.mdc` (editable `rules/` → generated `.cursor/rules/`); no semantic changes.
 - Added source-of-truth notes to remaining topic/language files: `rules/33-performance.mdc`, `rules/37-code-structure.mdc`, `rules/39-accessibility.mdc`, `rules/39-observability-security.mdc`, `rules/3C-frontend-architecture.mdc`, `rules/3A-anti-patterns.mdc`, and language guides (`rules/50-lang-*.mdc`) for JS, PHP (+ Laravel), Python, Go, Rust, Java, C#, HTML, CSS, GDScript; no semantic changes.
+- Added an editing reminder to `README.md` clarifying the workflow: edit `rules/**/*.mdc`, regenerate `.cursor/rules/` and `AGENTS.md` via `build-agents-doc.js`; do not edit generated outputs directly.
 
 [CHANGES]
 - Analysis only; no rule text modified yet.

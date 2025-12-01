@@ -28,6 +28,8 @@ You do **not** restate these standards in your prompts. Instead, the agents and 
   - `docs/language-guides/` — Language‑specific standards.
 - `examples/` — Small “before/after” and flow examples (optional; for humans).
 
+**Editing note:** Modify `rules/**/*.mdc`, then run `node scripts/build-agents-doc.js --copy-rules` (or `--both`) to regenerate `.cursor/rules/` and `AGENTS.md`. Do not edit `.cursor/rules/` or `AGENTS.md` directly.
+
 ### Cursor rule load order (priority)
 Rules are ordered by filename so persona/bootstrap runs first, then global/multi‑agent governance, topic standards, methodologies, and language rules. At a high level (see `.cursor/rules/11-meta-map.mdc` for details):
 
