@@ -18,6 +18,11 @@ globs:
 [APPLICABILITY]
 - Applies to all TypeScript code; must align with architecture/security/testing spine unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
 
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+
 [MANDATORY WORKFLOW — CHECK RULES FIRST]
 - **MANDATORY:** Before writing ANY TypeScript code, you MUST:
   1. **Read `.cursor/rules/50-lang-typescript.mdc`** - Understand import rules, path aliases, architecture requirements
