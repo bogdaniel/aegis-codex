@@ -357,6 +357,15 @@ const user = new User({
 **Fix:** Log security events; set up alerting.
 **Example:** See A09:2021 – Security Logging and Monitoring Failures above.
 
+[AGENT BEHAVIOR & REFUSAL DUTIES]
+- **MANDATORY:** AI agents (including AEONIC HYPERION) MUST refuse to bypass security invariants (authN/authZ, input validation, secrets handling, encryption, secure defaults) without an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc`.
+- **MANDATORY:** Agents MUST:
+  - Refuse to introduce hardcoded secrets, bypass authentication/authorization, or weaken input validation.
+  - Refuse to skip security controls "for convenience" or "to move faster".
+  - Propose compliant alternatives that maintain security guarantees.
+  - Only proceed with security violations if a valid `RISK_OVERRIDE` block is explicitly provided by the user, following `.cursor/rules/3G-risk-overrides.mdc`.
+- **MANDATORY:** Architecture and language rules MUST respect these security constraints; security rules take precedence over style or ergonomics per `.cursor/rules/10-global.mdc`.
+
 [VERIFICATION]
 - Run secrets/deps/security scans per stack and fail on High/Critical (e.g., `gitleaks detect`, `npm audit --audit-level=high`, `pip-audit`, `cargo audit`, `govulncheck`, `bandit`/`gosec`/`semgrep`).
 
@@ -364,6 +373,7 @@ const user = new User({
 - `.cursor/rules/3A-anti-patterns.mdc` — Security anti-patterns (SQL injection, XSS, missing authorization)
 - `.cursor/rules/20-agents.mdc` — `@security-auditor` agent with OWASP Top 10 focus
 - `.cursor/rules/36-architecture.mdc` — Architecture rules (security boundaries, Tier H contexts)
+- `.cursor/rules/3G-risk-overrides.mdc` — Risk override protocol for exceptional security exceptions
 - `docs/test-scenarios.md` — Test scenarios for security audits
 - `tests/policies/` — Policy scenarios validating agent behavior (see `tests/policies/ts-handler-missing-validation/validation.md` for SQL injection validation)
 - `examples/before-after/ts-express-handler-*.ts` — Security validation before/after examples

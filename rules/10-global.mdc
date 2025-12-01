@@ -57,7 +57,7 @@ globs:
 - This tier system indicates where to invest next and prevents pretending all languages are equally governed.
 
 [MANDATORY RULES FOR NON-TIER-S SERVICES]
-- **MANDATORY:** For any non-Tier-S backend/service that claims Aegis Codex compliance, the following rules are **non-optional**:
+- **MANDATORY:** For any non-Tier-S backend/service that claims Aegis Codex compliance, the following rules are **non-optional** and **non-negotiable**:
   - Persona & Governance: `.cursor/rules/00-persona.mdc`, `.cursor/rules/10-global.mdc`, `.cursor/rules/11-meta-map.mdc`
   - Agents & Orchestration: `.cursor/rules/20-agents.mdc`, `.cursor/rules/21-orchestration.mdc`, `.cursor/rules/22-ai-assistants.mdc`
   - Architecture & DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, `.cursor/rules/38-anti-corruption-events.mdc`
@@ -70,3 +70,4 @@ globs:
   - Risk Overrides: `.cursor/rules/3G-risk-overrides.mdc`
   - Appropriate language rules: relevant `.cursor/rules/50-lang-*.mdc`
 - **MANDATORY:** Rule Builder profiles and agent configurations MUST NOT disable or downgrade these rules for Tier M/H services; any exception MUST go through `.cursor/rules/3G-risk-overrides.mdc`.
+- **MANDATORY:** These spine rules form the **hardened law** of Aegis Codex; they are internally consistent with each other and with the doctrine defined in implementation/verification plans. Violations of these rules MUST be treated as blocking issues by all agents unless a valid risk override is in effect.

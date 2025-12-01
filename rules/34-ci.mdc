@@ -11,6 +11,7 @@ globs:
 - Pipeline stages: lint/format/type-check → **architecture checks** → unit tests + coverage → integration/smoke (DB/cache/API) → security scans (deps + secrets + static security) → build/package + SBOM/signing.
 - Required gates: block on lint/type errors, **architecture violations**, test failures/flakiness, coverage drops in critical paths, and High/Critical vulnerabilities unless risk-accepted with expiry; fail if secrets scan hits.
 - **MANDATORY:** Architecture checks MUST run before tests and MUST fail the pipeline on violations.
+- **MANDATORY:** CI failures on architecture/security/change-discipline/test rules are **blocking, not advisory**; the pipeline MUST NOT pass with violations unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is documented and time-bounded.
 - Supply chain: pin dependencies/locks; hermetic builds when possible; avoid `latest`; cache verified deps; publish SBOM as artifact.
 - Deployment: prefer canary/blue-green; health/readiness checks mandatory; auto-rollback on triggers (p95 latency +20%/15m, error rate +0.5%/10m, critical security event).
 - Environment/secrets: config via env/secret manager; least-privilege CI tokens; redact secrets from logs.
@@ -66,8 +67,22 @@ globs:
   - The relevant rules (`.cursor/rules/23-change-control.mdc`, `.cursor/rules/45-bugfix-protocol.mdc`, `.cursor/rules/46-regression-discipline.mdc`, `.cursor/rules/47-diff-discipline.mdc`, `.cursor/rules/48-doc-sync.mdc`, `.cursor/rules/35-api-lifecycle.mdc`) MUST be reviewed and tightened before merging changes.
   - Deviations MUST NOT be "accepted as-is" in CI; either the rule or the scenario is outdated, and the repository MUST converge them.
 
+[AGENT BEHAVIOR & REFUSAL DUTIES]
+- **MANDATORY:** CI/CD configurations MUST enforce architecture, security, and change-discipline rules as blocking gates.
+- **MANDATORY:** AI agents (including `@devops`, `@code-reviewer`) MUST:
+  - Refuse to configure CI pipelines that skip or downgrade architecture/security/change-discipline checks.
+  - Refuse to mark architecture/security/change-discipline violations as "warnings" or "advisory" for Tier M/H services.
+  - Only proceed with non-blocking CI configurations if a valid `RISK_OVERRIDE` block is explicitly provided by the user, following `.cursor/rules/3G-risk-overrides.mdc`.
+
 [VERIFICATION]
 - Provide local pipeline command (e.g., `npm run lint && npm test`, `go test ./...`, `cargo fmt -- --check && cargo clippy && cargo test`) and reference CI workflow path.
+
+**See also:**
+- `.cursor/rules/36-architecture.mdc` — Architecture rules enforced in CI
+- `.cursor/rules/30-security.mdc` — Security rules enforced in CI
+- `.cursor/rules/31-testing.mdc` — Testing rules enforced in CI
+- `.cursor/rules/23-change-control.mdc` — Change-discipline rules enforced in CI
+- `.cursor/rules/3G-risk-overrides.mdc` — Risk override protocol
 
 [ARCHITECTURE CHECK EXAMPLES]
 

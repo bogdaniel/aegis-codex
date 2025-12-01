@@ -45,6 +45,28 @@ globs:
   - Test doubles should be in test files or `tests/fixtures/` directories.
   - Prefer interface-based mocks over class-based mocks for better testability.
 
+[CHANGE-DISCIPLINE INTEGRATION]
+- **MANDATORY:** For backend/domain code, testing rules are binding and integrated with change-discipline:
+  - New behavior MUST come with tests covering happy path, at least one failure path, and at least one edge case (where applicable).
+  - Bugfixes MUST follow `.cursor/rules/45-bugfix-protocol.mdc` (reproduce, confirm, fix, guard with regression tests).
+  - Tests MUST NOT be deleted or weakened without justification and spec/ADR updates per `.cursor/rules/46-regression-discipline.mdc`.
+  - Changes MUST respect diff scope per `.cursor/rules/47-diff-discipline.mdc`; test changes must align with declared change scope.
+- **MANDATORY:** AI agents MUST treat missing tests for new behavior as a **blocking issue**; they MUST refuse to implement behavior changes without corresponding tests unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicitly provided.
+
+[AGENT BEHAVIOR & REFUSAL DUTIES]
+- **MANDATORY:** AI agents (including `@implementer`, `@test-engineer`, `@code-reviewer`) MUST:
+  - Refuse to implement bugfixes without regression tests per `.cursor/rules/45-bugfix-protocol.mdc`.
+  - Refuse to delete or weaken tests without going through `.cursor/rules/23-change-control.mdc` and `.cursor/rules/46-regression-discipline.mdc`.
+  - Refuse to implement new behavior without tests covering the behavior.
+  - Only proceed with test violations if a valid `RISK_OVERRIDE` block is explicitly provided by the user, following `.cursor/rules/3G-risk-overrides.mdc`.
+
 [VERIFICATION]
 - Provide exact commands to run tests per stack (e.g., `npm test -- --runInBand`, `pytest -q`, `go test ./...`, `cargo test`, `phpunit`) and include lint/type where relevant.
 - **Policy Validation:** Agent behavior MUST comply with policy scenarios in `tests/policies/`. If policy validation fails, tighten relevant `.cursor/rules/*.mdc` files (see `tests/policies/README.md`).
+
+**See also:**
+- `.cursor/rules/23-change-control.mdc` — Change classification and contracts
+- `.cursor/rules/45-bugfix-protocol.mdc` — Bugfix protocol (reproduce, test, fix, guard)
+- `.cursor/rules/46-regression-discipline.mdc` — Tests as contracts
+- `.cursor/rules/47-diff-discipline.mdc` — Diff scope and blast radius
+- `.cursor/rules/3G-risk-overrides.mdc` — Risk override protocol

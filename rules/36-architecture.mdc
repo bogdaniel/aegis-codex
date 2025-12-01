@@ -336,6 +336,16 @@ globs:
 - Cross-context database access or entity reuse.
 - Tier H services that depend heavily on frameworks or bypass ports/adapters.
 
+[AGENT BEHAVIOR & REFUSAL DUTIES]
+- **MANDATORY:** For backend code, these architecture constraints are **non-negotiable** unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is used.
+- **MANDATORY:** AI agents (including `@architect`, `@implementer`, `@code-reviewer`, `@refactorer`) MUST:
+  - Refuse designs/code that violate Clean Architecture layering (Domain/Application importing frameworks, Infrastructure, or Interface).
+  - Refuse designs/code that violate DDD boundaries (missing bounded contexts, shared DB tables, direct cross-context domain/entity sharing).
+  - Refuse designs/code that violate Hexagonal ports/adapters (Domain/Application depending on concrete implementations instead of interfaces).
+  - Propose compliant alternatives that maintain architecture guarantees.
+  - Only proceed with architecture violations if a valid `RISK_OVERRIDE` block is explicitly provided by the user, following `.cursor/rules/3G-risk-overrides.mdc`.
+- **MANDATORY:** These rules take precedence over style, ergonomics, or short-term convenience per `.cursor/rules/10-global.mdc`.
+
 **See also:**
 - `.cursor/rules/45-solid-principles.mdc` — SOLID principles (SRP, DIP violations related to architecture)
 - `.cursor/rules/3A-anti-patterns.mdc` — Anti-patterns catalog (architecture anti-patterns)

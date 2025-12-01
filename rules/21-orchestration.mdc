@@ -372,6 +372,22 @@ Output: Comprehensive validation report
 - `docs/multi-agent/parallel-semantics.md` — Parallel execution semantics
 - `docs/multi-agent/conditional-semantics.md` — Conditional workflow semantics
 
+[WORKFLOW CHECKS]
+- **MANDATORY:** Multi-agent workflows for backend changes MUST include appropriate spine rule checks:
+  - **Architecture checks:** Ensure `@architect` validates against `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc` (bounded contexts, layering, trust tiers, domain purity).
+  - **Security checks:** For Tier H/M contexts or security-sensitive changes, ensure `@security-auditor` validates against `.cursor/rules/30-security.mdc` and `.cursor/rules/30-threat-modeling.mdc`.
+  - **Change-discipline checks:** Ensure testing agents (`@test-engineer`) and review agents (`@code-reviewer`, `@supervisor`) validate against:
+    - `.cursor/rules/23-change-control.mdc` (change classification, ADR requirements)
+    - `.cursor/rules/45-bugfix-protocol.mdc` (regression tests for bugfixes)
+    - `.cursor/rules/46-regression-discipline.mdc` (tests as contracts)
+    - `.cursor/rules/47-diff-discipline.mdc` (diff scope)
+    - `.cursor/rules/48-doc-sync.mdc` (spec/doc updates)
+  - **Config/flags/API lifecycle checks:** For changes affecting configuration, feature flags, or APIs, ensure validation against:
+    - `.cursor/rules/3E-config-environments.mdc` (config sources, secrets, environment parity)
+    - `.cursor/rules/3F-feature-flags-rollouts.mdc` (flag design, rollout/rollback strategies)
+    - `.cursor/rules/35-api-lifecycle.mdc` (API versioning, backward compatibility, deprecation)
+- **MANDATORY:** `@supervisor` MUST validate that all relevant spine rules are checked before marking a workflow as "approved" or "complete".
+
 [CONFLICT RESOLUTION]
 - Hierarchy:
   - Orchestration MUST respect the global rule hierarchy defined in `.cursor/rules/10-global.mdc`:
@@ -387,6 +403,7 @@ Output: Comprehensive validation report
   - If `@supervisor` marks an issue as blocking, the orchestrator and other agents MUST:
     - Either adjust the plan to a compliant alternative, or
     - Require the user to supply an explicit `RISK_OVERRIDE` block (as defined in `.cursor/rules/3G-risk-overrides.mdc`) before proceeding with a non-compliant path.
+  - **MANDATORY:** If `@supervisor` deems a proposal non-compliant with core rules, the workflow MUST NOT proceed as "approved" unless a risk override is explicitly invoked per `.cursor/rules/3G-risk-overrides.mdc`. Other agents MUST NOT attempt to override `@supervisor`'s blocking decisions.
 - User overrides:
   - User-provided risk overrides MAY relax specific rules for a limited time and scope, but:
     - Orchestration MUST still minimize blast radius (`.cursor/rules/47-diff-discipline.mdc`) and respect rollout/rollback and observability requirements (`.cursor/rules/3F-feature-flags-rollouts.mdc`, `.cursor/rules/32-observability.mdc`, `.cursor/rules/3D-operations.mdc`).

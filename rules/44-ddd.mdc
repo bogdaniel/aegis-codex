@@ -81,6 +81,17 @@ globs:
 - **FORBIDDEN:** Domain depending on ORM/framework types → **REJECT**, Domain must be framework-free.
 - **FORBIDDEN:** Missing context map + trust tiers for non-trivial systems → **REJECT**, document context map and trust tiers.
 
+[AGENT BEHAVIOR & REFUSAL DUTIES]
+- **MANDATORY:** For serious systems (non-Tier-S bounded contexts), these DDD constraints are **non-negotiable** unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is used.
+- **MANDATORY:** AI agents (including `@architect`, `@implementer`, `@code-reviewer`) MUST:
+  - Refuse designs/code that violate bounded context boundaries (shared DB schemas/tables, direct cross-context domain/entity sharing).
+  - Refuse designs/code that violate domain purity (ORM/framework types in Domain layer, infrastructure concerns in domain logic).
+  - Refuse designs/code that bypass aggregates and invariants (anemic domain models, business logic in services/controllers).
+  - Refuse designs/code that ignore context mapping and trust tiers (missing context map, missing trust tier assignments).
+  - Propose compliant alternatives that maintain DDD guarantees.
+  - Only proceed with DDD violations if a valid `RISK_OVERRIDE` block is explicitly provided by the user, following `.cursor/rules/3G-risk-overrides.mdc`.
+- **MANDATORY:** These rules take precedence over style, ergonomics, or short-term convenience per `.cursor/rules/10-global.mdc`.
+
 [VERIFICATION]
 - For domain-heavy changes, ensure:
   - Types and modules reflect domain language and bounded contexts.
@@ -92,6 +103,7 @@ globs:
 - `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns (BINDING)
 - `.cursor/rules/45-solid-principles.mdc` — SOLID principles integrated with DDD
 - `.cursor/rules/3A-anti-patterns.mdc` — Anti-patterns catalog (anemic domain, god aggregates, etc.)
+- `.cursor/rules/3G-risk-overrides.mdc` — Risk override protocol for exceptional DDD exceptions
 - `test/example-app/` — Canonical TypeScript Clean Architecture + DDD demo (IdentityContext, OrdersContext)
 - `examples/refactoring/clean-architecture/` — Before/after examples for DDD violations
 - `tests/policies/` — Policy scenarios validating DDD enforcement
