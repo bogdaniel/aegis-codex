@@ -92,3 +92,11 @@ globs:
 - `.cursor/rules/50-lang-javascript.mdc` — JavaScript standards (form validation, state management)
 - `examples/before-after/` — Security validation examples (HTML escaping, XSS prevention)
 - `test/example-app/` — Canonical Clean Architecture demo (if HTML templates exist)
+
+[RELATION TO ARCHITECTURE]
+- HTML templates and markup:
+  - Are not required to implement Clean Architecture/DDD layering themselves, but MUST NOT undermine backend architecture by embedding domain/business logic or direct data access into templates.
+  - MUST treat backend/domain boundaries defined in `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc` as constraints: domain logic lives in backend Domain/Application, not in inline scripts.
+- HTML code MUST:
+  - Follow accessibility standards in `.cursor/rules/39-accessibility.mdc`.
+  - Respect security and data-handling rules in `.cursor/rules/30-security.mdc` and `.cursor/rules/3B-data-persistence.mdc` (e.g., no leaking secrets, safe escaping to prevent XSS).

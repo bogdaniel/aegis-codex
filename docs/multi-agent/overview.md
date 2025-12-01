@@ -186,21 +186,37 @@ Context Blocks are the canonical format for passing information between agents:
 - Delegate to @security-auditor for security review
 ```
 
-## Integration with 7-Chat Foundation
+## Integration with Core Aegis Rules
 
-Multi-agent workflows enforce all Phase 0 rules:
+Multi-agent workflows enforce the core Aegis rule spine:
 
-- **36-architecture.mdc** — Clean Architecture, Hexagonal Architecture, DDD, bounded contexts, trust tiers
-- **44-ddd.mdc** — Domain purity, aggregates, value objects, domain events
-- **50-lang-*.mdc** — Path aliases, framework-free Domain/Application, thin controllers
-- **30-security.mdc** — OWASP Top 10, security best practices
-- **31-testing.mdc** — Test coverage, determinism, hermetic tests
-- **34-ci.mdc** — CI/CD gates, architecture checks
+- **Architecture & DDD**
+  - `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD, bounded contexts, trust tiers
+  - `.cursor/rules/44-ddd.mdc` — Domain purity, aggregates, value objects, domain events
+  - `.cursor/rules/38-anti-corruption-events.mdc` — ACLs and event contracts
+- **Security & Threat Modeling**
+  - `.cursor/rules/30-security.mdc` — OWASP Top 10, security best practices
+  - `.cursor/rules/30-threat-modeling.mdc` — Threat modeling for Tier H/M contexts
+- **Change Discipline & Contracts**
+  - `.cursor/rules/23-change-control.mdc` — Change classification and contracts
+  - `.cursor/rules/45-bugfix-protocol.mdc` — Bugfix protocol (reproduce, test, fix, guard)
+  - `.cursor/rules/46-regression-discipline.mdc` — Tests-as-contracts discipline
+  - `.cursor/rules/47-diff-discipline.mdc` — Diff scope & blast-radius discipline
+  - `.cursor/rules/48-doc-sync.mdc` — Spec/doc sync discipline
+  - `.cursor/rules/35-api-lifecycle.mdc` — API lifecycle, compatibility, deprecation
+- **Data, Config, Flags, Ops**
+  - `.cursor/rules/3B-data-persistence.mdc` — Data ownership & persistence
+  - `.cursor/rules/3E-config-environments.mdc` — Config & environments
+  - `.cursor/rules/3F-feature-flags-rollouts.mdc` — Feature flags & rollouts
+  - `.cursor/rules/32-observability.mdc`, `.cursor/rules/3D-operations.mdc` — Observability & operations
+- **Language & Governance**
+  - `.cursor/rules/50-lang-*.mdc` — Language rules (path aliases, framework-free Domain/Application, thin controllers, etc.)
+  - `.cursor/rules/00-persona.mdc`, `.cursor/rules/10-global.mdc`, `.cursor/rules/11-meta-map.mdc`, `.cursor/rules/3G-risk-overrides.mdc` — Persona, global invariants, meta-map, and risk overrides
 
 **Enforcement:**
-- Orchestrator MUST enforce Phase 0 rules
-- Supervisor validates all outputs against Phase 0 rules
-- All agents enforce Phase 0 rules in their outputs
+- Orchestrator MUST enforce these core rules when planning and delegating work.
+- Supervisor validates all outputs against these rules and treats violations as blocking unless a valid risk override is in effect per `.cursor/rules/3G-risk-overrides.mdc`.
+- All agents enforce their respective slices of these rules in their outputs (see `.cursor/rules/20-agents.mdc`).
 
 ## Examples
 

@@ -88,25 +88,25 @@ All configs follow this structure:
 }
 ```
 
-## Mandatory Rules
+## Mandatory Spine (Backend/Server-Side Profiles)
 
-The following rules are **always included** regardless of config (mandatory):
+For backend/server-side profiles, the following rules are **always included** regardless of config:
 
-- `00-persona.mdc`
-- `10-global.mdc`
-- `20-agents.mdc`
-- `21-orchestration.mdc`
-- `30-security.mdc`
-- `31-testing.mdc`
-- `32-observability.mdc`
-- `34-ci.mdc`
-- `36-architecture.mdc`
-- `37-code-structure.mdc`
-- `38-anti-corruption-events.mdc`
-- `38-compliance.mdc`
-- `44-ddd.mdc`
-- `45-solid-principles.mdc`
-- `3A-anti-patterns.mdc`
+- `00-persona.mdc`, `10-global.mdc`, `11-meta-map.mdc`
+- `20-agents.mdc`, `21-orchestration.mdc`, `22-ai-assistants.mdc`
+- `30-security.mdc`, `30-threat-modeling.mdc`
+- `31-testing.mdc`, `32-observability.mdc`, `34-ci.mdc`
+- `36-architecture.mdc`, `37-code-structure.mdc`
+- `38-anti-corruption-events.mdc`, `38-compliance.mdc`
+- `44-ddd.mdc`, `45-solid-principles.mdc`, `3A-anti-patterns.mdc`
+- `23-change-control.mdc`
+- `45-bugfix-protocol.mdc`, `46-regression-discipline.mdc`, `47-diff-discipline.mdc`, `48-doc-sync.mdc`
+- `35-api-lifecycle.mdc`
+- `3B-data-persistence.mdc`
+- `3E-config-environments.mdc`
+- `3F-feature-flags-rollouts.mdc`
+- `3D-operations.mdc`
+- `3G-risk-overrides.mdc`
 
 ## Dependencies
 

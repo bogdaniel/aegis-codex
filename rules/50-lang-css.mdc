@@ -99,3 +99,11 @@ globs:
 - `.cursor/rules/50-lang-html.mdc` — HTML standards (semantic structure, landmarks)
 - `docs/architecture/design-principles.md` — Design principles (SoC, cohesion/coupling)
 - `test/example-app/` — Canonical Clean Architecture demo (if CSS exists)
+
+[RELATION TO ARCHITECTURE]
+- CSS:
+  - Is not responsible for enforcing Clean/Hex/DDD layering, but MUST support architectural boundaries by keeping concerns presentation-only.
+  - MUST NOT encode backend/domain behavior or security decisions in CSS (e.g., hiding elements instead of enforcing access control).
+- CSS code MUST:
+  - Work in concert with HTML semantics and accessibility rules (`.cursor/rules/50-lang-html.mdc`, `.cursor/rules/39-accessibility.mdc`).
+  - Respect security/data-handling rules (`.cursor/rules/30-security.mdc`, `.cursor/rules/3B-data-persistence.mdc`) by not leaking sensitive information via content, attributes, or debug-only styling.

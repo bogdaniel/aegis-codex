@@ -7,7 +7,7 @@ This document provides real-world test scenarios for validating agent behavior a
 1. Pick a scenario below
 2. Run the described prompt in Cursor
 3. Compare agent output to the acceptance criteria
-4. If outputs drift, tighten the relevant `.cursor/rules/*.mdc` file and regenerate `AGENTS.md`
+4. If outputs drift, tighten the relevant `rules/*.mdc` file (treating existing MUST/MUST NOT clauses as lower bounds), regenerate `rules/*.mdc` as needed, and re-export to `.cursor/rules/` + `AGENTS.md` via the rule builder
 
 ---
 
@@ -235,6 +235,43 @@ public function update(Request $request, $id) {
 - ✅ Security standards met
 - ✅ Tests present
 - ✅ Final review passes
+
+---
+
+### Scenario 10: Backend Change with Flags, Lifecycle & Doc-Sync (Multi-Agent)
+
+**Workflow:**
+- A small but real change to a Tier M backend service:
+  - Adjusts a public API response (adds an optional field),
+  - Tightens validation on an input parameter,
+  - Fixes a subtle bug found in production,
+  - Rolls out behind a feature flag with a defined rollback path.
+- Involves at least:
+  - `@orchestrator` to plan and coordinate,
+  - `@architect` to apply `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, `.cursor/rules/23-change-control.mdc`, `.cursor/rules/3E-config-environments.mdc`, `.cursor/rules/3F-feature-flags-rollouts.mdc`, `.cursor/rules/35-api-lifecycle.mdc`,
+  - `@test-engineer` to add regression and behavior tests (`.cursor/rules/45-bugfix-protocol.mdc`, `.cursor/rules/46-regression-discipline.mdc`, `.cursor/rules/31-testing.mdc`),
+  - `@security-auditor` if validation/security changes are involved (`.cursor/rules/30-security.mdc`),
+  - `@code-reviewer` and `@supervisor` to enforce change-discipline and governance (`.cursor/rules/23-change-control.mdc`, `.cursor/rules/47-diff-discipline.mdc`, `.cursor/rules/48-doc-sync.mdc`, `.cursor/rules/3G-risk-overrides.mdc`).
+
+**Expected Output:**
+- A multi-step plan from `@orchestrator` that:
+  - Classifies the change (bugfix + feature, possibly non-breaking API extension),
+  - Includes architecture, testing, rollout/rollback, and doc-update steps.
+- `@architect` output that:
+  - Confirms bounded context & trust tier,
+  - Specifies config keys and feature flags,
+  - Describes API lifecycle impact and needed ADR/docs.
+- `@test-engineer` output with regression tests and behavior tests for both flag-on and flag-off.
+- `@security-auditor` output (if applicable) mapping validation changes to `.cursor/rules/30-security.mdc`.
+- `@code-reviewer` output that blocks if any change-discipline rules (23, 45–48, 35) or architecture/security rules are violated.
+- `@supervisor` output that explicitly checks architecture, security, testing, change-control, config/flags, and doc-sync before marking the workflow as passing.
+
+**Acceptance Criteria:**
+- ✅ Bugfix is not applied without regression tests (45, 46).
+- ✅ API behavior changes are treated as contract changes and go through `.cursor/rules/35-api-lifecycle.mdc` and `.cursor/rules/48-doc-sync.mdc`.
+- ✅ Config/env and feature flags follow `.cursor/rules/3E-config-environments.mdc` and `.cursor/rules/3F-feature-flags-rollouts.mdc`.
+- ✅ Diff scope is controlled and documented (`.cursor/rules/47-diff-discipline.mdc`).
+- ✅ Any suggestion to bypass rules requires an explicit `RISK_OVERRIDE` block per `.cursor/rules/3G-risk-overrides.mdc`, and agents still propose safer alternatives.
 
 ---
 

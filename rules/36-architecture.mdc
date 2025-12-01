@@ -13,6 +13,18 @@ globs:
 
 [ARCHITECTURE — CLEAN + HEXAGONAL + DDD + MODULAR CONTEXTS]
 
+[SCOPE]
+- **MANDATORY:** This rule applies primarily to backend and domain-heavy code:
+  - Services, APIs, workers, and CLI tools that implement business logic and cross-context contracts.
+  - Bounded contexts and their Domain/Application/Interface/Infrastructure layers as described below.
+- **MANDATORY:** Pure presentation layers (static HTML/CSS, view templates, thin frontend shells) are governed primarily by:
+  - `.cursor/rules/50-lang-html.mdc`
+  - `.cursor/rules/50-lang-css.mdc`
+  - `.cursor/rules/39-accessibility.mdc`
+- **MANDATORY:** Even for frontend/markup:
+  - Code MUST NOT violate backend architecture boundaries (e.g., embedding domain logic in inline scripts that bypass ports/adapters).
+  - All code MUST still respect security and data-handling rules in `.cursor/rules/30-security.mdc` and `.cursor/rules/3B-data-persistence.mdc`.
+
 [CORE MANDATE]
 - All non-trivial backend codebases must follow:
   - **Clean Architecture** layering,

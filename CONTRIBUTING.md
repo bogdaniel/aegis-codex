@@ -1,9 +1,10 @@
 # Contributing
 
 ## Edit flow
-- Edit rules in `.cursor/rules/*.mdc` (persona/global/agents in 00/10/20, standards in 30-38, methodologies in 40-44, languages in 50-lang-*).
-- If you change rules, regenerate `AGENTS.md` from the rules with: `node scripts/build-agents-doc.js` (add `--langs` to filter languages).
-- Keep human docs (`docs/*`) aligned with rule content; update examples/prompts if behavior changes.
+- Edit rules in `rules/*.mdc` (persona/global/agents in 00/10/11/20/21, topic standards in 23/30–3F, methodologies in 40–44, language rules in 50-lang-*).
+- Use the rule builder to export rules into `.cursor/rules/*.mdc` and regenerate `AGENTS.md` after changes:
+  - `node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules --generate-agents`
+- Keep human docs (`docs/*`, `README.md`, `AGENTS.md`) aligned with rule content; update examples/prompts if behavior or guarantees change.
 
 ## Rule style
 - Use bracketed sections `[SECTION]`; keep bullets short and enforceable.

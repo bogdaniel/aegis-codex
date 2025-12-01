@@ -144,24 +144,43 @@ node scripts/build-agents-doc.js --config .aegis-rules.json --both --dry-run
 
 ## What Gets Included
 
-### Always Included (Mandatory Rules)
+### Always Included (Mandatory Spine for Backend/Server-Side Profiles)
 
-These are **always** included regardless of your config:
-- `00-persona.mdc` - Persona bootstrap
-- `10-global.mdc` - Global invariants
-- `20-agents.mdc` - Agent roles
-- `21-orchestration.mdc` - Multi-agent orchestration
-- `30-security.mdc` - Security standards
-- `31-testing.mdc` - Testing standards
-- `32-observability.mdc` - Observability standards
-- `34-ci.mdc` - CI/CD standards
-- `36-architecture.mdc` - Architecture (Clean/Hex/DDD)
-- `37-code-structure.mdc` - Code structure
-- `38-anti-corruption-events.mdc` - ACL & events
-- `38-compliance.mdc` - Compliance checklist
-- `44-ddd.mdc` - Domain-Driven Design
-- `45-solid-principles.mdc` - SOLID principles
-- `3A-anti-patterns.mdc` - Anti-patterns catalog
+These rules are **always** included for backend/server-side profiles, regardless of your config:
+
+- Persona & Governance:
+  - `00-persona.mdc` - Persona bootstrap
+  - `10-global.mdc` - Global invariants
+  - `11-meta-map.mdc` - Meta-map of rule groups and precedence
+  - `20-agents.mdc` - Agent roles
+  - `21-orchestration.mdc` - Multi-agent orchestration
+  - `22-ai-assistants.mdc` - AI/code-assistant governance
+  - `3G-risk-overrides.mdc` - Risk override protocol
+- Security, Testing, Observability, CI/CD:
+  - `30-security.mdc`, `30-threat-modeling.mdc`
+  - `31-testing.mdc`
+  - `32-observability.mdc`
+  - `34-ci.mdc`
+- Architecture & DDD & Anti-corruption:
+  - `36-architecture.mdc` - Architecture (Clean/Hex/DDD)
+  - `37-code-structure.mdc` - Code structure
+  - `38-anti-corruption-events.mdc` - ACL & events
+  - `38-compliance.mdc` - Compliance checklist
+  - `44-ddd.mdc` - Domain-Driven Design
+  - `45-solid-principles.mdc` - SOLID principles
+  - `3A-anti-patterns.mdc` - Anti-patterns catalog
+- Change Discipline & Contracts:
+  - `23-change-control.mdc` - Change classification & contracts
+  - `45-bugfix-protocol.mdc` - Bugfix protocol
+  - `46-regression-discipline.mdc` - Tests-as-contracts discipline
+  - `47-diff-discipline.mdc` - Diff scope & blast-radius discipline
+  - `48-doc-sync.mdc` - Spec/doc sync discipline
+  - `35-api-lifecycle.mdc` - API lifecycle, compatibility, deprecation
+- Data, Config, Flags, Ops:
+  - `3B-data-persistence.mdc` - Data & persistence
+  - `3E-config-environments.mdc` - Config & environments
+  - `3F-feature-flags-rollouts.mdc` - Feature flags & rollouts
+  - `3D-operations.mdc` - Operations & runbooks
 
 ### Optional Rules (Selected by Config)
 

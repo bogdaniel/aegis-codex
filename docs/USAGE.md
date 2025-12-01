@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide explains how to use Aegis Codex `.cursor/rules` and specialized agents in your daily development workflow.
+This guide explains how to use Aegis Codex rules (`rules/*.mdc` exported to `.cursor/rules/*.mdc`) and specialized agents in your daily development workflow.
 
 **Two Audiences:**
 - **Developers:** How to use rules and agents in daily work
@@ -177,22 +177,33 @@ node scripts/build-agents-doc.js --interactive --both
 
 ### Understanding Rules
 
-**Rule File Structure:**
+**Rule File Structure (in `rules/*.mdc`):**
 - `00-persona.mdc` — Core persona and response modes
 - `10-global.mdc` — Global invariants and output contract
-- `20-agents.mdc` — Agent definitions
-- `30-38*.mdc` — Topic standards (security, testing, observability, performance, CI, API, architecture)
+- `11-meta-map.mdc` — Meta‑map of rule groups and precedence
+- `20-agents.mdc` / `21-orchestration.mdc` / `22-ai-assistants.mdc` — Agent definitions, orchestration, AI governance
+- `23-change-control.mdc` — Change classification and contracts
+- `30-3F*.mdc` — Topic standards (security, threat modeling, testing, observability, performance, CI/CD, API, architecture, code-structure, anti‑corruption, compliance, accessibility, data/persistence, config/environments, feature flags/rollouts, operations)
+- `35-api-lifecycle.mdc` — API lifecycle, compatibility, and deprecation
 - `40-44*.mdc` — Methodologies (ATDD, BDD, TDD, FDD, DDD)
+- `45-solid-principles.mdc` — SOLID principles
+- `45-bugfix-protocol.mdc`, `46-regression-discipline.mdc`, `47-diff-discipline.mdc`, `48-doc-sync.mdc` — Bugfix, regression, diff-scope, and doc-sync discipline
+- `3G-risk-overrides.mdc` — Risk override protocol
 - `50-lang-*.mdc` — Language-specific standards
 - `patterns/` — Design pattern catalog
 
-**Rule Application:**
-- Rules with `alwaysApply: true` apply to all matching files (based on globs).
-- Rules with `alwaysApply: false` are available but not automatically enforced (e.g., design patterns).
+**Rule Application & Profiles:**
+- Each rule declares:
+  - `required: true|false` — whether it is part of the mandatory spine for typical profiles,
+  - `category` / `subcategory` — how it is grouped.
+- The Rule Builder reads `rules/*.mdc` and:
+  - Always includes the mandatory spine for backend/server-side profiles (see `rules/11-meta-map.mdc` and `RULE_BUILDER_PLAN.md`),
+  - Optionally includes additional topics/methodologies/patterns/languages based on your `.aegis-rules.json`.
+- Generated rules are written to `.cursor/rules/*.mdc` for Cursor and similar tools to load automatically.
 
 ## Multi-Agent Usage
 
-See `docs/multi-agent/overview.md` for comprehensive guide.
+See `docs/multi-agent/overview.md` for the comprehensive multi-agent and governance guide (roles, workflows, conflict resolution, and risk overrides).
 
 ### Quick Start
 
