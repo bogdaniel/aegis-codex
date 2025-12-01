@@ -60,6 +60,49 @@ globs:
   - Refuse to implement new behavior without tests covering the behavior.
   - Only proceed with test violations if a valid `RISK_OVERRIDE` block is explicitly provided by the user, following `.cursor/rules/3G-risk-overrides.mdc`.
 
+[DEFINITION OF DONE — TESTING REQUIREMENTS]
+- **MANDATORY:** For any backend/domain behavior change (new feature, bugfix, refactor that changes behavior) in non-Tier-S code:
+  - **Domain tests are REQUIRED for:**
+    - Value objects (VOs) with non-trivial invariants (validation, equality, business rules).
+    - Entities/aggregates with behavior or invariants (state transitions, business rules, aggregate boundaries).
+    - Domain events with non-trivial data (event structure, event data validation).
+  - **Application tests are REQUIRED for:**
+    - Use cases / application services / handlers that orchestrate behavior (happy path, failure paths, edge cases).
+  - **"Behavior change" includes:**
+    - New execution paths or workflows.
+    - Changed invariants or validation rules.
+    - Different side effects (e.g., events published, persistence operations, external calls).
+    - Modified business rules or domain logic.
+  - **Exceptions (MUST be explicitly documented):**
+    - Only allowed for clearly-marked Tier S scripts or pure presentation-only code (UI-only changes with no backend logic).
+    - For these exceptions, tests MAY be lighter, but not entirely absent.
+    - MUST be explicitly noted in the change description or ADR with justification.
+  - **Changes MUST NOT be considered complete if:**
+    - Domain behavior changed (VOs, entities, events) and only Application tests were added → **BLOCKER**, Domain tests required.
+    - Use cases changed but only Domain tests were added → **BLOCKER**, Application tests required.
+    - Tests cover only the happy path without at least one negative/failure path for non-trivial logic → **BLOCKER**, failure path tests required.
+    - Required tests are missing and no valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided → **BLOCKER**, cannot proceed.
+- **MANDATORY semantics:**
+  - "MANDATORY" in this file means:
+    - Agents MUST treat these requirements as **hard gating criteria**; they are not suggestions or best practices.
+    - Missing required tests MUST be reported explicitly and treated as a **blocking issue** that prevents completion.
+    - Agents MUST refuse to mark a change as "complete" or "done" when required tests are missing.
+    - Only valid risk overrides per `.cursor/rules/3G-risk-overrides.mdc` can bypass these requirements.
+
+[CHECKLIST — SELF-VERIFICATION BEFORE COMPLETION]
+- **MANDATORY:** Every implementation agent MUST verify the following before marking a change as "complete" or "done":
+  - [ ] **Domain tests:** Did any value object (VO) invariants change? If yes → VO tests updated/added.
+  - [ ] **Domain tests:** Did any entity/aggregate behavior change? If yes → entity tests updated/added.
+  - [ ] **Domain tests:** Did any domain event structure or data change? If yes → domain event tests updated/added.
+  - [ ] **Application tests:** Did any use case/application service behavior change? If yes → application tests updated/added.
+  - [ ] **Failure paths:** Is there at least one negative/failure path test for each non-trivial branch or validation?
+  - [ ] **Coverage:** Do tests clearly cover the bug/feature described in the change (happy path + at least one failure path)?
+  - [ ] **Exceptions:** If any required tests are missing, is there a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` with explicit justification?
+- **MANDATORY:** If any checklist item is not satisfied:
+  - Agents MUST NOT mark the change as complete.
+  - Agents MUST explicitly report which required tests are missing.
+  - Agents MUST either add the missing tests or document a valid risk override before proceeding.
+
 [VERIFICATION]
 - Provide exact commands to run tests per stack (e.g., `npm test -- --runInBand`, `pytest -q`, `go test ./...`, `cargo test`, `phpunit`) and include lint/type where relevant.
 - **Policy Validation:** Agent behavior MUST comply with policy scenarios in `tests/policies/`. If policy validation fails, tighten relevant `.cursor/rules/*.mdc` files (see `tests/policies/README.md`).

@@ -29,20 +29,30 @@ function parseFrontMatter(raw) {
 function parseYamlMetadata(yamlText) {
   const meta = {};
   const lines = yamlText.split(/\r?\n/);
+  let currentListKey = null;
 
-  for (const line of lines) {
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith("#")) continue;
 
-    // Parse key: value
-    const match = trimmed.match(/^([^:]+):\s*(.+)$/);
-    if (match) {
-      const key = match[1].trim();
-      let value = match[2].trim();
+    // Parse key: value (with or without value)
+    const keyMatch = trimmed.match(/^([^:]+):\s*(.*)$/);
+    if (keyMatch) {
+      const key = keyMatch[1].trim();
+      let value = keyMatch[2].trim();
+      
+      // If value is empty, this might be the start of a list
+      if (value === "") {
+        currentListKey = key;
+        meta[key] = [];
+        continue;
+      }
 
       // Ensure value is a string before string operations
       if (typeof value !== "string") {
         meta[key] = value;
+        currentListKey = null;
         continue;
       }
 
@@ -64,15 +74,31 @@ function parseYamlMetadata(yamlText) {
       }
 
       meta[key] = value;
-    } else if (trimmed.startsWith("-")) {
-      // Handle list items (for globs)
-      const itemMatch = trimmed.match(/^-\s*"(.+)"$/);
+      currentListKey = null;
+    } else if (trimmed.startsWith("-") && trimmed !== "---") {
+      // Handle list items (for globs, coreAgents, etc.)
+      // Skip lines that are just "---" (YAML frontmatter delimiter)
+      const itemMatch = trimmed.match(/^-\s*(.+)$/);
       if (itemMatch) {
-        if (!meta.globs) meta.globs = [];
-        meta.globs.push(itemMatch[1]);
+        let itemValue = itemMatch[1].trim();
+        // Remove quotes if present
+        if ((itemValue.startsWith('"') && itemValue.endsWith('"')) || (itemValue.startsWith("'") && itemValue.endsWith("'"))) {
+          itemValue = itemValue.slice(1, -1);
+        }
+        
+        // Use currentListKey if set, otherwise default to globs for backward compatibility
+        const listKey = currentListKey || "globs";
+        if (!meta[listKey]) meta[listKey] = [];
+        meta[listKey].push(itemValue);
       }
+    } else {
+      // If we see a non-list line, reset currentListKey
+      currentListKey = null;
     }
   }
+
+  // Clean up temporary tracking
+  delete meta._currentListKey;
 
   return meta;
 }

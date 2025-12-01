@@ -1,0 +1,40 @@
+{
+  "version": "1.0.0",
+  "optional": {
+    "topics": {
+      "performance": true,
+      "api": true,
+      "accessibility": true,
+      "observability-security": true
+    },
+    "methodologies": {
+      "atdd": true,
+      "bdd": true,
+      "tdd": true,
+      "fdd": true
+    },
+    "languages": {
+      "typescript": true,
+      "javascript": true,
+      "php": true,
+      "python": true,
+      "go": true,
+      "rust": true,
+      "java": true,
+      "csharp": true,
+      "html": true,
+      "css": true,
+      "gdscript": true
+    },
+    "patterns": {
+      "enabled": true,
+      "categories": {
+        "architectural-enterprise": true,
+        "behavioural": true,
+        "creational": true,
+        "structural": true
+      },
+      "specific": []
+    }
+  }
+}

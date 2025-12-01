@@ -44,6 +44,29 @@ function generateAgentsDoc(rules, sourceDir = ".cursor/rules") {
   );
   lines.push("");
 
+  // Extract core agents from 20-agents.mdc rule
+  const agentsRule = rules.find((r) => r.name.includes("20-agents.mdc"));
+  if (agentsRule && agentsRule.data && agentsRule.data.meta && agentsRule.data.meta.coreAgents) {
+    lines.push(`[CORE (MANDATORY) AGENTS]`);
+    lines.push("");
+    lines.push(`These agents are **non-optional** for serious backend work. They enforce the spine rules:`);
+    lines.push("");
+    lines.push(`- **Architecture** (\`.cursor/rules/36-architecture.mdc\`): Clean Architecture, Hexagonal, DDD, bounded contexts`);
+    lines.push(`- **Security** (\`.cursor/rules/30-security.mdc\`): OWASP Top 10, defense-in-depth, supply chain`);
+    lines.push(`- **Testing** (\`.cursor/rules/31-testing.mdc\`): Domain + Application tests, coverage, determinism`);
+    lines.push(`- **CI/CD** (\`.cursor/rules/34-ci.mdc\`): Architecture checks, supply chain, rollout safety`);
+    lines.push(`- **Change Discipline** (\`.cursor/rules/23-change-control.mdc\`, \`.cursor/rules/45-bugfix-protocol.mdc\`, etc.): Classification, regression tests, diff scope`);
+    lines.push(`- **Risk Overrides** (\`.cursor/rules/3G-risk-overrides.mdc\`): Explicit exceptions to core rules`);
+    lines.push("");
+    lines.push(`**Core Agents:**`);
+    for (const agent of agentsRule.data.meta.coreAgents) {
+      lines.push(`- ${agent} — Mandatory for backend/domain work`);
+    }
+    lines.push("");
+    lines.push(`**MANDATORY:** Multi-agent workflows MUST NOT skip or bypass these core agents for Tier M/H contexts. Missing core agent involvement is a blocking issue unless a valid risk override per \`.cursor/rules/3G-risk-overrides.mdc\` is explicitly provided.`);
+    lines.push("");
+  }
+
   // Group rules by category
   const groups = [
     {
