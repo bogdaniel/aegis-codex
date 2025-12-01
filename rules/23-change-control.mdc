@@ -33,6 +33,45 @@ globs:
   - **Non-breaking change:** Extensions that preserve existing behavior/contracts.
   - **Breaking change:** Changes behavior or contracts for existing consumers.
 
+### [CHANGE CATEGORIES & REQUIRED SAFEGUARDS]
+
+#### Bugfix
+- **Definition:** Corrects behavior that contradicts existing specs, domain rules, or tests without intentionally widening or narrowing the contract.
+- **MANDATORY:** Bugfixes MUST:
+  - Follow `.cursor/rules/45-bugfix-protocol.mdc` (Reproduce → Confirm → Fix → Guard).
+  - Introduce or strengthen at least one regression test that would have caught the bug (see `.cursor/rules/42-tdd.mdc`, `.cursor/rules/31-testing.mdc`).
+  - Preserve existing contracts unless explicitly reclassified as a breaking or clarifying change.
+  - Stay within a tight diff scope (`.cursor/rules/47-diff-discipline.mdc`), touching only necessary code, wiring, and tests.
+- **Docs/records:**
+  - For non-trivial bugs in Tier H/M contexts or cross-context contracts, you MUST update ADRs or incident/change records and, where the behavior clarification changes contracts, also update specs/docs per `.cursor/rules/48-doc-sync.mdc`.
+
+#### Feature
+- **Definition:** Adds new behavior or capabilities while preserving existing contracts (typically as non-breaking, additive changes).
+- **MANDATORY:** Feature changes MUST:
+  - Provide tests for happy path, at least one failure path, and at least one edge case where meaningful (`.cursor/rules/46-regression-discipline.mdc`, `.cursor/rules/31-testing.mdc`).
+  - Respect API lifecycle rules for public/cross-context contracts (`.cursor/rules/35-api-lifecycle.mdc`), preferring additive endpoints/fields over breaking changes.
+  - Use configuration (`.cursor/rules/3E-config-environments.mdc`) and feature flags/rollouts (`.cursor/rules/3F-feature-flags-rollouts.mdc`) for risky changes, especially in Tier H/M contexts.
+- **Docs/records:**
+  - MUST update relevant API docs, module READMEs, and ADRs where responsibilities or public surfaces expand (`.cursor/rules/48-doc-sync.mdc`).
+
+#### Refactor
+- **Definition:** Internal structural change that preserves observable behavior and contracts.
+- **MANDATORY:** Refactors MUST:
+  - Keep all existing relevant tests green (no change to observable behavior).
+  - Respect architecture and DDD boundaries (`.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`) and MUST improve, not degrade, compliance (`.cursor/rules/3A-anti-patterns.mdc`).
+  - Avoid mixing in new features or contract changes; if those are necessary, they MUST be classified separately as Feature or Breaking change and documented as such.
+- **Docs/records:**
+  - MAY update internal docs/comments; ADRs are only needed if refactor materially alters design decisions (e.g., aggregate boundaries, context layout).
+
+#### Experiment
+- **Definition:** Temporary, typically flag-guarded behavior used for learning or validation (e.g., A/B tests, dark launches) without immediately committing to a stable contract.
+- **MANDATORY:** Experiments MUST:
+  - Be guarded by clearly defined flags and rollout plans (`.cursor/rules/3F-feature-flags-rollouts.mdc`).
+  - Include tests for both flag-on and flag-off behaviors where these impact correctness or safety.
+  - Have an explicit sunset/cleanup plan; "permanent experiments" are forbidden — they must either graduate to Non-breaking/Breaking change with updated specs or be removed.
+- **Docs/records:**
+  - MUST record the experiment, rationale, and metrics in ADRs or experiment logs and MUST ensure that external-facing documentation does not overstate experimental behavior as stable unless and until it is promoted (`.cursor/rules/48-doc-sync.mdc`).
+
 ### [BASE RULES]
 
 #### Stable Code Governance

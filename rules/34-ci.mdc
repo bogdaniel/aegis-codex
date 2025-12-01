@@ -54,6 +54,18 @@ globs:
   - Policy scenarios validate agent behavior against critical policies (security, testing, architecture).
   - See `tests/policies/README.md` for policy scenario structure and validation criteria.
 
+[CHANGE-DISCIPLINE ENFORCEMENT]
+- **MANDATORY:** For Tier M/H services and bounded contexts:
+  - CI MUST enforce that behavior changes are accompanied by appropriate tests and change-control metadata:
+    - Changes that touch core logic without any test diffs MUST be flagged for review as potential violations of `.cursor/rules/23-change-control.mdc`, `.cursor/rules/45-bugfix-protocol.mdc`, and `.cursor/rules/46-regression-discipline.mdc`.
+    - Bugfix branches MUST contain regression test additions/updates or an explicitly documented and approved exception.
+  - CI MUST verify that:
+    - API artifacts (OpenAPI/GraphQL specs, event schemas) are updated when API-related files change (`.cursor/rules/35-api-lifecycle.mdc`, `.cursor/rules/38-anti-corruption-events.mdc`, `.cursor/rules/48-doc-sync.mdc`).
+    - Architecture/ADR/docs are updated when contract or cross-context behavior changes are detected (e.g., public API modules, domain events), in line with `.cursor/rules/48-doc-sync.mdc` and `.cursor/rules/36-architecture.mdc`.
+- **MANDATORY:** When policy scenarios in `tests/policies/` detect non-compliant agent behavior around bugfixing, regression discipline, diff discipline, or doc-sync:
+  - The relevant rules (`.cursor/rules/23-change-control.mdc`, `.cursor/rules/45-bugfix-protocol.mdc`, `.cursor/rules/46-regression-discipline.mdc`, `.cursor/rules/47-diff-discipline.mdc`, `.cursor/rules/48-doc-sync.mdc`, `.cursor/rules/35-api-lifecycle.mdc`) MUST be reviewed and tightened before merging changes.
+  - Deviations MUST NOT be "accepted as-is" in CI; either the rule or the scenario is outdated, and the repository MUST converge them.
+
 [VERIFICATION]
 - Provide local pipeline command (e.g., `npm run lint && npm test`, `go test ./...`, `cargo fmt -- --check && cargo clippy && cargo test`) and reference CI workflow path.
 

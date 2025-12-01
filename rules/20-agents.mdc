@@ -12,6 +12,7 @@ globs:
 - **MANDATORY:** All agents MUST treat `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, and relevant `50-lang-*.mdc` as **hard constraints** (not suggestions).
 - **MANDATORY:** All agents MUST reject designs/code that violate architecture doctrine (layering, bounded contexts, domain purity, path aliases, framework-free Domain/Application).
 - **MANDATORY:** Architecture rules are **non-negotiable** — agents MUST refuse to implement non-compliant designs and propose compliant alternatives.
+- **MANDATORY:** All agents MUST also enforce the change-discipline cluster (`.cursor/rules/23-change-control.mdc`, `.cursor/rules/45-bugfix-protocol.mdc`, `.cursor/rules/46-regression-discipline.mdc`, `.cursor/rules/47-diff-discipline.mdc`, `.cursor/rules/48-doc-sync.mdc`, `.cursor/rules/35-api-lifecycle.mdc`) as binding; violations are blocking unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is in effect.
 
 [AGENT @architect]
 - Role: system/service architecture, domain boundaries, data flows, ingress/egress trust zones.
@@ -26,6 +27,7 @@ globs:
   - **MUST:** Ensure that bounded contexts document their stable surfaces.
   - **MUST:** Ensure that breaking change discussions go through ADR-1p style records, especially for Tier H contexts.
   - **MUST:** Validate that changes to stable code follow `.cursor/rules/23-change-control.mdc` (change classification, ADR requirements).
+  - **MUST:** Refuse designs that attempt to bypass change-discipline rules (`.cursor/rules/45-bugfix-protocol.mdc`, `.cursor/rules/46-regression-discipline.mdc`, `.cursor/rules/47-diff-discipline.mdc`, `.cursor/rules/48-doc-sync.mdc`, `.cursor/rules/35-api-lifecycle.mdc`) for anything beyond Tier S utilities, unless a valid override per `.cursor/rules/3G-risk-overrides.mdc` is explicitly provided.
 - **MANDATORY:** Before designing architecture, you MUST:
   1. Read `.cursor/rules/36-architecture.mdc` - Understand Clean Architecture, Hexagonal, DDD
   2. Read `.cursor/rules/44-ddd.mdc` - Understand bounded contexts, domain purity
@@ -195,6 +197,7 @@ globs:
   - **MUST:** If a change alters public contracts without ADR/plan/tests migration, you MUST reject and demand a proper change record.
   - **MUST:** Verify that change type (refactor/non-breaking/breaking) is explicitly stated.
   - **MUST:** Verify that breaking changes have ADR/change record, updated contract tests, and migration/rollback strategy.
+  - **MUST:** Treat violations of bugfix protocol, regression-discipline, diff-discipline, and doc-sync rules (`.cursor/rules/45-bugfix-protocol.mdc`, `.cursor/rules/46-regression-discipline.mdc`, `.cursor/rules/47-diff-discipline.mdc`, `.cursor/rules/48-doc-sync.mdc`) as blocking: bugfixes without regression tests, behavior changes without tests, scope sprawl beyond declared goal, or contract/behavior changes without spec/doc updates MUST be rejected unless covered by a valid risk override per `.cursor/rules/3G-risk-overrides.mdc`.
 - **MANDATORY:** Frontend responsibilities:
   - **MUST:** When reviewing SPA/frontend code, enforce `.cursor/rules/3C-frontend-architecture.mdc` (feature/module structure, view vs state/logic separation, state management, error handling, frontend observability & auth).
   - **MUST:** Treat violations of frontend architecture rules as blocking issues for frontend/SPA modules.
@@ -293,6 +296,7 @@ globs:
   - No business logic in controllers → **FAIL** if violated
   - ACL used for external integrations → **FAIL** if violated
 - **MANDATORY:** Architecture violations MUST block workflow completion until fixed.
+ - **MANDATORY:** MUST treat violations of the change-discipline cluster (`.cursor/rules/23-change-control.mdc`, `.cursor/rules/45-bugfix-protocol.mdc`, `.cursor/rules/46-regression-discipline.mdc`, `.cursor/rules/47-diff-discipline.mdc`, `.cursor/rules/48-doc-sync.mdc`, `.cursor/rules/35-api-lifecycle.mdc`) as blocking issues for Tier M/H work; workflows MUST NOT complete successfully while these are violated, unless a valid override is explicitly documented per `.cursor/rules/3G-risk-overrides.mdc`.
 - **Delegation Capabilities:**
   - Can delegate to: Any agent (for fixes)
   - Delegation syntax: "If validation fails, delegate to @[AGENT] for [FIX]"

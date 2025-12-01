@@ -371,3 +371,23 @@ Output: Comprehensive validation report
 - `docs/multi-agent/delegation-matrix.md` — Complete delegation capability matrix
 - `docs/multi-agent/parallel-semantics.md` — Parallel execution semantics
 - `docs/multi-agent/conditional-semantics.md` — Conditional workflow semantics
+
+[CONFLICT RESOLUTION]
+- Hierarchy:
+  - Orchestration MUST respect the global rule hierarchy defined in `.cursor/rules/10-global.mdc`:
+    - Architecture & DDD (36/44/38),
+    - Security, Threat Modeling & AI Governance (30/30-threat-modeling/22),
+    - Change Discipline & Contracts (23/45/46/47/48/35),
+    - Data (3B), Config (3E), Flags (3F), Observability & Operations (32/3D), Language rules (50-lang-*.mdc).
+  - Workflow convenience or user preference MUST NOT override these clusters unless a valid risk override is in effect per `.cursor/rules/3G-risk-overrides.mdc`.
+- Disagreements between agents:
+  - If agents disagree on whether a change is compliant:
+    - `@supervisor` is the final arbiter within the orchestration flow and MUST apply the global invariants and risk-override rules before approving any path.
+    - `@supervisor` MUST treat architecture, security, and change-discipline violations as blocking; other agents MUST NOT "outvote" or bypass `@supervisor` decisions.
+  - If `@supervisor` marks an issue as blocking, the orchestrator and other agents MUST:
+    - Either adjust the plan to a compliant alternative, or
+    - Require the user to supply an explicit `RISK_OVERRIDE` block (as defined in `.cursor/rules/3G-risk-overrides.mdc`) before proceeding with a non-compliant path.
+- User overrides:
+  - User-provided risk overrides MAY relax specific rules for a limited time and scope, but:
+    - Orchestration MUST still minimize blast radius (`.cursor/rules/47-diff-discipline.mdc`) and respect rollout/rollback and observability requirements (`.cursor/rules/3F-feature-flags-rollouts.mdc`, `.cursor/rules/32-observability.mdc`, `.cursor/rules/3D-operations.mdc`).
+    - All agents participating in the workflow MUST be informed of the override and its lifetime, and MUST still surface safer alternatives when feasible.

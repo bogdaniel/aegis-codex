@@ -93,3 +93,9 @@ globs:
   - SHOULD enforce automated checks (linters, scanners, or custom scripts) that detect hard-coded secrets, unknown configuration keys, and missing configuration documentation for new services.
   - SHOULD validate that deployment manifests and runtime configuration for critical services (Tier H/M) are consistent across environments and that configuration drift is monitored and controlled per `.cursor/rules/3D-operations.mdc`.
 
+[BACKEND SERVICES]
+- **MANDATORY:** For any network-facing or data-persisting backend service (Tier M/H bounded contexts in `.cursor/rules/36-architecture.mdc`), this rule is **non-optional**:
+  - Configuration MUST follow the single-source-of-truth model defined here.
+  - Secrets and sensitive config MUST follow `.cursor/rules/30-security.mdc` and `.cursor/rules/3B-data-persistence.mdc` with no hard-coded exceptions.
+  - Environment differences MUST be modeled via config/flags, documented, and included in change-control plans per `.cursor/rules/23-change-control.mdc` and `.cursor/rules/3D-operations.mdc`.
+

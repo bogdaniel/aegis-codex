@@ -131,3 +131,21 @@ globs:
   - Public API modules that export everything (should export only approved, stable contracts).
   - Domain importing from Infrastructure or Interface (e.g., `@context/infra/*`, `@context/interface/*`).
   - Cross-context direct imports to Domain or Infrastructure (e.g., `@other-context/domain/*`, `@other-context/infra/*`).
+
+[CHANGE-SAFETY]
+- **MANDATORY:** For backend TypeScript services (Tier M/H contexts and non-trivial APIs), language-specific practices are binding on top of change-discipline rules:
+  - Bugfixes MUST follow `.cursor/rules/45-bugfix-protocol.mdc` (test-first/with, regression tests, minimal fix, guard existing behavior).
+  - Behavioral changes and new features MUST follow `.cursor/rules/23-change-control.mdc` and `.cursor/rules/46-regression-discipline.mdc` (classification, tests as contracts).
+  - Diffs MUST remain scoped per `.cursor/rules/47-diff-discipline.mdc`; drive-by refactors or cross-context changes are forbidden under a "small change" request.
+  - Public API and cross-context contract changes MUST follow `.cursor/rules/35-api-lifecycle.mdc` and `.cursor/rules/48-doc-sync.mdc` (versioning, migration, documentation).
+- **MANDATORY:** TypeScript agents and contributors MUST NOT:
+  - "Fix" failing tests by weakening or deleting them without going through `.cursor/rules/23-change-control.mdc` and `.cursor/rules/46-regression-discipline.mdc`.
+  - Change public method signatures, API payloads, or event schemas without applying `.cursor/rules/35-api-lifecycle.mdc` and updating docs/specs per `.cursor/rules/48-doc-sync.mdc`.
+  - Introduce config or flag behavior that bypasses `.cursor/rules/3E-config-environments.mdc` or `.cursor/rules/3F-feature-flags-rollouts.mdc`.
+- **See also:**
+  - `.cursor/rules/23-change-control.mdc` — Change classification and contracts.
+  - `.cursor/rules/45-bugfix-protocol.mdc` — Bugfix protocol (reproduce, test, fix, guard).
+  - `.cursor/rules/46-regression-discipline.mdc` — Tests as contracts.
+  - `.cursor/rules/47-diff-discipline.mdc` — Diff scope and blast radius.
+  - `.cursor/rules/48-doc-sync.mdc` — Spec & documentation sync.
+  - `.cursor/rules/35-api-lifecycle.mdc` — API lifecycle, compatibility, deprecation.

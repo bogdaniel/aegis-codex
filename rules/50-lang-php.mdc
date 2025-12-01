@@ -173,6 +173,17 @@ globs:
 - Large God classes/services that mix responsibilities across multiple bounded contexts.
 - Inline SQL, hand-built JSON strings, or manual serialization where the framework provides safe abstractions.
 - Copy-pasting validation rules or business logic across controllers instead of centralizing in Domain/Application.
+ 
+[CHANGE-SAFETY]
+- **MANDATORY:** For PHP backend services (Tier M/H contexts and non-trivial APIs), language-specific practices are binding on top of change-discipline rules:
+  - Bugfixes MUST follow `.cursor/rules/45-bugfix-protocol.mdc` (reproduce, regression test, minimal fix, guard surrounding behavior).
+  - Behavioral changes and new features MUST follow `.cursor/rules/23-change-control.mdc` and `.cursor/rules/46-regression-discipline.mdc` (classification, tests as contracts, explicit assessment of breaking vs non-breaking).
+  - Refactors MUST respect `.cursor/rules/47-diff-discipline.mdc` (tight diff scope, no bundled large refactors with small fixes).
+  - Public API and cross-context contract changes MUST follow `.cursor/rules/35-api-lifecycle.mdc` and `.cursor/rules/48-doc-sync.mdc` (versioning, migration, documentation).
+- **MANDATORY:** PHP agents and contributors MUST NOT:
+  - Delete or weaken tests solely to "get CI green" without updating specs/ADRs and following `.cursor/rules/23-change-control.mdc` and `.cursor/rules/46-regression-discipline.mdc`.
+  - Change controller or HTTP behavior that is externally consumed without aligning with `.cursor/rules/35-api-lifecycle.mdc` and `.cursor/rules/48-doc-sync.mdc`.
+  - Introduce configuration or flag behavior that bypasses `.cursor/rules/3E-config-environments.mdc` or `.cursor/rules/3F-feature-flags-rollouts.mdc`.
 
 [VERIFICATION]
 
@@ -190,5 +201,11 @@ globs:
 - **See also:**
   - `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns (BINDING)
   - `.cursor/rules/44-ddd.mdc` — Domain-Driven Design methodology (BINDING)
+  - `.cursor/rules/23-change-control.mdc` — Change classification and contracts
+  - `.cursor/rules/45-bugfix-protocol.mdc` — Bugfix protocol (reproduce, test, fix, guard)
+  - `.cursor/rules/46-regression-discipline.mdc` — Tests as contracts
+  - `.cursor/rules/47-diff-discipline.mdc` — Diff scope and blast radius
+  - `.cursor/rules/48-doc-sync.mdc` — Spec & documentation sync
+  - `.cursor/rules/35-api-lifecycle.mdc` — API lifecycle, compatibility, deprecation
   - `docs/laravel-php-ai-guidelines.md` — Laravel/PHP style & conventions
   - `examples/refactoring/clean-architecture/` — Before/after examples for architecture violations
