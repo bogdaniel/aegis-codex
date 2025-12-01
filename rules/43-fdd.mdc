@@ -11,6 +11,16 @@ globs:
   - "tests/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/43-fdd.mdc`
+- Generated/consumed copy: `.cursor/rules/43-fdd.mdc` (keep references intact)
+
+[INTENT]
+- Define Feature-Driven Development guidance.
+
+[APPLICABILITY]
+- Applies where FDD is used; guidance binding unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
+
 [FDD — FEATURE-DRIVEN DEVELOPMENT (THIN, REVERSIBLE SLICES)]
 
 [CORE MANDATE]

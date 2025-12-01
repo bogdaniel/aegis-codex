@@ -10,5 +10,15 @@ globs:
   - "services/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/35-api.mdc`
+- Generated/consumed copy: `.cursor/rules/35-api.mdc` (keep references intact)
+
+[INTENT]
+- Deprecated: direct readers to `rules/35-api-lifecycle.mdc` for canonical API rules; retain legacy note for compatibility.
+
+[APPLICABILITY]
+- Applies only as a legacy reference; use `rules/35-api-lifecycle.mdc` for current work. Deviations require explicit risk override per `.cursor/rules/3G-risk-overrides.mdc`.
+
 This file is kept only for backward compatibility and references; all constraints are preserved and extended in `rules/35-api-lifecycle.mdc`.
 

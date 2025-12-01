@@ -13,6 +13,16 @@ globs:
   - "tests/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/42-tdd.mdc`
+- Generated/consumed copy: `.cursor/rules/42-tdd.mdc` (keep references intact)
+
+[INTENT]
+- Define Test-Driven Development cycle and expectations.
+
+[APPLICABILITY]
+- Applies to TDD practice where adopted; guidance binding unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
+
 [TDD — TEST-DRIVEN DEVELOPMENT (DETERMINISTIC FIRST)]
 
 [CORE MANDATE]

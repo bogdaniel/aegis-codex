@@ -7,6 +7,16 @@ globs:
   - "**/*"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/38-compliance.mdc`
+- Generated/consumed copy: `.cursor/rules/38-compliance.mdc` (keep references intact)
+
+[INTENT]
+- Define compliance checklist enforcement for regulated/sensitive contexts.
+
+[APPLICABILITY]
+- Applies to compliance-sensitive work and audits; requirements are binding unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
+
 [COMPLIANCE BASELINE]
 - Use `docs/compliance-checklist.md` as acceptance bar: security, testing, observability, performance, CI/CD, documentation all satisfied before "done."
 - Ensure SBOM and vulnerability scans clean; secrets scan passes.

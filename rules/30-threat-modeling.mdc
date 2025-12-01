@@ -11,6 +11,16 @@ globs:
   - "docs/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/30-threat-modeling.mdc`
+- Generated/consumed copy: `.cursor/rules/30-threat-modeling.mdc` (keep references intact)
+
+[INTENT]
+- Define threat modeling process (STRIDE, trust tiers) and trust boundary mapping.
+
+[APPLICABILITY]
+- Applies to security-sensitive/Tier M/H contexts and external integrations; threat modeling requirements are binding unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
+
 [THREAT MODELING & TRUST BOUNDARIES BASELINE]
 
 ### [LIGHTWEIGHT THREAT MODELING PROCESS]

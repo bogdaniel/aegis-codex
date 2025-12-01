@@ -10,6 +10,16 @@ globs:
   - "application/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/45-solid-principles.mdc`
+- Generated/consumed copy: `.cursor/rules/45-solid-principles.mdc` (keep references intact)
+
+[INTENT]
+- Define SOLID principles as integrated with Clean Architecture and DDD.
+
+[APPLICABILITY]
+- Applies to code design across contexts; requirements are binding unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
+
 [SOLID PRINCIPLES — INTEGRATION WITH CLEAN ARCHITECTURE & DDD]
 
 [CORE MANDATE]

@@ -11,6 +11,16 @@ globs:
   - "acceptance/**"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/41-bdd.mdc`
+- Generated/consumed copy: `.cursor/rules/41-bdd.mdc` (keep references intact)
+
+[INTENT]
+- Define Behavior-Driven Development expectations (Given/When/Then, shared language).
+
+[APPLICABILITY]
+- Applies to behavior specifications/tests where BDD is used; guidance binding unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
+
 [BDD — BEHAVIOR-DRIVEN DISCOVERY (DOMAIN LANGUAGE FIRST)]
 
 [CORE MANDATE]
