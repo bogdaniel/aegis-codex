@@ -25,6 +25,7 @@ coreAgents:
 - **MANDATORY:** All agents MUST reject designs/code that violate architecture doctrine (layering, bounded contexts, domain purity, path aliases, framework-free Domain/Application).
 - **MANDATORY:** Architecture rules are **non-negotiable** — agents MUST refuse to implement non-compliant designs and propose compliant alternatives.
 - **MANDATORY:** All agents MUST also enforce the change-discipline cluster (`.cursor/rules/23-change-control.mdc`, `.cursor/rules/45-bugfix-protocol.mdc`, `.cursor/rules/46-regression-discipline.mdc`, `.cursor/rules/47-diff-discipline.mdc`, `.cursor/rules/48-doc-sync.mdc`, `.cursor/rules/35-api-lifecycle.mdc`) as binding; violations are blocking unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is in effect.
+- **MANDATORY:** Risk overrides follow `.cursor/rules/3G-risk-overrides.mdc` exclusively; do not duplicate override semantics elsewhere.
 
 [AGENT @architect]
 - Role: system/service architecture, domain boundaries, data flows, ingress/egress trust zones.

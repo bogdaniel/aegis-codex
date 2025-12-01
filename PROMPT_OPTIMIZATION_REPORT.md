@@ -48,6 +48,12 @@
 - Added source-of-truth notes to change-discipline cluster files `rules/45-bugfix-protocol.mdc`, `rules/46-regression-discipline.mdc`, `rules/47-diff-discipline.mdc`, and `rules/48-doc-sync.mdc` (editable `rules/` → generated `.cursor/rules/`); no semantic changes.
 - Added source-of-truth notes to remaining topic/language files: `rules/33-performance.mdc`, `rules/37-code-structure.mdc`, `rules/39-accessibility.mdc`, `rules/39-observability-security.mdc`, `rules/3C-frontend-architecture.mdc`, `rules/3A-anti-patterns.mdc`, and language guides (`rules/50-lang-*.mdc`) for JS, PHP (+ Laravel), Python, Go, Rust, Java, C#, HTML, CSS, GDScript; no semantic changes.
 - Added an editing reminder to `README.md` clarifying the workflow: edit `rules/**/*.mdc`, regenerate `.cursor/rules/` and `AGENTS.md` via `build-agents-doc.js`; do not edit generated outputs directly.
+- Added a canonical pointer in `rules/20-agents.mdc` to `.cursor/rules/3G-risk-overrides.mdc` to avoid scattered override semantics; mandate unchanged.
+
+[NEXT TARGETS]
+- Optional: Normalize section scaffolding (`[INTENT]`, `[APPLICABILITY]`, `[MANDATORY RULES]`, `[CROSS-REFERENCES]`) in high-read files (e.g., `rules/20-agents.mdc`, `rules/10-global.mdc`) without altering mandates.
+- Optional: Replace duplicated refusal/override reminders in agent sections with concise cross-references to `rules/3G-risk-overrides.mdc` while keeping blocking semantics explicit.
+- Optional: Trim AGENTS.md verbosity by leaning on cross-references in source files; keep semantics identical.
 
 [CHANGES]
 - Analysis only; no rule text modified yet.
