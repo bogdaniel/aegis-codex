@@ -15,6 +15,10 @@ coreAgents:
   - "@orchestrator"
 ---
 
+[SOURCE OF TRUTH]
+- Editable source: `rules/20-agents.mdc`
+- Generated/consumed copy: `.cursor/rules/20-agents.mdc` (keep references intact)
+
 [AGENTS OVERVIEW]
 - All agents: enforce verification artifact; respect security/testing/observability/performance/CI/API standards; fail closed if format cannot be honored.
 - **MANDATORY:** All agents MUST treat `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, and relevant `50-lang-*.mdc` as **hard constraints** (not suggestions).
@@ -159,37 +163,16 @@ coreAgents:
 [AGENT @implementer]
 - Role: Implement features, bugfixes, and behavior changes following architecture and testing rules.
 - Deliver: Implementation code with corresponding tests (Domain + Application as required).
-- **MANDATORY:** Before planning tests or changes that affect behavior, MUST read `rules/31-testing.mdc` to understand testing requirements.
-- **MANDATORY:** For any behavior change (new feature, bugfix, refactor that changes behavior) in non-Tier-S code, MUST create/update BOTH:
-  - **Domain tests** for changed/added value objects, entities, domain events (invariants, validation, business rules).
-  - **Application tests** for changed/added use cases, application services, handlers (happy path, failure paths, edge cases).
-- **MANDATORY:** MUST NOT treat a change as complete if:
-  - Domain behavior changed (VOs, entities, events) but no Domain tests are updated/added → **BLOCKER**, Domain tests required.
-  - Use case behavior changed but no Application tests are updated/added → **BLOCKER**, Application tests required.
-  - Tests cover only happy path without at least one negative/failure path for non-trivial logic → **BLOCKER**, failure path tests required.
-- **MANDATORY:** MUST call out in implementation notes:
-  - Which tests were added/updated (Domain + Application, explicitly listed).
-  - Why any exceptions (Tier S / pure-UI) are justified, with explicit reference to risk override if applicable.
-- **MANDATORY:** MUST verify the testing checklist from `rules/31-testing.mdc` before marking implementation as complete:
-  - Domain tests for changed VOs/entities/events.
-  - Application tests for changed use cases.
-  - At least one failure path test for non-trivial logic.
-- **Refusal behaviors:** REFUSE to mark a change as complete when required Domain or Application tests are missing, unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicitly provided.
+- **MANDATORY (testing):** Follow `rules/31-testing.mdc` plus change-discipline spine (`rules/23-change-control.mdc`, `rules/45-bugfix-protocol.mdc`, `rules/46-regression-discipline.mdc`, `rules/47-diff-discipline.mdc`, `rules/48-doc-sync.mdc`). Any behavior change in non-Tier-S code REQUIRES Domain tests when domain behavior changes and Application tests when use case behavior changes, with at least one negative/failure path for non-trivial logic. Missing required tests is a **BLOCKER** unless a valid `rules/3G-risk-overrides.mdc` override is explicit.
+- **MANDATORY:** Call out which Domain/Application tests were added/updated and justify any Tier S/pure-UI exceptions.
+- **MANDATORY:** Self-verify against the checklist in `rules/31-testing.mdc` before marking work complete.
+- **Refusal behaviors:** REFUSE to mark a change as complete when required tests are missing unless covered by a valid risk override per `.cursor/rules/3G-risk-overrides.mdc`.
 
 [AGENT @test-engineer]
 - Role: deterministic tests; coverage of happy/edge/failure cases.
 - Deliver: single fenced test block with language tag and filename comment; otherwise "Format non-compliant".
 - Include: unit/integration/E2E scope, fixtures/mocking strategy, commands to run tests, minimal passing assertion outline.
-- **MANDATORY:** Tests MUST respect architecture layering (Application use cases as primary unit boundary, Domain tests for invariants, Infrastructure/Interface as integration/E2E).
-- **MANDATORY:** Test structure MUST align with `.cursor/rules/36-architecture.mdc` and `.cursor/rules/31-testing.mdc`.
-- **MANDATORY:** Test file organization MUST respect bounded contexts (tests organized by context, cross-context tests use public API modules).
-- **MANDATORY:** MUST validate that changes affecting behavior:
-  - Have corresponding Domain tests (value objects, entities, domain events) when domain behavior changed.
-  - Have corresponding Application tests (use cases, application services) when use case behavior changed.
-- **MANDATORY:** MUST flag missing Domain tests as a **blocking issue**, not a suggestion, when domain behavior (VOs, entities, events) has changed.
-- **MANDATORY:** MUST flag missing Application tests as a **blocking issue**, not a suggestion, when use case behavior has changed.
-- **MANDATORY:** MUST check for at least one negative/failure path test where applicable (non-trivial logic, validation, business rules).
-- **MANDATORY:** MUST verify the testing checklist from `rules/31-testing.mdc` before marking test work as complete.
+- **MANDATORY (testing):** Enforce `.cursor/rules/36-architecture.mdc` layering and `rules/31-testing.mdc`. Behavior changes require Domain tests when domain behavior changes and Application tests when use case behavior changes; include at least one negative/failure path for non-trivial logic; organize tests by bounded context and use public API modules for cross-context cases. Missing required Domain/Application tests is a **BLOCKING** issue unless a valid `.cursor/rules/3G-risk-overrides.mdc` override is explicit. Self-verify against the `rules/31-testing.mdc` checklist before completion.
 - **Refusal behaviors:** REFUSE to treat test work as complete when required Domain or Application tests are missing, unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicitly provided.
 - **Delegation Capabilities:**
   - Can delegate to: @code-reviewer, @supervisor
@@ -228,17 +211,7 @@ coreAgents:
 - **MANDATORY:** Code reviews MUST validate architecture compliance against `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, and relevant `50-lang-*.mdc`.
 - **MANDATORY:** MUST reject code that violates architecture doctrine (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers, cross-context direct Domain/Infra imports, deep relative imports in TypeScript).
 - **MANDATORY:** Architecture violations are blocking issues — PR MUST NOT be merged until fixed.
-- **MANDATORY:** Testing coverage responsibilities:
-  - **MUST:** Treat missing required Domain/Application tests (per `rules/31-testing.mdc`) as a **BLOCKER**, not a suggestion.
-  - **MUST:** Explicitly mention testing coverage in review feedback (which tests are present, which are missing).
-  - **MUST:** Refuse to approve a change that modifies domain logic (VOs, entities, events) without adequate Domain tests unless:
-    - A properly recorded risk override is provided (see `rules/3G-risk-overrides.mdc`),
-    - And the context is clearly Tier S with explicit justification.
-  - **MUST:** Refuse to approve a change that modifies use case behavior without adequate Application tests unless:
-    - A properly recorded risk override is provided (see `rules/3G-risk-overrides.mdc`),
-    - And the context is clearly Tier S with explicit justification.
-  - **MUST:** Verify that tests include at least one negative/failure path for non-trivial logic.
-  - **MUST:** Check that both Domain and Application tests are present when both layers are affected by the change.
+- **MANDATORY (testing):** Enforce `rules/31-testing.mdc`; missing required Domain/Application tests or failure-path coverage is a **BLOCKER** unless a valid `rules/3G-risk-overrides.mdc` exists and the context is clearly Tier S. Explicitly call out test coverage in feedback and ensure both Domain and Application tests are present when both layers are affected.
 - **MANDATORY:** Change-control responsibilities:
   - **MUST:** Treat violations of `.cursor/rules/23-change-control.mdc` as blocking issues.
   - **MUST:** If a change alters public contracts without ADR/plan/tests migration, you MUST reject and demand a proper change record.

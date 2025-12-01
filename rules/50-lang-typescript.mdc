@@ -94,12 +94,7 @@ globs:
   - **MANDATORY:** Test runners (Vitest/Jest) MUST resolve path aliases (configure `resolve.alias` or use `tsconfig-paths`).
   - **MANDATORY:** Build tools MUST resolve path aliases (TypeScript compiler, bundlers).
   - **Validation:** CI should verify path alias configuration; warn if relative imports found (beyond 1 level).
-  - **Public API modules (facades) REQUIRED:**
-    - Each bounded context MUST define public API modules (barrel exports) per layer as the only approved entry point for cross-context imports.
-    - Structure: `ContextName/Application/index.ts` exports approved use cases and ports.
-    - Cross-context imports: `import { RegisterUser, IdentityPort } from '@identity/app'` (via public API).
-    - Forbidden: Direct imports into internal subfolders from other contexts (e.g., `@identity/app/UseCases/RegisterUser/RegisterUser.js`).
-    - Within-context imports can use full paths (e.g., `@identity/app/UseCases/RegisterUser/RegisterUser.js`).
+  - **Public API modules (facades) REQUIRED:** Follow the canonical requirements in `rules/36-architecture.mdc` (barrel per context/layer, only approved entry points for cross-context imports, no direct internal-path imports from other contexts).
   - **Layer import restrictions:**
     - Domain layer MUST NOT import from Infrastructure or Interface aliases (e.g., `@context/infra/*`, `@context/interface/*`).
     - Domain can only import from its own domain layer or other contexts' public API modules.

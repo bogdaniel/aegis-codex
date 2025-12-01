@@ -187,11 +187,7 @@ globs:
   - **SHOULD export:** Command/Query types (as types only, using `export type`).
   - **MUST NOT export:** Internal implementations, Infrastructure adapters, Domain entities directly.
   - **Versioning:** Breaking changes to public APIs require deprecation period; use semantic versioning for public API modules.
-- Public API module structure:
-  - **MUST export:** Use cases (classes), Ports (interfaces for cross-context use).
-  - **SHOULD export:** Command/Query types (as types only, using `export type`).
-  - **MUST NOT export:** Internal implementations, Infrastructure adapters, Domain entities directly.
-  - **Versioning:** Breaking changes to public APIs require deprecation period; use semantic versioning for public API modules.
+- Public API module structure (canonical requirements above apply; do not duplicate elsewhere—cross-reference this section).
 - Cross-context import restrictions:
   - A context MAY NOT import another context's Domain or Infrastructure directly.
   - Cross-context imports MUST go through documented public API modules only (e.g., `@identity/app`, `@identity/domain` if domain has public API).
