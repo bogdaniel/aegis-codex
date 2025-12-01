@@ -11,6 +11,12 @@ globs:
 - Editable source: `rules/50-lang-go.mdc`
 - Generated/consumed copy: `.cursor/rules/50-lang-go.mdc` (keep references intact)
 
+[INTENT]
+- Define Go standards (architecture alignment, testing, security).
+
+[APPLICABILITY]
+- Applies to Go code; must align with architecture/security/testing spine unless explicit risk override per `.cursor/rules/3G-risk-overrides.mdc`.
+
 [GO STANDARDS]
 - Stack: Go 1.22+ with modules.
 - Style/lint: `gofmt` + `goimports`; `staticcheck` or `golangci-lint`; command: `gofmt -w . && goimports -w . && staticcheck ./...`.

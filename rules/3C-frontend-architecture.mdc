@@ -16,6 +16,12 @@ globs:
 - Editable source: `rules/3C-frontend-architecture.mdc`
 - Generated/consumed copy: `.cursor/rules/3C-frontend-architecture.mdc` (keep references intact)
 
+[INTENT]
+- Define frontend/SPAs architecture, feature structure, and separation of concerns.
+
+[APPLICABILITY]
+- Applies to frontend/SPAs and BFFs; non-negotiable unless explicit risk override per `.cursor/rules/3G-risk-overrides.mdc`.
+
 [FRONTEND ARCHITECTURE BASELINE]
 
 ### [SPA/FRAMEWORK ARCHITECTURE]

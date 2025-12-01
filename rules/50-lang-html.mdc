@@ -15,6 +15,12 @@ globs:
 - Editable source: `rules/50-lang-html.mdc`
 - Generated/consumed copy: `.cursor/rules/50-lang-html.mdc` (keep references intact)
 
+[INTENT]
+- Define HTML standards (structure, semantics, accessibility) aligned with Aegis Codex.
+
+[APPLICABILITY]
+- Applies to HTML/UI code; must align with accessibility/security requirements unless explicit risk override per `.cursor/rules/3G-risk-overrides.mdc`.
+
 [HTML — SEMANTICS, ACCESSIBILITY & DOCUMENT STRUCTURE]
 
 [BASELINE]

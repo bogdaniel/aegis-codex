@@ -16,6 +16,12 @@ globs:
 - Editable source: `rules/3A-anti-patterns.mdc`
 - Generated/consumed copy: `.cursor/rules/3A-anti-patterns.mdc` (keep references intact)
 
+[INTENT]
+- Catalog anti-patterns to avoid across architecture/domain/testing/security.
+
+[APPLICABILITY]
+- Applies to all code/agents; anti-patterns are blocking unless explicit risk override per `.cursor/rules/3G-risk-overrides.mdc`.
+
 [ANTI-PATTERNS CATALOG]
 
 This catalog consolidates common anti-patterns across SOLID, Clean Architecture, DDD, and general code quality. Each anti-pattern includes symptoms, fixes, and links to examples.

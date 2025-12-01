@@ -11,6 +11,12 @@ globs:
 - Editable source: `rules/50-lang-rust.mdc`
 - Generated/consumed copy: `.cursor/rules/50-lang-rust.mdc` (keep references intact)
 
+[INTENT]
+- Define Rust standards (architecture alignment, testing, security).
+
+[APPLICABILITY]
+- Applies to Rust code; must align with architecture/security/testing spine unless explicit risk override per `.cursor/rules/3G-risk-overrides.mdc`.
+
 [RUST STANDARDS]
 - Toolchain: stable Rust 2021+; pin via `rust-toolchain.toml`; prefer workspaces for multi-crate setups.
 - Style/lint: `cargo fmt --all -- --check`; `cargo clippy --all-targets --all-features -D warnings`; avoid unwarranted `clone`.

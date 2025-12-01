@@ -16,6 +16,12 @@ globs:
 - Editable source: `rules/39-accessibility.mdc`
 - Generated/consumed copy: `.cursor/rules/39-accessibility.mdc` (keep references intact)
 
+[INTENT]
+- Define accessibility standards for UI/HTML/CSS (A11y baseline).
+
+[APPLICABILITY]
+- Applies to UI/presentation code (HTML/CSS/JS) and agents producing UI; binding unless explicit risk override per `.cursor/rules/3G-risk-overrides.mdc`.
+
 [ACCESSIBILITY & UX BASELINE]
 
 [CORE MANDATE]

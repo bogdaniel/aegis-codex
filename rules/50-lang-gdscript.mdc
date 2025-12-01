@@ -11,6 +11,12 @@ globs:
 - Editable source: `rules/50-lang-gdscript.mdc`
 - Generated/consumed copy: `.cursor/rules/50-lang-gdscript.mdc` (keep references intact)
 
+[INTENT]
+- Define GDScript standards (architecture alignment, testing, security basics).
+
+[APPLICABILITY]
+- Applies to GDScript code; must align with applicable architecture/security/testing guidance unless explicit risk override per `.cursor/rules/3G-risk-overrides.mdc`.
+
 [GDSCRIPT STANDARDS]
 - Style: typed GDScript; snake_case; one class per file with file named after class/scene; avoid global state; keep scripts small per node responsibility; prefer composition via nodes/scenes over inheritance.
 - Signals: use signals for decoupling instead of direct node coupling; check node existence before use.

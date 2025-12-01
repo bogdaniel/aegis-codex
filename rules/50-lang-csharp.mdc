@@ -11,6 +11,12 @@ globs:
 - Editable source: `rules/50-lang-csharp.mdc`
 - Generated/consumed copy: `.cursor/rules/50-lang-csharp.mdc` (keep references intact)
 
+[INTENT]
+- Define C# standards (architecture alignment, testing, security).
+
+[APPLICABILITY]
+- Applies to C# code; must align with architecture/security/testing spine unless explicit risk override per `.cursor/rules/3G-risk-overrides.mdc`.
+
 [C# / .NET STANDARDS]
 - Stack: .NET 8+, C# 12+.
 - Style/lint: EditorConfig, StyleCop, Roslyn analyzers; command: `dotnet format --verify` and `dotnet build` (with analyzers enabled).

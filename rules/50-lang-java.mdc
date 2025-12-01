@@ -11,6 +11,12 @@ globs:
 - Editable source: `rules/50-lang-java.mdc`
 - Generated/consumed copy: `.cursor/rules/50-lang-java.mdc` (keep references intact)
 
+[INTENT]
+- Define Java standards (architecture alignment, testing, security).
+
+[APPLICABILITY]
+- Applies to Java code; must align with architecture/security/testing spine unless explicit risk override per `.cursor/rules/3G-risk-overrides.mdc`.
+
 [JAVA STANDARDS]
 - Stack: Java 17+ (LTS), Maven/Gradle.
 - Style/lint: Google Java Style, Checkstyle, SpotBugs; command: `mvn checkstyle:check` or `./gradlew checkstyleMain`.

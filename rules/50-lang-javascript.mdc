@@ -15,6 +15,12 @@ globs:
 - Editable source: `rules/50-lang-javascript.mdc`
 - Generated/consumed copy: `.cursor/rules/50-lang-javascript.mdc` (keep references intact)
 
+[INTENT]
+- Define JavaScript standards (style, architecture alignment, testing).
+
+[APPLICABILITY]
+- Applies to JavaScript code; must align with architecture/security/testing spine unless explicit risk override per `.cursor/rules/3G-risk-overrides.mdc`.
+
 [JAVASCRIPT / TYPESCRIPT — STATE & UI BEHAVIOR]
 
 [BASELINE]

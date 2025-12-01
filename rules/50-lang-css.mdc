@@ -19,6 +19,12 @@ globs:
 - Editable source: `rules/50-lang-css.mdc`
 - Generated/consumed copy: `.cursor/rules/50-lang-css.mdc` (keep references intact)
 
+[INTENT]
+- Define CSS standards (structure, theming, accessibility) aligned with Aegis Codex.
+
+[APPLICABILITY]
+- Applies to CSS/UI styling; must align with accessibility/security requirements unless explicit risk override per `.cursor/rules/3G-risk-overrides.mdc`.
+
 [CSS — ARCHITECTURE & BEST PRACTICES]
 
 [BASELINE]

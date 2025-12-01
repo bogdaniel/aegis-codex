@@ -14,6 +14,12 @@ globs:
 - Editable source: `rules/33-performance.mdc`
 - Generated/consumed copy: `.cursor/rules/33-performance.mdc` (keep references intact)
 
+[INTENT]
+- Define performance optimization standards and safeguards for agents (profiling-first, correctness-preserving).
+
+[APPLICABILITY]
+- Applies to performance-related work across contexts; must not violate architecture/testing/security rules unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` exists.
+
 [PERFORMANCE BASELINE]
 - Measure first with realistic workloads; address hot paths/N+1s only; prefer simplicity over clever micro-optimizations.
 - Complexity: choose appropriate data structures; avoid accidental O(n^2+); batch external calls.
