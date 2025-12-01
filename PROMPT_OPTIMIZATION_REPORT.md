@@ -49,6 +49,8 @@
 - Added source-of-truth notes to remaining topic/language files: `rules/33-performance.mdc`, `rules/37-code-structure.mdc`, `rules/39-accessibility.mdc`, `rules/39-observability-security.mdc`, `rules/3C-frontend-architecture.mdc`, `rules/3A-anti-patterns.mdc`, and language guides (`rules/50-lang-*.mdc`) for JS, PHP (+ Laravel), Python, Go, Rust, Java, C#, HTML, CSS, GDScript; no semantic changes.
 - Added an editing reminder to `README.md` clarifying the workflow: edit `rules/**/*.mdc`, regenerate `.cursor/rules/` and `AGENTS.md` via `build-agents-doc.js`; do not edit generated outputs directly.
 - Added a canonical pointer in `rules/20-agents.mdc` to `.cursor/rules/3G-risk-overrides.mdc` to avoid scattered override semantics; mandate unchanged.
+- Added `[INTENT]` and `[APPLICABILITY]` sections to `rules/10-global.mdc` and `rules/20-agents.mdc` to clarify scope/purpose without changing mandates.
+- Added `[INTENT]` and `[APPLICABILITY]` sections to `rules/11-meta-map.mdc` and `rules/21-orchestration.mdc` to clarify scope/purpose without changing mandates.
 
 [NEXT TARGETS]
 - Optional: Normalize section scaffolding (`[INTENT]`, `[APPLICABILITY]`, `[MANDATORY RULES]`, `[CROSS-REFERENCES]`) in high-read files (e.g., `rules/20-agents.mdc`, `rules/10-global.mdc`) without altering mandates.

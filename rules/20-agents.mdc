@@ -19,6 +19,12 @@ coreAgents:
 - Editable source: `rules/20-agents.mdc`
 - Generated/consumed copy: `.cursor/rules/20-agents.mdc` (keep references intact)
 
+[INTENT]
+- Define agent roles, responsibilities, and blocking compliance criteria; enforce architecture, testing, security, and change-discipline mandates across all agents.
+
+[APPLICABILITY]
+- Applies to all core agents (`@architect`, `@implementer`, `@code-reviewer`, `@test-engineer`, `@security-auditor`, `@supervisor`, `@orchestrator`) in all contexts; non-negotiable unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicitly invoked.
+
 [AGENTS OVERVIEW]
 - All agents: enforce verification artifact; respect security/testing/observability/performance/CI/API standards; fail closed if format cannot be honored.
 - **MANDATORY:** All agents MUST treat `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, and relevant `50-lang-*.mdc` as **hard constraints** (not suggestions).

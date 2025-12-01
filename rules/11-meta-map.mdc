@@ -11,6 +11,12 @@ globs:
 - Editable source: `rules/11-meta-map.mdc`
 - Generated/consumed copy: `.cursor/rules/11-meta-map.mdc` (keep references intact)
 
+[INTENT]
+- Define rule group hierarchy and precedence across Aegis Codex; spine grouping and ordering.
+
+[APPLICABILITY]
+- Applies to all agents and profiles; establishes non-negotiable ordering unless valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicit.
+
 [CONCEPTS]
 - Rule groups:
   - Rules are organized into coherent groups (architecture, security, change-discipline, data, config/env, flags/rollouts, observability/ops, AI governance/multi-agent, language/stack) that together define the Aegis Codex.
