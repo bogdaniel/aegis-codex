@@ -51,6 +51,9 @@
 - Added a canonical pointer in `rules/20-agents.mdc` to `.cursor/rules/3G-risk-overrides.mdc` to avoid scattered override semantics; mandate unchanged.
 - Added `[INTENT]` and `[APPLICABILITY]` sections to `rules/10-global.mdc` and `rules/20-agents.mdc` to clarify scope/purpose without changing mandates.
 - Added `[INTENT]` and `[APPLICABILITY]` sections to `rules/11-meta-map.mdc` and `rules/21-orchestration.mdc` to clarify scope/purpose without changing mandates.
+- Added `[INTENT]` and `[APPLICABILITY]` to `rules/30-security.mdc` to clarify scope/purpose without altering security mandates.
+- Added `[INTENT]` and `[APPLICABILITY]` to `rules/31-testing.mdc` and `rules/36-architecture.mdc` to clarify scope/purpose without altering mandates.
+- Added `[INTENT]` and `[APPLICABILITY]` to `rules/23-change-control.mdc`, `rules/34-ci.mdc`, `rules/44-ddd.mdc`, `rules/35-api-lifecycle.mdc`, and `rules/38-anti-corruption-events.mdc` to clarify scope/purpose without altering mandates.
 
 [NEXT TARGETS]
 - Optional: Normalize section scaffolding (`[INTENT]`, `[APPLICABILITY]`, `[MANDATORY RULES]`, `[CROSS-REFERENCES]`) in high-read files (e.g., `rules/20-agents.mdc`, `rules/10-global.mdc`) without altering mandates.

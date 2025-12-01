@@ -15,6 +15,12 @@ globs:
 - Editable source: `rules/36-architecture.mdc`
 - Generated/consumed copy: `.cursor/rules/36-architecture.mdc` (keep references intact)
 
+[INTENT]
+- Define Clean Architecture + Hexagonal + DDD doctrine, layering, bounded contexts, and trust tiers.
+
+[APPLICABILITY]
+- Applies to all backend/domain code and architecture decisions; non-negotiable unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicit.
+
 [ARCHITECTURE — CLEAN + HEXAGONAL + DDD + MODULAR CONTEXTS]
 
 [SCOPE]

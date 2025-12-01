@@ -16,6 +16,12 @@ globs:
 - Editable source: `rules/30-security.mdc`
 - Generated/consumed copy: `.cursor/rules/30-security.mdc` (keep references intact)
 
+[INTENT]
+- Define security baseline and OWASP-aligned controls for all agents and code; enforce defense-in-depth requirements.
+
+[APPLICABILITY]
+- Applies to all code and agents; security controls are non-negotiable unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicitly invoked.
+
 [SECURITY BASELINE]
 - Input/output hygiene: validate and normalize all external inputs (type/length/range/charset); prefer allowlists; encode/escape outputs for sink; block inline scripts.
 - AuthN/AuthZ: require authenticated identity for non-public actions; authorize at boundaries with deny-by-default; short-lived tokens validated server-side (audience/issuer); separate user/service identities.

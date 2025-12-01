@@ -14,6 +14,12 @@ globs:
 - Editable source: `rules/35-api-lifecycle.mdc`
 - Generated/consumed copy: `.cursor/rules/35-api-lifecycle.mdc` (keep references intact)
 
+[INTENT]
+- Define API lifecycle, compatibility, and deprecation rules.
+
+[APPLICABILITY]
+- Applies to all public/cross-context APIs and events; requirements are binding unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicit.
+
 [SCOPE]
 - Applicability:
   - This rule applies to:

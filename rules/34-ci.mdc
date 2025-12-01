@@ -11,6 +11,12 @@ globs:
 - Editable source: `rules/34-ci.mdc`
 - Generated/consumed copy: `.cursor/rules/34-ci.mdc` (keep references intact)
 
+[INTENT]
+- Define CI/CD gates for architecture, testing, security, and change-discipline compliance.
+
+[APPLICABILITY]
+- Applies to all CI/CD pipelines; gates are blocking unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicit.
+
 [CI/CD BASELINE]
 - Pipeline stages: lint/format/type-check → **architecture checks** → unit tests + coverage → integration/smoke (DB/cache/API) → security scans (deps + secrets + static security) → build/package + SBOM/signing.
 - Required gates: block on lint/type errors, **architecture violations**, test failures/flakiness, coverage drops in critical paths, and High/Critical vulnerabilities unless risk-accepted with expiry; fail if secrets scan hits.

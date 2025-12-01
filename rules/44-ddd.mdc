@@ -17,6 +17,12 @@ globs:
 - Editable source: `rules/44-ddd.mdc`
 - Generated/consumed copy: `.cursor/rules/44-ddd.mdc` (keep references intact)
 
+[INTENT]
+- Define DDD boundaries, domain purity, bounded contexts, and invariants.
+
+[APPLICABILITY]
+- Applies to all backend/domain code; non-negotiable unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicit.
+
 [DDD — DOMAIN-DRIVEN DESIGN (BOUNDARIES & INVARIANTS)]
 
 [CORE MANDATE]

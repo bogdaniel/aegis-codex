@@ -14,6 +14,12 @@ globs:
 - Editable source: `rules/31-testing.mdc`
 - Generated/consumed copy: `.cursor/rules/31-testing.mdc` (keep references intact)
 
+[INTENT]
+- Define testing baseline, coverage, determinism, and gating requirements for all agents and code.
+
+[APPLICABILITY]
+- Applies to all behavior changes (especially non-Tier-S); testing mandates are non-negotiable unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicit.
+
 [TESTING BASELINE]
 - Coverage: target ≥80% critical code paths; prioritize domain logic, edges, regression tests for fixed bugs; fail on drops in critical modules.
 - Determinism: tests must be hermetic, order-independent, and parallel-safe; no external network/clock randomness; control time/randomness/IO via fakes/mocks; avoid sleep-based waits.
