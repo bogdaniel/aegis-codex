@@ -54,6 +54,7 @@
 - Added `[INTENT]` and `[APPLICABILITY]` to `rules/30-security.mdc` to clarify scope/purpose without altering security mandates.
 - Added `[INTENT]` and `[APPLICABILITY]` to `rules/31-testing.mdc` and `rules/36-architecture.mdc` to clarify scope/purpose without altering mandates.
 - Added `[INTENT]` and `[APPLICABILITY]` to `rules/23-change-control.mdc`, `rules/34-ci.mdc`, `rules/44-ddd.mdc`, `rules/35-api-lifecycle.mdc`, and `rules/38-anti-corruption-events.mdc` to clarify scope/purpose without altering mandates.
+- Added `[INTENT]` and `[APPLICABILITY]` to `rules/3G-risk-overrides.mdc` and `rules/22-ai-assistants.mdc` to clarify scope/purpose without altering mandates.
 
 [NEXT TARGETS]
 - Optional: Normalize section scaffolding (`[INTENT]`, `[APPLICABILITY]`, `[MANDATORY RULES]`, `[CROSS-REFERENCES]`) in high-read files (e.g., `rules/20-agents.mdc`, `rules/10-global.mdc`) without altering mandates.
