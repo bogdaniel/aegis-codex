@@ -21,6 +21,7 @@ globs:
 - Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
 - Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
 - Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+- Tooling references: `docs/testing-tooling-matrix.md` (per-language test tools) and `docs/secure-coding-checklists.md` (per-language security reminders) for configuring CI gates.
 
 [CI/CD BASELINE]
 - Pipeline stages: lint/format/type-check → **architecture checks** → unit tests + coverage → integration/smoke (DB/cache/API) → security scans (deps + secrets + static security) → build/package + SBOM/signing.

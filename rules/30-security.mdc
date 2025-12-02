@@ -392,3 +392,6 @@ const user = new User({
 - `docs/test-scenarios.md` — Test scenarios for security audits
 - `tests/policies/` — Policy scenarios validating agent behavior (see `tests/policies/ts-handler-missing-validation/validation.md` for SQL injection validation)
 - `examples/before-after/ts-express-handler-*.ts` — Security validation before/after examples
+
+- Secure coding references: see `docs/secure-coding-checklists.md` for language/framework-specific reminders.
+- Password handling: credentials MUST be hashed with vetted algorithms AND regression tests MUST assert stored hashes differ from raw input; tests lacking this assertion are non-compliant.

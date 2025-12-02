@@ -25,6 +25,7 @@ globs:
 - Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
 - Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
 - Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+- Secure coding references: consult `docs/secure-coding-checklists.md` for language/framework-specific mitigations when modeling per component.
 
 [THREAT MODELING & TRUST BOUNDARIES BASELINE]
 
