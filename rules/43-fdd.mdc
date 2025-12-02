@@ -58,4 +58,5 @@ globs:
   - Scope is small, well-bounded, and described.
   - The change can be enabled/disabled or rolled back with minimal blast radius.
   - Tests and observability confirm behavior and provide insight post-deploy.
+  - When using ATDD/BDD/TDD within the slice, write scenarios/tests first and observe them failing (red) before implementation; post-hoc tests are non-compliant.
 - Push back on oversized, multi-concern changes that violate these constraints; propose slicing strategies instead.

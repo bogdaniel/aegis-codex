@@ -33,6 +33,8 @@ globs:
 - Scope: unit pure logic with mocked deps; integration with seeded data and cleanup; minimal E2E on critical flows; use containers/fakes for infra.
 - Isolation: small explicit fixtures; no global state; reset between tests; limit parallelism for shared resources.
 - CI gating: block on flakiness; no silent skips; include coverage reports; run lint/type/**architecture checks**/security checks with tests.
+- For new functionality: write required tests first, run them continuously during implementation, and only consider the functionality complete when the relevant tests pass (red/green).
+- UI/E2E: when a browser environment is available, include a minimal in-browser E2E/component check for primary user flows; keep it deterministic and isolated (no shared state).
 
 [TESTING & ARCHITECTURE]
 - **MANDATORY:** All tests MUST respect architecture layering as defined in `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`.
@@ -67,6 +69,7 @@ globs:
   - Bugfixes MUST follow `.cursor/rules/45-bugfix-protocol.mdc` (reproduce, confirm, fix, guard with regression tests).
   - Tests MUST NOT be deleted or weakened without justification and spec/ADR updates per `.cursor/rules/46-regression-discipline.mdc`.
   - Changes MUST respect diff scope per `.cursor/rules/47-diff-discipline.mdc`; test changes must align with declared change scope.
+  - Red/Green discipline: write tests first, confirm they fail (red), then implement until they pass (green); do not batch “all tests then all code” or proceed to later layers (e.g., UI) before current layer’s tests are green.
 - **MANDATORY:** AI agents MUST treat missing tests for new behavior as a **blocking issue**; they MUST refuse to implement behavior changes without corresponding tests unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicitly provided.
 
 [AGENT BEHAVIOR & REFUSAL DUTIES]

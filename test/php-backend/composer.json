@@ -1,0 +1,23 @@
+{
+    "name": "aegis/php-backend",
+    "description": "Minimal PHP backend with Clean Architecture",
+    "type": "project",
+    "require": {
+        "php": ">=8.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "IdentityContext\\": "IdentityContext/",
+            "OrdersContext\\": "OrdersContext/",
+            "ProductsContext\\": "ProductsContext/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    }
+}

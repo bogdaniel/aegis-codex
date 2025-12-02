@@ -1,0 +1,23 @@
+FROM php:8.2-cli
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Install SQLite extension
+RUN docker-php-ext-install pdo pdo_sqlite
+
+# Install PHPUnit for development
+RUN composer global require phpunit/phpunit:^10.5 --no-interaction
+
+# Set working directory
+WORKDIR /app
+
+# Create data directory
+RUN mkdir -p data && chmod 777 data
+
+# Expose port
+EXPOSE 8000
+
+# Keep container running
+CMD ["tail", "-f", "/dev/null"]
+

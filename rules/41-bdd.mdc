@@ -58,4 +58,6 @@ globs:
   - Uses domain language,
   - Follows a Given/When/Then structure (explicitly or implicitly),
   - Maps to implemented tests and behavior.
+- Scenarios/tests should be written first and observed failing (red) before implementation; post-hoc scenarios are non-compliant with BDD intent.
+- Do not batch “all scenarios then all code”; iterate scenario-by-scenario with red/green and continuous test runs.
 - If scenarios are missing or purely technical, push for rephrasing in domain terms before designing or coding.

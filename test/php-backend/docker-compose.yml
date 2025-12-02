@@ -1,0 +1,39 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - .:/app
+    environment:
+      - PHP_ENV=development
+    command: php -S 0.0.0.0:8000 -t public
+
+  setup:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php-backend-setup
+    volumes:
+      - ./data:/app/data
+      - .:/app
+    command: sh -c "composer install && php scripts/setup-database.php"
+    profiles:
+      - setup
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php-backend-test
+    volumes:
+      - ./data:/app/data
+      - .:/app
+    command: sh -c "composer install && ./vendor/bin/phpunit"
+    profiles:
+      - test
+

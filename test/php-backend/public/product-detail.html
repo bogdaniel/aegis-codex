@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Product Details - PHP Backend</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Product Details</h1>
+        <nav>
+            <a href="index.html" class="nav-link">← Back to Home</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="product-detail-section" aria-labelledby="product-detail-heading">
+            <div id="product-loading" class="loading-message">Loading product details...</div>
+            <div id="product-error" class="error-message" role="alert" aria-live="polite"></div>
+            <div id="product-detail" class="product-detail-container"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>API running on <code>http://localhost:8000</code></p>
+    </footer>
+
+    <script src="api.js"></script>
+    <script>
+        /**
+         * Escapes HTML to prevent XSS
+         */
+        function escapeHTML(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        /**
+         * Gets UUID from URL query parameter
+         */
+        function getUuidFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('uuid');
+        }
+
+        /**
+         * Loads and displays product detail
+         */
+        async function loadProductDetail() {
+            const loadingEl = document.getElementById('product-loading');
+            const errorEl = document.getElementById('product-error');
+            const detailEl = document.getElementById('product-detail');
+            
+            const uuid = getUuidFromUrl();
+            
+            if (!uuid) {
+                errorEl.textContent = 'Product UUID is required in URL (e.g., ?uuid=...)';
+                errorEl.style.display = 'block';
+                loadingEl.style.display = 'none';
+                return;
+            }
+            
+            loadingEl.style.display = 'block';
+            errorEl.textContent = '';
+            errorEl.style.display = 'none';
+            detailEl.innerHTML = '';
+            
+            try {
+                const result = await getProductDetail(uuid);
+                
+                if (result.success && result.data && result.data.product) {
+                    const product = result.data.product;
+                    
+                    detailEl.innerHTML = `
+                        <article class="product-detail-card">
+                            <header class="product-detail-header">
+                                <h2>${escapeHTML(product.name)}</h2>
+                                <div class="product-price-large">$${product.price.toFixed(2)}</div>
+                            </header>
+                            <div class="product-detail-body">
+                                <p class="product-description">${escapeHTML(product.description)}</p>
+                                <dl class="product-meta">
+                                    <dt>Product UUID:</dt>
+                                    <dd><code class="uuid">${escapeHTML(product.uuid)}</code></dd>
+                                    <dt>Created:</dt>
+                                    <dd>${escapeHTML(product.createdAt)}</dd>
+                                </dl>
+                            </div>
+                        </article>
+                    `;
+                } else {
+                    errorEl.textContent = result.error || 'Product not found';
+                    errorEl.style.display = 'block';
+                }
+            } catch (error) {
+                errorEl.textContent = error.message || 'An error occurred while loading product details';
+                errorEl.style.display = 'block';
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        }
+
+        // Load product detail when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadProductDetail);
+        } else {
+            loadProductDetail();
+        }
+    </script>
+</body>
+</html>
+

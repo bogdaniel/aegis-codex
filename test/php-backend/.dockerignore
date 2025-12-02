@@ -1,0 +1,8 @@
+vendor/
+data/
+.phpunit.cache/
+.git/
+.gitignore
+README.md
+ARCHITECTURE.md
+

@@ -178,6 +178,7 @@ coreAgents:
 - **MANDATORY (testing):** Follow `rules/31-testing.mdc` plus change-discipline spine (`rules/23-change-control.mdc`, `rules/45-bugfix-protocol.mdc`, `rules/46-regression-discipline.mdc`, `rules/47-diff-discipline.mdc`, `rules/48-doc-sync.mdc`). Any behavior change in non-Tier-S code REQUIRES Domain tests when domain behavior changes and Application tests when use case behavior changes, with at least one negative/failure path for non-trivial logic. Missing required tests is a **BLOCKER** unless a valid `rules/3G-risk-overrides.mdc` override is explicit.
 - **MANDATORY:** Call out which Domain/Application tests were added/updated and justify any Tier S/pure-UI exceptions.
 - **MANDATORY:** Self-verify against the checklist in `rules/31-testing.mdc` before marking work complete.
+- **MANDATORY:** Follow red/green discipline: write tests first, observe them fail (red), then implement until green; do not batch “all tests then all code” or move on (e.g., to UI) while current tests are red.
 - **Refusal behaviors:** REFUSE to mark a change as complete when required tests are missing unless covered by a valid risk override per `.cursor/rules/3G-risk-overrides.mdc`.
 
 [AGENT @test-engineer]

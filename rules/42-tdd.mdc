@@ -79,9 +79,10 @@ globs:
   - This harness is a stopgap and must be replaced by proper tests in production applications.
 
 [WORKFLOW]
-1. Before or alongside any logic change, write or update a test (or demo harness check) that captures the desired behavior or bug fix.
-2. Implement the minimal code necessary to make the check pass.
+1. Before implementation, write or update a test (or demo harness check) that captures the desired behavior/bug fix and confirm it fails (red) against current code. Post-hoc tests are non-compliant.
+2. Implement the minimal code necessary to make the check pass (green).
 3. Refactor implementation and tests to improve design while preserving coverage and invariants.
+4. Do not batch “all tests then all code”; iterate red/green per slice and run tests continuously during implementation.
 4. For UI-heavy code:
    - Extract validation and state logic into plain functions/modules.
    - Test those functions directly, and keep DOM glue thin.
