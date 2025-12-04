@@ -1,0 +1,53 @@
+---
+description: "Cross-agent workflows — common workflow patterns for multi-agent collaboration."
+category: "agents"
+subcategory: "workflows"
+required: true
+globs:
+  - "**/*"
+---
+
+[SOURCE OF TRUTH]
+- Editable source: `rules/agents/workflows.mdc`
+- Generated/consumed copy: `.cursor/rules/agents/workflows.mdc` (keep references intact)
+
+[INTENT]
+- Define common cross-agent workflow patterns for coordinated multi-agent tasks.
+
+[APPLICABILITY]
+- Applies to all multi-agent workflows; provides reference patterns for orchestrating agent collaboration.
+
+[CROSS-REFERENCES]
+- Orchestration: `.cursor/rules/21-orchestration.mdc` (binding)
+- Agent definitions: Individual agent files in `rules/agents/`
+
+[CROSS-AGENT WORKFLOWS]
+
+### End-to-End Feature Development
+1. **@architect** — Design architecture and bounded contexts
+2. **@api-designer** — Design API contracts
+3. **@security-auditor** — Review and fix security issues
+4. **@test-engineer** — Add tests
+5. **@perf-optimizer** — Optimize hot paths (if needed)
+6. **@devops** — Set up CI/CD
+7. **@code-reviewer** — Final review
+
+**Example:** See `examples/before-after/ts-express-handler-before.ts` → `ts-express-handler-after.ts` workflow.
+
+### Security-First Development
+1. **@architect** — Design with security boundaries (Tier H contexts)
+2. **@security-auditor** — Audit design and implementation
+3. **@test-engineer** — Add security-focused tests
+4. **@code-reviewer** — Verify security compliance
+
+### Performance Optimization Workflow
+1. **@perf-optimizer** — Profile and identify bottlenecks
+2. **@architect** — Review architecture for performance issues (if needed)
+3. **@test-engineer** — Add performance regression tests
+4. **@code-reviewer** — Verify optimizations don't break correctness
+
+### Legacy Refactoring Workflow
+1. **@refactorer** — Identify issues and create refactor plan
+2. **@test-engineer** — Add characterization tests
+3. **@refactorer** — Execute refactor
+4. **@code-reviewer** — Verify compliance and no regressions

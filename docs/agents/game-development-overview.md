@@ -1,0 +1,13 @@
+# Game Development Module — Overview
+- **Scope:** Concept to production for game projects.
+- **Phases/Workflows:**
+  - Preproduction: `brainstorm-game`, `game-brief`.
+  - Design: `gdd`, `narrative`.
+  - Technical: `game-architecture` (adapted from BMM architecture workflow).
+  - Production: Sprint planning, story creation/management, epic tech specs, code review, retros (via Game Dev Scrum Master).
+- **Agents:**
+  - Game Designer 🎲 — Creative vision, GDD, mechanics, narrative.
+  - Game Developer 🕹️ — Gameplay programming, physics, AI, optimization (Unity/Unreal/custom).
+  - Game Architect 🏛️ — Game systems/engine architecture, scalability, platform fit.
+  - Game Dev Scrum Master 🎯 — Sprint orchestration for game teams.
+- **Team Bundle:** Team Game Development 🎮 includes Designer, Developer, Architect for end-to-end coverage.

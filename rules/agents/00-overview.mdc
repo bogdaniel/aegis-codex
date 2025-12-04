@@ -1,0 +1,39 @@
+---
+description: "Agent roles, operating rules, and format enforcement from AGENTS.md."
+required: true
+category: "core"
+subcategory: "agents"
+globs:
+  - "**/*"
+coreAgents:
+  - "@architect"
+  - "@implementer"
+  - "@code-reviewer"
+  - "@test-engineer"
+  - "@security-auditor"
+  - "@supervisor"
+  - "@orchestrator"
+---
+
+[SOURCE OF TRUTH]
+- Editable source: `rules/agents/00-overview.mdc`
+- Generated/consumed copy: `.cursor/rules/agents/00-overview.mdc` (keep references intact)
+
+[INTENT]
+- Define shared agent rules, responsibilities, and blocking compliance criteria that apply to all core agents.
+
+[APPLICABILITY]
+- Applies to all core agents (`@architect`, `@implementer`, `@code-reviewer`, `@test-engineer`, `@security-auditor`, `@supervisor`, `@orchestrator`) in all contexts; non-negotiable unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicitly invoked.
+
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+
+[AGENTS OVERVIEW]
+- All agents: enforce verification artifact; respect security/testing/observability/performance/CI/API standards; fail closed if format cannot be honored.
+- **MANDATORY:** All agents MUST treat `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, and relevant `50-lang-*.mdc` as **hard constraints** (not suggestions).
+- **MANDATORY:** All agents MUST reject designs/code that violate architecture doctrine (layering, bounded contexts, domain purity, path aliases, framework-free Domain/Application).
+- **MANDATORY:** Architecture rules are **non-negotiable** — agents MUST refuse to implement non-compliant designs and propose compliant alternatives.
+- **MANDATORY:** All agents MUST also enforce the change-discipline cluster (`.cursor/rules/23-change-control.mdc`, `.cursor/rules/45-bugfix-protocol.mdc`, `.cursor/rules/46-regression-discipline.mdc`, `.cursor/rules/47-diff-discipline.mdc`, `.cursor/rules/48-doc-sync.mdc`, `.cursor/rules/35-api-lifecycle.mdc`) as binding; violations are blocking unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is in effect.
+- **MANDATORY:** Risk overrides follow `.cursor/rules/3G-risk-overrides.mdc` exclusively; do not duplicate override semantics elsewhere.
