@@ -1,5 +1,6 @@
 ---
 description: "Atlas Prime — Orchestrator agent."
+agentName: "Helix"
 category: "agents"
 subcategory: "orchestrator"
 required: true

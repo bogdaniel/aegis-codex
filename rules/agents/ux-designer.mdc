@@ -1,5 +1,6 @@
 ---
 description: "UX Designer agent (Sally)."
+agentName: "Motive"
 category: "agents"
 subcategory: "ux-designer"
 required: false

@@ -1,5 +1,6 @@
 ---
 description: "CIS Agent — Maya (Design Thinking Maestro)."
+agentName: "Canvas"
 category: "agents"
 subcategory: "cis-design-thinking-maestro"
 required: false

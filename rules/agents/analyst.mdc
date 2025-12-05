@@ -1,5 +1,6 @@
 ---
 description: "Analyst agent (Mary)."
+agentName: "Vector"
 category: "agents"
 subcategory: "analyst"
 required: false

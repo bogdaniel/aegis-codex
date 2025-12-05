@@ -1,5 +1,6 @@
 ---
 description: "Principal Engineer agent (Avery Frost)."
+agentName: "Keystone"
 category: "agents"
 subcategory: "principal-engineer"
 required: false

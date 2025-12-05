@@ -1,5 +1,6 @@
 ---
 description: "Researcher agent."
+agentName: "Scout"
 category: "agents"
 subcategory: "researcher"
 required: false

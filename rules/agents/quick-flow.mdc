@@ -1,5 +1,6 @@
 ---
 description: "Quick Flow Solo agent (Barry)."
+agentName: "Swift"
 category: "agents"
 subcategory: "quick-flow"
 required: false

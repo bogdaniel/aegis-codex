@@ -1,5 +1,6 @@
 ---
 description: "Test Architect agent (Murat)."
+agentName: "Fixture"
 category: "agents"
 subcategory: "test-architect"
 required: false

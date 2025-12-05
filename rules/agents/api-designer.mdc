@@ -1,5 +1,6 @@
 ---
 description: "API Designer agent."
+agentName: "Blueprint"
 category: "agents"
 subcategory: "api-designer"
 required: false

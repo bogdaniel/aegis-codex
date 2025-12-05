@@ -1,5 +1,6 @@
 ---
 description: "CIS Agent — Dr. Quinn (Master Problem Solver)."
+agentName: "Resolver"
 category: "agents"
 subcategory: "cis-problem-solver"
 required: false

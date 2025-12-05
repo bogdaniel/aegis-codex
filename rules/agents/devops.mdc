@@ -1,5 +1,6 @@
 ---
 description: "DevOps agent."
+agentName: "Pipeline"
 category: "agents"
 subcategory: "devops"
 required: false

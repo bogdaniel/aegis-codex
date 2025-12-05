@@ -1,5 +1,6 @@
 ---
 description: "CIS Agent — Victor (Disruptive Innovation Oracle)."
+agentName: "Nova"
 category: "agents"
 subcategory: "cis-innovation-oracle"
 required: false

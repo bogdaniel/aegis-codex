@@ -1,5 +1,6 @@
 ---
 description: "Test Engineer agent."
+agentName: "Gauge"
 category: "agents"
 subcategory: "test-engineer"
 required: true

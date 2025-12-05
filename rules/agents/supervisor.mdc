@@ -1,5 +1,6 @@
 ---
 description: "Supervisor agent."
+agentName: "Overwatch"
 category: "agents"
 subcategory: "supervisor"
 required: true

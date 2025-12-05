@@ -1,5 +1,6 @@
 ---
 description: "Riley Stone — Code Reviewer agent."
+agentName: "Sentinel"
 category: "agents"
 subcategory: "code-reviewer"
 required: true

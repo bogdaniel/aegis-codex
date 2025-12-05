@@ -1,5 +1,6 @@
 ---
 description: "CIS Agent — Caravaggio (Visual Communication & Presentation Expert)."
+agentName: "Beacon"
 category: "agents"
 subcategory: "cis-presentation-master"
 required: false

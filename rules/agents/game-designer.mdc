@@ -1,5 +1,6 @@
 ---
 description: "Game Designer agent (Samus Shepard)."
+agentName: "Lore"
 category: "agents"
 subcategory: "game-designer"
 required: false

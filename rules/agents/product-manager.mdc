@@ -1,5 +1,6 @@
 ---
 description: "Product Manager agent (John)."
+agentName: "Compass"
 category: "agents"
 subcategory: "product-manager"
 required: false

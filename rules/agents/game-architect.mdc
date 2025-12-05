@@ -1,5 +1,6 @@
 ---
 description: "Game Architect agent (Cloud Dragonborn)."
+agentName: "Forge"
 category: "agents"
 subcategory: "game-architect"
 required: false

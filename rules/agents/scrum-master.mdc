@@ -1,5 +1,6 @@
 ---
 description: "Scrum Master agent (Bob)."
+agentName: "Cadence"
 category: "agents"
 subcategory: "scrum-master"
 required: false

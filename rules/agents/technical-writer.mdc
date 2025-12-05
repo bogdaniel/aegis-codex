@@ -1,5 +1,6 @@
 ---
 description: "Technical Writer agent (Paige)."
+agentName: "Scribe"
 category: "agents"
 subcategory: "technical-writer"
 required: false

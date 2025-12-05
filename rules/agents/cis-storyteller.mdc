@@ -1,5 +1,6 @@
 ---
 description: "CIS Agent — Sophia (Master Storyteller)."
+agentName: "Narrate"
 category: "agents"
 subcategory: "cis-storyteller"
 required: false

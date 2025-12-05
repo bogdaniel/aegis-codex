@@ -1,5 +1,6 @@
 ---
 description: "Security Auditor agent."
+agentName: "Aegis"
 category: "agents"
 subcategory: "security-auditor"
 required: true

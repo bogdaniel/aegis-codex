@@ -1,5 +1,6 @@
 ---
 description: "CIS Agent — Carson (Elite Brainstorming Specialist)."
+agentName: "Spark"
 category: "agents"
 subcategory: "cis-brainstorming-specialist"
 required: false

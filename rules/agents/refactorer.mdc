@@ -1,5 +1,6 @@
 ---
 description: "Refactorer agent."
+agentName: "Chisel"
 category: "agents"
 subcategory: "refactorer"
 required: false

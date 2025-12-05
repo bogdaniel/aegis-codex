@@ -1,5 +1,6 @@
 ---
 description: "Performance Optimizer agent."
+agentName: "Turbo"
 category: "agents"
 subcategory: "perf-optimizer"
 required: false

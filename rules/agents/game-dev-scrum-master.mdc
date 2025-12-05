@@ -1,5 +1,6 @@
 ---
 description: "Game Dev Scrum Master agent (Max)."
+agentName: "Quest"
 category: "agents"
 subcategory: "game-dev-scrum-master"
 required: false
