@@ -1,0 +1,98 @@
+---
+description: "Anti-Corruption Layers + Event Catalog — safe integration with external/legacy systems."
+required: true
+category: "architecture"
+subcategory: "anti-corruption-events"
+globs:
+  - "src/**"
+  - "app/**"
+  - "backend/**"
+  - "services/**"
+---
+
+[SOURCE OF TRUTH]
+- Editable source: `rules/architecture/38-anti-corruption-events.mdc`
+- Generated/consumed copy: `.cursor/rules/38-anti-corruption-events.mdc` (keep references intact)
+
+[INTENT]
+- Define anti-corruption and event schema rules for cross-context integrations.
+
+[APPLICABILITY]
+- Applies to all cross-context integrations/events; requirements are binding unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicit.
+
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+
+[ANTI-CORRUPTION LAYERS & EVENT CATALOG]
+
+[CORE MANDATE]
+- External/legacy systems must not leak directly into core domains.
+- All domain events and external events must go through explicit schemas and mapping layers.
+
+[EVENT CATALOG]
+- Domain events:
+  - Are defined per bounded context (e.g., `AuthContext.UserRegistered`, `BillingContext.PaymentCaptured`).
+  - Have versioned schemas (JSON Schema, Protobuf, or equivalent).
+  - Are published from Domain/Application, not from Infrastructure directly.
+- Cross-context events:
+  - **MANDATORY:** All cross-context events MUST have versioned schemas (JSON Schema, Protobuf, or equivalent).
+  - **Domain-internal events that never leave a bounded context are exempt from schema requirements.**
+  - **MANDATORY:** Schema validation MUST happen at adapter boundaries (before events reach Domain/Application).
+  - Use canonical, versioned event definitions.
+  - Are treated as **contracts**; changes are backward-compatible.
+- Event schema enforcement:
+  - **Schema Requirements:**
+    - All cross-context events MUST have JSON Schema or Protobuf schema.
+    - Schemas MUST be versioned (e.g., `OrderPlaced.v1.schema.json`).
+    - Schema validation MUST happen at adapter boundaries.
+  - **Naming Convention:**
+    - Events: `{ContextName}{EventName}` (e.g., `OrdersOrderPlaced`).
+    - Schemas: `{EventName}.v{version}.schema.{json|proto}`.
+  - **Breaking Changes:**
+    - New schema version required for breaking changes.
+    - Deprecation period for old versions.
+    - Document migration path.
+  - **REJECTION CRITERIA:**
+    - Cross-context event without schema → **REJECT**, define schema first.
+    - Publishing raw external events without canonicalization → **REJECT**, use ACL.
+
+[ANTI-CORRUPTION LAYERS (ACL)]
+- **MANDATORY:** Every integration with legacy/third-party systems MUST pass through an ACL that:
+  - **MUST:** Translate external models and semantics into clean domain types.
+  - **MUST:** Hide external weirdness from Domain/Application.
+  - **MUST NOT:** Allow external DTOs/entities to be used directly in Domain.
+- **MANDATORY:** For each external/legacy/3rd-party integration:
+  - **MUST:** Map external DTOs to clean domain types via ACL.
+  - **MUST NOT:** Use raw external DTOs in domain → **REJECT**, use ACL mapping.
+  - **MUST NOT:** Publish raw external events on internal bus → **REJECT**, canonicalize via ACL.
+- ACL for cross-context ports:
+  - When a context consumes another context's port, it MUST define its own ACL interface with a distinct name.
+  - The owning context defines the canonical port (e.g., `IdentityContext/Application/Ports/IdentityPort.ts`).
+  - The consuming context defines an ACL interface (e.g., `OrdersContext/Application/Ports/IdentityValidationPort.ts`).
+  - ACL adapter in Infrastructure translates between ACL interface and canonical port.
+  - This shields the consuming context from the provider's exact semantics and prevents duplicate port names.
+- Forbidden patterns:
+  - Direct use of third-party SDK models as Domain Entities.
+  - Having Domain code depending on external client libraries or transport-specific types.
+  - Multiple contexts defining ports with the same name but different contracts (e.g., both contexts having `IdentityPort`).
+  - Consuming contexts importing and using the canonical port directly (must use ACL interface).
+
+[EVENT CANONICALIZATION]
+- Do not publish raw external events onto internal buses.
+- All inbound events:
+  - Are received by an adapter.
+  - Mapped into internal event types or commands via ACLs.
+  - Validated against schemas before reaching Domain/Application.
+- All outbound events:
+  - Are constructed from Domain/Application state.
+  - Validated against their schema before being emitted.
+
+[VERIFICATION]
+- For each integration:
+  - Identify and document its ACL.
+  - Ensure Domain/Application references only internal models, not external DTOs.
+- For each event type:
+  - Ensure a schema exists and is referenced by producers/consumers.
+  - Ensure changes to event schemas are reviewed for backward compatibility.

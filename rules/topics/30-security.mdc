@@ -1,0 +1,397 @@
+---
+description: "Security standards (defense-in-depth, OWASP) distilled for assistants."
+required: true
+category: "topic"
+subcategory: "security"
+globs:
+  - "src/**"
+  - "app/**"
+  - "api/**"
+  - "services/**"
+  - "infra/**"
+  - "tests/**"
+---
+
+[SOURCE OF TRUTH]
+- Editable source: `rules/topics/30-security.mdc`
+- Generated/consumed copy: `.cursor/rules/30-security.mdc` (keep references intact)
+
+[INTENT]
+- Define security baseline and OWASP-aligned controls for all agents and code; enforce defense-in-depth requirements.
+
+[APPLICABILITY]
+- Applies to all code and agents; security controls are non-negotiable unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicitly invoked.
+
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+
+[SECURITY BASELINE]
+- Input/output hygiene: validate and normalize all external inputs (type/length/range/charset); prefer allowlists; encode/escape outputs for sink; block inline scripts.
+- AuthN/AuthZ: require authenticated identity for non-public actions; authorize at boundaries with deny-by-default; short-lived tokens validated server-side (audience/issuer); separate user/service identities.
+- Anti-CSRF/XSS/SQLi: CSRF tokens on state-changing HTTP; parameterized queries/ORM only; CSP, HSTS, secure cookies with HttpOnly+SameSite.
+- Secrets/config: never hardcode; load via env/secret manager; rotate; redact in logs/errors; no secrets in tests/examples.
+- Transport/data protection: TLS in transit; encrypt sensitive data at rest where supported; avoid logging PII/secrets; field-level filtering where needed.
+- Rate/abuse and limits: rate limit public endpoints; apply pagination/limits to prevent resource exhaustion.
+- Dependencies/supply chain: pin versions; SBOM + vulnerability scan; block High/Critical unless risk-accepted with expiry; prefer vetted registries.
+- Logging/error handling: structured logs with correlation/request IDs; separate 4xx vs 5xx; no stack traces to clients; no sensitive data in logs.
+- Data handling: classify data; minimize collection; enforce content-type/size checks; use monotonic clocks for ordering-sensitive logic.
+
+[SECURITY & TRUST TIERS]
+- **Tier H contexts** (from 36-architecture.mdc) MUST satisfy stronger controls:
+  - MFA for operations.
+  - Stricter tokens (shorter TTL, narrower scopes).
+  - More frequent vulnerability scans.
+  - Stricter dependency gating.
+- Architectural decisions in 36-architecture.mdc MUST consider the security implications in this file.
+
+[OWASP TOP 10 2021 MAPPING]
+
+### A01:2021 – Broken Access Control
+**Risk:** Users can access resources or perform actions they shouldn't.
+**Mitigations:**
+- **Authorization at boundaries:** Check permissions at API/use case entry points, not just authentication.
+- **Deny by default:** Require explicit permission grants; no implicit access.
+- **Principle of least privilege:** Users/service accounts have minimum required permissions.
+- **IDOR prevention:** Validate resource ownership; don't trust client-provided IDs.
+- **Framework patterns:**
+  - Laravel: Use policies/gates, not ad-hoc role checks.
+  - Spring Boot: Use `@PreAuthorize` or method security, not controller-level checks only.
+  - ASP.NET Core: Use authorization policies, not inline role checks.
+- **Example anti-pattern:**
+  ```typescript
+  // ❌ BAD: No authorization check
+  async getOrder(orderId: string) {
+    return await this.orderRepository.findById(orderId);
+  }
+  ```
+- **Example fix:**
+  ```typescript
+  // ✅ GOOD: Authorization at boundary
+  async getOrder(orderId: string, userId: string) {
+    const order = await this.orderRepository.findById(orderId);
+    if (order.userId !== userId) {
+      throw new UnauthorizedError('Access denied');
+    }
+    return order;
+  }
+  ```
+
+### A02:2021 – Cryptographic Failures
+**Risk:** Sensitive data exposed due to weak encryption or missing protection.
+**Mitigations:**
+- **Encryption at rest:** Encrypt sensitive fields (PII, passwords, tokens) in databases.
+- **Encryption in transit:** TLS 1.2+ for all external communication; no plain HTTP.
+- **Password hashing:** Use bcrypt/Argon2/scrypt; never MD5/SHA1/plaintext.
+- **Token security:** Short-lived JWTs with proper signing; rotate keys regularly.
+- **Secrets management:** Never hardcode; use secret managers (AWS Secrets Manager, HashiCorp Vault, etc.).
+- **Framework patterns:**
+  - Laravel: Use `Hash::make()` for passwords; `Crypt::encrypt()` for sensitive data.
+  - Spring Boot: Use `BCryptPasswordEncoder`; `@Encrypted` for sensitive fields.
+  - ASP.NET Core: Use `PasswordHasher<T>`; `IDataProtectionProvider` for encryption.
+- **Example anti-pattern:**
+  ```typescript
+  // ❌ BAD: Plaintext password storage
+  await db.users.insert({ email, password: password });
+  ```
+- **Example fix:**
+  ```typescript
+  // ✅ GOOD: Hashed password
+  const hashedPassword = await bcrypt.hash(password, 10);
+  await db.users.insert({ email, passwordHash: hashedPassword });
+  ```
+
+### A03:2021 – Injection
+**Risk:** SQL, NoSQL, OS command, or LDAP injection via untrusted input.
+**Mitigations:**
+- **Parameterized queries:** Always use prepared statements/ORM; never string concatenation.
+- **Input validation:** Validate type, length, format before processing.
+- **ORM usage:** Use ORM methods that parameterize automatically (Eloquent, JPA, Entity Framework).
+- **NoSQL injection:** Validate and sanitize input; use parameterized queries for NoSQL.
+- **Framework patterns:**
+  - Laravel: Use Eloquent ORM; `DB::select()` with bindings, not raw SQL.
+  - Spring Boot: Use JPA/Hibernate; `@Query` with `:param` bindings.
+  - ASP.NET Core: Use Entity Framework Core; `FromSqlRaw()` with parameters.
+- **Example anti-pattern:**
+  ```typescript
+  // ❌ BAD: SQL injection
+  const query = `SELECT * FROM users WHERE email = '${email}'`;
+  ```
+- **Example fix:**
+  ```typescript
+  // ✅ GOOD: Parameterized query
+  const query = 'SELECT * FROM users WHERE email = ?';
+  await db.query(query, [email]);
+  ```
+
+### A04:2021 – Insecure Design
+**Risk:** Security flaws in architecture/design, not just implementation.
+**Mitigations:**
+- **Threat modeling:** Identify threats and design mitigations before implementation.
+- **Secure by default:** Deny-by-default access; require explicit permissions.
+- **Defense in depth:** Multiple layers of security (network, application, data).
+- **Architecture patterns:** Use Clean Architecture with security boundaries (Tier H contexts for auth/policy).
+- **Framework patterns:**
+  - Separate AuthN (IdentityContext) from AuthZ (PolicyContext).
+  - Use bounded contexts with trust tiers (Tier H for security-critical).
+  - Implement ports/adapters for external services (ACL pattern).
+- **Example anti-pattern:**
+  ```typescript
+  // ❌ BAD: Security logic scattered, no clear boundaries
+  if (user.role === 'admin') { /* ... */ }
+  ```
+- **Example fix:**
+  ```typescript
+  // ✅ GOOD: Security in dedicated context (PolicyContext)
+  const canAccess = await policyContext.authorize(userId, 'viewOrder', orderId);
+  if (!canAccess) throw new UnauthorizedError();
+  ```
+
+### A05:2021 – Security Misconfiguration
+**Risk:** Default/incomplete configurations expose vulnerabilities.
+**Mitigations:**
+- **Secure defaults:** Disable debug mode, verbose errors, default credentials in production.
+- **Headers:** Set security headers (CSP, HSTS, X-Frame-Options, X-Content-Type-Options).
+- **Error handling:** Don't expose stack traces, internal paths, or version info to clients.
+- **Framework patterns:**
+  - Laravel: `APP_DEBUG=false` in production; use `helmet` middleware.
+  - Spring Boot: `debug=false`; use `spring-boot-starter-security`.
+  - ASP.NET Core: `ASPNETCORE_ENVIRONMENT=Production`; use security headers middleware.
+- **Example anti-pattern:**
+  ```typescript
+  // ❌ BAD: Debug mode in production
+  app.use(express.json());
+  app.get('/users/:id', (req, res) => {
+    res.json({ error: err.stack }); // Exposes stack trace
+  });
+  ```
+- **Example fix:**
+  ```typescript
+  // ✅ GOOD: Production-safe error handling
+  app.use(helmet());
+  app.get('/users/:id', (req, res) => {
+    try { /* ... */ }
+    catch (err) {
+      logger.error(err);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  ```
+
+### A06:2021 – Vulnerable and Outdated Components
+**Risk:** Known vulnerabilities in dependencies.
+**Mitigations:**
+- **Dependency scanning:** Run `npm audit`, `pip-audit`, `cargo audit`, `govulncheck` in CI.
+- **Pin versions:** Use lockfiles; avoid `latest` or version ranges.
+- **SBOM generation:** Generate Software Bill of Materials for supply chain transparency.
+- **Update strategy:** Regular updates with testing; patch critical vulnerabilities immediately.
+- **Framework patterns:**
+  - All languages: Pin dependencies; scan in CI; block High/Critical vulnerabilities.
+- **Example anti-pattern:**
+  ```json
+  // ❌ BAD: Unpinned dependencies
+  { "dependencies": { "express": "*" } }
+  ```
+- **Example fix:**
+  ```json
+  // ✅ GOOD: Pinned dependencies
+  { "dependencies": { "express": "4.18.2" } }
+  ```
+
+### A07:2021 – Identification and Authentication Failures
+**Risk:** Weak authentication or session management.
+**Mitigations:**
+- **Strong passwords:** Enforce complexity; use password strength meters.
+- **Multi-factor authentication:** Require MFA for sensitive operations.
+- **Session management:** Secure session cookies (HttpOnly, Secure, SameSite); rotate session IDs.
+- **Token security:** Short-lived JWTs; validate audience/issuer; use refresh tokens.
+- **Framework patterns:**
+  - Laravel: Use Laravel Sanctum/Passport; secure session config.
+  - Spring Boot: Use Spring Security; OAuth2/JWT with proper validation.
+  - ASP.NET Core: Use ASP.NET Core Identity; JWT with `JwtBearer` middleware.
+- **Example anti-pattern:**
+  ```typescript
+  // ❌ BAD: Weak session management
+  res.cookie('session', sessionId); // No HttpOnly, Secure, SameSite
+  ```
+- **Example fix:**
+  ```typescript
+  // ✅ GOOD: Secure session cookie
+  res.cookie('session', sessionId, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict',
+    maxAge: 3600000
+  });
+  ```
+
+### A08:2021 – Software and Data Integrity Failures
+**Risk:** Unverified updates or CI/CD pipeline compromises.
+**Mitigations:**
+- **Code signing:** Sign artifacts; verify signatures before deployment.
+- **CI/CD security:** Secure CI/CD pipelines; use least-privilege tokens.
+- **Dependency verification:** Verify package integrity (checksums, signatures).
+- **Immutable deployments:** Use container images with verified base layers.
+- **Framework patterns:**
+  - All: Use signed artifacts; verify in deployment pipeline.
+- **Example anti-pattern:**
+  ```yaml
+  # ❌ BAD: No signature verification
+  - name: Deploy
+    run: docker pull myapp:latest && docker run myapp:latest
+  ```
+- **Example fix:**
+  ```yaml
+  # ✅ GOOD: Verify signature before deployment
+  - name: Deploy
+    run: |
+      docker pull myapp:latest
+      docker trust verify myapp:latest
+      docker run myapp:latest
+  ```
+
+### A09:2021 – Security Logging and Monitoring Failures
+**Risk:** Insufficient logging/monitoring for security events.
+**Mitigations:**
+- **Security event logging:** Log authentication failures, authorization denials, suspicious activity.
+- **Structured logging:** Use structured logs (JSON) with correlation IDs.
+- **Alerting:** Set up alerts for security events (failed logins, privilege escalations).
+- **Log retention:** Retain security logs for compliance/forensics.
+- **Framework patterns:**
+  - All: Use structured logging; include correlation IDs; alert on security events.
+- **Example anti-pattern:**
+  ```typescript
+  // ❌ BAD: No security logging
+  if (!user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  ```
+- **Example fix:**
+  ```typescript
+  // ✅ GOOD: Security event logging
+  if (!user) {
+    logger.warn({ event: 'auth_failure', email, ip: req.ip, correlationId });
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  ```
+
+### A10:2021 – Server-Side Request Forgery (SSRF)
+**Risk:** Forced server to make requests to unintended locations.
+**Mitigations:**
+- **Input validation:** Validate and sanitize URLs; use allowlists for allowed domains.
+- **Network segmentation:** Restrict server network access; use firewalls.
+- **URL parsing:** Use proper URL parsers; don't trust user-provided URLs.
+- **Framework patterns:**
+  - All: Validate URLs; use allowlists; restrict network access.
+- **Example anti-pattern:**
+  ```typescript
+  // ❌ BAD: No URL validation
+  const response = await fetch(userProvidedUrl);
+  ```
+- **Example fix:**
+  ```typescript
+  // ✅ GOOD: URL validation with allowlist
+  const allowedDomains = ['api.example.com', 'cdn.example.com'];
+  const url = new URL(userProvidedUrl);
+  if (!allowedDomains.includes(url.hostname)) {
+    throw new Error('Invalid URL');
+  }
+  const response = await fetch(url.toString());
+  ```
+
+[COMMON VULNERABILITIES CATALOG]
+
+### SQL Injection
+**Symptom:** User input directly concatenated into SQL queries.
+**Fix:** Use parameterized queries or ORM.
+**Example:** See A03:2021 – Injection above.
+
+### XSS (Cross-Site Scripting)
+**Symptom:** Untrusted user input rendered in HTML without escaping.
+**Fix:** Escape output; use CSP headers; sanitize input.
+**Example:**
+```typescript
+// ❌ BAD: XSS vulnerability
+res.send(`<div>${userInput}</div>`);
+
+// ✅ GOOD: Escaped output
+res.send(`<div>${escapeHtml(userInput)}</div>`);
+```
+
+### CSRF (Cross-Site Request Forgery)
+**Symptom:** State-changing requests without CSRF token validation.
+**Fix:** Validate CSRF tokens on state-changing requests.
+**Example:**
+```typescript
+// ✅ GOOD: CSRF protection
+app.use(csrf({ cookie: true }));
+app.post('/orders', csrfProtection, (req, res) => {
+  // CSRF token validated automatically
+});
+```
+
+### Insecure Direct Object References (IDOR)
+**Symptom:** Users can access resources by guessing/changing IDs.
+**Fix:** Validate resource ownership; use authorization checks.
+**Example:** See A01:2021 – Broken Access Control above.
+
+### Mass Assignment
+**Symptom:** User input directly assigned to model properties.
+**Fix:** Use whitelisting; validate and map input to allowed fields.
+**Example:**
+```typescript
+// ❌ BAD: Mass assignment
+const user = new User(req.body);
+
+// ✅ GOOD: Whitelisted fields
+const user = new User({
+  email: req.body.email,
+  name: req.body.name
+  // Ignore req.body.isAdmin, req.body.role, etc.
+});
+```
+
+### Sensitive Data Exposure
+**Symptom:** Secrets, passwords, or PII in logs, errors, or responses.
+**Fix:** Redact sensitive data; encrypt at rest; use secure transmission.
+**Example:** See A02:2021 – Cryptographic Failures above.
+
+### Missing Function-Level Access Control
+**Symptom:** Authorization checks only in UI, not in API.
+**Fix:** Authorize at API/use case boundaries, not just UI.
+**Example:** See A01:2021 – Broken Access Control above.
+
+### Using Components with Known Vulnerabilities
+**Symptom:** Outdated dependencies with known CVEs.
+**Fix:** Regular dependency scanning; update vulnerable packages.
+**Example:** See A06:2021 – Vulnerable and Outdated Components above.
+
+### Insufficient Logging & Monitoring
+**Symptom:** No logs for security events; no alerts for suspicious activity.
+**Fix:** Log security events; set up alerting.
+**Example:** See A09:2021 – Security Logging and Monitoring Failures above.
+
+[AGENT BEHAVIOR & REFUSAL DUTIES]
+- **MANDATORY:** AI agents (including AEONIC HYPERION) MUST refuse to bypass security invariants (authN/authZ, input validation, secrets handling, encryption, secure defaults) without an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc`.
+- **MANDATORY:** Agents MUST:
+  - Refuse to introduce hardcoded secrets, bypass authentication/authorization, or weaken input validation.
+  - Refuse to skip security controls "for convenience" or "to move faster".
+  - Propose compliant alternatives that maintain security guarantees.
+  - Only proceed with security violations if a valid `RISK_OVERRIDE` block is explicitly provided by the user, following `.cursor/rules/3G-risk-overrides.mdc`.
+- **MANDATORY:** Architecture and language rules MUST respect these security constraints; security rules take precedence over style or ergonomics per `.cursor/rules/10-global.mdc`.
+
+[VERIFICATION]
+- Run secrets/deps/security scans per stack and fail on High/Critical (e.g., `gitleaks detect`, `npm audit --audit-level=high`, `pip-audit`, `cargo audit`, `govulncheck`, `bandit`/`gosec`/`semgrep`).
+
+**See also:**
+- `.cursor/rules/3A-anti-patterns.mdc` — Security anti-patterns (SQL injection, XSS, missing authorization)
+- `.cursor/rules/20-agents.mdc` — `@security-auditor` agent with OWASP Top 10 focus
+- `.cursor/rules/36-architecture.mdc` — Architecture rules (security boundaries, Tier H contexts)
+- `.cursor/rules/3G-risk-overrides.mdc` — Risk override protocol for exceptional security exceptions
+- `docs/test-scenarios.md` — Test scenarios for security audits
+- `tests/policies/` — Policy scenarios validating agent behavior (see `tests/policies/ts-handler-missing-validation/validation.md` for SQL injection validation)
+- `examples/before-after/ts-express-handler-*.ts` — Security validation before/after examples
+
+- Secure coding references: see `docs/secure-coding-checklists.md` for language/framework-specific reminders.
+- Password handling: credentials MUST be hashed with vetted algorithms AND regression tests MUST assert stored hashes differ from raw input; tests lacking this assertion are non-compliant.

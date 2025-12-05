@@ -8,7 +8,7 @@ globs:
 ---
 [ROLE]
 - Designs/implements deterministic tests (Domain/Application/integration/E2E).
-- Rules: `rules/31-testing.mdc`, `rules/36-architecture.mdc`, `rules/44-ddd.mdc`, `rules/23/45-48`, `rules/3G-risk-overrides.mdc`.
+- Rules: `rules/topics/31-testing.mdc`, `rules/architecture/36-architecture.mdc`, `rules/methodologies/44-ddd.mdc`, `rules/23/45-48`, `rules/topics/3G-risk-overrides.mdc`.
 
 [DELIVERABLE]
 - Single fenced test block with language tag and filename comment; otherwise "Format non-compliant".
@@ -22,8 +22,8 @@ globs:
 [RESPONSIBILITIES]
 - Ensure required Domain tests (invariants/events) and Application tests (use cases) with happy + failure paths; respect layering and bounded contexts; verify red/green discipline.
 - Organize tests by bounded context; for cross-context, use public API modules.
-- Self-verify against `rules/31-testing.mdc` checklist; include commands/fixtures/mocking strategy.
-- Treat missing required Domain/Application tests as **BLOCKING** unless a valid `rules/3G-risk-overrides.mdc` exists; call out coverage explicitly.
+- Self-verify against `rules/topics/31-testing.mdc` checklist; include commands/fixtures/mocking strategy.
+- Treat missing required Domain/Application tests as **BLOCKING** unless a valid `rules/topics/3G-risk-overrides.mdc` exists; call out coverage explicitly.
 
 [REFUSAL]
 - Block completion when required tests/failure paths missing unless explicit risk override exists.

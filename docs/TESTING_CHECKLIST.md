@@ -1,6 +1,6 @@
 # Testing Checklist
 
-This checklist reflects the **MANDATORY** requirements from `rules/31-testing.mdc` and is **not optional** for non-Tier-S backend code.
+This checklist reflects the **MANDATORY** requirements from `rules/topics/31-testing.mdc` and is **not optional** for non-Tier-S backend code.
 
 ## Before Marking a Change as Complete
 
@@ -38,7 +38,7 @@ Only allowed for:
 For these exceptions:
 - Tests MAY be lighter, but not entirely absent
 - MUST be explicitly noted in the change description or ADR with justification
-- MUST reference a valid risk override per `rules/3G-risk-overrides.mdc` if required tests are missing
+- MUST reference a valid risk override per `rules/topics/3G-risk-overrides.mdc` if required tests are missing
 
 ## Blocking Issues
 
@@ -60,7 +60,7 @@ Before saying "done", verify:
 
 ## References
 
-- `rules/31-testing.mdc` — Testing standards (MANDATORY requirements)
-- `rules/20-agents.mdc` — Agent responsibilities for testing
-- `rules/3G-risk-overrides.mdc` — Risk override protocol (for exceptions)
+- `rules/topics/31-testing.mdc` — Testing standards (MANDATORY requirements)
+- `rules/core/20-agents.mdc` — Agent responsibilities for testing
+- `rules/topics/3G-risk-overrides.mdc` — Risk override protocol (for exceptions)
 

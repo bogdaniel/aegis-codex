@@ -1,0 +1,62 @@
+---
+description: "FDD — Feature-Driven Development (thin, reversible slices). Enforce small, safe, traceable increments."
+required: false
+category: "methodology"
+subcategory: "fdd"
+globs:
+  - "features/**"
+  - "tasks/**"
+  - "src/**"
+  - "app/**"
+  - "tests/**"
+---
+
+[SOURCE OF TRUTH]
+- Editable source: `rules/methodologies/43-fdd.mdc`
+- Generated/consumed copy: `.cursor/rules/43-fdd.mdc` (keep references intact)
+
+[INTENT]
+- Define Feature-Driven Development guidance.
+
+[APPLICABILITY]
+- Applies where FDD is used; guidance binding unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
+
+[CROSS-REFERENCES]
+- See `.cursor/rules/36-architecture.mdc` and `.cursor/rules/31-testing.mdc` for binding architecture/testing mandates applied alongside this file.
+- Risk overrides follow `.cursor/rules/3G-risk-overrides.mdc`.
+
+[FDD — FEATURE-DRIVEN DEVELOPMENT (THIN, REVERSIBLE SLICES)]
+
+[CORE MANDATE]
+- Break work into small, independently shippable slices with explicit scope, acceptance, and rollback paths.
+
+[PRINCIPLES]
+- Prefer thin vertical slices that cut through UI/API → application → domain → persistence, delivering a coherent behavior end-to-end.
+- Keep slices reversible: use feature flags, configuration toggles, or safe defaults to disable or roll back behavior quickly.
+- Avoid mixing unrelated concerns in a single slice (e.g., refactor + feature + dependency upgrade).
+- Each slice must have clear acceptance criteria and corresponding tests; defer speculative groundwork to future slices (YAGNI).
+- Document risks and dependencies (migrations, external systems) and plan mitigation/rollback upfront.
+
+[ANTI-PATTERNS]
+- Coupling unrelated changes together (features + refactors + infra) in a single change set.
+- Refactoring mixed with feature work without clear separation and tests.
+- No rollback plan or feature flag for risky changes.
+- Ambiguous scope that allows silent scope creep.
+- Slices that only provide value when combined with multiple future slices.
+
+[DEFINITION OF DONE (DOD)]
+- [ ] Acceptance criteria met with evidence (tests and/or acceptance checks).
+- [ ] Tests pass (unit/integration/E2E as appropriate).
+- [ ] Security checks run and clean for impacted surface.
+- [ ] Feature flag or safe configuration in place where relevant.
+- [ ] Rollback path identified and, where possible, exercised or simulated.
+- [ ] Observability hooks added for new critical paths.
+- [ ] User-facing or ops documentation updated where needed.
+
+[VERIFICATION]
+- For any feature/task, ensure:
+  - Scope is small, well-bounded, and described.
+  - The change can be enabled/disabled or rolled back with minimal blast radius.
+  - Tests and observability confirm behavior and provide insight post-deploy.
+  - When using ATDD/BDD/TDD within the slice, write scenarios/tests first and observe them failing (red) before implementation; post-hoc tests are non-compliant.
+- Push back on oversized, multi-concern changes that violate these constraints; propose slicing strategies instead.

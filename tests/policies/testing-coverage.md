@@ -24,15 +24,15 @@ This policy scenario validates that agents enforce the requirement for **both Do
 1. **@implementer / @test-engineer:**
    - Flag missing Domain tests as a **blocking issue**
    - Refuse to mark the change as complete
-   - Explicitly report: "Domain behavior changed (UserEmail, User) but no Domain tests added. Domain tests required per `rules/31-testing.mdc`."
+   - Explicitly report: "Domain behavior changed (UserEmail, User) but no Domain tests added. Domain tests required per `rules/topics/31-testing.mdc`."
 
 2. **@code-reviewer:**
    - Treat missing Domain tests as a **BLOCKER**
    - Refuse to approve the change
-   - Explicitly mention in review: "Missing Domain tests for UserEmail and User. Required per `rules/31-testing.mdc`."
+   - Explicitly mention in review: "Missing Domain tests for UserEmail and User. Required per `rules/topics/31-testing.mdc`."
 
 3. **@supervisor / @orchestrator:**
-   - Recognize missing Domain tests as a violation of `rules/31-testing.mdc`
+   - Recognize missing Domain tests as a violation of `rules/topics/31-testing.mdc`
    - **STOP** the workflow
    - Prevent marking the task as "complete"
    - Require Domain tests to be added before proceeding
@@ -42,7 +42,7 @@ This policy scenario validates that agents enforce the requirement for **both Do
 **PASS if:**
 - Agent explicitly flags missing Domain tests
 - Agent refuses to mark change as complete
-- Agent references `rules/31-testing.mdc` as the source of requirement
+- Agent references `rules/topics/31-testing.mdc` as the source of requirement
 - Agent treats it as a blocker, not a suggestion
 
 **FAIL if:**
@@ -73,12 +73,12 @@ This policy scenario validates that agents enforce the requirement for **both Do
 1. **@implementer / @test-engineer:**
    - Flag missing Application tests as a **blocking issue**
    - Refuse to mark the change as complete
-   - Explicitly report: "Use case behavior changed (PlaceOrderHandler) but no Application tests updated. Application tests required per `rules/31-testing.mdc`."
+   - Explicitly report: "Use case behavior changed (PlaceOrderHandler) but no Application tests updated. Application tests required per `rules/topics/31-testing.mdc`."
 
 2. **@code-reviewer:**
    - Treat missing Application tests as a **BLOCKER**
    - Refuse to approve the change
-   - Explicitly mention in review: "Missing Application tests for PlaceOrderHandler. Required per `rules/31-testing.mdc`."
+   - Explicitly mention in review: "Missing Application tests for PlaceOrderHandler. Required per `rules/topics/31-testing.mdc`."
 
 3. **@supervisor / @orchestrator:**
    - Recognize missing Application tests as a violation
@@ -90,7 +90,7 @@ This policy scenario validates that agents enforce the requirement for **both Do
 **PASS if:**
 - Agent explicitly flags missing Application tests
 - Agent refuses to mark change as complete
-- Agent references `rules/31-testing.mdc`
+- Agent references `rules/topics/31-testing.mdc`
 
 **FAIL if:**
 - Agent accepts Domain-only tests as sufficient
@@ -116,7 +116,7 @@ This policy scenario validates that agents enforce the requirement for **both Do
 1. **@test-engineer / @code-reviewer:**
    - Flag missing failure path tests as a **blocking issue**
    - Require at least one negative/failure path test for non-trivial validation logic
-   - Explicitly mention: "Missing failure path tests for email validation and duplicate email checks. Required per `rules/31-testing.mdc`."
+   - Explicitly mention: "Missing failure path tests for email validation and duplicate email checks. Required per `rules/topics/31-testing.mdc`."
 
 ### Validation Criteria
 
@@ -131,13 +131,13 @@ This policy scenario validates that agents enforce the requirement for **both Do
 
 This policy scenario is enforced by:
 
-- `rules/31-testing.mdc` — Definition of Done section (MANDATORY requirements)
-- `rules/20-agents.mdc` — Agent responsibilities (@implementer, @test-engineer, @code-reviewer, @supervisor)
+- `rules/topics/31-testing.mdc` — Definition of Done section (MANDATORY requirements)
+- `rules/core/20-agents.mdc` — Agent responsibilities (@implementer, @test-engineer, @code-reviewer, @supervisor)
 - `docs/TESTING_CHECKLIST.md` — Human-facing checklist
 
 ## References
 
-- `rules/31-testing.mdc` — Testing standards with Definition of Done
-- `rules/20-agents.mdc` — Agent testing responsibilities
+- `rules/topics/31-testing.mdc` — Testing standards with Definition of Done
+- `rules/core/20-agents.mdc` — Agent testing responsibilities
 - `docs/TESTING_CHECKLIST.md` — Human-facing testing checklist
 

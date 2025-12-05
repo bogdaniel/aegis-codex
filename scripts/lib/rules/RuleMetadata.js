@@ -16,6 +16,8 @@ function extractMetadata(rule, fileName) {
   if (!meta.category) {
     if (fileName.startsWith("00-") || fileName.startsWith("10-") || fileName.startsWith("20-")) {
       meta.category = "core";
+    } else if (fileName.includes("architecture/")) {
+      meta.category = "architecture";
     } else if (fileName.startsWith("30-") || fileName.startsWith("3")) {
       meta.category = "topic";
     } else if (fileName.startsWith("40-") || fileName.startsWith("4")) {
@@ -123,4 +125,3 @@ module.exports = {
   extractMetadata,
   validateMetadata,
 };
-

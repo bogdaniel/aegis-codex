@@ -31,7 +31,19 @@ function copyRules(selectedRules, sourceDir, outputDir, dryRun = false) {
   for (const rule of selectedRules) {
     const sourcePath = rule.filePath;
     const relativePath = rule.relativePath;
-    const outputPath = path.join(outputDir, relativePath);
+    // Flatten core/topics/methodologies/languages into root to preserve legacy .cursor paths,
+    // but keep agents and patterns in their subdirectories to avoid name collisions.
+    const isPattern = relativePath.startsWith("patterns/");
+    const isAgent = relativePath.startsWith("agents/");
+    const baseName = path.basename(relativePath);
+    const flattenExceptions = ["3A-anti-patterns.mdc"];
+    const targetRelativePath =
+      isAgent
+        ? relativePath
+        : isPattern && !flattenExceptions.includes(baseName)
+        ? relativePath
+        : baseName;
+    const outputPath = path.join(outputDir, targetRelativePath);
     const outputDirPath = path.dirname(outputPath);
 
     try {
@@ -61,4 +73,3 @@ function copyRules(selectedRules, sourceDir, outputDir, dryRun = false) {
 module.exports = {
   copyRules,
 };
-

@@ -1,0 +1,153 @@
+---
+description: "API lifecycle: versioning, compatibility, and deprecation for service contracts."
+category: "api"
+subcategory: "lifecycle"
+required: true
+globs:
+  - "api/**"
+  - "src/**"
+  - "app/**"
+  - "services/**"
+---
+
+[SOURCE OF TRUTH]
+- Editable source: `rules/topics/35-api-lifecycle.mdc`
+- Generated/consumed copy: `.cursor/rules/35-api-lifecycle.mdc` (keep references intact)
+
+[INTENT]
+- Define API lifecycle, compatibility, and deprecation rules.
+
+[APPLICABILITY]
+- Applies to all public/cross-context APIs and events; requirements are binding unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicit.
+
+[CROSS-REFERENCES]
+- See `.cursor/rules/36-architecture.mdc` and `.cursor/rules/31-testing.mdc` for binding architecture/testing mandates applied alongside this file.
+- Risk overrides follow `.cursor/rules/3G-risk-overrides.mdc`.
+
+[SCOPE]
+- Applicability:
+  - This rule applies to:
+    - Public HTTP/REST and GraphQL APIs exposed to external clients,
+    - Internal APIs (HTTP/gRPC/message-based) that serve as public contracts between bounded contexts,
+    - Event schemas and contracts that are consumed across bounded contexts as defined in `.cursor/rules/38-anti-corruption-events.mdc`.
+  - APIs and contracts internal to a single bounded context but exposed to other technical layers (e.g., controllers calling Application use cases) MUST still follow the architecture and layering rules in `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc` but are out of scope for external lifecycle guarantees.
+- Context and trust tiers:
+  - Bounded contexts and their trust tiers (Tier H/M/S) are defined in `.cursor/rules/36-architecture.mdc`; Tier H and Tier M APIs MUST be treated as more sensitive and subject to stricter lifecycle, compatibility, and observability requirements.
+  - APIs that form anti-corruption boundaries or ACLs MUST also respect event and integration rules in `.cursor/rules/38-anti-corruption-events.mdc`.
+
+
+[API DESIGN BASELINE (INHERITED)]
+- The following API design standards from the legacy API rule remain in force and are extended here:
+  - Versioning: explicit versions (/v1 or Accept header); document deprecation timelines; avoid breaking changes without migration path.
+  - URIs/methods: predictable RESTful URIs; standard methods (GET/POST/PUT/PATCH/DELETE); consistent status codes (2xx/4xx/5xx with 400/401/403/404/409/422 norms); JSON `Content-Type` by default.
+  - Contracts: validated request/response schemas; consistent error envelope with code/message/details and trace ID; structured errors only (no HTML).
+  - Pagination/filtering: required pagination with limits; cursor preferred for large sets; allowlisted filters/sorts; include pagination metadata (next cursor/hasMore/total when feasible).
+  - Safety: authN/authZ by default; rate limiting/abuse protections; idempotency keys for non-idempotent POST when needed; avoid sensitive fields leakage; field-level filtering where appropriate.
+  - GraphQL (if used): well-defined schema; avoid unbounded lists; use connections/cursors; avoid generic catch-all fields.
+  - Observability: log request IDs/status/latency; metrics per route; propagate trace context.
+- All MUST / MUST NOT implications of the above baseline remain mandatory; this file extends them with explicit lifecycle, compatibility, and deprecation rules and supersedes `rules/topics/35-api.mdc` as the canonical API rule while preserving its constraints.
+
+
+[VERSIONING STRATEGY]
+- Strategy selection:
+  - Each API surface (service or bounded context) MUST declare a clear versioning strategy (e.g., URI prefix `/v1`, versioned subdomain, or explicit version header) and MUST document it alongside the API contract.
+  - For GraphQL or schema-based APIs, semantic schema versioning MUST be defined (e.g., via schema registry, introspection fields, or versioned endpoints) and MUST be documented.
+- Backward-compatible preference:
+  - Tier H and Tier M APIs MUST favor backward-compatible, additive changes (adding fields, tolerating unknown fields, adding optional endpoints) over breaking changes, consistent with `.cursor/rules/23-change-control.mdc`.
+  - API providers MUST design request/response schemas to be evolvable (e.g., using additive fields and default values) and MUST avoid requiring strict client-side validation that breaks on unknown fields.
+- Versioning and compatibility:
+  - Breaking changes (removing fields, changing semantics, tightening validation beyond documented guarantees) MUST be treated as explicit lifecycle events and MUST NOT be introduced silently under an existing major version.
+  - When a breaking change is necessary for an external-facing API, a new major version (e.g., `/v2`) or explicit compatibility strategy (e.g., versioned header, dual-endpoint) MUST be introduced, and the old version MUST be deprecated following the rules in [DEPRECATION & REMOVAL].
+  - Internal APIs between bounded contexts MAY adopt lighter-weight versioning (e.g., schema evolution with compatibility testing) but MUST still avoid breaking downstream consumers without coordination and must align with `.cursor/rules/36-architecture.mdc` and `.cursor/rules/38-anti-corruption-events.mdc`.
+- Documentation:
+  - The chosen versioning strategy, compatibility guarantees, and supported versions MUST be clearly documented for each API, including:
+    - Current stable version(s),
+    - Deprecated version(s) and associated timelines,
+    - Planned or in-progress new versions if applicable.
+
+
+[BACKWARD COMPATIBILITY & CONTRACTS]
+- Additive changes:
+  - Adding new optional fields, new endpoints, or new error codes that do not change existing semantics SHOULD be favored and MUST be implemented in a way that is safe for existing clients (e.g., default values, optional behavior).
+  - Providers MUST ensure that API schemas and validators accept unknown fields where appropriate, to allow forward compatibility and client evolution.
+- Breaking changes:
+  - Any change that removes or repurposes existing fields, significantly changes validation rules, alters error models, or changes semantics visible to clients MUST be classified as a breaking change and handled under `.cursor/rules/23-change-control.mdc`.
+  - For external-facing APIs, breaking changes MUST:
+    - Introduce a new version or alternate endpoint,
+    - Provide a migration path and documentation,
+    - Define a deprecation window for the old behavior as described in [DEPRECATION & REMOVAL].
+  - For internal cross-context APIs, breaking changes MUST be coordinated with consumers via change-control and MAY use dual-stack strategies (e.g., support old and new shapes behind flags or separate paths) as aligned with `.cursor/rules/36-architecture.mdc` and `.cursor/rules/38-anti-corruption-events.mdc`.
+- Contract testing:
+  - Contracts for APIs and cross-context events MUST be covered by automated contract tests, snapshot tests, or equivalent mechanisms, ensuring that accidental breaking changes are caught before deployment.
+  - CI pipelines MUST include contract/schema validation checks (e.g., OpenAPI/GraphQL schema linters, JSON Schema validation, or event schema registries) as described in `.cursor/rules/34-ci.mdc` and `.cursor/rules/31-testing.mdc`.
+
+
+[DEPRECATION & REMOVAL]
+- Deprecation process:
+  - When deprecating an endpoint, field, or version, providers MUST:
+    - Mark it as deprecated in official docs and schemas (e.g., OpenAPI `deprecated: true`, GraphQL @deprecated),
+    - Communicate deprecation to known clients (e.g., changelog, release notes, API portal, or direct communication channels),
+    - Where appropriate, include non-disruptive deprecation warnings in responses (e.g., headers) without leaking sensitive information.
+  - Deprecation announcements MUST specify:
+    - The replacement (new endpoint/field/version),
+    - Expected behavior differences,
+    - The earliest removal date or minimum deprecation window.
+- Minimum deprecation window:
+  - For external-facing APIs, a minimum deprecation window MUST be defined at the organization level (e.g., 90/180 days) and referenced in docs; removal before this window MUST require explicit exception and recorded justification in change-control artifacts per `.cursor/rules/23-change-control.mdc`.
+  - For internal cross-context APIs, deprecation windows MAY be shorter but MUST still allow realistic client migration and MUST be agreed upon by involved teams.
+- Removal:
+  - Removing deprecated endpoints, fields, or versions MUST:
+    - Be tracked via change-control (ADR or equivalent) including impact assessment and rollback strategy,
+    - Update tests (removing or adjusting contract tests accordingly),
+    - Update monitoring and alerting to remove or adjust checks tied to removed endpoints.
+  - Removal of APIs that affect Tier H/M contexts MUST be accompanied by an updated threat model and risk assessment where security or data handling semantics change, in line with `.cursor/rules/30-security.mdc` and `.cursor/rules/3B-data-persistence.mdc`.
+
+
+[AGENT BEHAVIOR]
+- Classifying API changes:
+  - When asked to change an API or contract, agents MUST explicitly classify the change as additive vs breaking and MUST state the implications for clients.
+  - For additive changes, agents MUST:
+    - Preserve existing behavior and tests,
+    - Extend schemas/contracts and contract tests,
+    - Ensure clients that ignore the new behavior continue to function.
+  - For breaking changes, agents MUST:
+    - Invoke `.cursor/rules/23-change-control.mdc` and treat the change as a formal lifecycle event,
+    - Propose appropriate versioning or dual-path strategies (e.g., new versioned endpoint, dual-read/dual-write) instead of silently mutating existing behavior.
+- Designing with lifecycle in mind:
+  - Agents MUST design new APIs and events to be evolvable (extensible schemas, explicit error models, documented invariants) consistent with `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, and `.cursor/rules/38-anti-corruption-events.mdc`.
+  - Agents MUST avoid introducing "one-off" APIs that bypass bounded contexts or ACLs; instead, they MUST use the existing context map and public API modules and respect trust tiers.
+- Deprecation and documentation:
+  - When deprecating or removing APIs, agents MUST:
+    - Update documentation and schemas to mark the deprecation,
+    - Propose or update migration guides,
+    - Ensure tests and CI checks align with the new state (e.g., no longer asserting behavior for removed endpoints).
+  - Agents MUST NOT simply delete or break existing APIs in stable systems without going through the lifecycle, communication, and migration expectations defined in this rule.
+
+
+[VERIFICATION / CHECKS]
+- For `@architect`:
+  - MUST ensure that each major API surface has:
+    - A documented versioning strategy,
+    - Clear compatibility guarantees,
+    - Defined deprecation and removal processes consistent with organizational policy.
+  - MUST verify that cross-context APIs and events respect bounded contexts, ACLs, and schema rules in `.cursor/rules/36-architecture.mdc` and `.cursor/rules/38-anti-corruption-events.mdc`.
+- For `@code-reviewer`:
+  - MUST check that any API change identifies whether it is additive or breaking, and that breaking changes:
+    - Reference `.cursor/rules/23-change-control.mdc`,
+    - Include a migration path and, where relevant, new version or endpoint,
+    - Update contract tests and documentation.
+  - MUST block changes that alter public API behavior in unstable or undocumented ways, or that bypass existing lifecycle and communication processes.
+- For `@supervisor` and CI/policy checks:
+  - SHOULD verify that CI enforces contract/schema validation for APIs and events, and that policy scenarios for breaking API changes require lifecycle artifacts (ADR/change record, deprecation plan, migration path).
+  - SHOULD validate that deprecation windows and removal policies are adhered to, especially for external-facing and Tier H/M APIs, and that violations are explicitly risk-accepted rather than accidental.
+
+
+[VERIFICATION]
+- API providers MUST provide concrete commands or procedures for validating API contracts (e.g., `npm run lint:openapi`, `spectral lint openapi.yaml`, contract test suites in CI) and MUST ensure these checks run as part of the CI pipeline in alignment with `.cursor/rules/34-ci.mdc`.
+- See also:
+  - `.cursor/rules/36-architecture.mdc` — Architecture rules (API boundaries, bounded contexts, public API modules)
+  - `.cursor/rules/38-anti-corruption-events.mdc` — Anti-Corruption Layers & Event Catalog (cross-context contracts)
+  - `.cursor/rules/23-change-control.mdc` — Change-control, ADRs, and risk management
+  - `.cursor/rules/30-security.mdc` — Security standards for API design and operation
+  - `.cursor/rules/31-testing.mdc` — Testing standards and contract tests
+

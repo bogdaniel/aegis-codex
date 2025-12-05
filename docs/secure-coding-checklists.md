@@ -1,6 +1,6 @@
 # Secure Coding Checklists (Reference)
 
-- Purpose: language/framework-specific secure coding reminders. Use alongside binding rules in `rules/30-security.mdc`; architecture/testing mandates remain non-negotiable.
+- Purpose: language/framework-specific secure coding reminders. Use alongside binding rules in `rules/topics/30-security.mdc`; architecture/testing mandates remain non-negotiable.
 
 ## TypeScript / Node / React
 - Auth/session: use signed/HttpOnly/SameSite cookies; rotate tokens; validate issuer/audience.

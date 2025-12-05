@@ -765,21 +765,21 @@ Deliverables:
 - Clean Architecture/DDD-compliant code in PHP 8.2+ with ports/adapters and no frameworks in Domain/Application.
 - In-memory adapters (repos, event publisher) for tests.
 - composer.json, phpunit.xml, deptrac.yaml (layer enforcement), minimal README with run/test commands.
-- Tests: Domain (VO/entity invariants) + Application (happy + failure paths) per rules/31-testing.mdc.
+- Tests: Domain (VO/entity invariants) + Application (happy + failure paths) per rules/topics/31-testing.mdc.
 - CI/commands: `composer install`, `composer test` (phpunit + phpstan), `vendor/bin/deptrac analyse`.
 
 Workflow (follow rules):
-1) @architect: design bounded contexts, trust tiers, layers, ports/adapters per rules/36-architecture.mdc & 44-ddd.mdc; no structure guidance needed.
-2) @security-auditor: threat model per rules/30-threat-modeling.mdc; apply PHP secure coding checklist (docs/secure-coding-checklists.md).
+1) @architect: design bounded contexts, trust tiers, layers, ports/adapters per rules/architecture/36-architecture.mdc & 44-ddd.mdc; no structure guidance needed.
+2) @security-auditor: threat model per rules/topics/30-threat-modeling.mdc; apply PHP secure coding checklist (docs/secure-coding-checklists.md).
 3) @implementer: build per design; keep Domain/Application framework-free; hash passwords; enforce invariants.
-4) @test-engineer: add required tests (Domain + Application, happy + failure) per rules/31-testing.mdc.
+4) @test-engineer: add required tests (Domain + Application, happy + failure) per rules/topics/31-testing.mdc.
 5) @code-reviewer: enforce architecture/testing/change-discipline; reject violations.
 6) @supervisor: ensure compliance; no completion if mandatory rules/tests missing.
 
 Constraints:
 - Respect Clean Architecture, no business logic in controllers/adapters.
 - No plaintext passwords; validate duplicate email; Money non-negative.
-- No edits to rules/.cursor; if a rule must be violated, require explicit RISK_OVERRIDE per rules/3G-risk-overrides.mdc.
+- No edits to rules/.cursor; if a rule must be violated, require explicit RISK_OVERRIDE per rules/topics/3G-risk-overrides.mdc.
 - Keep outputs concise and self-contained; provide commands to run tests/checks.
 
 ### Template 1: End-to-End Feature Development

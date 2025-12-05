@@ -40,7 +40,23 @@ function readRuleFiles(rulesDir) {
   }
 
   traverseDir(rulesPath);
-  return rules.sort((a, b) => a.relativePath.localeCompare(b.relativePath));
+
+  function numericPrefix(relativePath) {
+    const base = relativePath.split("/").pop();
+    const match = base && base.match(/^(\d+)/);
+    return match ? parseInt(match[1], 10) : Number.MAX_SAFE_INTEGER;
+  }
+
+  return rules.sort((a, b) => {
+    const aNum = numericPrefix(a.relativePath);
+    const bNum = numericPrefix(b.relativePath);
+    if (aNum !== bNum) return aNum - bNum;
+
+    const nameCompare = a.name.localeCompare(b.name);
+    if (nameCompare !== 0) return nameCompare;
+
+    return a.relativePath.localeCompare(b.relativePath);
+  });
 }
 
 /**
@@ -59,4 +75,3 @@ module.exports = {
   readRuleFiles,
   readRuleFile,
 };
-

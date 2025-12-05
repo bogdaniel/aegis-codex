@@ -1,0 +1,90 @@
+---
+description: "Tests as contracts: regression discipline and test hygiene."
+category: "testing"
+subcategory: "regression-discipline"
+required: true
+globs:
+  - "tests/**"
+  - "src/**"
+  - "app/**"
+---
+
+[SOURCE OF TRUTH]
+- Editable source: `rules/topics/46-regression-discipline.mdc`
+- Generated/consumed copy: `.cursor/rules/46-regression-discipline.mdc` (keep references intact)
+
+[INTENT]
+- Define regression discipline: tests as contracts, no weakening/removal without control.
+
+[APPLICABILITY]
+- Applies to all changes affecting tests/contracts; requirements are binding unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
+
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+
+[CONCEPTS]
+- Tests as contracts:
+  - A passing test suite defines the expected behavior of the system at a given point in time; changing tests is equivalent to changing contracts.
+  - Acceptance, integration, and unit tests collectively express domain rules, invariants, and edge cases as described in `.cursor/rules/40-atdd.mdc`, `.cursor/rules/41-bdd.mdc`, and `.cursor/rules/31-testing.mdc`.
+  - Deleting or weakening tests without aligning specs, ADRs, and domain language creates code/spec drift and MUST be treated as a contract change, not a "quick fix".
+- Regression discipline:
+  - Regression discipline means that once a behavior is encoded in tests, future changes MUST preserve that behavior unless the underlying specification intentionally changes.
+  - Tests that capture fixed bugs (regression tests) are especially critical; removing or weakening them risks reintroducing known failures and is strongly discouraged.
+
+
+[BASE RULES]
+- Test deletion:
+  - Contributors and agents MUST NOT delete tests without:
+    - Explicit justification (e.g., the underlying spec/behavior has changed, the test is proven redundant/duplicated, or the tested code path has been safely removed), and
+    - Matching updates to specs/ADRs or other authoritative artifacts per `.cursor/rules/48-doc-sync.mdc` and `.cursor/rules/23-change-control.mdc`.
+  - Deleting a regression test that guards a previously fixed bug MUST be treated as a high-risk change and MUST go through formal change-control with clear rationale.
+- Test weakening:
+  - Contributors and agents MUST NOT weaken tests (e.g., loosening assertions, using broader matches, removing failure cases) without:
+    - Explaining exactly why the test no longer reflects the intended guarantee, and
+    - Ensuring that the new test still encodes the desired behavior/invariant in line with `.cursor/rules/40-atdd.mdc` and `.cursor/rules/41-bdd.mdc`.
+  - Replacing strong behavior-focused assertions with vague or incidental checks (e.g., only checking HTTP 200 instead of payload semantics) is considered a weakening and MUST be justified as a contract change.
+- Coverage for new/changed behavior:
+  - Any new or changed behavior in non-trivial systems MUST be accompanied by tests that cover:
+    - At least one happy path,
+    - At least one representative failure path (e.g., invalid input, unauthorized access, dependent failure),
+    - At least one relevant edge case where applicable (boundary value, empty input, extreme load, etc.), consistent with `.cursor/rules/31-testing.mdc` and `.cursor/rules/42-tdd.mdc`.
+  - For Tier H/M contexts or changes that affect security, data handling, or SLOs, additional negative and abuse-case tests SHOULD be added, in line with `.cursor/rules/30-security.mdc` and `.cursor/rules/32-observability.mdc`.
+
+
+[AGENT BEHAVIOR]
+- When adding features or modifying behavior:
+  - Agents MUST propose or update tests alongside code changes and explicitly link each test to the behavior it covers (e.g., "this test asserts that unauthorized users cannot access X").
+  - Agents MUST treat tests as first-class artifacts:
+    - For each primary behavior change, agents SHOULD identify which existing tests cover it and whether new tests are required.
+    - Agents MUST avoid adding code without either confirming existing coverage or adding new tests.
+- When editing or removing tests:
+  - Agents MUST state clearly:
+    - Why the test is being changed or removed (spec change, flakiness fix, more precise invariant, dead code removal),
+    - How the new test set continues to encode the intended contracts and invariants.
+  - Agents MUST refuse requests to "just remove this failing test" or to loosen assertions solely to make CI green, unless:
+    - The underlying spec is being intentionally changed,
+    - The change follows `.cursor/rules/23-change-control.mdc` and `.cursor/rules/48-doc-sync.mdc`,
+    - The behavior change and test changes are documented together.
+- Interaction with bugfix protocol:
+  - When fixing bugs, agents MUST follow `rules/topics/45-bugfix-protocol.mdc`:
+    - Add or strengthen regression tests,
+    - Avoid weakening or deleting tests as a substitute for fixing the bug.
+
+
+[VERIFICATION / CHECKS]
+- For `@code-reviewer`:
+  - MUST treat PRs that add or change behavior without corresponding tests as non-compliant by default, unless there is explicit, documented evidence of existing coverage.
+  - MUST scrutinize any test deletion or weakening as a potential contract change:
+    - Ensure justification is clear and matches updated specs/ADRs,
+    - Ensure that behavior is still exercised by other tests where appropriate.
+  - MUST block changes that remove or weaken tests simply to hide failures without proper change-control and spec updates.
+- For `@architect` / `@owner`:
+  - SHOULD ensure that critical flows, domain invariants, and cross-context contracts have stable, behavior-focused tests that are not casually modified.
+  - MUST ensure that changes to tests that imply domain or API contract changes trigger appropriate lifecycle and documentation updates per `.cursor/rules/35-api-lifecycle.mdc`, `.cursor/rules/36-architecture.mdc`, and `.cursor/rules/48-doc-sync.mdc`.
+- For CI / policy enforcement:
+  - SHOULD include checks or manual policies where:
+    - Behavior changes without test diffs are flagged for review,
+    - Deletion of tests, especially in critical modules, requires additional scrutiny or approval.
+

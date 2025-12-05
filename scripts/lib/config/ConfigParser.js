@@ -17,6 +17,8 @@ const DEFAULT_CONFIG = {
       api: true,
       accessibility: true,
       "observability-security": false,
+      "feature-flags-rollouts": true,
+      "multi-tenancy": false,
     },
     methodologies: {
       atdd: true,
@@ -175,4 +177,3 @@ module.exports = {
   mergeCliFlags,
   DEFAULT_CONFIG,
 };
-

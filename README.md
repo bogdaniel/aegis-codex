@@ -315,7 +315,7 @@ See `docs/rule-builder-testing.md` for comprehensive testing guide.
 
 ## Extending the System
 - To add a new language: create `docs/language-guides/<lang>.md` and a matching `rules/50-lang-<lang>.mdc` file with globs and MUST/NEVER lists. Then regenerate `.cursor/rules/` and `AGENTS.md` using the rule builder.
-- To add a new agent: edit `rules/20-agents.mdc` with role, operating rules, and `[FORMAT]`; optionally add usage in `docs/agent-prompts.md`; then regenerate `.cursor/rules/` and `AGENTS.md` using the rule builder.
+- To add a new agent: edit `rules/core/20-agents.mdc` with role, operating rules, and `[FORMAT]`; optionally add usage in `docs/agent-prompts.md`; then regenerate `.cursor/rules/` and `AGENTS.md` using the rule builder.
 - To tighten behavior: adjust the relevant `rules/*.mdc` section; prefer "fail‑closed" patterns (e.g., respond with `Format non-compliant` when format can't be honored), then regenerate `.cursor/rules/` and `AGENTS.md` using the rule builder.
 
 ## Quickstart with Cursor

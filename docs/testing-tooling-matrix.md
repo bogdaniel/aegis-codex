@@ -1,6 +1,6 @@
 # Testing Tooling Matrix (Reference)
 
-- Purpose: quick reference for unit/integration/E2E tools per language/framework. Use in conjunction with binding requirements in `rules/31-testing.mdc` and CI gating in `rules/34-ci.mdc`. Architecture/testing mandates remain non-negotiable.
+- Purpose: quick reference for unit/integration/E2E tools per language/framework. Use in conjunction with binding requirements in `rules/topics/31-testing.mdc` and CI gating in `rules/topics/34-ci.mdc`. Architecture/testing mandates remain non-negotiable.
 
 ## TypeScript / JavaScript
 - Unit: Jest, Vitest, ts-jest, @testing-library/react
@@ -47,5 +47,5 @@
 ## Cross-Cutting
 - Contract tests: Pact/OpenAPI schema validation where APIs/events are exposed.
 - Test data: factories/fixtures per bounded context; avoid global mutable state.
-- Environment parity: align local/stage/prod configs per `rules/3E-config-environments.mdc`.
+- Environment parity: align local/stage/prod configs per `rules/architecture/3E-config-environments.mdc`.
 

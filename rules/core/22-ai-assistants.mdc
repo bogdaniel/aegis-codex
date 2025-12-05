@@ -1,0 +1,227 @@
+---
+description: "AI/code assistant usage governance: allowed/forbidden operations, requirements, privacy & provenance."
+required: true
+category: "core"
+subcategory: "governance"
+globs:
+  - "**/*"
+---
+
+[SOURCE OF TRUTH]
+- Editable source: `rules/core/22-ai-assistants.mdc`
+- Generated/consumed copy: `.cursor/rules/22-ai-assistants.mdc` (keep references intact)
+
+[INTENT]
+- Define governance for AI/code assistant usage, allowed/forbidden operations, and traceability requirements.
+
+[APPLICABILITY]
+- Applies to all AI/code-assistant usage; requirements are binding unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicit.
+
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+
+[AI/CODE ASSISTANT USAGE GOVERNANCE BASELINE]
+
+### [ALLOWED OPERATIONS]
+
+#### Routine Refactors
+- **ALLOWED:** AI/code-assistants MAY perform:
+  - **Routine refactors:** Within a bounded context (rename variables, extract functions, format code).
+  - **Boilerplate generation:** Under architecture & testing constraints (generate CRUD handlers, DTOs, tests).
+  - **Documentation:** Generate documentation from code (JSDoc, README, API docs).
+- **MANDATORY:** Allowed operations MUST:
+  - **Respect architecture:** Follow `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`.
+  - **Include tests:** Generated code must include tests (unit, integration, or both).
+  - **Be reviewed:** All AI-generated code must be code-reviewed by human owner.
+- **Verification:** Check that AI-generated code respects architecture; tests are included; code is reviewed.
+
+#### Boilerplate Generation
+- **ALLOWED:** AI/code-assistants MAY generate:
+  - **CRUD handlers:** Following Clean Architecture patterns (thin controllers, use cases, repositories).
+  - **DTOs:** Request/response DTOs with validation (zod, yup, or equivalent).
+  - **Tests:** Unit tests, integration tests, following testing standards.
+- **MANDATORY:** Generated boilerplate MUST:
+  - **Follow patterns:** Use established patterns from codebase (not invent new patterns).
+  - **Include validation:** Input validation, error handling, security checks.
+  - **Be complete:** Not just skeletons; include error handling, logging, observability.
+- **Verification:** Check that generated boilerplate follows patterns; validation and error handling are included.
+
+### [FORBIDDEN OPERATIONS]
+
+#### Database Migrations
+- **FORBIDDEN:** AI/code-assistants MUST NOT generate database migrations without explicit human approval:
+  - **MUST NOT:** Generate migrations for Tier H/M contexts without review.
+  - **MUST NOT:** Generate zero-downtime migrations without validation.
+  - **MUST NOT:** Generate migrations that alter existing data without explicit approval.
+- **MANDATORY:** Database migrations MUST:
+  - **Be reviewed:** All migrations must be code-reviewed by database owner.
+  - **Be tested:** Migrations must be tested in staging environment.
+  - **Have rollback plan:** Rollback plan documented and tested.
+- **Verification:** Check that database migrations are reviewed and tested; rollback plans are documented.
+
+#### Cryptography/Security-Critical Code
+- **FORBIDDEN:** AI/code-assistants MUST NOT generate:
+  - **Cryptography code:** Encryption, hashing, key generation, token generation without review.
+  - **Security-critical code:** Authentication, authorization, session management without review.
+  - **Secret handling:** Code that handles secrets, tokens, keys without review.
+- **MANDATORY:** Security-critical code MUST:
+  - **Be reviewed:** All security-critical code must be reviewed by security team.
+  - **Follow standards:** Use established security patterns (OWASP Top 10, security rules).
+  - **Be tested:** Security tests (penetration testing, security audits) required.
+- **Verification:** Check that security-critical code is reviewed; security standards are followed.
+
+#### Cross-Context Boundary Changes
+- **FORBIDDEN:** AI/code-assistants MUST NOT:
+  - **Alter trust tiers:** Change trust tier assignments without explicit approval.
+  - **Modify context boundaries:** Change bounded context boundaries without architecture review.
+  - **Create cross-context dependencies:** Create new cross-context dependencies without review.
+- **MANDATORY:** Cross-context boundary changes MUST:
+  - **Be reviewed:** Architecture review required (@architect approval).
+  - **Update context map:** Context map updated with new boundaries/dependencies.
+  - **Update threat models:** Threat models updated for affected contexts.
+- **Verification:** Check that cross-context boundary changes are reviewed; context map and threat models are updated.
+
+#### Secrets Handling
+- **FORBIDDEN:** AI/code-assistants MUST NOT generate:
+  - **Secret management code:** Code that handles secrets, tokens, keys without review.
+  - **Token rotation code:** Code that rotates tokens/keys without review.
+  - **Credential storage code:** Code that stores credentials without review.
+- **MANDATORY:** Secrets handling MUST:
+  - **Use secret managers:** AWS Secrets Manager, HashiCorp Vault, or equivalent.
+  - **Be reviewed:** All secrets handling code must be reviewed by security team.
+  - **Follow standards:** Follow `.cursor/rules/30-security.mdc` (no hardcoded secrets).
+- **Verification:** Check that secrets handling uses secret managers; code is reviewed.
+
+### [REQUIREMENTS]
+
+#### Test Coverage
+- **MANDATORY:** All AI-generated/modified code MUST be:
+  - **Covered by tests:** Unit tests, integration tests, or both (minimum 80% coverage for critical paths).
+  - **Tested:** Tests must pass before code is merged.
+  - **Reviewed:** Tests must be reviewed by human owner.
+- **MANDATORY:** Test coverage MUST align with `.cursor/rules/31-testing.mdc`:
+  - **MUST:** Tests are deterministic, hermetic, and parallel-safe.
+  - **MUST:** Tests cover happy paths, edge cases, and failure modes.
+  - **MUST:** Tests respect architecture layering (Application use cases as primary unit boundary).
+- **Verification:** Check that AI-generated code has test coverage; tests pass and are reviewed.
+
+#### Code Review
+- **MANDATORY:** All AI-generated/modified code MUST be:
+  - **Code-reviewed:** Reviewed by human owner (not just AI-generated).
+  - **Architecture-checked:** Validated against architecture rules (layering, bounded contexts, domain purity).
+  - **Security-checked:** Validated against security rules (OWASP Top 10, security patterns).
+- **MANDATORY:** Code review MUST:
+  - **Be thorough:** Not just rubber-stamp; actual review of logic, architecture, security.
+  - **Be documented:** Review comments, approvals, rejections documented in PR.
+  - **Be required:** No merging without human code review.
+- **Verification:** Check that AI-generated code is code-reviewed; reviews are thorough and documented.
+
+#### Traceability
+- **MANDATORY:** All AI-generated/modified code MUST be:
+  - **Traceable:** Commit messages, PR notes, tags indicate AI-generated code.
+  - **Documented:** PR description explains what AI generated and why.
+  - **Tagged:** Use tags (e.g., `[ai-generated]`, `[ai-assisted]`) in commits/PRs.
+- **MANDATORY:** Traceability MUST:
+  - **Be clear:** Easy to identify AI-generated code in git history.
+  - **Be searchable:** Can search for AI-generated code across codebase.
+  - **Be auditable:** Can audit AI-generated code for compliance, security, quality.
+- **Verification:** Check that AI-generated code is traceable; commits/PRs are tagged and documented.
+
+### [PRIVACY & PROVENANCE]
+
+#### No Leaking Secrets
+- **MANDATORY:** AI/code-assistants MUST NOT:
+  - **Leak secrets:** Never send secrets, API keys, tokens, passwords to AI services.
+  - **Leak proprietary data:** Never send proprietary business logic, algorithms, data to AI services.
+  - **Leak PII:** Never send PII (personally identifiable information) to AI services.
+- **MANDATORY:** Privacy MUST be:
+  - **Enforced:** Use tools that redact secrets before sending to AI services.
+  - **Monitored:** Monitor AI service usage for potential data leaks.
+  - **Documented:** Document what data is sent to AI services (if any).
+- **Verification:** Check that secrets are not leaked; privacy is enforced and monitored.
+
+#### Data Retention Policies
+- **MANDATORY:** AI/code-assistants MUST:
+  - **Respect data retention:** Follow organization's data retention policies.
+  - **Respect privacy:** Follow organization's privacy policies (GDPR, CCPA, etc.).
+  - **Respect compliance:** Follow organization's compliance requirements (SOC 2, ISO 27001, etc.).
+- **MANDATORY:** Data retention MUST be:
+  - **Documented:** Document what data is retained by AI services (if any).
+  - **Configurable:** Configure AI services to respect data retention policies.
+  - **Auditable:** Can audit AI service usage for compliance.
+- **Verification:** Check that data retention policies are respected; AI service usage is documented and auditable.
+
+#### Approved Services Only
+- **MANDATORY:** AI/code-assistants MUST:
+  - **Use approved services:** Only use organization-approved AI services (Cursor, GitHub Copilot, etc.).
+  - **Follow policies:** Follow organization's AI usage policies.
+  - **Get approval:** Get approval before using new AI services.
+- **MANDATORY:** Approved services MUST be:
+  - **Listed:** List of approved AI services documented.
+  - **Reviewed:** New AI services reviewed by security/compliance team.
+  - **Monitored:** AI service usage monitored for compliance.
+- **Verification:** Check that only approved AI services are used; AI service usage is monitored.
+
+### [INTEGRATION WITH EXISTING RULES]
+
+#### Persona Rules
+- **MANDATORY:** AI/code-assistants MUST align with `.cursor/rules/00-persona.mdc`:
+  - **MUST:** Follow persona expectations (AEONIC HYPERION, enterprise-grade rigor).
+  - **MUST:** Respect security-first mindset (no shortcuts, no workarounds).
+  - **MUST:** Follow single-recommendation rule (one best practice, not multiple options).
+- **Verification:** Check that AI-generated code aligns with persona rules; security-first mindset is maintained.
+
+#### Agent Rules
+- **MANDATORY:** AI/code-assistants MUST align with `.cursor/rules/20-agents.mdc`:
+  - **MUST:** Follow agent format requirements (single fenced code block, filename comment).
+  - **MUST:** Respect agent responsibilities (@architect, @security-auditor, @code-reviewer).
+  - **MUST:** Follow agent delegation patterns (context passing, handoff).
+- **Verification:** Check that AI-generated code aligns with agent rules; agent format requirements are followed.
+
+#### Architecture Rules
+- **MANDATORY:** AI/code-assistants MUST align with `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`:
+  - **MUST:** Respect Clean Architecture layering (Domain, Application, Infrastructure, Interface).
+  - **MUST:** Respect bounded contexts (no cross-context violations).
+  - **MUST:** Respect domain purity (no framework dependencies in Domain).
+- **Verification:** Check that AI-generated code aligns with architecture rules; layering and bounded contexts are respected.
+
+#### Security Rules
+- **MANDATORY:** AI/code-assistants MUST align with `.cursor/rules/30-security.mdc`:
+  - **MUST:** Follow OWASP Top 10 mitigations (input validation, parameterized queries, secure cookies).
+  - **MUST:** Respect security controls (authentication, authorization, encryption).
+  - **MUST:** Follow secrets management rules (no hardcoded secrets, use secret managers).
+- **Verification:** Check that AI-generated code aligns with security rules; OWASP Top 10 mitigations are followed.
+
+### [AGENT RESPONSIBILITIES]
+
+#### @supervisor
+- **MANDATORY:** @supervisor MUST:
+  - **Validate AI-generated code:** Check that AI-generated code meets requirements (tests, review, traceability).
+  - **Enforce policies:** Enforce AI usage policies (approved services, privacy, data retention).
+  - **Monitor compliance:** Monitor AI service usage for compliance violations.
+- **Verification:** Check that @supervisor validates AI-generated code; policies are enforced.
+
+#### @code-reviewer
+- **MANDATORY:** @code-reviewer MUST:
+  - **Review AI-generated code:** Thoroughly review AI-generated code (not just rubber-stamp).
+  - **Check architecture:** Validate AI-generated code against architecture rules.
+  - **Check security:** Validate AI-generated code against security rules.
+- **Verification:** Check that @code-reviewer reviews AI-generated code; architecture and security are validated.
+
+### [VERIFICATION]
+
+- **Allowed operations:** Check that AI-generated code respects architecture; tests are included; code is reviewed.
+- **Forbidden operations:** Check that database migrations, security-critical code, cross-context changes are reviewed.
+- **Requirements:** Check that AI-generated code has test coverage; code is reviewed; traceability is maintained.
+- **Privacy & provenance:** Check that secrets are not leaked; data retention policies are respected; only approved services are used.
+- **Agent responsibilities:** Check that @supervisor and @code-reviewer fulfill AI governance responsibilities.
+
+**See also:**
+- `.cursor/rules/00-persona.mdc` — Persona expectations (AEONIC HYPERION, enterprise-grade rigor)
+- `.cursor/rules/20-agents.mdc` — Agent definitions and format requirements
+- `.cursor/rules/36-architecture.mdc` — Architecture rules (Clean Architecture, DDD)
+- `.cursor/rules/30-security.mdc` — Security standards (OWASP Top 10, security controls)
+- `.cursor/rules/31-testing.mdc` — Testing standards (coverage, determinism, contracts)
+- `docs/ai-usage-policy.md` — Organization's AI usage policy (if exists)

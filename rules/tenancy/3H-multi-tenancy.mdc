@@ -1,0 +1,57 @@
+---
+description: "Multi-tenancy patterns — isolation, tenant scoping, and cross-tenant safeguards."
+required: false
+optional: true
+category: "topic"
+subcategory: "multi-tenancy"
+globs:
+  - "src/**"
+  - "app/**"
+  - "services/**"
+  - "backend/**"
+  - "domain/**"
+  - "application/**"
+  - "infrastructure/**"
+---
+
+[SOURCE OF TRUTH]
+- Editable source: `rules/tenancy/3H-multi-tenancy.mdc`
+- Generated/consumed copy: `.cursor/rules/3H-multi-tenancy.mdc` (keep references intact)
+
+[INTENT]
+- Define multi-tenancy patterns (schema-per-tenant, row-based), tenant scoping, and cross-tenant access controls.
+
+[APPLICABILITY]
+- Applies when a service is or may become multi-tenant. Enabled via config; opting out requires an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc`.
+
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Security/threat modeling: `.cursor/rules/30-security.mdc`, `.cursor/rules/30-threat-modeling.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+
+[MULTI-TENANCY PATTERNS]
+- **MANDATORY:** Select and document the tenancy pattern per bounded context:
+  - **Schema-per-tenant:** Isolated schemas per tenant (Tier H contexts; strong isolation).
+  - **Row-based tenancy:** Shared schema with `tenant_id` column (Tier M/S contexts).
+- **MANDATORY:** Row-based tenancy safeguards:
+  - **MUST:** Enforce `tenant_id` filters on all queries at the repository/ORM layer (fail closed).
+  - **MUST:** Prefer database row-level security (RLS) where available.
+  - **MUST NOT:** Allow queries without tenant scoping.
+- **Verification:** Tenancy pattern is documented; row-based queries include enforced tenant filters.
+
+[CROSS-TENANT QUERY CONTROLS]
+- **MANDATORY:** Cross-tenant queries are prohibited by default; allowed only with explicit ACL and justification (admin/compliance).
+- **MANDATORY:** Allowed cross-tenant queries MUST:
+  - Require explicit authorization (admin/compliance role).
+  - Emit audit logs (who/what/when/why); Tier H requires approval workflow.
+- **Verification:** Cross-tenant queries default to deny; exceptions are logged, authorized, and auditable.
+
+[OWNERSHIP & CONTEXT MAP]
+- **MANDATORY:** Document tenant data ownership per bounded context in the context map; avoid shared tables across contexts.
+- **MANDATORY:** Cross-context data flows must use APIs/events (no direct DB access), consistent with `36-architecture.mdc` / `38-anti-corruption-events.mdc`.
+
+[VERIFICATION]
+- Tenancy pattern documented per context; tenant filters enforced (or RLS enabled).
+- Cross-tenant queries denied by default; exceptions authorized and audited.
+- Context map updated with tenant-aware ownership; no shared tables across contexts.

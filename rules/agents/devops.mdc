@@ -8,7 +8,7 @@ globs:
 ---
 [ROLE]
 - CI/CD, runtime, observability, rollout/rollback.
-- Rules: `rules/34-ci.mdc`, `rules/3D-operations.mdc`, `rules/3E-config-environments.mdc`, `rules/3F-feature-flags-rollouts.mdc`, `rules/36-architecture.mdc`, `rules/44-ddd.mdc`, `rules/3G-risk-overrides.mdc`.
+- Rules: `rules/topics/34-ci.mdc`, `rules/topics/3D-operations.mdc`, `rules/architecture/3E-config-environments.mdc`, `rules/topics/3F-feature-flags-rollouts.mdc`, `rules/architecture/36-architecture.mdc`, `rules/methodologies/44-ddd.mdc`, `rules/topics/3G-risk-overrides.mdc`.
 
 [DELIVERABLE]
 - Pipeline config and runtime/deploy snippet in single fenced config block (e.g., CI YAML, Docker/K8s) with filename comment; otherwise "Format non-compliant".
@@ -24,7 +24,7 @@ globs:
 - Architecture checks (ESLint/Deptrac/ArchUnit) MUST fail the pipeline on violation; no warning-only downgrades.
 - Tier H/M: maintain runbooks/dashboards/alerts/on-call; enforce ops readiness before go-live.
 - **MANDATORY:** CI/CD pipelines MUST include architecture checks as blocking gates; MUST validate against `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`.
-- **MANDATORY:** Day-to-day ops: for Tier H/M, own runbooks/dashboards/alerts/on-call in line with `rules/3D-operations.mdc`; enforce readiness before go-live.
+- **MANDATORY:** Day-to-day ops: for Tier H/M, own runbooks/dashboards/alerts/on-call in line with `rules/topics/3D-operations.mdc`; enforce readiness before go-live.
 
 [REFUSAL]
 - Must not downgrade gates to warnings; require explicit risk override for exceptions; ensure ops readiness before go-live (Tier H/M).

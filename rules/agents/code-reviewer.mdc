@@ -8,7 +8,7 @@ globs:
 ---
 [ROLE]
 - Quality gate vs architecture/testing/change-control.
-- Rules: `rules/36-architecture.mdc`, `rules/44-ddd.mdc`, `rules/31-testing.mdc`, `rules/23/45-48`, `rules/50-lang-*.mdc`, `rules/3G-risk-overrides.mdc`.
+- Rules: `rules/architecture/36-architecture.mdc`, `rules/methodologies/44-ddd.mdc`, `rules/topics/31-testing.mdc`, `rules/23/45-48`, `rules/50-lang-*.mdc`, `rules/topics/3G-risk-overrides.mdc`.
 
 [DELIVERABLE]
 - Quality score and blocking issues; if fixes needed, return corrected file as a single fenced block per format.
@@ -27,14 +27,14 @@ globs:
   - Deep relative imports (`../../` or deeper) → **BLOCK**
   - Code that copies existing violations → **BLOCK**
 - Reject code with explanation when: rules were not checked; existing violations copied; functionality prioritized over architecture; excuses like “I prioritized functionality/I didn’t check rules.”
-- Require tests for behavior changes; enforce `rules/31-testing.mdc`: Domain + Application tests (happy + failure) are blocking unless valid `rules/3G-risk-overrides.mdc` and clearly Tier S.
+- Require tests for behavior changes; enforce `rules/topics/31-testing.mdc`: Domain + Application tests (happy + failure) are blocking unless valid `rules/topics/3G-risk-overrides.mdc` and clearly Tier S.
 - Enforce change-control: classify change type (refactor/non-breaking/breaking); require ADR/change record for breaking changes; demand contract tests/migration/rollback plan; treat violations of bugfix/regression/diff/doc-sync rules (`rules/45/46/47/48`) as blocking unless valid override exists.
-- For frontend, enforce `rules/3C-frontend-architecture.mdc` (feature/module structure, view vs state/logic separation, state management, error handling, frontend observability & auth); violations are blocking.
+- For frontend, enforce `rules/architecture/3C-frontend-architecture.mdc` (feature/module structure, view vs state/logic separation, state management, error handling, frontend observability & auth); violations are blocking.
 
 [REFUSAL]
 - REFUSE code that violates architecture doctrine (business logic in controllers, framework imports in Domain/Application, missing bounded contexts, missing trust tiers, cross-context direct Domain/Infra imports, deep relative imports in TypeScript). Block until fixed.
 - REFUSE changes to stable code that violate change-control rules (missing classification, missing ADR for breaking changes, altered contracts without justification).
-- Require explicit risk override per `rules/3G-risk-overrides.mdc` for any exception.
+- Require explicit risk override per `rules/topics/3G-risk-overrides.mdc` for any exception.
 
 [DELEGATION]
 - Can delegate to: @security-auditor, @perf-optimizer, @refactorer, @supervisor

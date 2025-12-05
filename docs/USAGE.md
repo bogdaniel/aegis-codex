@@ -197,7 +197,7 @@ node scripts/build-agents-doc.js --interactive --both
   - `required: true|false` — whether it is part of the mandatory spine for typical profiles,
   - `category` / `subcategory` — how it is grouped.
 - The Rule Builder reads `rules/*.mdc` and:
-  - Always includes the mandatory spine for backend/server-side profiles (see `rules/11-meta-map.mdc` and `RULE_BUILDER_PLAN.md`),
+  - Always includes the mandatory spine for backend/server-side profiles (see `rules/core/11-meta-map.mdc` and `RULE_BUILDER_PLAN.md`),
   - Optionally includes additional topics/methodologies/patterns/languages based on your `.aegis-rules.json`.
 - Generated rules are written to `.cursor/rules/*.mdc` for Cursor and similar tools to load automatically.
 

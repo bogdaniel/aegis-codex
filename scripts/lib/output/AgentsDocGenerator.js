@@ -11,8 +11,9 @@
  */
 function renderRule(name, rule) {
   const lines = [];
+  const displayName = name.split("/").pop();
   const desc = rule.meta.description ? ` — ${rule.meta.description}` : "";
-  lines.push(`## ${name}${desc}`.trim());
+  lines.push(`## ${displayName}${desc}`.trim());
   if (rule.meta.globs && rule.meta.globs.length) {
     lines.push(`- Globs: ${rule.meta.globs.join(", ")}`);
   }
@@ -77,6 +78,21 @@ function generateAgentsDoc(rules, sourceDir = ".cursor/rules") {
       },
     },
     {
+      title: "[ARCHITECTURE]",
+      match: (name) => {
+        const baseName = name.split("/").pop();
+        const architectureFiles = new Set([
+          "36-architecture.mdc",
+          "3C-frontend-architecture.mdc",
+          "37-code-structure.mdc",
+          "3B-data-persistence.mdc",
+          "3E-config-environments.mdc",
+          "38-anti-corruption-events.mdc",
+        ]);
+        return name.includes("architecture/") || architectureFiles.has(baseName);
+      },
+    },
+    {
       title: "[TOPIC STANDARDS] (LLM-facing mirrors in .cursor/rules/30-38)",
       match: (name) => {
         const baseName = name.split("/").pop();
@@ -135,4 +151,3 @@ module.exports = {
   generateAgentsDoc,
   renderRule,
 };
-

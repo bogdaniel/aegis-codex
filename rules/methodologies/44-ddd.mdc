@@ -1,0 +1,124 @@
+---
+description: "DDD — Domain-Driven Design (boundaries and invariants). Maintain domain purity and bounded contexts."
+required: true
+category: "methodology"
+subcategory: "ddd"
+globs:
+  - "src/**"
+  - "domain/**"
+  - "application/**"
+  - "infrastructure/**"
+  - "docs/architecture/**"
+  - "contracts/**"
+  - "docs/adr/**"
+---
+
+[SOURCE OF TRUTH]
+- Editable source: `rules/methodologies/44-ddd.mdc`
+- Generated/consumed copy: `.cursor/rules/44-ddd.mdc` (keep references intact)
+
+[INTENT]
+- Define DDD boundaries, domain purity, bounded contexts, and invariants.
+
+[APPLICABILITY]
+- Applies to all backend/domain code; non-negotiable unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicit.
+
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+
+[DDD — DOMAIN-DRIVEN DESIGN (BOUNDARIES & INVARIANTS)]
+
+[CORE MANDATE]
+- **MANDATORY:** Model complex domains explicitly using ubiquitous language, bounded contexts, aggregates, and invariants; keep domain logic independent of technical concerns.
+- **MANDATORY:** All backend code MUST be organized into bounded contexts with explicit trust tiers (H/M/S).
+- **MANDATORY:** Domain layer MUST be framework-free and infrastructure-free (no ORMs, HTTP, or persistence concerns).
+- **MANDATORY:** Contexts MUST NOT share database tables or persistence models (each context owns its data).
+- **MANDATORY:** Context map + trust tiers MUST be documented for non-trivial systems (3+ contexts or any Tier H context).
+
+[PRINCIPLES]
+- **Ubiquitous language:**
+  - **MUST:** Use domain terms consistently in code (types, methods, modules) and documentation.
+  - **MUST NOT:** Use leaky technical names in the domain layer (e.g., `UserDTO`, `UserEntity`, `UserModel` → use `User`).
+- **Bounded contexts:**
+  - **MUST:** Partition the domain into cohesive contexts with clear boundaries and ownership.
+  - **MUST:** Define explicit contracts (APIs, events, schemas) at context borders.
+  - **MUST NOT:** Share database tables or persistence models across contexts (each context owns its data).
+  - **MUST NOT:** Share domain entities across contexts (use public API modules for cross-context access).
+- **Aggregates & invariants:**
+  - **MUST:** Design aggregates as consistency boundaries.
+  - **MUST:** Enforce invariants inside aggregates rather than in random services or controllers.
+  - **MUST:** Document aggregate boundaries and invariants explicitly.
+- **Domain purity:**
+  - **MUST:** Keep domain model free from frameworks and infrastructure (no ORMs, HTTP, or persistence concerns in domain types).
+  - **MUST NOT:** Import ORM types (e.g., `@Entity`, `@Table`, `@Column`), HTTP types (e.g., `Request`, `Response`), or framework types in Domain layer.
+  - **MUST:** Infrastructure depends on domain, not vice versa.
+  - **Domain purity clauses MUST refer to 36-architecture.mdc for layer rules.**
+- **Context mapping:**
+  - **MANDATORY:** Document relationships between contexts (partnerships, upstream/downstream, ACLs).
+  - **MANDATORY:** Document trust tiers (H/M/S) for each context.
+  - **MANDATORY:** Keep ADRs and diagrams up to date when boundaries or contracts change.
+  - **MANDATORY:** Context map + trust tiers MUST be documented for non-trivial systems (3+ contexts or any Tier H context).
+- **Alignment:**
+  - **MUST:** Align with architecture patterns in docs/architecture/architecture-patterns.md and systemic guidance in docs/architecture/system-decomposition.md.
+
+[DOMAIN PURITY — HARD CONSTRAINTS]
+- **MANDATORY:** Domain purity clauses MUST refer to 36-architecture.mdc for layer rules.
+- **MANDATORY:**
+  - **MUST:** Aggregate boundaries documented.
+  - **MUST:** Ubiquitous language present in code (namespaces/packages, class names).
+  - **MUST:** Context map (even lightweight) for non-trivial domains (3+ contexts or any Tier H context).
+- **MANDATORY:** Domain layer MUST NOT depend on:
+  - ORM types (e.g., `@Entity`, `@Table`, `@Column`, `@Id`, `@GeneratedValue`).
+  - HTTP types (e.g., `Request`, `Response`, `Controller`, `Route`).
+  - Framework types (e.g., `Model`, `DB`, `Auth`, `Config`, `Cache`, `Queue`, `Mail`, `Log`).
+  - Infrastructure adapters (e.g., `@context/infra/*`, `@context/interface/*`).
+- **MANDATORY:** Domain layer MUST:
+  - Contain only business logic (entities, value objects, domain services, domain events).
+  - Define repository interfaces (ports) but not implementations.
+  - Be framework-free, ORM-free, HTTP-free.
+- **Exception:** "If design is simple CRUD with no real domain complexity, keep DDD minimal and explain why – do not over-complicate."
+
+[INVARIANT PROTECTION]
+- Validate at aggregate boundaries; reject or correct invalid commands early.
+- Make illegal states unrepresentable through type modeling and construction rules.
+- Test invariants explicitly (unit and property-based tests where helpful).
+- Document critical business rules directly in domain code (names, comments, and tests), not only in external docs.
+
+[ANTI-PATTERNS]
+- **FORBIDDEN:** Anemic domain models (entities with just getters/setters and no behavior) → **REJECT**, use rich domain models.
+- **FORBIDDEN:** God aggregates or services that know too much and own unrelated responsibilities → **REJECT**, split into focused aggregates/services.
+- **FORBIDDEN:** Technical concerns (ORM, HTTP, framework annotations) leaking into domain types → **REJECT**, remove framework dependencies from Domain.
+- **FORBIDDEN:** Bypassing invariants via direct setters, public mutable fields, or raw persistence access → **REJECT**, enforce invariants in aggregates.
+- **FORBIDDEN:** Context boundaries ignored "for convenience" (shared DB tables, cross-context backdoor calls) → **REJECT**, use explicit contracts (APIs, events).
+- **FORBIDDEN:** Contexts sharing database tables or persistence models → **REJECT**, each context owns its data.
+- **FORBIDDEN:** Domain depending on ORM/framework types → **REJECT**, Domain must be framework-free.
+- **FORBIDDEN:** Missing context map + trust tiers for non-trivial systems → **REJECT**, document context map and trust tiers.
+
+[AGENT BEHAVIOR & REFUSAL DUTIES]
+- **MANDATORY:** For serious systems (non-Tier-S bounded contexts), these DDD constraints are **non-negotiable** unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is used.
+- **MANDATORY:** AI agents (including `@architect`, `@implementer`, `@code-reviewer`) MUST:
+  - Refuse designs/code that violate bounded context boundaries (shared DB schemas/tables, direct cross-context domain/entity sharing).
+  - Refuse designs/code that violate domain purity (ORM/framework types in Domain layer, infrastructure concerns in domain logic).
+  - Refuse designs/code that bypass aggregates and invariants (anemic domain models, business logic in services/controllers).
+  - Refuse designs/code that ignore context mapping and trust tiers (missing context map, missing trust tier assignments).
+  - Propose compliant alternatives that maintain DDD guarantees.
+  - Only proceed with DDD violations if a valid `RISK_OVERRIDE` block is explicitly provided by the user, following `.cursor/rules/3G-risk-overrides.mdc`.
+- **MANDATORY:** These rules take precedence over style, ergonomics, or short-term convenience per `.cursor/rules/10-global.mdc`.
+
+[VERIFICATION]
+- For domain-heavy changes, ensure:
+  - Types and modules reflect domain language and bounded contexts.
+  - Invariants are enforced in aggregates/domain services and covered by tests.
+  - Contracts between contexts (APIs, events, schemas) are explicit and versioned.
+  - Architecture docs (context maps, ADRs) are updated when boundaries or invariants change.
+
+**See also:**
+- `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns (BINDING)
+- `.cursor/rules/45-solid-principles.mdc` — SOLID principles integrated with DDD
+- `.cursor/rules/3A-anti-patterns.mdc` — Anti-patterns catalog (anemic domain, god aggregates, etc.)
+- `.cursor/rules/3G-risk-overrides.mdc` — Risk override protocol for exceptional DDD exceptions
+- `test/example-app/` — Canonical TypeScript Clean Architecture + DDD demo (IdentityContext, OrdersContext)
+- `examples/refactoring/clean-architecture/` — Before/after examples for DDD violations
+- `tests/policies/` — Policy scenarios validating DDD enforcement

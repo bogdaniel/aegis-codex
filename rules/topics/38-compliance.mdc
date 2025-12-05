@@ -1,0 +1,52 @@
+---
+description: "Compliance checklist enforcement."
+required: true
+category: "topic"
+subcategory: "compliance"
+globs:
+  - "**/*"
+---
+
+[SOURCE OF TRUTH]
+- Editable source: `rules/topics/38-compliance.mdc`
+- Generated/consumed copy: `.cursor/rules/38-compliance.mdc` (keep references intact)
+
+[INTENT]
+- Define compliance checklist enforcement for regulated/sensitive contexts.
+
+[APPLICABILITY]
+- Applies to compliance-sensitive work and audits; requirements are binding unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
+
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+
+[COMPLIANCE BASELINE]
+- Use `docs/compliance-checklist.md` as acceptance bar: security, testing, observability, performance, CI/CD, documentation all satisfied before "done."
+- Ensure SBOM and vulnerability scans clean; secrets scan passes.
+- Ensure rollback plan and feature flags exist for risky changes; ORR before global enablement.
+- Require documentation updates (README/ADR/api docs) when behavior or contracts change.
+- Verification artifact: cite checklist items covered and command(s) run (tests, scans, sbom).
+
+[ARCHITECTURE COMPLIANCE — MANDATORY]
+- Architecture compliance (36-architecture.mdc + 44-ddd.mdc + language rules) is part of the compliance checklist.
+- If violated, feature is NOT "done".
+- Compliance check MUST explicitly confirm:
+  - Layering respected.
+  - Bounded contexts not violated.
+  - No raw external DTOs in domain.
+
+[POLICY VALIDATION — MANDATORY]
+- **MANDATORY:** Policy scenarios in `tests/policies/` MUST be validated when rules change.
+- **MANDATORY:** If policy validation fails, tighten relevant `.cursor/rules/*.mdc` files.
+- Policy scenarios validate agent behavior against critical policies (security, testing, architecture).
+- See `tests/policies/README.md` for policy scenario structure and validation criteria.
+- See `tests/policies/ENFORCEMENT.md` for enforcement mechanisms.
+
+**See also:**
+- `.cursor/rules/36-architecture.mdc` — Architecture rules (BINDING)
+- `.cursor/rules/44-ddd.mdc` — DDD rules (BINDING)
+- `.cursor/rules/34-ci.mdc` — CI/CD standards including policy validation
+- `tests/policies/` — Policy scenarios validating compliance
+- `test/example-app/` — Canonical Clean Architecture + DDD demo

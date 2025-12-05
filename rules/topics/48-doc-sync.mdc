@@ -1,0 +1,111 @@
+---
+description: "Spec & documentation sync: no stealth behavior changes."
+category: "governance"
+subcategory: "doc-sync"
+required: true
+globs:
+  - "docs/**"
+  - "src/**"
+  - "app/**"
+  - "ADR/**"
+  - "architecture/**"
+---
+
+[SOURCE OF TRUTH]
+- Editable source: `rules/topics/48-doc-sync.mdc`
+- Generated/consumed copy: `.cursor/rules/48-doc-sync.mdc` (keep references intact)
+
+[INTENT]
+- Define documentation/spec synchronization for contract/behavior changes.
+
+[APPLICABILITY]
+- Applies to all contract/behavior changes; doc/sync requirements are binding unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
+
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+
+[CONCEPTS]
+- Spec artifacts:
+  - Spec artifacts are the authoritative descriptions of system behavior, structure, and operations, including:
+    - Architecture and domain docs (e.g., context maps, bounded context definitions, domain specs) governed by `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`,
+    - ADRs and change records defined by `.cursor/rules/23-change-control.mdc`,
+    - API specifications and contracts governed by `.cursor/rules/35-api-lifecycle.mdc` and `.cursor/rules/38-anti-corruption-events.mdc`,
+    - Runbooks and operational procedures governed by `.cursor/rules/3D-operations.mdc`,
+    - Testing and methodology docs (ATDD/BDD/TDD/FDD) per `.cursor/rules/40-atdd.mdc`, `.cursor/rules/41-bdd.mdc`, `.cursor/rules/42-tdd.mdc`, `.cursor/rules/43-fdd.mdc`.
+- Code/spec drift:
+  - Code/spec drift occurs when behavior in code diverges from what specs/docs/ADRs state:
+    - APIs behave differently from their documented contracts,
+    - Domain invariants or workflows change without updating domain specs or context maps,
+    - Security, data handling, or SLOs change without updating threat models, runbooks, or observability plans.
+  - Drift undermines reliability, governance, and LLM agent effectiveness; behavior changes without spec/doc updates are considered policy violations.
+
+
+[BASE RULES]
+- Behavior changes and spec sync:
+  - Any change that:
+    - Alters public APIs or cross-context contracts,
+    - Changes domain behavior visible across bounded contexts,
+    - Impacts security, data handling, or SLOs,
+  - MUST be accompanied by updates to the relevant specs/docs, which MAY include:
+    - ADRs or change records documenting the decision and rationale (`.cursor/rules/23-change-control.mdc`),
+    - API docs/specs (OpenAPI/GraphQL schemas, event schemas) per `.cursor/rules/35-api-lifecycle.mdc` and `.cursor/rules/38-anti-corruption-events.mdc`,
+    - Architecture or domain docs (context maps, bounded context docs) per `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`,
+    - Runbooks and operational docs when behavior affects alerts, SLOs, recovery procedures, or operator workflows per `.cursor/rules/3D-operations.mdc` and `.cursor/rules/32-observability.mdc`.
+  - It is a policy violation to change such behavior without updating the relevant artifacts; silent drift MUST NOT be introduced by agents or human contributors.
+- Tests and specs:
+  - Tests, specs, and docs MUST remain aligned:
+    - When specs change, tests MUST be updated to reflect the new behavior (`.cursor/rules/31-testing.mdc`, `.cursor/rules/40-atdd.mdc`, `.cursor/rules/41-bdd.mdc`).
+    - When tests are updated in a way that implies a contract change (see `rules/topics/46-regression-discipline.mdc`), corresponding specs/docs and ADRs MUST also be updated.
+  - Using tests alone as "implicit docs" for externally visible behavior without any spec update SHOULD be avoided for cross-context or external-facing contracts.
+- No stealth contract changes:
+  - Public API changes (including error models, rate limits, data fields) MUST NOT be made without:
+    - Updating API specs/docs as per `.cursor/rules/35-api-lifecycle.mdc`,
+    - Running or updating contract tests,
+    - Recording the change through appropriate change-control.
+  - Domain behavior visible across bounded contexts (e.g., business rules, event semantics) MUST NOT be changed without updating:
+    - Domain documentation/context maps,
+    - Event schemas and catalog entries (`.cursor/rules/38-anti-corruption-events.mdc`),
+    - Any impacted ADRs.
+
+
+[AGENT BEHAVIOR]
+- Planning and implementation:
+  - When implementing a change that affects APIs, domain behavior, security, data handling, or SLOs, agents MUST:
+    - Identify which spec artifacts are impacted (ADRs, API specs, architecture docs, runbooks),
+    - Include spec/doc updates as explicit items in their plan (e.g., "update API spec X", "amend ADR Y", "update runbook Z"),
+    - Propose concrete edits or at least structured content for those artifacts.
+  - Agents MUST treat doc/spec updates as part of the same logical change, not optional follow-ups that can be silently skipped.
+- Handling user requests:
+  - If a user asks to change behavior but explicitly refuses to touch specs/docs, agents MUST:
+    - Warn clearly about code/spec drift and the governance violation,
+    - Request explicit risk acceptance, and
+    - Where organizational policy does not allow such changes, refuse to implement them.
+  - Agents MUST NOT "quietly" implement contract or behavior changes while pretending that specs/docs remain accurate.
+- Integration with other disciplines:
+  - For bugfixes that clarify contracts, agents MUST:
+    - Follow `rules/topics/45-bugfix-protocol.mdc` and ensure that any contract clarification is reflected in specs/docs and tests.
+  - For refactors that change architecture or bounded context boundaries, agents MUST:
+    - Update architecture diagrams, context maps, or relevant docs to match `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`.
+
+
+[VERIFICATION / CHECKS]
+- For `@architect` / `@owner`:
+  - MUST ensure that:
+    - Behavior changes in core domains, APIs, and Tier H/M contexts are mirrored in the relevant specs/docs and ADRs,
+    - Context maps, trust tiers, and domain documentation remain consistent with the implemented code.
+  - MUST reject or request rework for PRs that change contracts or critical behavior without appropriate doc/spec updates.
+- For `@code-reviewer`:
+  - MUST treat:
+    - API changes without spec updates,
+    - Domain behavior changes across contexts without domain/architecture doc updates,
+    - Security/observability/operations changes without runbook or SLO updates,
+    - As policy violations unless accompanied by justification and explicit change-control artifacts.
+  - SHOULD verify that tests, code, and docs tell the same story (no contradictions in behavior description).
+- For `@supervisor` / CI & policy:
+  - SHOULD enforce workflows where:
+    - Changes to API schemas, event schemas, or public interfaces require corresponding doc/spec updates,
+    - Critical behavior changes (as tagged in PR metadata or files changed) require a linked ADR or change record.
+  - SHOULD flag mismatches between code changes in critical areas and absence of changes in corresponding docs/specs as potential drift for manual review.
+

@@ -1,0 +1,161 @@
+---
+description: "TypeScript standards: strict types, lint/format, testing."
+required: false
+category: "language"
+subcategory: "typescript"
+globs:
+  - "**/*.ts"
+  - "**/*.tsx"
+---
+
+[SOURCE OF TRUTH]
+- Editable source: `rules/languages/50-lang-typescript.mdc`
+- Generated/consumed copy: `.cursor/rules/50-lang-typescript.mdc` (keep references intact)
+
+[INTENT]
+- Define TypeScript standards (strict types, architecture alignment, testing, security).
+
+[APPLICABILITY]
+- Applies to all TypeScript code; must align with architecture/security/testing spine unless an explicit risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided.
+
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+
+[MANDATORY WORKFLOW — CHECK RULES FIRST]
+- **MANDATORY:** Before writing ANY TypeScript code, you MUST:
+  1. **Read `.cursor/rules/50-lang-typescript.mdc`** - Understand import rules, path aliases, architecture requirements
+  2. **Read `.cursor/rules/36-architecture.mdc`** - Understand Clean Architecture, layering, bounded contexts
+  3. **Read `.cursor/rules/44-ddd.mdc`** - Understand DDD patterns, domain purity
+  4. **Check `tsconfig.json`** - Verify path aliases are configured
+  5. **Check ESLint config** - Verify `no-restricted-imports` rule is configured
+  6. **Review existing code patterns** - If existing code violates rules, DO NOT copy it; fix it instead
+- **MANDATORY:** Do NOT prioritize functionality over architecture. Architecture compliance is NON-NEGOTIABLE.
+- **MANDATORY:** Do NOT copy existing violations. If you see deep relative imports in existing code, that code is WRONG and must be fixed, not copied.
+- **MANDATORY:** Validate imports BEFORE writing code. Check that path aliases exist and are correctly configured.
+- **MANDATORY:** After writing code, validate against rules:
+  1. Check all imports use path aliases (no `../../` or deeper)
+  2. Check Domain/Application layers don't import from Infrastructure/Interface
+  3. Check cross-context imports use public API modules
+  4. Run `npm run lint` to catch violations
+- **REJECTION CRITERIA:** Code written without checking rules first → **REJECT**. Code that copies existing violations → **REJECT**. Code that prioritizes functionality over architecture → **REJECT**.
+
+[TYPESCRIPT STANDARDS]
+- Stack: Node 20+; ESM preferred; `tsconfig` strict (`noImplicitAny`, `noUncheckedIndexedAccess`) and path aliases REQUIRED (see IMPORTS & PATH ALIASES section); avoid default exports for shared libs.
+- Style/lint: ESLint (typescript-eslint) + Prettier; `npm run lint && npm run format -- --check`; keep imports ordered and unused removed.
+- Types: no `any`/`!`; prefer discriminated unions and readonly; avoid ambient globals; `tsc --noEmit` required.
+- Async/safety: handle promises with try/catch; no unhandled rejections; add timeouts/retries for I/O; avoid `eval`/dynamic code; validate inputs with schemas (e.g., zod/yup); set `helmet`/secure cookies for HTTP.
+- Testing: `npm test` (vitest/jest) with coverage; mock boundaries; include integration/API contract tests where applicable.
+- Security/deps: parameterized queries/ORM; sanitize outputs; secrets from env/manager; `npm audit --production --audit-level=high`.
+- **Architecture compliance:** TypeScript code MUST comply with `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`. Architecture violations will be rejected.
+- **MANDATORY:** TypeScript language rules are **integrated with** and **enforce** architecture rules — they are not separate concerns.
+- **MANDATORY:** For backend services, TypeScript code MUST adhere to `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`. This is a binding constraint, not optional guidance.
+- **See also:**
+  - `.cursor/rules/36-architecture.mdc` — Clean Architecture, Hexagonal Architecture, DDD patterns (BINDING)
+  - `.cursor/rules/44-ddd.mdc` — Domain-Driven Design methodology (BINDING)
+  - `test/example-app/` — Canonical TypeScript Clean Architecture + DDD demo
+  - `examples/refactoring/clean-architecture/` — Before/after examples for architecture violations
+  - `examples/before-after/ts-express-handler-*.ts` — Security validation examples
+- Verification artifact: `npm run lint && npm run format -- --check && tsc --noEmit && npm test && npm audit --production --audit-level=high`.
+
+[ARCHITECTURE INTEGRATION — CLEAN + HEX + DDD]
+- **MANDATORY:** All TypeScript backend code MUST follow Clean Architecture, Hexagonal Architecture, and DDD patterns as defined in `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`.
+- **These architecture rules are BINDING for TypeScript backends** — violations will be rejected.
+- **Domain/Application MUST be framework-free:**
+  - Domain layer MUST NOT import Express, NestJS, TypeORM, Prisma, or any HTTP/ORM framework.
+  - Domain layer MUST NOT import from Infrastructure or Interface aliases (e.g., `@context/infra/*`, `@context/interface/*`).
+  - Application layer MUST NOT import Express, NestJS, or any HTTP framework.
+  - Application layer MUST NOT import from Infrastructure or Interface aliases.
+  - Use ports/adapters pattern: define interfaces in Domain/Application, implement in Infrastructure/Interface.
+
+[FRONTEND & SPA INTEGRATION]
+- **MANDATORY:** For frontend/SPA TypeScript code (e.g., `src/frontend/**`, `frontend/**`, `app/**`, `public/**`), agents MUST follow `.cursor/rules/3C-frontend-architecture.mdc` (feature-based/module-based structure, view vs state/logic separation, state management, error handling, frontend observability & auth).
+- **Path aliases REQUIRED:**
+  - **MANDATORY:** Use `@context/layer/*` aliases (e.g., `@identity/domain/*`, `@orders/app/*`).
+  - **MANDATORY:** Configure `baseUrl` and `paths` in `tsconfig.json` for bounded contexts.
+  - **MANDATORY:** Forbid deep relative imports (`../../` or deeper).
+  - **MANDATORY:** Enforce via ESLint `no-restricted-imports` rules:
+    - Domain importing Infra/Interface (e.g., `@context/infra/*`, `@context/interface/*`).
+    - Deep relative imports across contexts (e.g., `../../OtherContext`).
+    - Cross-context direct Domain/Infrastructure imports (must use public API modules).
+- **REJECTION CRITERIA:**
+  - TypeScript code that violates `.cursor/rules/36-architecture.mdc` layering rules → **REJECT**.
+  - TypeScript code that violates `.cursor/rules/44-ddd.mdc` domain purity rules → **REJECT**.
+  - Domain/Application importing frameworks or Infrastructure/Interface → **REJECT**, use ports/adapters.
+  - Missing path aliases or using deep relative imports → **REJECT**, configure path aliases.
+
+[IMPORTS & PATH ALIASES]
+- Path aliases are REQUIRED for all TypeScript projects:
+  - Use path aliases instead of relative imports (`../../`) for maintainability and clarity.
+  - Configure in `tsconfig.json` with `baseUrl` and `paths`.
+  - Structure aliases to reflect project organization (modules, features, layers, contexts).
+- Benefits:
+  - Maintainable: moving files doesn't break imports.
+  - Self-documenting: imports show project structure.
+  - Clear boundaries: architecture/module boundaries visible in code.
+- Type-only imports:
+  - Commands, Queries, and DTOs SHOULD be imported as types when only used for type annotations.
+  - Prevents accidental runtime imports of DTOs and improves tree-shaking.
+  - Example: `import type { RegisterUserCommand } from '@identity/app/index.js'` (for type-only usage).
+  - Use regular imports when DTOs are instantiated at runtime (e.g., in controllers).
+- For Clean Architecture / DDD projects with bounded contexts:
+  - Structure: `@context/layer/*` (e.g., `@identity/domain/*`, `@orders/app/*`).
+  - Makes bounded contexts and layers explicit in imports.
+  - Pattern: `@context/layer/Path/To/File` (e.g., `@identity/domain/Entities/User`).
+- Path alias configuration validation:
+  - **MANDATORY:** `tsconfig.json` MUST have `baseUrl` and `paths` configured.
+  - **MANDATORY:** Path aliases MUST match directory structure (e.g., `@identity/domain/*` → `IdentityContext/Domain/*`).
+  - **MANDATORY:** Test runners (Vitest/Jest) MUST resolve path aliases (configure `resolve.alias` or use `tsconfig-paths`).
+  - **MANDATORY:** Build tools MUST resolve path aliases (TypeScript compiler, bundlers).
+  - **Validation:** CI should verify path alias configuration; warn if relative imports found (beyond 1 level).
+  - **Public API modules (facades) REQUIRED:** Follow the canonical requirements in `rules/architecture/36-architecture.mdc` (barrel per context/layer, only approved entry points for cross-context imports, no direct internal-path imports from other contexts).
+  - **Layer import restrictions:**
+    - Domain layer MUST NOT import from Infrastructure or Interface aliases (e.g., `@context/infra/*`, `@context/interface/*`).
+    - Domain can only import from its own domain layer or other contexts' public API modules.
+    - Example: `@identity/domain/Entities/User.ts` cannot import from `@identity/infra/*` or `@identity/interface/*`.
+  - **Cross-context import restrictions:**
+    - A context MAY NOT import another context's Domain or Infrastructure directly.
+    - Cross-context imports MUST go through documented public API modules only (e.g., `@identity/app`).
+    - Forbidden: `import { User } from '@identity/domain/Entities/User.js'` from OrdersContext.
+    - Forbidden: `import { InMemoryUserRepository } from '@identity/infra/Adapters/InMemoryUserRepository.js'` from any other context.
+- For other project structures:
+  - Use meaningful alias patterns (e.g., `@features/*`, `@shared/*`, `@modules/*`).
+  - Align aliases with project organization and module boundaries.
+- **FORBIDDEN:**
+  - Deep relative imports (`../` beyond one level, or `../../` and deeper) are **FORBIDDEN**.
+  - Example: `import { User } from '../../Domain/Entities/User.js'` → **FORBIDDEN**.
+  - Use path aliases instead: `import { User } from '@identity/domain/Entities/User.js'`.
+  - Exception: Single-level relative imports (`./` or `../`) within the same file's immediate directory are allowed for local utilities.
+- **Domain Layer Import Restrictions (TypeScript):**
+  - Domain layer MUST NOT import from Infrastructure or Interface aliases (e.g., `@context/infra/*`, `@context/interface/*`).
+  - Domain can only import from its own domain layer or other contexts' public API modules.
+  - Example: `@identity/domain/Entities/User.ts` cannot import from `@identity/infra/*` or `@identity/interface/*`.
+  - **REJECTION CRITERIA:**
+    - Domain file importing from `@context/infra/*` or `@context/interface/*` → **REJECT**, use ports/adapters pattern.
+- Anti-patterns:
+  - Relative imports like `../../Domain/Entities/User` (use path aliases instead).
+  - Path aliases without clear structure or meaning.
+  - Mixing relative imports and path aliases inconsistently.
+  - Cross-context imports bypassing public API modules (e.g., `@orders/app/UseCases/PlaceOrder/PlaceOrder.js` from IdentityContext).
+  - Public API modules that export everything (should export only approved, stable contracts).
+  - Domain importing from Infrastructure or Interface (e.g., `@context/infra/*`, `@context/interface/*`).
+  - Cross-context direct imports to Domain or Infrastructure (e.g., `@other-context/domain/*`, `@other-context/infra/*`).
+
+[CHANGE-SAFETY]
+- **MANDATORY:** For backend TypeScript services (Tier M/H contexts and non-trivial APIs), language-specific practices are binding on top of change-discipline rules:
+  - Bugfixes MUST follow `.cursor/rules/45-bugfix-protocol.mdc` (test-first/with, regression tests, minimal fix, guard existing behavior).
+  - Behavioral changes and new features MUST follow `.cursor/rules/23-change-control.mdc` and `.cursor/rules/46-regression-discipline.mdc` (classification, tests as contracts).
+  - Diffs MUST remain scoped per `.cursor/rules/47-diff-discipline.mdc`; drive-by refactors or cross-context changes are forbidden under a "small change" request.
+  - Public API and cross-context contract changes MUST follow `.cursor/rules/35-api-lifecycle.mdc` and `.cursor/rules/48-doc-sync.mdc` (versioning, migration, documentation).
+- **MANDATORY:** TypeScript agents and contributors MUST NOT:
+  - "Fix" failing tests by weakening or deleting them without going through `.cursor/rules/23-change-control.mdc` and `.cursor/rules/46-regression-discipline.mdc`.
+  - Change public method signatures, API payloads, or event schemas without applying `.cursor/rules/35-api-lifecycle.mdc` and updating docs/specs per `.cursor/rules/48-doc-sync.mdc`.
+  - Introduce config or flag behavior that bypasses `.cursor/rules/3E-config-environments.mdc` or `.cursor/rules/3F-feature-flags-rollouts.mdc`.
+- **See also:**
+  - `.cursor/rules/23-change-control.mdc` — Change classification and contracts.
+  - `.cursor/rules/45-bugfix-protocol.mdc` — Bugfix protocol (reproduce, test, fix, guard).
+  - `.cursor/rules/46-regression-discipline.mdc` — Tests as contracts.
+  - `.cursor/rules/47-diff-discipline.mdc` — Diff scope and blast radius.
+  - `.cursor/rules/48-doc-sync.mdc` — Spec & documentation sync.
+  - `.cursor/rules/35-api-lifecycle.mdc` — API lifecycle, compatibility, deprecation.

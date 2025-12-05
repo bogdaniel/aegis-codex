@@ -1,0 +1,134 @@
+---
+description: "Testing standards: coverage, determinism, and contracts."
+required: true
+category: "topic"
+subcategory: "testing"
+globs:
+  - "src/**"
+  - "app/**"
+  - "domain/**"
+  - "tests/**"
+---
+
+[SOURCE OF TRUTH]
+- Editable source: `rules/topics/31-testing.mdc`
+- Generated/consumed copy: `.cursor/rules/31-testing.mdc` (keep references intact)
+
+[INTENT]
+- Define testing baseline, coverage, determinism, and gating requirements for all agents and code.
+
+[APPLICABILITY]
+- Applies to all behavior changes (especially non-Tier-S); testing mandates are non-negotiable unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicit.
+
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+- Tooling references: see `docs/testing-tooling-matrix.md` for unit/integration/E2E tooling per language/framework.
+
+[TESTING BASELINE]
+- Coverage: target ≥80% critical code paths; prioritize domain logic, edges, regression tests for fixed bugs; fail on drops in critical modules.
+- Determinism: tests must be hermetic, order-independent, and parallel-safe; no external network/clock randomness; control time/randomness/IO via fakes/mocks; avoid sleep-based waits.
+- Structure: Arrange-Act-Assert; descriptive names by intent; avoid testing implementation details.
+- Scope: unit pure logic with mocked deps; integration with seeded data and cleanup; minimal E2E on critical flows; use containers/fakes for infra.
+- Isolation: small explicit fixtures; no global state; reset between tests; limit parallelism for shared resources.
+- CI gating: block on flakiness; no silent skips; include coverage reports; run lint/type/**architecture checks**/security checks with tests.
+- For new functionality: write required tests first, run them continuously during implementation, and only consider the functionality complete when the relevant tests pass (red/green).
+- UI/E2E: when a browser environment is available, include a minimal in-browser E2E/component check for primary user flows; keep it deterministic and isolated (no shared state).
+
+[TESTING & ARCHITECTURE]
+- **MANDATORY:** All tests MUST respect architecture layering as defined in `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc`.
+- **MANDATORY:** For non-trivial services, tests MUST:
+  - **Target Application layer use cases as primary unit boundaries** (not controllers, not repositories).
+  - Use Domain tests for invariants (aggregate boundaries, value object validation, domain events).
+  - Keep Infrastructure/HTTP tests as integration/E2E (test adapters, not business logic).
+- **MANDATORY:** Test structure MUST reflect architecture layers:
+  - **Domain tests:** Test entities, value objects, domain services, domain events, aggregate invariants.
+  - **Application tests:** Test use cases (primary unit boundary), commands/queries, application services.
+  - **Infrastructure tests:** Test adapters (repositories, external API clients, message publishers).
+  - **Interface tests:** Test HTTP controllers, CLI commands, message consumers (thin adapters only).
+- **MANDATORY:** Test file organization MUST respect bounded contexts:
+  - Tests organized by bounded context (e.g., `tests/IdentityContext/Application/UseCases/RegisterUser.test.ts`).
+  - Cross-context tests use public API modules (same as production code).
+  - Test utilities in `tests/` or `__tests__/` directories.
+
+[TEST FILE STRUCTURE]
+- Test file import patterns:
+  - Can import from any layer within their context (for testing purposes).
+  - Can import Infrastructure adapters directly (for test doubles and mocks).
+  - MUST use public API modules for cross-context imports (same as production code).
+  - Test utilities should be in `tests/` or `__tests__/` directories.
+- Mock patterns:
+  - Mocks should implement ports (interfaces), not concrete classes.
+  - Test doubles should be in test files or `tests/fixtures/` directories.
+  - Prefer interface-based mocks over class-based mocks for better testability.
+
+[CHANGE-DISCIPLINE INTEGRATION]
+- **MANDATORY:** For backend/domain code, testing rules are binding and integrated with change-discipline:
+  - New behavior MUST come with tests covering happy path, at least one failure path, and at least one edge case (where applicable).
+  - Bugfixes MUST follow `.cursor/rules/45-bugfix-protocol.mdc` (reproduce, confirm, fix, guard with regression tests).
+  - Tests MUST NOT be deleted or weakened without justification and spec/ADR updates per `.cursor/rules/46-regression-discipline.mdc`.
+  - Changes MUST respect diff scope per `.cursor/rules/47-diff-discipline.mdc`; test changes must align with declared change scope.
+  - Red/Green discipline: write tests first, confirm they fail (red), then implement until they pass (green); do not batch “all tests then all code” or proceed to later layers (e.g., UI) before current layer’s tests are green.
+- **MANDATORY:** AI agents MUST treat missing tests for new behavior as a **blocking issue**; they MUST refuse to implement behavior changes without corresponding tests unless a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicitly provided.
+
+[AGENT BEHAVIOR & REFUSAL DUTIES]
+- **MANDATORY:** AI agents (including `@implementer`, `@test-engineer`, `@code-reviewer`) MUST:
+  - Refuse to implement bugfixes without regression tests per `.cursor/rules/45-bugfix-protocol.mdc`.
+  - Refuse to delete or weaken tests without going through `.cursor/rules/23-change-control.mdc` and `.cursor/rules/46-regression-discipline.mdc`.
+  - Refuse to implement new behavior without tests covering the behavior.
+  - Only proceed with test violations if a valid `RISK_OVERRIDE` block is explicitly provided by the user, following `.cursor/rules/3G-risk-overrides.mdc`.
+
+[DEFINITION OF DONE — TESTING REQUIREMENTS]
+- **MANDATORY:** For any backend/domain behavior change (new feature, bugfix, refactor that changes behavior) in non-Tier-S code:
+  - **Domain tests are REQUIRED for:**
+    - Value objects (VOs) with non-trivial invariants (validation, equality, business rules).
+    - Entities/aggregates with behavior or invariants (state transitions, business rules, aggregate boundaries).
+    - Domain events with non-trivial data (event structure, event data validation).
+  - **Application tests are REQUIRED for:**
+    - Use cases / application services / handlers that orchestrate behavior (happy path, failure paths, edge cases).
+  - **"Behavior change" includes:**
+    - New execution paths or workflows.
+    - Changed invariants or validation rules.
+    - Different side effects (e.g., events published, persistence operations, external calls).
+    - Modified business rules or domain logic.
+  - **Exceptions (MUST be explicitly documented):**
+    - Only allowed for clearly-marked Tier S scripts or pure presentation-only code (UI-only changes with no backend logic).
+    - For these exceptions, tests MAY be lighter, but not entirely absent.
+    - MUST be explicitly noted in the change description or ADR with justification.
+  - **Changes MUST NOT be considered complete if:**
+    - Domain behavior changed (VOs, entities, events) and only Application tests were added → **BLOCKER**, Domain tests required.
+    - Use cases changed but only Domain tests were added → **BLOCKER**, Application tests required.
+    - Tests cover only the happy path without at least one negative/failure path for non-trivial logic → **BLOCKER**, failure path tests required.
+    - Required tests are missing and no valid risk override per `.cursor/rules/3G-risk-overrides.mdc` is provided → **BLOCKER**, cannot proceed.
+- **MANDATORY semantics:**
+  - "MANDATORY" in this file means:
+    - Agents MUST treat these requirements as **hard gating criteria**; they are not suggestions or best practices.
+    - Missing required tests MUST be reported explicitly and treated as a **blocking issue** that prevents completion.
+    - Agents MUST refuse to mark a change as "complete" or "done" when required tests are missing.
+    - Only valid risk overrides per `.cursor/rules/3G-risk-overrides.mdc` can bypass these requirements.
+
+[CHECKLIST — SELF-VERIFICATION BEFORE COMPLETION]
+- **MANDATORY:** Every implementation agent MUST verify the following before marking a change as "complete" or "done":
+  - [ ] **Domain tests:** Did any value object (VO) invariants change? If yes → VO tests updated/added.
+  - [ ] **Domain tests:** Did any entity/aggregate behavior change? If yes → entity tests updated/added.
+  - [ ] **Domain tests:** Did any domain event structure or data change? If yes → domain event tests updated/added.
+  - [ ] **Application tests:** Did any use case/application service behavior change? If yes → application tests updated/added.
+  - [ ] **Failure paths:** Is there at least one negative/failure path test for each non-trivial branch or validation?
+  - [ ] **Coverage:** Do tests clearly cover the bug/feature described in the change (happy path + at least one failure path)?
+  - [ ] **Exceptions:** If any required tests are missing, is there a valid risk override per `.cursor/rules/3G-risk-overrides.mdc` with explicit justification?
+- **MANDATORY:** If any checklist item is not satisfied:
+  - Agents MUST NOT mark the change as complete.
+  - Agents MUST explicitly report which required tests are missing.
+  - Agents MUST either add the missing tests or document a valid risk override before proceeding.
+
+[VERIFICATION]
+- Provide exact commands to run tests per stack (e.g., `npm test -- --runInBand`, `pytest -q`, `go test ./...`, `cargo test`, `phpunit`) and include lint/type where relevant.
+- **Policy Validation:** Agent behavior MUST comply with policy scenarios in `tests/policies/`. If policy validation fails, tighten relevant `.cursor/rules/*.mdc` files (see `tests/policies/README.md`).
+
+**See also:**
+- `.cursor/rules/23-change-control.mdc` — Change classification and contracts
+- `.cursor/rules/45-bugfix-protocol.mdc` — Bugfix protocol (reproduce, test, fix, guard)
+- `.cursor/rules/46-regression-discipline.mdc` — Tests as contracts
+- `.cursor/rules/47-diff-discipline.mdc` — Diff scope and blast radius
+- `.cursor/rules/3G-risk-overrides.mdc` — Risk override protocol

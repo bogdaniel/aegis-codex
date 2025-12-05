@@ -1,0 +1,425 @@
+---
+description: "Orchestration — How agents cooperate in multi-agent workflows."
+required: true
+category: "core"
+subcategory: "orchestration"
+globs:
+  - "**/*"
+---
+
+[SOURCE OF TRUTH]
+- Editable source: `rules/core/21-orchestration.mdc`
+- Generated/consumed copy: `.cursor/rules/21-orchestration.mdc` (keep references intact)
+
+[INTENT]
+- Explain multi-agent orchestration conventions, delegation, and quality gates.
+
+[APPLICABILITY]
+- Applies to all multi-agent workflows involving core agents; conventions are binding unless risk override per `.cursor/rules/3G-risk-overrides.mdc` is explicit.
+
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+
+[ORCHESTRATION — HOW AGENTS COOPERATE]
+
+[CORE PRINCIPLES]
+- Modular: Each agent replaceable without disrupting the rest
+- Scalable: System manages more agents/tasks without redesign
+- Interoperable: Agents interact using common APIs/protocols
+
+[CONVENTIONS VS AUTOMATION]
+- **Context Passing:** Context MUST be formatted as a Context Block so that Cursor / the user can easily pass it to the next agent. This is a convention, not "automatic" - agents format output for easy manual handoff.
+- **Parallel Execution:** Parallel execution is semantic: orchestrator asks multiple agents for views in one structured answer. Nothing guarantees real concurrency or simultaneous execution - it's a convention for aggregating multiple perspectives.
+- **Delegation:** Agents can delegate to other agents, but context passing is manual (user copies Context Block and passes to next agent). This is a convention, not true automation.
+
+[SEQUENTIAL WORKFLOWS]
+- Agents execute one by one, passing context
+- Context format: Grounding Block + Plan + Artifacts + Next Steps
+- Each agent's output becomes context for next agent
+
+[PARALLEL EXECUTION — SEMANTICS]
+
+[PARALLEL SYNTAX]
+- Syntax: Use "parallel" keyword in orchestrator prompt
+- Format: "@orchestrator [TASK] with parallel [AGENT_LIST]"
+- Example: "@orchestrator Review payment feature with parallel @security-auditor, @perf-optimizer, @code-reviewer"
+
+[PARALLEL SEMANTICS — WHAT "PARALLEL" MEANS]
+- Parallel execution is semantic: orchestrator asks multiple agents for views in one structured answer
+- Nothing guarantees real concurrency or simultaneous execution
+- Independent agents provide perspectives that are aggregated into one answer
+- Each agent analyzes the same input from their specialized viewpoint
+- Results are aggregated into a unified output
+- NOT true concurrent execution (agents don't run simultaneously in separate processes)
+- Instead: Orchestrator synthesizes multiple agent perspectives into one comprehensive response
+
+[WHEN TO USE PARALLEL]
+- Reviews: Multiple agents review same code/design from different angles
+- Audits: Security + performance + code quality audits on same artifact
+- Analysis: Different analytical perspectives on same problem
+- Validation: Multiple validation checks on same output
+
+[WHEN NOT TO USE PARALLEL]
+- Sequential workflows: When agents depend on each other's outputs
+- Design → Implementation: Architect must complete before API designer
+- Build → Deploy: Tests must pass before deployment
+- Any workflow where Agent B needs Agent A's output as input
+
+[PARALLEL EXECUTION RULES]
+1. **Independence Requirement:**
+   - Agents must be independent (no dependencies on each other's outputs)
+   - All agents receive the same initial context
+   - Agents do not communicate during execution
+
+2. **Context Sharing:**
+   - Context formatted as Context Block at start for easy handoff
+   - Each agent receives full context block (user passes it manually)
+   - Agents do not see each other's intermediate outputs
+   - Note: Context sharing is not "automatic" - it's a convention for formatting
+
+3. **Result Aggregation:**
+   - Results aggregated at end by orchestrator or supervisor
+   - Unified output presents all perspectives
+   - Conflicts or contradictions highlighted
+
+4. **Quality Gates:**
+   - Supervisor validates all parallel outputs
+   - Each agent's output must meet their quality gates
+   - Aggregated output must be internally consistent
+
+[PARALLEL EXECUTION PATTERNS]
+
+**Pattern 1: Multi-Perspective Review**
+```
+@orchestrator Review [FEATURE] with parallel analysis:
+- @security-auditor: Security perspective
+- @perf-optimizer: Performance perspective
+- @code-reviewer: Code quality perspective
+
+Output: Unified review with security, performance, and quality findings
+```
+
+**Pattern 2: Comprehensive Audit**
+```
+@orchestrator Audit [MODULE] with parallel security and architecture review:
+- @security-auditor: Security vulnerabilities
+- @architect: Architecture compliance
+
+Output: Combined audit report
+```
+
+**Pattern 3: Validation Suite**
+```
+@orchestrator Validate [FEATURE] with parallel checks:
+- @supervisor: Quality gates
+- @code-reviewer: Standards compliance
+- @test-engineer: Test coverage
+
+Output: Comprehensive validation report
+```
+
+[PARALLEL VS SEQUENTIAL DECISION TREE]
+- **Use Sequential if:**
+  - Agent B needs Agent A's output
+  - Workflow has dependencies (design → API → tests)
+  - Building something (architect → api-designer → devops)
+  
+- **Use Parallel if:**
+  - Agents analyze same input independently
+  - Multiple perspectives on same artifact
+  - Reviews, audits, validations
+  - No dependencies between agents
+
+[PARALLEL EXECUTION CONSTRAINTS]
+- Maximum parallel agents: 3-4 (to avoid overwhelming output)
+- All parallel agents must complete before aggregation
+- Supervisor must validate all parallel outputs
+- Conflicts between parallel outputs must be resolved
+
+[CONDITIONAL EXECUTION — SEMANTICS]
+
+[CONDITIONAL SYNTAX]
+- Syntax: Use "if" keyword in orchestrator prompt
+- Format: "@orchestrator [TASK] with conditional [CONDITION] → [AGENT]"
+- Example: "@orchestrator Review payment feature. If security issues found, delegate to @security-auditor for fixes."
+
+[CONDITIONAL SEMANTICS — WHAT "CONDITIONAL" MEANS]
+- Conditional execution means describing branches, but user controls execution
+- Orchestrator describes "if X then Y, else Z" but doesn't auto-execute
+- User must approve conditional paths before execution
+- Supervisor validates conditional branches meet quality gates
+- NOT automatic branching (orchestrator doesn't auto-execute based on conditions)
+- Instead: Orchestrator presents conditional plan, user approves, then execution proceeds
+
+[CONDITION TYPES]
+
+1. **Issue-Based Conditions:**
+   - "if [ISSUE] found" → Execute agent if issue detected
+   - Examples:
+     - "if security issues found" → @security-auditor
+     - "if architecture violations found" → @refactorer
+     - "if performance issues found" → @perf-optimizer
+   - Evaluation: Supervisor or previous agent reports issues
+
+2. **Metric-Based Conditions:**
+   - "if [METRIC] > [THRESHOLD]" → Execute agent if metric exceeds threshold
+   - Examples:
+     - "if p95 latency > 200ms" → @perf-optimizer
+     - "if test coverage < 80%" → @test-engineer
+     - "if error rate > 0.5%" → @code-reviewer
+   - Evaluation: Metrics from previous agent or supervisor
+
+3. **Status-Based Conditions:**
+   - "if [STATUS] == [VALUE]" → Execute agent if status matches value
+   - Examples:
+     - "if validation failed" → @code-reviewer
+     - "if tests failed" → @test-engineer
+     - "if security audit failed" → @security-auditor
+   - Evaluation: Status from supervisor or previous agent
+
+4. **Compliance-Based Conditions:**
+   - "if [RULE] violated" → Execute agent if rule violated
+   - Examples:
+     - "if architecture rules violated" → @architect
+     - "if security rules violated" → @security-auditor
+     - "if language rules violated" → @code-reviewer
+   - Evaluation: Supervisor validates against Phase 0 rules
+
+[CONDITIONAL PLANNING WORKFLOW]
+
+1. **Orchestrator Describes Branches:**
+   ```
+   @orchestrator Review payment feature with conditional planning.
+   
+   Plan:
+   - Step 1: @code-reviewer reviews code
+   - Step 2 (conditional): If security issues found → @security-auditor
+   - Step 3 (conditional): If performance issues found → @perf-optimizer
+   - Step 4: @supervisor validates all outputs
+   ```
+
+2. **User Approves Conditional Paths:**
+   - User reviews conditional plan
+   - User approves which branches to execute
+   - User can modify conditions or skip branches
+
+3. **Execution Proceeds:**
+   - Orchestrator executes approved branches
+   - Supervisor validates conditional branches
+   - Results aggregated with conditional outcomes
+
+[CONDITIONAL EXECUTION RULES]
+
+1. **User Control:**
+   - User must approve conditional paths before execution
+   - User can modify conditions
+   - User can skip branches
+
+2. **Supervisor Validation:**
+   - Supervisor validates conditional branches
+   - Supervisor ensures quality gates met despite conditional execution
+   - Supervisor reports which conditions were met/not met
+
+3. **Condition Evaluation:**
+   - Conditions evaluated by supervisor or previous agent
+   - Conditions must be explicit and measurable
+   - Conditions must reference Phase 0 rules or metrics
+
+4. **Branch Isolation:**
+   - Conditional branches are isolated
+   - Each branch receives full context
+   - Branches don't interfere with each other
+
+[CONDITIONAL EXECUTION PATTERNS]
+
+**Pattern 1: Issue-Based Conditional Fix**
+```
+@orchestrator Review [FEATURE] with conditional fixes:
+- @code-reviewer reviews code
+- If security issues found → @security-auditor fixes
+- If performance issues found → @perf-optimizer fixes
+- @supervisor validates all fixes
+```
+
+**Pattern 2: Metric-Based Conditional Optimization**
+```
+@orchestrator Review [FEATURE] with conditional optimization:
+- @perf-optimizer analyzes performance
+- If p95 latency > 200ms → @perf-optimizer optimizes
+- If error rate > 0.5% → @code-reviewer fixes
+- @supervisor validates optimizations
+```
+
+**Pattern 3: Compliance-Based Conditional Refactoring**
+```
+@orchestrator Review [MODULE] with conditional refactoring:
+- @supervisor validates architecture compliance
+- If architecture violations found → @refactorer refactors
+- If security violations found → @security-auditor fixes
+- @supervisor validates all changes
+```
+
+[CONDITIONAL VS UNCONDITIONAL]
+
+- **Use Conditional if:**
+  - Need to handle different scenarios
+  - Want to optimize workflow (skip unnecessary steps)
+  - Have multiple possible paths
+  
+- **Use Unconditional if:**
+  - Always need all steps
+  - Workflow is deterministic
+  - No branching needed
+
+[CONDITIONAL EXECUTION CONSTRAINTS]
+- Maximum conditional branches: 3-4 (to avoid complexity)
+- All conditions must be explicit and measurable
+- User approval required for conditional execution
+- Supervisor must validate all conditional branches
+- Conditional branches must maintain Phase 0 compliance
+
+[CONTEXT & HAND-OFF FORMAT]
+- Canonical "Context Block" format:
+  - Grounding Block: Goal, constraints, assumptions, metrics, tier
+  - Plan: The minimal path that moves SLOs now; rollback path
+  - Artifacts: Files, designs, code created
+  - Next Steps: Recommended next actions or agent delegations
+- Context MUST be formatted as a Context Block so that Cursor / the user can easily pass it to the next agent
+- This becomes the contract for how @orchestrator and @supervisor communicate via text
+- Note: Context passing is not "automatic" - it's a convention that agents format output for easy manual handoff
+
+[AGENT DELEGATION]
+
+[DELEGATION SYNTAX]
+- Format: "After [TASK], delegate to @[AGENT] for [PURPOSE]"
+- Example: "After design, delegate to @api-designer for API design and @security-auditor for security review"
+- Context MUST be formatted as a Context Block so that Cursor / the user can easily pass it to the next agent
+
+[DELEGATION RULES]
+- Agents can only delegate to agents with compatible roles
+- Delegation must respect agent capabilities
+- Context from delegating agent becomes input for delegated agent
+- Delegated agent MUST enforce same Phase 0 rules as delegating agent
+- Delegation is explicit (agent must state delegation in output)
+- Delegated agent receives full context block from delegating agent
+
+[DELEGATION CAPABILITY MATRIX]
+
+| Delegating Agent | Can Delegate To | Purpose | When to Use |
+|------------------|-----------------|---------|-------------|
+| **@architect** | @api-designer | API design | After architecture design, need API contract |
+| | @security-auditor | Security review | After architecture design, need security validation |
+| | @test-engineer | Test design | After architecture design, need test strategy |
+| | @supervisor | Validation | After architecture design, need compliance check |
+| **@api-designer** | @security-auditor | Security review | After API design, need security validation |
+| | @test-engineer | API tests | After API design, need contract tests |
+| | @code-reviewer | Code review | After API design, need compliance check |
+| **@security-auditor** | @test-engineer | Security tests | After security review, need security test coverage |
+| | @code-reviewer | Fix validation | After security fixes, need compliance check |
+| | @supervisor | Quality gate | After security review, need validation |
+| **@perf-optimizer** | @architect | Architecture review | If performance issues require architecture changes |
+| | @test-engineer | Performance tests | After optimization, need performance regression tests |
+| | @code-reviewer | Code review | After optimization, need compliance check |
+| | @supervisor | Validation | After optimization, need quality gate check |
+| **@test-engineer** | @code-reviewer | Code review | After test implementation, need compliance check |
+| | @supervisor | Coverage validation | After test implementation, need coverage validation |
+| **@devops** | @code-reviewer | Config review | After CI/CD setup, need compliance check |
+| | @supervisor | Pipeline validation | After CI/CD setup, need quality gate check |
+| **@refactorer** | @test-engineer | Characterization tests | Before refactoring, need safety net |
+| | @code-reviewer | Compliance check | After refactoring, need compliance validation |
+| | @supervisor | Regression check | After refactoring, need regression validation |
+| **@code-reviewer** | @security-auditor | Security fix | If security issues found during review |
+| | @perf-optimizer | Performance fix | If performance issues found during review |
+| | @refactorer | Refactoring | If architecture violations found during review |
+| | @supervisor | Final validation | After review, need final quality gate |
+| **@orchestrator** | Any agent | Workflow execution | Can delegate to any agent as part of workflow |
+| **@supervisor** | Any agent | Fix execution | If quality gates fail, can delegate to fix agents |
+| **@researcher** | @architect | Architecture research | After research, need architecture design |
+| | @security-auditor | Security research | After research, need security validation |
+| | @api-designer | API research | After research, need API design |
+
+[DELEGATION PATTERNS BY WORKFLOW TYPE]
+
+**Design Workflow:**
+- @architect → @api-designer → @security-auditor → @test-engineer → @supervisor
+
+**Review Workflow:**
+- @code-reviewer → @security-auditor (if issues) → @perf-optimizer (if issues) → @supervisor
+
+**Refactoring Workflow:**
+- @refactorer → @test-engineer → @code-reviewer → @supervisor
+
+**Optimization Workflow:**
+- @perf-optimizer → @architect (if needed) → @test-engineer → @supervisor
+
+**Security Workflow:**
+- @security-auditor → @test-engineer → @code-reviewer → @supervisor
+
+**Change-Control Workflow:**
+- @orchestrator → @architect (confirm impact and stable surface identification)
+- @orchestrator → @architect (draft ADR for breaking changes, if needed)
+- @orchestrator → @refactorer (implement change with proper classification)
+- @orchestrator → @code-reviewer (validate change type, ADR compliance, contract preservation)
+- @orchestrator → @supervisor (final validation of change-control compliance)
+
+**Pattern:**
+```
+@orchestrator Review change to stable code with change-control workflow:
+- @architect confirms impact and identifies stable surfaces
+- If breaking change → @architect drafts ADR-1p
+- @refactorer implements change with proper classification
+- @code-reviewer validates change-control compliance
+- @supervisor validates final compliance
+```
+
+[DELEGATION CONSTRAINTS]
+- Maximum delegation depth: 3 levels (to avoid deep chains)
+- Circular delegation forbidden (A → B → A)
+- Delegation must be explicit in agent output
+- Context must be passed to delegated agent
+- Delegated agent must acknowledge context from delegating agent
+
+**See also:**
+- `.cursor/rules/20-agents.mdc` — Agent definitions and capabilities
+- `docs/multi-agent/delegation-matrix.md` — Complete delegation capability matrix
+- `docs/multi-agent/parallel-semantics.md` — Parallel execution semantics
+- `docs/multi-agent/conditional-semantics.md` — Conditional workflow semantics
+
+[WORKFLOW CHECKS]
+- **MANDATORY:** Multi-agent workflows for backend changes MUST include appropriate spine rule checks:
+  - **Architecture checks:** Ensure `@architect` validates against `.cursor/rules/36-architecture.mdc` and `.cursor/rules/44-ddd.mdc` (bounded contexts, layering, trust tiers, domain purity).
+  - **Security checks:** For Tier H/M contexts or security-sensitive changes, ensure `@security-auditor` validates against `.cursor/rules/30-security.mdc` and `.cursor/rules/30-threat-modeling.mdc`.
+  - **Change-discipline checks:** Ensure testing agents (`@test-engineer`) and review agents (`@code-reviewer`, `@supervisor`) validate against:
+    - `.cursor/rules/23-change-control.mdc` (change classification, ADR requirements)
+    - `.cursor/rules/45-bugfix-protocol.mdc` (regression tests for bugfixes)
+    - `.cursor/rules/46-regression-discipline.mdc` (tests as contracts)
+    - `.cursor/rules/47-diff-discipline.mdc` (diff scope)
+    - `.cursor/rules/48-doc-sync.mdc` (spec/doc updates)
+  - **Config/flags/API lifecycle checks:** For changes affecting configuration, feature flags, or APIs, ensure validation against:
+    - `.cursor/rules/3E-config-environments.mdc` (config sources, secrets, environment parity)
+    - `.cursor/rules/3F-feature-flags-rollouts.mdc` (flag design, rollout/rollback strategies)
+    - `.cursor/rules/35-api-lifecycle.mdc` (API versioning, backward compatibility, deprecation)
+- **MANDATORY:** `@supervisor` MUST validate that all relevant spine rules are checked before marking a workflow as "approved" or "complete".
+
+[CONFLICT RESOLUTION]
+- Hierarchy:
+  - Orchestration MUST respect the global rule hierarchy defined in `.cursor/rules/10-global.mdc`:
+    - Architecture & DDD (36/44/38),
+    - Security, Threat Modeling & AI Governance (30/30-threat-modeling/22),
+    - Change Discipline & Contracts (23/45/46/47/48/35),
+    - Data (3B), Config (3E), Flags (3F), Observability & Operations (32/3D), Language rules (50-lang-*.mdc).
+  - Workflow convenience or user preference MUST NOT override these clusters unless a valid risk override is in effect per `.cursor/rules/3G-risk-overrides.mdc`.
+- Disagreements between agents:
+  - If agents disagree on whether a change is compliant:
+    - `@supervisor` is the final arbiter within the orchestration flow and MUST apply the global invariants and risk-override rules before approving any path.
+    - `@supervisor` MUST treat architecture, security, and change-discipline violations as blocking; other agents MUST NOT "outvote" or bypass `@supervisor` decisions.
+  - If `@supervisor` marks an issue as blocking, the orchestrator and other agents MUST:
+    - Either adjust the plan to a compliant alternative, or
+    - Require the user to supply an explicit `RISK_OVERRIDE` block (as defined in `.cursor/rules/3G-risk-overrides.mdc`) before proceeding with a non-compliant path.
+  - **MANDATORY:** If `@supervisor` deems a proposal non-compliant with core rules, the workflow MUST NOT proceed as "approved" unless a risk override is explicitly invoked per `.cursor/rules/3G-risk-overrides.mdc`. Other agents MUST NOT attempt to override `@supervisor`'s blocking decisions.
+- User overrides:
+  - User-provided risk overrides MAY relax specific rules for a limited time and scope, but:
+    - Orchestration MUST still minimize blast radius (`.cursor/rules/47-diff-discipline.mdc`) and respect rollout/rollback and observability requirements (`.cursor/rules/3F-feature-flags-rollouts.mdc`, `.cursor/rules/32-observability.mdc`, `.cursor/rules/3D-operations.mdc`).
+    - All agents participating in the workflow MUST be informed of the override and its lifetime, and MUST still surface safer alternatives when feasible.

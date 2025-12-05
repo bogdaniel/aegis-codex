@@ -1,0 +1,128 @@
+---
+description: "Risk overrides: explicit, logged exceptions to core rules."
+category: "governance"
+subcategory: "risk-overrides"
+required: true
+globs:
+  - "**/*"
+---
+
+[SOURCE OF TRUTH]
+- Editable source: `rules/topics/3G-risk-overrides.mdc`
+- Generated/consumed copy: `.cursor/rules/3G-risk-overrides.mdc` (keep references intact)
+
+[INTENT]
+- Define the explicit, time-bounded risk override protocol and required metadata for exceptions to core rules.
+
+[APPLICABILITY]
+- Applies to all requests to bypass core architecture/security/testing/change-discipline rules; only valid when an explicit override per this file is provided.
+
+[CROSS-REFERENCES]
+- Architecture/DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc` (binding)
+- Testing/change-discipline: `.cursor/rules/31-testing.mdc`, `.cursor/rules/23-change-control.mdc` (binding)
+- Risk overrides: `.cursor/rules/3G-risk-overrides.mdc` (explicit overrides only)
+
+[CONCEPTS]
+- Risk override:
+  - A risk override is an explicit, temporary exception to one or more core rules (architecture, security, change-discipline, data, config, etc.) that would otherwise be treated as non-negotiable.
+  - Overrides exist to handle exceptional, time-bounded situations (e.g., incident mitigation, critical outage), **never** for convenience or "faster delivery".
+- Core rules:
+  - Core rules include, at minimum:
+    - Architecture & DDD: `.cursor/rules/36-architecture.mdc`, `.cursor/rules/44-ddd.mdc`, `.cursor/rules/38-anti-corruption-events.mdc`
+    - Security & Threat Modeling & AI Governance: `.cursor/rules/30-security.mdc`, `.cursor/rules/30-threat-modeling.mdc`, `.cursor/rules/22-ai-assistants.mdc`
+    - Change Discipline & Contracts: `.cursor/rules/23-change-control.mdc`, `.cursor/rules/45-bugfix-protocol.mdc`, `.cursor/rules/46-regression-discipline.mdc`, `.cursor/rules/47-diff-discipline.mdc`, `.cursor/rules/48-doc-sync.mdc`, `.cursor/rules/35-api-lifecycle.mdc`
+    - Data & Persistence: `.cursor/rules/3B-data-persistence.mdc`
+    - Config & Environments: `.cursor/rules/3E-config-environments.mdc`
+    - Feature Flags & Rollouts: `.cursor/rules/3F-feature-flags-rollouts.mdc`
+    - Observability & Operations: `.cursor/rules/32-observability.mdc`, `.cursor/rules/3D-operations.mdc`
+- Trust tiers & blast radius:
+  - Risk overrides affecting Tier H contexts (auth, policy, ledger, risk, compliance) as defined in `.cursor/rules/36-architecture.mdc` are extremely sensitive and MUST meet the strictest requirements in this rule.
+  - Blast radius is the set of behaviors, users, data, and bounded contexts that can be affected by the override; larger blast radius → stricter justification and shorter lifetime.
+
+
+[BASE RULES]
+- When overrides are allowed:
+  - Overrides are allowed **only** for exceptional, time-bounded situations where:
+    - There is a clear, immediate need (e.g., incident mitigation, regulatory deadline, critical outage), and
+    - A compliant alternative is not feasible in the required timeframe.
+  - Overrides MUST NOT be used for:
+    - Pure convenience, preference, or "less typing",
+    - Skipping architecture, security, or test work on new systems by default,
+    - Hiding behavior changes or contract changes from specs/docs/CI.
+- Required override content:
+  - Any risk override MUST explicitly record, at minimum:
+    - **Tier** of affected context(s) (H/M/S as per `.cursor/rules/36-architecture.mdc`),
+    - **Blast radius** (who/what can be affected: users, domains, services, data classes),
+    - **Explicit list of rules being violated** by filename (e.g., `.cursor/rules/36-architecture.mdc`, `.cursor/rules/30-security.mdc`, `.cursor/rules/23-change-control.mdc`),
+    - **Rationale** (why this override is necessary now, including alternatives considered),
+    - **Expected lifetime** of the exception (hours/days) and latest acceptable expiry date,
+    - **Rollback path** (how to remove the override and restore compliance, including tests and deployment steps),
+    - **Owner** (team/person responsible for cleanup and monitoring).
+  - For Tier H overrides, a threat model update and incident/change record MUST be included as part of the override, following `.cursor/rules/30-threat-modeling.mdc` and `.cursor/rules/3D-operations.mdc`.
+- Override lifetime:
+  - Overrides MUST be strictly time-bounded:
+    - The default expectation is **short-lived** (e.g., hours/days), not weeks/months.
+    - Long-lived overrides MUST be treated as design problems and either removed or replaced with a compliant design.
+  - Overrides that reach their expiry without cleanup MUST be treated as incidents and MUST trigger follow-up work per `.cursor/rules/3D-operations.mdc`.
+
+
+[RISK OVERRIDE REQUEST SYNTAX]
+- User request syntax:
+  - To request an override, users MUST include an explicit block in their prompt, for example:
+    - `RISK_OVERRIDE: { rules: [".cursor/rules/36-architecture.mdc", ".cursor/rules/23-change-control.mdc"], tier: "M", blast_radius: "OrdersContext + billing integrations", rationale: "...", lifetime: "24h", rollback: "..." }`
+  - The exact JSON shape is advisory, but **rule filenames, tier, blast radius, rationale, lifetime, and rollback path MUST be clearly stated** in the user request for agents to treat it as a valid override.
+- Agent interpretation:
+  - If a user provides a `RISK_OVERRIDE` block, agents MUST:
+    - Parse and restate the override content in plain language,
+    - Verify that the requested violations match what the user has declared,
+    - Confirm that the override is time-bounded and has a rollback path.
+  - Vague statements like "ignore the rules" or "do the quick way" WITHOUT a structured override are **NOT** valid overrides and MUST be treated as non-compliant requests.
+
+
+[AGENT BEHAVIOR]
+- Default behavior (no override):
+  - Agents (including AEONIC HYPERION) MUST:
+    - Refuse to violate architecture, security, change-discipline, data, config, or observability rules by default.
+    - Explain which rules would be violated and propose a compliant alternative or smaller, safer slice.
+  - Agents MUST treat `.cursor/rules/10-global.mdc` as authoritative for rule hierarchy; they MUST NOT silently prioritize user convenience over core invariants.
+- With explicit override:
+  - When a valid `RISK_OVERRIDE` block is present and clearly references the rules to be broken:
+    - Agents MUST:
+      - Restate the override, including rules, tier, blast radius, rationale, lifetime, and rollback path.
+      - Confirm that the user understands which guarantees are being suspended and for how long.
+      - Propose mitigations to reduce blast radius (e.g., flags, canary, additional logging) even under the override, following `.cursor/rules/3F-feature-flags-rollouts.mdc` and `.cursor/rules/32-observability.mdc`.
+    - Agents MAY proceed with the requested unsafe option **only** within the explicit scope and lifetime of the override and MUST avoid expanding the blast radius.
+  - For Tier H overrides, agents SHOULD strongly prefer mitigation paths that preserve core guarantees and MUST clearly label any deviation as high-risk.
+- Integration with change-control and documentation:
+  - Any override that leads to code or configuration changes MUST:
+    - Be recorded via change-control artifacts and ADRs per `.cursor/rules/23-change-control.mdc`,
+    - Include tests and/or monitoring that capture the overridden behavior and its rollback, consistent with `.cursor/rules/31-testing.mdc` and `.cursor/rules/32-observability.mdc`,
+    - Trigger spec/doc updates where user-visible or cross-context behavior is impacted (`.cursor/rules/48-doc-sync.mdc`).
+
+
+[VERIFICATION / CHECKS]
+- For `@supervisor`:
+  - MUST treat violations of core rules (36/44/38/30/30-threat-modeling/22/23/45/46/47/48/35/3B/3E/3F/32/3D) as **hard blocks** unless a valid risk override per this file is present.
+  - MUST verify that any accepted override:
+    - Lists all violated rules by filename,
+    - Declares tier, blast radius, rationale, lifetime, rollback path, and owner,
+    - Is time-bounded and accompanied by mitigation and monitoring.
+  - MUST ensure that once the override expires, follow-up work to remove the exception is tracked and enforced.
+- For `@architect` and `@code-reviewer`:
+  - MUST refuse to approve designs or diffs that violate core architecture, security, or change-discipline rules without:
+    - A valid risk override,
+    - Corresponding change-control records and doc/spec updates.
+  - SHOULD recommend safer alternative designs and staged rollouts that avoid or minimize the need for overrides.
+- For CI / policy enforcement:
+  - SHOULD integrate checks that:
+    - Detect the presence of known override markers (e.g., annotations or configuration),
+    - Flag long-lived or expired overrides for manual review and cleanup.
+
+**See also:**
+- `.cursor/rules/10-global.mdc` — Global invariants and rule hierarchy.
+- `.cursor/rules/22-ai-assistants.mdc` — AI governance and assistant usage constraints.
+- `.cursor/rules/23-change-control.mdc` — Change classification and control procedures.
+- `.cursor/rules/36-architecture.mdc` — Architecture doctrine (Clean+Hex+DDD).
+- `.cursor/rules/30-security.mdc` — Security standards and OWASP mapping.
+- `.cursor/rules/3D-operations.mdc` — Operations, incidents, and runbooks.
+

@@ -8,7 +8,7 @@ globs:
 ---
 [ROLE]
 - Behavior-preserving modernization that improves architecture compliance.
-- Rules: `rules/36-architecture.mdc`, `rules/44-ddd.mdc`, `rules/23-change-control.mdc`, `rules/31-testing.mdc`, `rules/3G-risk-overrides.mdc`.
+- Rules: `rules/architecture/36-architecture.mdc`, `rules/methodologies/44-ddd.mdc`, `rules/core/23-change-control.mdc`, `rules/topics/31-testing.mdc`, `rules/topics/3G-risk-overrides.mdc`.
 
 [DELIVERABLE]
 - Current issues, 2–4 step refactor plan with safety rails, before/after sketch, tests/checks, rollback trigger/path.
@@ -18,7 +18,7 @@ globs:
 
 [RESPONSIBILITIES]
 - Classify change (refactor vs behavior change); add characterization tests if needed; improve structure without altering contracts; follow red/green; coordinate with @test-engineer/@code-reviewer.
-- Determine if code is stable; apply change-control rules (`rules/23-change-control.mdc`) accordingly; require ADR for breaking changes.
+- Determine if code is stable; apply change-control rules (`rules/core/23-change-control.mdc`) accordingly; require ADR for breaking changes.
 - Ensure refactor improves architecture compliance (no business logic in controllers, no framework deps in Domain/Application, respect bounded contexts/trust tiers).
 
 [REFUSAL]

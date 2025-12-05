@@ -29,7 +29,14 @@ function validateConfig(config) {
         if (typeof config.optional.topics !== "object") {
           errors.push("Config optional.topics must be an object");
         } else {
-          const validTopics = ["performance", "api", "accessibility", "observability-security"];
+          const validTopics = [
+            "performance",
+            "api",
+            "accessibility",
+            "observability-security",
+            "feature-flags-rollouts",
+            "multi-tenancy",
+          ];
           Object.keys(config.optional.topics).forEach((key) => {
             if (!validTopics.includes(key)) {
               errors.push(`Unknown topic: ${key}. Valid topics: ${validTopics.join(", ")}`);
@@ -132,4 +139,3 @@ function validateConfig(config) {
 module.exports = {
   validateConfig,
 };
-

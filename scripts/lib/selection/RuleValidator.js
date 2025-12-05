@@ -33,6 +33,8 @@ function validateRules(selectedRules, allRules) {
   ];
 
   const selectedPaths = new Set(selectedRules.map((r) => r.relativePath));
+  const hasArchitecture = selectedRules.some((r) => r.relativePath.includes("36-architecture.mdc"));
+  const hasDDD = selectedRules.some((r) => r.relativePath.includes("44-ddd.mdc"));
 
   for (const mandatory of mandatoryRules) {
     const found = selectedRules.some((r) => r.relativePath.includes(mandatory));
@@ -56,7 +58,7 @@ function validateRules(selectedRules, allRules) {
   for (const rule of selectedRules) {
     const meta = rule.meta || {};
     if (meta.category === "language") {
-      if (!selectedPaths.has("36-architecture.mdc") && !selectedPaths.has("44-ddd.mdc")) {
+      if (!hasArchitecture || !hasDDD) {
         warnings.push(
           `Language rule ${rule.relativePath} should have architecture and DDD rules (will be auto-included)`
         );
@@ -74,4 +76,3 @@ function validateRules(selectedRules, allRules) {
 module.exports = {
   validateRules,
 };
-
