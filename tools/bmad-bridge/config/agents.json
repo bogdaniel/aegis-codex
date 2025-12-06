@@ -1,0 +1,21 @@
+[
+  {"aegisId":"architect","aegisPath":"rules/agents/architect.mdc","template":"tools/bmad-bridge/templates/bmm/architect.agent.yaml","module":"bmm","output":"architect"},
+  {"aegisId":"implementer","aegisPath":"rules/agents/implementer.mdc","template":"tools/bmad-bridge/templates/bmm/dev.agent.yaml","module":"bmm","output":"dev"},
+  {"aegisId":"scrum-master","aegisPath":"rules/agents/scrum-master.mdc","template":"tools/bmad-bridge/templates/bmm/sm.agent.yaml","module":"bmm","output":"sm"},
+  {"aegisId":"product-manager","aegisPath":"rules/agents/product-manager.mdc","template":"tools/bmad-bridge/templates/bmm/pm.agent.yaml","module":"bmm","output":"pm"},
+  {"aegisId":"test-architect","aegisPath":"rules/agents/test-architect.mdc","template":"tools/bmad-bridge/templates/bmm/tea.agent.yaml","module":"bmm","output":"tea"},
+  {"aegisId":"technical-writer","aegisPath":"rules/agents/technical-writer.mdc","template":"tools/bmad-bridge/templates/bmm/tech-writer.agent.yaml","module":"bmm","output":"tech-writer"},
+  {"aegisId":"analyst","aegisPath":"rules/agents/analyst.mdc","template":"tools/bmad-bridge/templates/bmm/analyst.agent.yaml","module":"bmm","output":"analyst"},
+  {"aegisId":"ux-designer","aegisPath":"rules/agents/ux-designer.mdc","template":"tools/bmad-bridge/templates/bmm/ux-designer.agent.yaml","module":"bmm","output":"ux-designer"}
+  ,{"aegisId":"cis-brainstorming-specialist","aegisPath":"rules/agents/cis-brainstorming-specialist.mdc","template":"tools/bmad-bridge/templates/cis/brainstorming-coach.agent.yaml","module":"cis","output":"brainstorming-coach"}
+  ,{"aegisId":"cis-problem-solver","aegisPath":"rules/agents/cis-problem-solver.mdc","template":"tools/bmad-bridge/templates/cis/creative-problem-solver.agent.yaml","module":"cis","output":"creative-problem-solver"}
+  ,{"aegisId":"cis-design-thinking-maestro","aegisPath":"rules/agents/cis-design-thinking-maestro.mdc","template":"tools/bmad-bridge/templates/cis/design-thinking-coach.agent.yaml","module":"cis","output":"design-thinking-coach"}
+  ,{"aegisId":"cis-innovation-oracle","aegisPath":"rules/agents/cis-innovation-oracle.mdc","template":"tools/bmad-bridge/templates/cis/innovation-strategist.agent.yaml","module":"cis","output":"innovation-strategist"}
+  ,{"aegisId":"cis-presentation-master","aegisPath":"rules/agents/cis-presentation-master.mdc","template":"tools/bmad-bridge/templates/cis/presentation-master.agent.yaml","module":"cis","output":"presentation-master"}
+  ,{"aegisId":"cis-storyteller","aegisPath":"rules/agents/cis-storyteller.mdc","template":"tools/bmad-bridge/templates/cis/storyteller.agent.yaml","module":"cis","output":"storyteller"}
+  ,{"aegisId":"game-architect","aegisPath":"rules/agents/game-architect.mdc","template":"tools/bmad-bridge/templates/bmgd/game-architect.agent.yaml","module":"bmgd","output":"game-architect"}
+  ,{"aegisId":"game-designer","aegisPath":"rules/agents/game-designer.mdc","template":"tools/bmad-bridge/templates/bmgd/game-designer.agent.yaml","module":"bmgd","output":"game-designer"}
+  ,{"aegisId":"game-developer","aegisPath":"rules/agents/game-developer.mdc","template":"tools/bmad-bridge/templates/bmgd/game-dev.agent.yaml","module":"bmgd","output":"game-dev"}
+  ,{"aegisId":"game-dev-scrum-master","aegisPath":"rules/agents/game-dev-scrum-master.mdc","template":"tools/bmad-bridge/templates/bmgd/game-scrum-master.agent.yaml","module":"bmgd","output":"game-scrum-master"}
+  ,{"aegisId":"bmad-builder","aegisPath":"rules/agents/architect.mdc","template":"tools/bmad-bridge/templates/bmb/bmad-builder.agent.yaml","module":"bmb","output":"bmad-builder"}
+]

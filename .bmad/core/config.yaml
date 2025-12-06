@@ -1,0 +1,7 @@
+# BMAD core configuration
+bmad_folder: ".bmad"
+user_name: "Aegis User"
+communication_language: "English"
+document_output_language: "English"
+output_folder: "{project-root}/docs"
+install_user_docs: true

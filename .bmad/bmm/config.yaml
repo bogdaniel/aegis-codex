@@ -1,0 +1,7 @@
+# BMAD BMM module configuration
+output_folder: "test/docs"
+sprint_artifacts: "test/docs/stories"
+user_name: "Bogdan"
+communication_language: "English"
+user_skill_level: "beginner"
+document_output_language: "English"
