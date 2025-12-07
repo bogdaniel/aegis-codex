@@ -1,4 +1,0 @@
-# Innovation module configuration
-name: "Innovation"
-version: "0.0.0"
-config_source: "{project-root}/.aegis/innovation/config.yaml"

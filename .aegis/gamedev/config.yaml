@@ -1,4 +1,0 @@
-# GameDev module configuration
-name: "GameDev"
-version: "0.0.0"
-config_source: "{project-root}/.aegis/gamedev/config.yaml"

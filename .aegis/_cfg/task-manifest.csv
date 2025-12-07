@@ -1,5 +1,0 @@
-name,module,path,description,standalone
-advanced-elicitation,core,core/tasks/advanced-elicitation.xml,When called from workflow,true
-index-docs,core,core/tasks/index-docs.xml,Generates or updates an index.md of all documents in the specified directory,true
-validate-workflow,core,core/tasks/validate-workflow.xml,Run a checklist against a document with thorough analysis and produce a validation report,true
-workflow,core,core/tasks/workflow.xml,Execute given workflow by loading its configuration  following instructions  and producing output,true

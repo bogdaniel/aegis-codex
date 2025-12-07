@@ -39,7 +39,9 @@ coverage/
 
 # Generated files (rule builder output)
 .cursor/rules/
+.cursor/
 .claude/
+.aegis/
 .aegis-bundles/
+.tmp-aegis-*
 AGENTS.md
-

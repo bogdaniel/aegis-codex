@@ -1,4 +1,0 @@
-# Builder module configuration
-name: "Builder"
-version: "0.0.0"
-config_source: "{project-root}/.aegis/builder/config.yaml"
