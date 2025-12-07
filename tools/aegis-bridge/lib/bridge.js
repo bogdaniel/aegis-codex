@@ -252,9 +252,11 @@ function rewriteWorkflowPlaceholders(outRoot, installFolder) {
 }
 
 function exportWorkflowsAndTasks(outRoot, installFolder) {
-  // Use the in-repo install folder as the source of truth
-  const sourceRoot = path.resolve(installFolder);
-  if (!fs.existsSync(sourceRoot)) return;
+  // Use repository-embedded source as the single source of truth
+  const sourceRoot = path.resolve('source/aegis');
+  if (!fs.existsSync(sourceRoot)) {
+    throw new Error('Missing source/aegis content for workflows/tasks/tools export');
+  }
 
   // Core tasks
   copyDir(
@@ -272,16 +274,25 @@ function exportWorkflowsAndTasks(outRoot, installFolder) {
     path.join(outRoot, installFolder, 'core', 'tools'),
   );
 
-  // Export modules found under install folder
-  const moduleRoot = sourceRoot;
+  // Export modules found under source (supports legacy module names)
+  const moduleRoot = fs.existsSync(path.join(sourceRoot, 'modules'))
+    ? path.join(sourceRoot, 'modules')
+    : sourceRoot;
   const moduleEntries = fs
     .readdirSync(moduleRoot, { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && entry.name !== 'core' && entry.name !== '_cfg');
 
+  const moduleMap = {
+    bmm: 'method',
+    bmb: 'builder',
+    bmgd: 'gamedev',
+    cis: 'innovation',
+  };
   for (const entry of moduleEntries) {
     const mod = entry.name;
+    const targetModule = moduleMap[mod] || mod;
     const srcBase = path.join(moduleRoot, mod);
-    const dstBase = path.join(outRoot, installFolder, mod);
+    const dstBase = path.join(outRoot, installFolder, targetModule);
 
     const subdirs = [
       'workflows',

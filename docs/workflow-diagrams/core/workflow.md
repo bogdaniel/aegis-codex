@@ -1,5 +1,5 @@
 # party-mode
-Orchestrates group discussions between all installed Aegis agents  enabling natural multi-agent conversations
+Orchestrates group discussions between all installed BMAD agents  enabling natural multi-agent conversations
 ```mermaid
 flowchart TD
   party_mode["party-mode"]
