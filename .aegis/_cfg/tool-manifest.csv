@@ -1,0 +1,2 @@
+name,module,path,description,standalone
+shard-doc,core,core/tools/shard-doc.xml,Splits large markdown documents into smaller  organized files based on level 2 (default) sections,true

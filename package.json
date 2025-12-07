@@ -1,13 +1,14 @@
 {
-  "name": "aegis-bmad-bridge",
+  "name": "aegis-bridge",
   "version": "0.1.0",
   "private": true,
-  "description": "BMAD-format compiler and bundler for Aegis agents",
+  "description": "Compiled agent/bundle generator for Aegis agents",
   "scripts": {
-    "bmad:compile": "node tools/bmad-bridge/cli.js compile",
-    "bmad:bundle": "node tools/bmad-bridge/cli.js bundle",
-    "bmad:validate": "node tools/bmad-bridge/cli.js validate",
-    "bmad:ci": "node tools/bmad-bridge/scripts/ci-validate.js"
+    "aegis:compile": "node tools/aegis-bridge/cli.js compile",
+    "aegis:bundle": "node tools/aegis-bridge/cli.js bundle",
+    "aegis:validate": "node tools/aegis-bridge/cli.js validate",
+    "aegis:ci": "node tools/aegis-bridge/scripts/ci-validate.js",
+    "aegis:diagrams": "node tools/aegis-bridge/scripts/generate-workflow-diagrams.js"
   },
   "engines": {
     "node": ">=20.0.0"

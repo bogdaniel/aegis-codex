@@ -1,4 +1,0 @@
-# BMB module configuration
-name: "BMB"
-version: "0.0.0"
-config_source: "{project-root}/.bmad/bmb/config.yaml"

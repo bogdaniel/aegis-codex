@@ -1,0 +1,4 @@
+# CIS module configuration
+name: "CIS"
+version: "0.0.0"
+config_source: "{project-root}/.aegis/cis/config.yaml"

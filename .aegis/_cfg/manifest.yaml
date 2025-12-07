@@ -1,0 +1,8 @@
+version: 0.1.0
+modules:
+  - bmb
+  - bmgd
+  - bmm
+  - cis
+ides: []
+installDate: 2025-12-07T09:59:12.982Z

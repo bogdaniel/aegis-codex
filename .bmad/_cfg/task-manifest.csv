@@ -1,5 +1,0 @@
-name,module,path,description,standalone
-advanced-elicitation,core,core/tasks/advanced-elicitation.xml,,true
-index-docs,core,core/tasks/index-docs.xml,,true
-validate-workflow,core,core/tasks/validate-workflow.xml,,true
-workflow,core,core/tasks/workflow.xml,,true
