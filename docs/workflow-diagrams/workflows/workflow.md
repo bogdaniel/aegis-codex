@@ -1,30 +1,27 @@
-# storytelling
-Craft compelling narratives using proven story frameworks and techniques. This workflow guides users through structured narrative development  applying appropriate story frameworks to create emotionally resonant and engaging stories for any purpose.
+# workflow-status
+Lightweight status checker - answers "what should I do now?" for any agent. Reads YAML status file for workflow tracking. Use workflow-init for new projects.
 ```mermaid
 flowchart TD
-  storytelling["storytelling"]
+  workflow_status["workflow-status"]
   instructions__installed_path__instructions_md["instructions: {installed_path}/instructions.md"]
-  template__installed_path__template_md["template: {installed_path}/template.md"]
-  default_output__output_folder__story___date___md["default_output: {output_folder}/story-{{date}}.md"]
-  step_1_instructions_md["Step 1: Storytelling Workflow Instructions"]
-  step_2_instructions_md["Step 2: Workflow"]
-  step_3_instructions_md["Step 3: **Hero's Journey** - Classic transformation arc with adventure and return"]
-  step_4_instructions_md["Step 4: **Pixar Story Spine** - Emotional structure building tension to resolution"]
-  step_5_instructions_md["Step 5: **Customer Journey Story** - Before/after transformation narrative"]
-  step_6_instructions_md["Step 6: **Challenge-Overcome Arc** - Dramatic obstacle-to-victory structure"]
-  step_7_instructions_md["Step 7: **Brand Story** - Values, mission, and unique positioning"]
-  step_8_instructions_md["Step 8: **Pitch Narrative** - Persuasive problem-to-solution structure"]
-  step_9_instructions_md["Step 9: **Vision Narrative** - Future-focused aspirational story"]
-  step_10_instructions_md["Step 10: **Origin Story** - Foundational narrative of how it began"]
-  step_11_instructions_md["Step 11: **Data Storytelling** - Transform insights into compelling narrative"]
-  step_12_instructions_md["Step 12: **Emotional Hooks** - Craft powerful opening and touchpoints"]
-  step_13_instructions_md["Step 13: Draft the story yourself with my guidance"]
-  step_14_instructions_md["Step 14: Have me write the first draft based on what we've discussed"]
-  step_15_instructions_md["Step 15: Co-create it iteratively together"]
-  storytelling -->|instructions| instructions__installed_path__instructions_md
-  storytelling -->|template| template__installed_path__template_md
-  storytelling -->|default_output| default_output__output_folder__story___date___md
-  storytelling --> step_1_instructions_md
+  template__installed_path__workflow_status_templa["template: {installed_path}/workflow-status-template.yaml"]
+  path_files__installed_path__paths_["path_files: {installed_path}/paths/"]
+  default_output__output_folder__method_workflow_s["default_output: {output_folder}/method-workflow-status.yaml"]
+  step_1_instructions_md["Step 1: Workflow Status Check - Multi-Mode Service"]
+  step_2_instructions_md["Step 2: 📊 Current Status"]
+  step_3_instructions_md["Step 3: 🎯 Next Steps"]
+  step_4_instructions_md["Step 4: **Start next workflow** - {{next_workflow_name}} ({{next_agent}})"]
+  step_5_instructions_md["Step 5: **Run optional workflow** - Choose from available options"]
+  step_6_instructions_md["Step 6: **View full status YAML** - See complete status file"]
+  step_7_instructions_md["Step 7: **Update workflow status** - Mark a workflow as completed or skipped"]
+  step_8_instructions_md["Step 8: **Exit** - Return to agent"]
+  step_9_instructions_md["Step 9: Mark a workflow as **completed** (provide file path)"]
+  step_10_instructions_md["Step 10: Mark a workflow as **skipped**"]
+  workflow_status -->|instructions| instructions__installed_path__instructions_md
+  workflow_status -->|template| template__installed_path__workflow_status_templa
+  workflow_status -->|path_files| path_files__installed_path__paths_
+  workflow_status -->|default_output| default_output__output_folder__method_workflow_s
+  workflow_status --> step_1_instructions_md
   step_1_instructions_md --> step_2_instructions_md
   step_2_instructions_md --> step_3_instructions_md
   step_3_instructions_md --> step_4_instructions_md
@@ -34,10 +31,5 @@ flowchart TD
   step_7_instructions_md --> step_8_instructions_md
   step_8_instructions_md --> step_9_instructions_md
   step_9_instructions_md --> step_10_instructions_md
-  step_10_instructions_md --> step_11_instructions_md
-  step_11_instructions_md --> step_12_instructions_md
-  step_12_instructions_md --> step_13_instructions_md
-  step_13_instructions_md --> step_14_instructions_md
-  step_14_instructions_md --> step_15_instructions_md
 ```
-Source: cis/workflows/storytelling/workflow.yaml
+Source: method/workflows/workflow-status/workflow.yaml

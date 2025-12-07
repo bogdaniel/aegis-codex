@@ -160,7 +160,7 @@ Agent: Sharding PRD.md...
 
 ### Universal Support
 
-**All BMM workflows support both formats:**
+**All Method workflows support both formats:**
 
 - ✅ Whole documents
 - ✅ Sharded documents
@@ -319,7 +319,7 @@ Significant token reduction for large requirement docs!
 
 ```bash
 /shard-doc
-Source: docs/bmm-epics.md
+Source: docs/method-epics.md
 Destination: docs/epics/
 
 Created:
@@ -441,8 +441,8 @@ input_file_patterns:
 ## Related Documentation
 
 - [shard-doc Tool](../src/core/tools/shard-doc.xml) - Tool implementation
-- [BMM Workflows Guide](../src/modules/bmm/workflows/README.md) - Workflow overview
-- [Workflow Creation Guide](../src/modules/bmb/workflows/create-workflow/workflow-creation-guide.md) - Custom workflow patterns
+- [Method Workflows Guide](../src/modules/method/workflows/README.md) - Workflow overview
+- [Workflow Creation Guide](../src/modules/builder/workflows/create-workflow/workflow-creation-guide.md) - Custom workflow patterns
 
 ---
 

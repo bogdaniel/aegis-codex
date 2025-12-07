@@ -27,7 +27,7 @@ This uses **micro-file architecture** with **sequential conversation orchestrati
 
 ### Configuration Loading
 
-Load config from `{project-root}/{aegis_folder}/bmm/config.yaml` and resolve:
+Load config from `{project-root}/{aegis_folder}/method/config.yaml` and resolve:
 
 - `project_name`, `output_folder`, `user_name`
 - `communication_language`, `document_output_language`, `user_skill_level`

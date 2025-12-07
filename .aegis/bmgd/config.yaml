@@ -1,4 +1,0 @@
-# BMGD module configuration
-name: "BMGD"
-version: "0.0.0"
-config_source: "{project-root}/.aegis/bmgd/config.yaml"

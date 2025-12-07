@@ -81,7 +81,7 @@ function ensureCfg(outRoot, installFolder) {
   if (!fs.existsSync(manifestPath)) {
     const manifest = {
       version: '0.0.0',
-      modules: ['bmm'],
+      modules: ['method'],
       ides: [],
     };
     fs.writeFileSync(manifestPath, yaml.stringify(manifest), 'utf8');
@@ -159,7 +159,7 @@ function generateManifests(outRoot, installFolder, modules = [], ides = []) {
     const wf = parseWorkflow(file) || {};
     const rel = path.relative(base, file).replace(/\\/g, '/');
     const parts = rel.split('/');
-    const module = parts[0] === 'core' ? 'core' : (parts[1] || 'bmm');
+    const module = parts[0] === 'core' ? 'core' : (parts[1] || 'method');
     const name = validation.name || wf.name || parts[parts.length - 2] || path.basename(file, path.extname(file));
     const description = String(validation.description || wf.description || '').replaceAll(',', ' ');
     workflowRows.push(`${name},${module},${rel},${description}`);
@@ -168,16 +168,16 @@ function generateManifests(outRoot, installFolder, modules = [], ides = []) {
 
   const tasks = [
     ...listFiles(path.join(base, 'core', 'tasks'), (f) => f.endsWith('.xml') || f.endsWith('.md')),
-    ...listFiles(path.join(base, 'bmm', 'tasks'), (f) => f.endsWith('.xml') || f.endsWith('.md')),
+    ...listFiles(path.join(base, 'method', 'tasks'), (f) => f.endsWith('.xml') || f.endsWith('.md')),
     ...modules
-      .filter((mod) => mod !== 'bmm')
+      .filter((mod) => mod !== 'method')
       .flatMap((mod) => listFiles(path.join(base, mod, 'tasks'), (f) => f.endsWith('.xml') || f.endsWith('.md'))),
   ];
   const taskRows = tasks.map((file) => {
     const rel = path.relative(base, file).replace(/\\/g, '/');
     const parts = rel.split('/');
     const name = path.basename(file, path.extname(file));
-    const module = parts[0] === 'core' ? 'core' : (parts[1] || 'bmm');
+    const module = parts[0] === 'core' ? 'core' : (parts[1] || 'method');
     const description = parseDescriptionFromContent(file).replaceAll(',', ' ');
     return `${name},${module},${rel},${description},true`;
   });
@@ -185,25 +185,25 @@ function generateManifests(outRoot, installFolder, modules = [], ides = []) {
 
   const tools = [
     ...listFiles(path.join(base, 'core', 'tools'), (f) => f.endsWith('.xml') || f.endsWith('.md')),
-    ...listFiles(path.join(base, 'bmm', 'tools'), (f) => f.endsWith('.xml') || f.endsWith('.md')),
+    ...listFiles(path.join(base, 'method', 'tools'), (f) => f.endsWith('.xml') || f.endsWith('.md')),
     ...modules
-      .filter((mod) => mod !== 'bmm')
+      .filter((mod) => mod !== 'method')
       .flatMap((mod) => listFiles(path.join(base, mod, 'tools'), (f) => f.endsWith('.xml') || f.endsWith('.md'))),
   ];
   const toolRows = tools.map((file) => {
     const rel = path.relative(base, file).replace(/\\/g, '/');
     const parts = rel.split('/');
     const name = path.basename(file, path.extname(file));
-    const module = parts[0] === 'core' ? 'core' : (parts[1] || 'bmm');
+    const module = parts[0] === 'core' ? 'core' : (parts[1] || 'method');
     const description = parseDescriptionFromContent(file).replaceAll(',', ' ');
     return `${name},${module},${rel},${description},true`;
   });
   writeCsv(toolManifestPath, 'name,module,path,description,standalone', toolRows);
 
   const teams = [
-    ...listFiles(path.join(base, 'bmm', 'teams'), (f) => f.endsWith('.csv') || f.endsWith('.yaml') || f.endsWith('.yml')),
+    ...listFiles(path.join(base, 'method', 'teams'), (f) => f.endsWith('.csv') || f.endsWith('.yaml') || f.endsWith('.yml')),
     ...modules
-      .filter((mod) => mod !== 'bmm')
+      .filter((mod) => mod !== 'method')
       .flatMap((mod) =>
         listFiles(path.join(base, mod, 'teams'), (f) => f.endsWith('.csv') || f.endsWith('.yaml') || f.endsWith('.yml')),
       ),
@@ -212,7 +212,7 @@ function generateManifests(outRoot, installFolder, modules = [], ides = []) {
     const rel = path.relative(base, file).replace(/\\/g, '/');
     const parts = rel.split('/');
     const name = path.basename(file, path.extname(file));
-    const module = parts[0] === 'core' ? 'core' : (parts[1] || 'bmm');
+    const module = parts[0] === 'core' ? 'core' : (parts[1] || 'method');
     return `${name},${module},${rel},`;
   });
   writeCsv(teamManifestPath, 'name,module,path,description', teamRows);
@@ -252,11 +252,9 @@ function rewriteWorkflowPlaceholders(outRoot, installFolder) {
 }
 
 function exportWorkflowsAndTasks(outRoot, installFolder) {
-  const sourceRoot = path.resolve('tmp/Aegis-METHOD/src');
-  if (!fs.existsSync(sourceRoot)) {
-    console.warn('Aegis source not found at tmp/Aegis-METHOD/src; skipping workflow/task export');
-    return;
-  }
+  // Use the in-repo install folder as the source of truth
+  const sourceRoot = path.resolve(installFolder);
+  if (!fs.existsSync(sourceRoot)) return;
 
   // Core tasks
   copyDir(
@@ -274,27 +272,28 @@ function exportWorkflowsAndTasks(outRoot, installFolder) {
     path.join(outRoot, installFolder, 'core', 'tools'),
   );
 
-  // Export modules found under src/modules
-  const moduleRoot = path.join(sourceRoot, 'modules');
-  if (fs.existsSync(moduleRoot)) {
-    for (const entry of fs.readdirSync(moduleRoot, { withFileTypes: true })) {
-      if (!entry.isDirectory()) continue;
-      const mod = entry.name;
-      const srcBase = path.join(moduleRoot, mod);
-      const dstBase = path.join(outRoot, installFolder, mod);
+  // Export modules found under install folder
+  const moduleRoot = sourceRoot;
+  const moduleEntries = fs
+    .readdirSync(moduleRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && entry.name !== 'core' && entry.name !== '_cfg');
 
-      const subdirs = [
-        'workflows',
-        path.join('docs', 'workflows'),
-        path.join('reference', 'workflows'),
-        'tasks',
-        'tools',
-        'teams',
-      ];
+  for (const entry of moduleEntries) {
+    const mod = entry.name;
+    const srcBase = path.join(moduleRoot, mod);
+    const dstBase = path.join(outRoot, installFolder, mod);
 
-      for (const sub of subdirs) {
-        copyDir(path.join(srcBase, sub), path.join(dstBase, sub));
-      }
+    const subdirs = [
+      'workflows',
+      path.join('docs', 'workflows'),
+      path.join('reference', 'workflows'),
+      'tasks',
+      'tools',
+      'teams',
+    ];
+
+    for (const sub of subdirs) {
+      copyDir(path.join(srcBase, sub), path.join(dstBase, sub));
     }
   }
 }
@@ -425,7 +424,7 @@ function buildAll(mappingPath, options = {}) {
   const results = [];
   const agentManifestEntries = [];
 
-  const modules = Array.from(new Set([...mappings.map((m) => m.module || 'bmm'), ...extraModules]));
+  const modules = Array.from(new Set([...mappings.map((m) => m.module || 'method'), ...extraModules]));
   const ides = [];
   if (ideClaudeDir) ides.push('claude-code');
   if (ideCursorDir) ides.push('cursor');

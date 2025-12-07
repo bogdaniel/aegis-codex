@@ -18,4 +18,4 @@ flowchart TD
   step_5_step_04_strategy_md --> step_6_step_05_shopping_md
   step_6_step_05_shopping_md --> step_7_step_06_prep_schedule_md
 ```
-Source: bmb/reference/workflows/meal-prep-nutrition/workflow.md
+Source: builder/reference/workflows/meal-prep-nutrition/workflow.md

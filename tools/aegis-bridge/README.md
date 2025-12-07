@@ -18,12 +18,12 @@ Options:
 
 Additional outputs:
 - Generates `.aegis/core/config.yaml` if missing.
-- Exports workflows/tasks from source into `.aegis/core/tasks` and `.aegis/bmm/workflows|tasks` when source exists.
+- Exports workflows/tasks from source into `.aegis/core/tasks` and `.aegis/method/workflows|tasks` when source exists.
 - Creates `_cfg/manifest.yaml` and empty manifests (`workflow-manifest.csv`, `task-manifest.csv`, `tool-manifest.csv`).
 - Populates manifests by scanning `.aegis` workflows/tasks and writing workflow/task manifest CSVs.
 
 ## Mapping
-`tools/aegis-bridge/config/agents.json` maps each Aegis agent to a template. Templates live in `tools/aegis-bridge/templates/bmm/`. Update this file to add more agents.
+`tools/aegis-bridge/config/agents.json` maps each Aegis agent to a template. Templates live in `tools/aegis-bridge/templates/method/`. Update this file to add more agents.
 
 ## Notes
 - The compiler uses the ported schema/compilation path (`schema/agent.js`, `lib/compiler.js`).

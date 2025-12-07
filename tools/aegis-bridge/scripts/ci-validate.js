@@ -23,20 +23,15 @@ function ensure(condition, message) {
   }
 }
 
-const sourceExists = fs.existsSync(path.resolve('tmp/Aegis-METHOD/src'));
+buildAll(path.resolve(opts.config), {
+  outRoot: opts.out,
+  installFolder: opts.folder,
+  ideClaudeDir: opts.ideClaude,
+  ideCursorDir: opts.ideCursor,
+  modules: opts.modules,
+});
 
-// If source repo is missing, validate existing install instead of temp build
-if (sourceExists) {
-  buildAll(path.resolve(opts.config), {
-    outRoot: opts.out,
-    installFolder: opts.folder,
-    ideClaudeDir: opts.ideClaude,
-    ideCursorDir: opts.ideCursor,
-    modules: opts.modules,
-  });
-}
-
-const base = sourceExists ? path.join(opts.out, opts.folder) : path.resolve(opts.folder);
+const base = path.join(opts.out, opts.folder);
 const manifestPath = path.join(base, '_cfg', 'manifest.yaml');
 const workflowManifest = path.join(base, '_cfg', 'workflow-manifest.csv');
 const taskManifest = path.join(base, '_cfg', 'task-manifest.csv');
@@ -52,7 +47,7 @@ ensure(taskLines.length > 1, 'task-manifest.csv is empty');
 
 // Basic path checks
 ensure(exists(path.join(base, 'core', 'tasks')), 'Missing core/tasks');
-ensure(exists(path.join(base, 'bmm', 'workflows')), 'Missing bmm/workflows');
+ensure(exists(path.join(base, 'method', 'workflows')), 'Missing method/workflows');
 
 console.log('✓ CI validation passed');
 

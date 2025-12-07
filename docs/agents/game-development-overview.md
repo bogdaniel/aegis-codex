@@ -3,7 +3,7 @@
 - **Phases/Workflows:**
   - Preproduction: `brainstorm-game`, `game-brief`.
   - Design: `gdd`, `narrative`.
-  - Technical: `game-architecture` (adapted from BMM architecture workflow).
+  - Technical: `game-architecture` (adapted from Method architecture workflow).
   - Production: Sprint planning, story creation/management, epic tech specs, code review, retros (via Game Dev Scrum Master).
 - **Agents:**
   - Game Designer 🎲 — Creative vision, GDD, mechanics, narrative.

@@ -27,4 +27,4 @@ globs:
 - Find if this exists, treat as the bible: `**/project-context.md`.
 
 [CRITICAL ACTIONS]
-- CRITICAL: Load COMPLETE file {project-root}/{aegis_folder}/bmm/data/documentation-standards.md into memory and follow all rules within.
+- CRITICAL: Load COMPLETE file {project-root}/{aegis_folder}/method/data/documentation-standards.md into memory and follow all rules within.

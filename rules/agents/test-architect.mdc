@@ -27,6 +27,6 @@ globs:
 - Find if this exists, treat as the bible: `**/project-context.md`.
 
 [CRITICAL ACTIONS]
-- Consult {project-root}/{aegis_folder}/bmm/testarch/tea-index.csv to select knowledge fragments under knowledge/ and load only needed files.
-- Load the referenced fragment(s) from {project-root}/{aegis_folder}/bmm/testarch/knowledge/ before giving recommendations.
+- Consult {project-root}/{aegis_folder}/method/testarch/tea-index.csv to select knowledge fragments under knowledge/ and load only needed files.
+- Load the referenced fragment(s) from {project-root}/{aegis_folder}/method/testarch/knowledge/ before giving recommendations.
 - Cross-check recommendations with current official Playwright, Cypress, Pact, and CI platform documentation.

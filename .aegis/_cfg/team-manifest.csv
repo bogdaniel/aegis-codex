@@ -1,7 +1,7 @@
 name,module,path,description
-default-party,teams,bmm/teams/default-party.csv,
-team-fullstack,teams,bmm/teams/team-fullstack.yaml,
-creative-squad,teams,cis/teams/creative-squad.yaml,
-default-party,teams,cis/teams/default-party.csv,
-default-party,teams,bmgd/teams/default-party.csv,
-team-gamedev,teams,bmgd/teams/team-gamedev.yaml,
+default-party,teams,method/teams/default-party.csv,
+team-fullstack,teams,method/teams/team-fullstack.yaml,
+creative-squad,teams,innovation/teams/creative-squad.yaml,
+default-party,teams,innovation/teams/default-party.csv,
+default-party,teams,gamedev/teams/default-party.csv,
+team-gamedev,teams,gamedev/teams/team-gamedev.yaml,
