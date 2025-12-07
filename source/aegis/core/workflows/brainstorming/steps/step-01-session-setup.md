@@ -20,7 +20,7 @@
 - Variables from workflow.md are available in memory
 - Previous context = what's in output document + frontmatter
 - Don't assume knowledge from other steps
-- Brain techniques loaded on-demand from CSV when needed
+- Brain techniques loaded on-demand from JSON when needed
 
 ## YOUR TASK:
 
@@ -184,7 +184,7 @@ After user selects approach number:
 ## SESSION SETUP PROTOCOLS:
 
 - Always verify document existence before initialization
-- Load brain techniques CSV only when needed for technique presentation
+- Load brain techniques JSON only when needed for technique presentation
 - Use collaborative facilitation language throughout
 - Maintain psychological safety for creative exploration
 - Clear next-step routing based on user preferences

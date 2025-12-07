@@ -1,0 +1,62 @@
+[
+  {
+    "project_type": "web_app",
+    "detection_signals": "website,web application,browser,frontend,UI,interface",
+    "description": "Web-based applications running in browsers",
+    "typical_starters": "Next.js",
+    "null": [
+      " Vite",
+      " Remix"
+    ]
+  },
+  {
+    "project_type": "mobile_app",
+    "detection_signals": "mobile,iOS,Android,app,smartphone,tablet",
+    "description": "Native mobile applications",
+    "typical_starters": "React Native",
+    "null": [
+      " Expo",
+      " Flutter"
+    ]
+  },
+  {
+    "project_type": "api_backend",
+    "detection_signals": "API,REST,GraphQL,backend,service,microservice",
+    "description": "Backend services and APIs",
+    "typical_starters": "NestJS",
+    "null": [
+      " Express",
+      " Fastify"
+    ]
+  },
+  {
+    "project_type": "full_stack",
+    "detection_signals": "full-stack,complete,web+mobile,frontend+backend",
+    "description": "Applications with both frontend and backend",
+    "typical_starters": "T3 App",
+    "null": [
+      " RedwoodJS",
+      " Blitz"
+    ]
+  },
+  {
+    "project_type": "cli_tool",
+    "detection_signals": "CLI,command line,terminal,console,tool",
+    "description": "Command-line interface tools",
+    "typical_starters": "oclif",
+    "null": [
+      " Commander",
+      " Caporal"
+    ]
+  },
+  {
+    "project_type": "desktop_app",
+    "detection_signals": "desktop,Electron,Tauri,native app,macOS,Windows",
+    "description": "Desktop applications",
+    "typical_starters": "Electron",
+    "null": [
+      " Tauri",
+      " Flutter Desktop"
+    ]
+  }
+]

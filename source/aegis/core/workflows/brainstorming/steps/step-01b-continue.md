@@ -19,7 +19,7 @@
 
 - Existing document with frontmatter is available
 - Previous steps completed indicate session progress
-- Brain techniques CSV loaded when needed for remaining steps
+- Brain techniques JSON loaded when needed for remaining steps
 - User may want to continue, modify, or restart
 
 ## YOUR TASK:

@@ -3,14 +3,14 @@
 ## MANDATORY EXECUTION RULES (READ FIRST):
 
 - ✅ YOU ARE A TECHNIQUE LIBRARIAN, not a recommender
-- 🎯 LOAD TECHNIQUES ON-DEMAND from brain-methods.csv
-- 📋 PREVIEW TECHNIQUE OPTIONS clearly and concisely
+- 🎯 LOAD TECHNIQUES ON-DEMAND from brain-methods.json
+- 📋 PREVIEW TECHNIQUE OPTIONS clearly and coninnovationely
 - 🔍 LET USER EXPLORE and select based on their interests
 - 💬 PROVIDE BACK OPTION to return to approach selection
 
 ## EXECUTION PROTOCOLS:
 
-- 🎯 Load brain techniques CSV only when needed for presentation
+- 🎯 Load brain techniques JSON only when needed for presentation
 - ⚠️ Present [B] back option and [C] continue options
 - 💾 Update frontmatter with selected techniques
 - 📖 Route to technique execution after confirmation
@@ -19,27 +19,27 @@
 ## CONTEXT BOUNDARIES:
 
 - Session context from Step 1 is available
-- Brain techniques CSV contains 36+ techniques across 7 categories
+- Brain techniques JSON contains 36+ techniques across 7 categories
 - User wants full control over technique selection
 - May need to present techniques by category or search capability
 
 ## YOUR TASK:
 
-Load and present brainstorming techniques from CSV, allowing user to browse and select based on their preferences.
+Load and present brainstorming techniques from JSON, allowing user to browse and select based on their preferences.
 
 ## USER SELECTION SEQUENCE:
 
 ### 1. Load Brain Techniques Library
 
-Load techniques from CSV on-demand:
+Load techniques from JSON on-demand:
 
 "Perfect! Let's explore our complete brainstorming techniques library. I'll load all available techniques so you can browse and select exactly what appeals to you.
 
 **Loading Brain Techniques Library...**"
 
-**Load CSV and parse:**
+**Load JSON and parse:**
 
-- Read `brain-methods.csv`
+- Read `brain-methods.json`
 - Parse: category, technique_name, description, facilitation_prompts, best_for, energy_level, typical_duration
 - Organize by categories for browsing
 
@@ -114,7 +114,7 @@ For each technique:
 **2. Six Thinking Hats** (Duration: 15-25 min, Energy: Moderate)
 
 - Explore problems through six distinct perspectives for comprehensive analysis
-- Best for: Complex decisions, team alignment, thorough exploration
+- Best for: Complex deinnovationions, team alignment, thorough exploration
 - Example prompt: "White hat thinking: What facts do we know for certain about this challenge?"
 
 ### 4. Allow Technique Selection
@@ -194,7 +194,7 @@ If user selects [Back]:
 
 ## SUCCESS METRICS:
 
-✅ Brain techniques CSV loaded successfully on-demand
+✅ Brain techniques JSON loaded successfully on-demand
 ✅ Technique categories presented clearly with helpful descriptions
 ✅ User able to browse and select techniques based on interests
 ✅ Selected techniques confirmed with session fit explanation
@@ -212,7 +212,7 @@ If user selects [Back]:
 ## USER SELECTION PROTOCOLS:
 
 - Present techniques neutrally without steering or preference
-- Load CSV data only when needed for category/technique presentation
+- Load JSON data only when needed for category/technique presentation
 - Provide sufficient detail for informed choices without overwhelming
 - Always maintain option to return to previous steps
 - Respect user's autonomy in technique selection

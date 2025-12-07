@@ -20,7 +20,7 @@
 
 - Selected techniques from Step 2 available in frontmatter
 - Session context from Step 1 informs technique adaptation
-- Brain techniques CSV provides structure, not rigid scripts
+- Brain techniques JSON provides structure, not rigid scripts
 - User engagement and energy guide technique pacing and depth
 
 ## YOUR TASK:

@@ -1,0 +1,34 @@
+# Edit Module - Module Editor Configuration
+name: "edit-module"
+description: "Edit existing Aegis modules (structure, agents, workflows, documentation) while following all best practices"
+author: "Aegis"
+
+# Critical variables load from config_source
+config_source: "{project-root}/{aegis_folder}/builder/config.yaml"
+communication_language: "{config_source}:communication_language"
+user_name: "{config_source}:user_name"
+
+# Required Data Files - Critical for understanding module conventions
+module_structure_guide: "{project-root}/{aegis_folder}/builder/workflows/create-module/module-structure.md"
+
+# Related workflow editors
+agent_editor: "{project-root}/{aegis_folder}/builder/workflows/edit-agent/workflow.yaml"
+workflow_editor: "{project-root}/{aegis_folder}/builder/workflows/edit-workflow/workflow.yaml"
+
+# Reference examples - for learning patterns
+method_module_dir: "{project-root}/{aegis_folder}/method/"
+builder_module_dir: "{project-root}/{aegis_folder}/builder/"
+innovation_module_dir: "{project-root}/{aegis_folder}/innovation/"
+existing_agents_dir: "{project-root}/{aegis_folder}/*/agents/"
+existing_workflows_dir: "{project-root}/{aegis_folder}/*/workflows/"
+
+# Module path and component files
+installed_path: "{project-root}/{aegis_folder}/builder/workflows/edit-module"
+template: false # This is an action workflow - no template needed
+instructions: "{installed_path}/instructions.md"
+validation: "{installed_path}/checklist.md"
+
+standalone: true
+
+# Web bundle configuration
+web_bundle: false # Aegis Builder workflows run locally in Aegis-METHOD project

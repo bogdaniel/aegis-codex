@@ -1,0 +1,182 @@
+[
+  {
+    "category": "disruption",
+    "framework_name": "Disruptive Innovation Theory",
+    "description": "Identify how new entrants use simpler cheaper solutions to overtake incumbents by serving overlooked segments",
+    "key_questions": "Who are non-consumers?|What's good enough for them?|What incumbent weakness exists?|How could simple beat sophisticated?|What market entry point exists?"
+  },
+  {
+    "category": "disruption",
+    "framework_name": "Jobs to be Done",
+    "description": "Uncover customer jobs and the solutions they hire to make progress - reveals unmet needs competitors miss",
+    "key_questions": "What job are customers hiring this for?|What progress do they seek?|What alternatives do they use?|What frustrations exist?|What would fire this solution?"
+  },
+  {
+    "category": "disruption",
+    "framework_name": "Blue Ocean Strategy",
+    "description": "Create uncontested market space by making competition irrelevant through value innovation",
+    "key_questions": "What factors can we eliminate?|What should we reduce?|What can we raise?|What should we create?|Where is the blue ocean?"
+  },
+  {
+    "category": "disruption",
+    "framework_name": "Crossing the Chasm",
+    "description": "Navigate the gap between early adopters and mainstream market with focused beachhead strategy",
+    "key_questions": "Who are the innovators and early adopters?|What's our beachhead market?|What's the compelling reason to buy?|What's our whole product?|How do we cross to mainstream?"
+  },
+  {
+    "category": "disruption",
+    "framework_name": "Platform Revolution",
+    "description": "Transform linear value chains into exponential platform ecosystems that connect producers and consumers",
+    "key_questions": "What network effects exist?|Who are the producers?|Who are the consumers?|What transaction do we enable?|How do we achieve critical mass?"
+  },
+  {
+    "category": "business_model",
+    "framework_name": "Business Model Canvas",
+    "description": "Map and innovate across nine building blocks of how organizations create deliver and capture value",
+    "key_questions": "Who are customer segments?|What value propositions?|What channels and relationships?|What revenue streams?|What key resources activities partnerships?|What cost structure?"
+  },
+  {
+    "category": "business_model",
+    "framework_name": "Value Proposition Canvas",
+    "description": "Design compelling value propositions that match customer jobs pains and gains with preinnovationion",
+    "key_questions": "What are customer jobs?|What pains do they experience?|What gains do they desire?|How do we relieve pains?|How do we create gains?|What products and services?"
+  },
+  {
+    "category": "business_model",
+    "framework_name": "Business Model Patterns",
+    "description": "Apply proven business model patterns from other industries to your context for rapid innovation",
+    "key_questions": "What patterns could apply?|Subscription? Freemium? Marketplace? Razor blade? Bait and hook?|How would this change our model?"
+  },
+  {
+    "category": "business_model",
+    "framework_name": "Revenue Model Innovation",
+    "description": "Explore alternative ways to monetize value creation beyond traditional pricing approaches",
+    "key_questions": "How else could we charge?|Usage based? Performance based? Subscription?|What would customers pay for differently?|What new revenue streams exist?"
+  },
+  {
+    "category": "business_model",
+    "framework_name": "Cost Structure Innovation",
+    "description": "Redesign cost structure to enable new price points or improve margins through radical efficiency",
+    "key_questions": "What are our biggest costs?|What could we eliminate or automate?|What could we outsource or share?|How could we flip fixed to variable costs?"
+  },
+  {
+    "category": "market_analysis",
+    "framework_name": "TAM SAM SOM Analysis",
+    "description": "Size market opportunity across Total Addressable Serviceable and Obtainable markets for realistic planning",
+    "key_questions": "What's total market size?|What can we realistically serve?|What can we obtain near-term?|What assumptions underlie these?|How fast is it growing?"
+  },
+  {
+    "category": "market_analysis",
+    "framework_name": "Five Forces Analysis",
+    "description": "Assess industry structure and competitive dynamics to identify strategic positioning opportunities",
+    "key_questions": "What's supplier power?|What's buyer power?|What's competitive rivalry?|What's threat of substitutes?|What's threat of new entrants?|Where's opportunity?"
+  },
+  {
+    "category": "market_analysis",
+    "framework_name": "PESTLE Analysis",
+    "description": "Analyze macro environmental factors - Political Economic Social Tech Legal Environmental - shaping opportunities",
+    "key_questions": "What political factors affect us?|Economic trends?|Social shifts?|Technology changes?|Legal requirements?|Environmental factors?|What opportunities or threats?"
+  },
+  {
+    "category": "market_analysis",
+    "framework_name": "Market Timing Assessment",
+    "description": "Evaluate whether market conditions are right for your innovation - too early or too late both fail",
+    "key_questions": "What needs to be true first?|What's changing now?|Are customers ready?|Is technology mature enough?|What's the window of opportunity?"
+  },
+  {
+    "category": "market_analysis",
+    "framework_name": "Competitive Positioning Map",
+    "description": "Visualize competitive landscape across key dimensions to identify white space and differentiation opportunities",
+    "key_questions": "What dimensions matter most?|Where are competitors positioned?|Where's the white space?|What's our unique position?|What's defensible?"
+  },
+  {
+    "category": "strategic",
+    "framework_name": "Three Horizons Framework",
+    "description": "Balance portfolio across current business emerging opportunities and future possibilities for sustainable growth",
+    "key_questions": "What's our core business?|What emerging opportunities?|What future possibilities?|How do we invest across horizons?|What transitions are needed?"
+  },
+  {
+    "category": "strategic",
+    "framework_name": "Lean Startup Methodology",
+    "description": "Build measure learn in rapid cycles to validate assumptions and pivot to product market fit efficiently",
+    "key_questions": "What's the riskiest assumption?|What's minimum viable product?|What will we measure?|What did we learn?|Build or pivot?"
+  },
+  {
+    "category": "strategic",
+    "framework_name": "Innovation Ambition Matrix",
+    "description": "Define innovation portfolio balance across core adjacent and transformational initiatives based on risk and impact",
+    "key_questions": "What's core enhancement?|What's adjacent expansion?|What's transformational breakthrough?|What's our portfolio balance?|What's the right mix?"
+  },
+  {
+    "category": "strategic",
+    "framework_name": "Strategic Intent Development",
+    "description": "Define bold aspirational goals that stretch organization beyond current capabilities to drive innovation",
+    "key_questions": "What's our audacious goal?|What would change our industry?|What seems impossible but valuable?|What's our moon shot?|What capability must we build?"
+  },
+  {
+    "category": "strategic",
+    "framework_name": "Scenario Planning",
+    "description": "Explore multiple plausible futures to build robust strategies that work across different outcomes",
+    "key_questions": "What critical uncertainties exist?|What scenarios could unfold?|How would we respond?|What strategies work across scenarios?|What early signals to watch?"
+  },
+  {
+    "category": "value_chain",
+    "framework_name": "Value Chain Analysis",
+    "description": "Map activities from raw materials to end customer to identify where value is created and captured",
+    "key_questions": "What's the full value chain?|Where's value created?|What activities are we good at?|What could we outsource?|Where could we disintermediate?"
+  },
+  {
+    "category": "value_chain",
+    "framework_name": "Unbundling Analysis",
+    "description": "Identify opportunities to break apart integrated value chains and capture specific high-value components",
+    "key_questions": "What's bundled together?|What could be separated?|Where's most value?|What would customers pay for separately?|Who else could provide pieces?"
+  },
+  {
+    "category": "value_chain",
+    "framework_name": "Platform Ecosystem Design",
+    "description": "Architect multi-sided platforms that create value through network effects and reduced transaction costs",
+    "key_questions": "What sides exist?|What value exchange?|How do we attract each side?|What network effects?|What's our revenue model?|How do we govern?"
+  },
+  {
+    "category": "value_chain",
+    "framework_name": "Make vs Buy Analysis",
+    "description": "Evaluate strategic deinnovationions about vertical integration versus outsourcing for competitive advantage",
+    "key_questions": "What's core competence?|What provides advantage?|What should we own?|What should we partner?|What's the risk of each?"
+  },
+  {
+    "category": "value_chain",
+    "framework_name": "Partnership Strategy",
+    "description": "Design strategic partnerships and ecosystem plays that expand capabilities and reach efficiently",
+    "key_questions": "Who has complementary strengths?|What could we achieve together?|What's the value exchange?|How do we structure this?|What's governance model?"
+  },
+  {
+    "category": "technology",
+    "framework_name": "Technology Adoption Lifecycle",
+    "description": "Understand how innovations diffuse through society from innovators to laggards to time market entry",
+    "key_questions": "Who are the innovators?|Who are early adopters?|What's our adoption strategy?|How do we cross chasms?|What's our current stage?"
+  },
+  {
+    "category": "technology",
+    "framework_name": "S-Curve Analysis",
+    "description": "Identify inflection points in technology maturity and market adoption to time innovation investments",
+    "key_questions": "Where are we on the S-curve?|What's the next curve?|When should we jump curves?|What's the tipping point?|What should we invest in now?"
+  },
+  {
+    "category": "technology",
+    "framework_name": "Technology Roadmapping",
+    "description": "Plan evolution of technology capabilities aligned with strategic goals and market timing",
+    "key_questions": "What capabilities do we need?|What's the sequence?|What dependencies exist?|What's the timeline?|Where do we invest first?"
+  },
+  {
+    "category": "technology",
+    "framework_name": "Open Innovation Strategy",
+    "description": "Leverage external ideas technologies and paths to market to accelerate innovation beyond internal R and D",
+    "key_questions": "What could we source externally?|Who has relevant innovation?|How do we collaborate?|What IP strategy?|How do we integrate external innovation?"
+  },
+  {
+    "category": "technology",
+    "framework_name": "Digital Transformation Framework",
+    "description": "Reimagine business models operations and customer experiences through digital technology enablers",
+    "key_questions": "What digital capabilities exist?|How could they transform our model?|What customer experience improvements?|What operational efficiencies?|What new business models?"
+  }
+]

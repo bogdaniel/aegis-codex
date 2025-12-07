@@ -1,0 +1,72 @@
+[
+  {
+    "domain": "e_commerce",
+    "signals": "shopping,cart,checkout,payment,products,store",
+    "complexity_level": "medium",
+    "suggested_workflow": "standard",
+    "web_searches": "ecommerce architecture patterns, payment processing, inventory management"
+  },
+  {
+    "domain": "fintech",
+    "signals": "banking,payment,trading,finance,money,investment",
+    "complexity_level": "high",
+    "suggested_workflow": "enhanced",
+    "web_searches": "financial security, PCI compliance, trading algorithms, fraud detection"
+  },
+  {
+    "domain": "healthcare",
+    "signals": "medical,diagnostic,clinical,patient,hospital,health",
+    "complexity_level": "high",
+    "suggested_workflow": "enhanced",
+    "web_searches": "HIPAA compliance, medical data security, FDA regulations, health tech"
+  },
+  {
+    "domain": "social",
+    "signals": "social network,community,users,friends,posts,sharing",
+    "complexity_level": "high",
+    "suggested_workflow": "advanced",
+    "web_searches": "social graph algorithms, feed ranking, notification systems, privacy"
+  },
+  {
+    "domain": "education",
+    "signals": "learning,course,student,teacher,training,academic",
+    "complexity_level": "medium",
+    "suggested_workflow": "standard",
+    "web_searches": "LMS architecture, progress tracking, assessment systems, video streaming"
+  },
+  {
+    "domain": "productivity",
+    "signals": "productivity,workflow,tasks,management,business,tools",
+    "complexity_level": "medium",
+    "suggested_workflow": "standard",
+    "web_searches": "collaboration patterns, real-time editing, notification systems, integration"
+  },
+  {
+    "domain": "media",
+    "signals": "content,media,video,audio,streaming,broadcast",
+    "complexity_level": "high",
+    "suggested_workflow": "advanced",
+    "web_searches": "CDN architecture, video encoding, streaming protocols, content delivery"
+  },
+  {
+    "domain": "iot",
+    "signals": "IoT,sensors,devices,embedded,smart,connected",
+    "complexity_level": "high",
+    "suggested_workflow": "advanced",
+    "web_searches": "device communication, real-time data processing, edge computing, security"
+  },
+  {
+    "domain": "government",
+    "signals": "government,civic,public,admin,policy,regulation",
+    "complexity_level": "high",
+    "suggested_workflow": "enhanced",
+    "web_searches": "accessibility standards, security clearance, data privacy, audit trails"
+  },
+  {
+    "domain": "gaming",
+    "signals": "game,gaming,multiplayer,real-time,interactive,entertainment",
+    "complexity_level": "high",
+    "suggested_workflow": "advanced",
+    "web_searches": "real-time multiplayer, game engine architecture, matchmaking, leaderboards"
+  }
+]

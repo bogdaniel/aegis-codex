@@ -1,0 +1,5 @@
+name: "Demo Custom Module"
+code: "demo"
+version: "0.1.0"
+description: "Example custom module showing agents + workflows structure."
+config_source: "{project-root}/{aegis_folder}/demo/config.yaml"

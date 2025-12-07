@@ -1,16 +1,16 @@
-# BMAD™ Core Configuration
-header: "BMAD™ Core Configuration"
-subheader: "Configure the core settings for your BMAD™ installation.\nThese settings will be used across all modules and agents."
+# Aegis™ Core Configuration
+header: "Aegis™ Core Configuration"
+subheader: "Configure the core settings for your Aegis™ installation.\nThese settings will be used across all modules and agents."
 
-bmad_folder:
-  prompt: "What is the root folder for BMAD installation? (Recommended: .bmad)"
-  default: ".bmad"
+aegis_folder:
+  prompt: "What is the root folder for Aegis installation? (Recommended: .aegis)"
+  default: ".aegis"
   result: "{value}"
   regex: "^[a-zA-Z0-9._-]{1,20}$"
 
 user_name:
   prompt: "What shall the agents call you?"
-  default: "BMad"
+  default: "Aegis"
   result: "{value}"
 
 communication_language:
@@ -25,7 +25,7 @@ document_output_language:
 
 agent_sidecar_folder:
   prompt: "Where should users agent sidecar memory folders be stored?"
-  default: ".bmad-user-memory"
+  default: ".aegis-user-memory"
   result: "{project-root}/{value}"
 
 output_folder:

@@ -1,9 +1,9 @@
-# [object Object]
-[object Object]
+# {{workflowDisplayName}}
+{{workflowDescription}}
 ```mermaid
 flowchart TD
-  _object_Object_["[object Object]"]
-  _object_Object__details["No additional metadata"]
-  _object_Object_ --> _object_Object__details
+  __workflowDisplayName__["{{workflowDisplayName}}"]
+  __workflowDisplayName___details["No additional metadata"]
+  __workflowDisplayName__ --> __workflowDisplayName___details
 ```
 Source: builder/docs/workflows/templates/workflow.md

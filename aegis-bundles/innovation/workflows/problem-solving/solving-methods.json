@@ -1,0 +1,182 @@
+[
+  {
+    "category": "diagnosis",
+    "method_name": "Five Whys Root Cause",
+    "description": "Drill down through layers of symptoms to uncover true root cause by asking why five times",
+    "facilitation_prompts": "Why did this happen?|Why is that the case?|Why does that occur?|What's beneath that?|What's the root cause?"
+  },
+  {
+    "category": "diagnosis",
+    "method_name": "Fishbone Diagram",
+    "description": "Map all potential causes across categories - people process materials equipment environment - to systematically explore cause space",
+    "facilitation_prompts": "What people factors contribute?|What process issues?|What material problems?|What equipment factors?|What environmental conditions?"
+  },
+  {
+    "category": "diagnosis",
+    "method_name": "Problem Statement Refinement",
+    "description": "Transform vague complaints into preinnovatione actionable problem statements that focus solution effort",
+    "facilitation_prompts": "What exactly is wrong?|Who is affected and how?|When and where does it occur?|What's the gap between current and desired?|What makes this a problem?"
+  },
+  {
+    "category": "diagnosis",
+    "method_name": "Is/Is Not Analysis",
+    "description": "Define problem boundaries by contrasting where problem exists vs doesn't exist to narrow investigation",
+    "facilitation_prompts": "Where does problem occur?|Where doesn't it?|When does it happen?|When doesn't it?|Who experiences it?|Who doesn't?|What pattern emerges?"
+  },
+  {
+    "category": "diagnosis",
+    "method_name": "Systems Thinking",
+    "description": "Map interconnected system elements feedback loops and leverage points to understand complex problem dynamics",
+    "facilitation_prompts": "What are system components?|What relationships exist?|What feedback loops?|What delays occur?|Where are leverage points?"
+  },
+  {
+    "category": "analysis",
+    "method_name": "Force Field Analysis",
+    "description": "Identify driving forces pushing toward solution and restraining forces blocking progress to plan interventions",
+    "facilitation_prompts": "What forces drive toward solution?|What forces resist change?|Which are strongest?|Which can we influence?|What's the strategy?"
+  },
+  {
+    "category": "analysis",
+    "method_name": "Pareto Analysis",
+    "description": "Apply 80/20 rule to identify vital few causes creating majority of impact worth solving first",
+    "facilitation_prompts": "What causes exist?|What's the frequency or impact of each?|What's the cumulative impact?|What vital few drive 80%?|Focus where?"
+  },
+  {
+    "category": "analysis",
+    "method_name": "Gap Analysis",
+    "description": "Compare current state to desired state across multiple dimensions to identify specific improvement needs",
+    "facilitation_prompts": "What's current state?|What's desired state?|What gaps exist?|How big are gaps?|What causes gaps?|Priority focus?"
+  },
+  {
+    "category": "analysis",
+    "method_name": "Constraint Identification",
+    "description": "Find the bottleneck limiting system performance using Theory of Constraints thinking",
+    "facilitation_prompts": "What's the constraint?|What limits throughput?|What should we optimize?|What happens if we elevate constraint?|What's next constraint?"
+  },
+  {
+    "category": "analysis",
+    "method_name": "Failure Mode Analysis",
+    "description": "Anticipate how solutions could fail and engineer preventions before problems occur",
+    "facilitation_prompts": "What could go wrong?|What's likelihood?|What's impact?|How do we prevent?|How do we detect early?|What's mitigation?"
+  },
+  {
+    "category": "synthesis",
+    "method_name": "TRIZ Contradiction Matrix",
+    "description": "Resolve technical contradictions using 40 inventive principles from pattern analysis of patents",
+    "facilitation_prompts": "What improves?|What worsens?|What's the contradiction?|What principles apply?|How to resolve?"
+  },
+  {
+    "category": "synthesis",
+    "method_name": "Lateral Thinking Techniques",
+    "description": "Use provocative operations and random entry to break pattern-thinking and access novel solutions",
+    "facilitation_prompts": "Make a provocation|Challenge assumptions|Use random stimulus|Escape dominant ideas|Generate alternatives"
+  },
+  {
+    "category": "synthesis",
+    "method_name": "Morphological Analysis",
+    "description": "Systematically explore all combinations of solution parameters to find non-obvious optimal configurations",
+    "facilitation_prompts": "What are key parameters?|What options exist for each?|Try different combinations|What patterns emerge?|What's optimal?"
+  },
+  {
+    "category": "synthesis",
+    "method_name": "Biomimicry Problem Solving",
+    "description": "Learn from nature's 3.8 billion years of R and D to find elegant solutions to engineering challenges",
+    "facilitation_prompts": "How does nature solve this?|What biological analogy?|What principles transfer?|How to adapt?"
+  },
+  {
+    "category": "synthesis",
+    "method_name": "Synectics Method",
+    "description": "Make strange familiar and familiar strange through analogies to spark creative problem-solving breakthrough",
+    "facilitation_prompts": "What's this like?|How are they similar?|What metaphor fits?|What does that suggest?|What insight emerges?"
+  },
+  {
+    "category": "evaluation",
+    "method_name": "Deinnovationion Matrix",
+    "description": "Systematically evaluate solution options against weighted criteria for objective selection",
+    "facilitation_prompts": "What are options?|What criteria matter?|What weights?|Rate each option|Calculate scores|What wins?"
+  },
+  {
+    "category": "evaluation",
+    "method_name": "Cost Benefit Analysis",
+    "description": "Quantify expected costs and benefits of solution options to support rational investment deinnovationions",
+    "facilitation_prompts": "What are costs?|What are benefits?|Quantify each|What's payback period?|What's ROI?|What's recommended?"
+  },
+  {
+    "category": "evaluation",
+    "method_name": "Risk Assessment Matrix",
+    "description": "Evaluate solution risks across likelihood and impact dimensions to prioritize mitigation efforts",
+    "facilitation_prompts": "What could go wrong?|What's probability?|What's impact?|Plot on matrix|What's risk score?|Mitigation plan?"
+  },
+  {
+    "category": "evaluation",
+    "method_name": "Pilot Testing Protocol",
+    "description": "Design small-scale experiments to validate solutions before full implementation commitment",
+    "facilitation_prompts": "What will we test?|What's success criteria?|What's the test plan?|What data to collect?|What did we learn?|Scale or pivot?"
+  },
+  {
+    "category": "evaluation",
+    "method_name": "Feasibility Study",
+    "description": "Assess technical operational financial and schedule feasibility of solution options",
+    "facilitation_prompts": "Is it technically possible?|Operationally viable?|Financially sound?|Schedule realistic?|Overall feasibility?"
+  },
+  {
+    "category": "implementation",
+    "method_name": "PDCA Cycle",
+    "description": "Plan Do Check Act iteratively to implement solutions with continuous learning and adjustment",
+    "facilitation_prompts": "What's the plan?|Execute plan|Check results|What worked?|What didn't?|Adjust and repeat"
+  },
+  {
+    "category": "implementation",
+    "method_name": "Gantt Chart Planning",
+    "description": "Visualize project timeline with tasks dependencies and milestones for execution clarity",
+    "facilitation_prompts": "What are tasks?|What sequence?|What dependencies?|What's the timeline?|Who's responsible?|What milestones?"
+  },
+  {
+    "category": "implementation",
+    "method_name": "Stakeholder Mapping",
+    "description": "Identify all affected parties and plan engagement strategy to build support and manage resistance",
+    "facilitation_prompts": "Who's affected?|What's their interest?|What's their influence?|What's engagement strategy?|How to communicate?"
+  },
+  {
+    "category": "implementation",
+    "method_name": "Change Management Protocol",
+    "description": "Systematically manage organizational and human dimensions of solution implementation",
+    "facilitation_prompts": "What's changing?|Who's impacted?|What resistance expected?|How to communicate?|How to support transition?|How to sustain?"
+  },
+  {
+    "category": "implementation",
+    "method_name": "Monitoring Dashboard",
+    "description": "Create visual tracking system for key metrics to ensure solution delivers expected results",
+    "facilitation_prompts": "What metrics matter?|What targets?|How to measure?|How to visualize?|What triggers action?|Review frequency?"
+  },
+  {
+    "category": "creative",
+    "method_name": "Assumption Busting",
+    "description": "Identify and challenge underlying assumptions to open new solution possibilities",
+    "facilitation_prompts": "What are we assuming?|What if opposite were true?|What if assumption removed?|What becomes possible?"
+  },
+  {
+    "category": "creative",
+    "method_name": "Random Word Association",
+    "description": "Use random stimuli to force brain into unexpected connection patterns revealing novel solutions",
+    "facilitation_prompts": "Pick random word|How does it relate?|What connections emerge?|What ideas does it spark?|Make it relevant"
+  },
+  {
+    "category": "creative",
+    "method_name": "Reverse Brainstorming",
+    "description": "Flip problem to how to cause or worsen it then reverse insights to find solutions",
+    "facilitation_prompts": "How could we cause this problem?|How make it worse?|What would guarantee failure?|Now reverse insights|What solutions emerge?"
+  },
+  {
+    "category": "creative",
+    "method_name": "Six Thinking Hats",
+    "description": "Explore problem from six perspectives - facts emotions benefits risks creativity process - for comprehensive view",
+    "facilitation_prompts": "White facts?|Red feelings?|Yellow benefits?|Black risks?|Green alternatives?|Blue process?"
+  },
+  {
+    "category": "creative",
+    "method_name": "SCAMPER for Problems",
+    "description": "Apply seven problem-solving lenses - Substitute Combine Adapt Modify Purposes Eliminate Reverse",
+    "facilitation_prompts": "What to substitute?|What to combine?|What to adapt?|What to modify?|Other purposes?|What to eliminate?|What to reverse?"
+  }
+]

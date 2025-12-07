@@ -8,7 +8,8 @@
     "aegis:bundle": "node tools/aegis-bridge/cli.js bundle",
     "aegis:validate": "node tools/aegis-bridge/cli.js validate",
     "aegis:ci": "node tools/aegis-bridge/scripts/ci-validate.js",
-    "aegis:diagrams": "node tools/aegis-bridge/scripts/generate-workflow-diagrams.js"
+    "aegis:diagrams": "node tools/aegis-bridge/scripts/generate-workflow-diagrams.js",
+    "aegis:install": "node tools/aegis-bridge/install.js"
   },
   "engines": {
     "node": ">=20.0.0"

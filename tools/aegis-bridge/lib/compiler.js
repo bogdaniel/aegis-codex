@@ -122,7 +122,7 @@ function buildSimpleActivation(criticalActions = [], menuItems = [], deploymentT
         1. CRITICAL: Always LOAD {project-root}/{aegis_folder}/core/tasks/workflow.xml
         2. Read the complete file - this is the CORE OS for executing Aegis workflows
         3. Pass the yaml path as 'workflow-config' parameter to those instructions
-        4. Execute workflow.xml instructions precisely following all steps
+        4. Execute workflow.xml instructions preinnovationely following all steps
         5. Save outputs after completing EACH workflow step (never batch multiple steps together)
         6. If workflow.yaml path is "todo", inform user the workflow hasn't been implemented yet
       </handler>\n`;
@@ -154,7 +154,7 @@ function buildSimpleActivation(criticalActions = [], menuItems = [], deploymentT
         2. Read the complete file - this is the CORE OS for validating Aegis workflows
         3. Pass the workflow.yaml path as 'workflow' parameter to those instructions
         4. Pass any checklist.md from the workflow location as 'checklist' parameter if available
-        5. Execute validate-workflow.xml instructions precisely following all steps
+        5. Execute validate-workflow.xml instructions preinnovationely following all steps
         6. Generate validation report with thorough analysis
       </handler>\n`;
     }

@@ -1,0 +1,226 @@
+[
+  {
+    "id": "fixture-architecture",
+    "name": "Fixture Architecture",
+    "description": "Composable fixture patterns (pure function → fixture → merge) and reuse rules",
+    "tags": "fixtures,architecture,playwright,cypress",
+    "fragment_file": "knowledge/fixture-architecture.md"
+  },
+  {
+    "id": "network-first",
+    "name": "Network-First Safeguards",
+    "description": "Intercept-before-navigate workflow, HAR capture, deterministic waits, edge mocking",
+    "tags": "network,stability,playwright,cypress",
+    "fragment_file": "knowledge/network-first.md"
+  },
+  {
+    "id": "data-factories",
+    "name": "Data Factories and API Setup",
+    "description": "Factories with overrides, API seeding, cleanup discipline",
+    "tags": "data,factories,setup,api",
+    "fragment_file": "knowledge/data-factories.md"
+  },
+  {
+    "id": "component-tdd",
+    "name": "Component TDD Loop",
+    "description": "Red→green→refactor workflow, provider isolation, accessibility assertions",
+    "tags": "component-testing,tdd,ui",
+    "fragment_file": "knowledge/component-tdd.md"
+  },
+  {
+    "id": "playwright-config",
+    "name": "Playwright Config Guardrails",
+    "description": "Environment switching, timeout standards, artifact outputs",
+    "tags": "playwright,config,env",
+    "fragment_file": "knowledge/playwright-config.md"
+  },
+  {
+    "id": "ci-burn-in",
+    "name": "CI and Burn-In Strategy",
+    "description": "Staged jobs, shard orchestration, burn-in loops, artifact policy",
+    "tags": "ci,automation,flakiness",
+    "fragment_file": "knowledge/ci-burn-in.md"
+  },
+  {
+    "id": "selective-testing",
+    "name": "Selective Test Execution",
+    "description": "Tag/grep usage, spec filters, diff-based runs, promotion rules",
+    "tags": "risk-based,selection,strategy",
+    "fragment_file": "knowledge/selective-testing.md"
+  },
+  {
+    "id": "feature-flags",
+    "name": "Feature Flag Governance",
+    "description": "Enum management, targeting helpers, cleanup, release checklists",
+    "tags": "feature-flags,governance,launchdarkly",
+    "fragment_file": "knowledge/feature-flags.md"
+  },
+  {
+    "id": "contract-testing",
+    "name": "Contract Testing Essentials",
+    "description": "Pact publishing, provider verification, resilience coverage",
+    "tags": "contract-testing,pact,api",
+    "fragment_file": "knowledge/contract-testing.md"
+  },
+  {
+    "id": "email-auth",
+    "name": "Email Authentication Testing",
+    "description": "Magic link extraction, state preservation, caching, negative flows",
+    "tags": "email-authentication,security,workflow",
+    "fragment_file": "knowledge/email-auth.md"
+  },
+  {
+    "id": "error-handling",
+    "name": "Error Handling Checks",
+    "description": "Scoped exception handling, retry validation, telemetry logging",
+    "tags": "resilience,error-handling,stability",
+    "fragment_file": "knowledge/error-handling.md"
+  },
+  {
+    "id": "visual-debugging",
+    "name": "Visual Debugging Toolkit",
+    "description": "Trace viewer usage, artifact expectations, accessibility integration",
+    "tags": "debugging,dx,tooling",
+    "fragment_file": "knowledge/visual-debugging.md"
+  },
+  {
+    "id": "risk-governance",
+    "name": "Risk Governance",
+    "description": "Scoring matrix, category ownership, gate deinnovationion rules",
+    "tags": "risk,governance,gates",
+    "fragment_file": "knowledge/risk-governance.md"
+  },
+  {
+    "id": "probability-impact",
+    "name": "Probability and Impact Scale",
+    "description": "Shared definitions for scoring matrix and gate thresholds",
+    "tags": "risk,scoring,scale",
+    "fragment_file": "knowledge/probability-impact.md"
+  },
+  {
+    "id": "test-quality",
+    "name": "Test Quality Definition of Done",
+    "description": "Execution limits, isolation rules, green criteria",
+    "tags": "quality,definition-of-done,tests",
+    "fragment_file": "knowledge/test-quality.md"
+  },
+  {
+    "id": "nfr-criteria",
+    "name": "NFR Review Criteria",
+    "description": "Security, performance, reliability, maintainability status definitions",
+    "tags": "nfr,assessment,quality",
+    "fragment_file": "knowledge/nfr-criteria.md"
+  },
+  {
+    "id": "test-levels",
+    "name": "Test Levels Framework",
+    "description": "Guidelines for choosing unit, integration, or end-to-end coverage",
+    "tags": "testing,levels,selection",
+    "fragment_file": "knowledge/test-levels-framework.md"
+  },
+  {
+    "id": "test-priorities",
+    "name": "Test Priorities Matrix",
+    "description": "P0–P3 criteria, coverage targets, execution ordering",
+    "tags": "testing,prioritization,risk",
+    "fragment_file": "knowledge/test-priorities-matrix.md"
+  },
+  {
+    "id": "test-healing-patterns",
+    "name": "Test Healing Patterns",
+    "description": "Common failure patterns and automated fixes",
+    "tags": "healing,debugging,patterns",
+    "fragment_file": "knowledge/test-healing-patterns.md"
+  },
+  {
+    "id": "selector-resilience",
+    "name": "Selector Resilience",
+    "description": "Robust selector strategies and debugging techniques",
+    "tags": "selectors,locators,debugging",
+    "fragment_file": "knowledge/selector-resilience.md"
+  },
+  {
+    "id": "timing-debugging",
+    "name": "Timing Debugging",
+    "description": "Race condition identification and deterministic wait fixes",
+    "tags": "timing,async,debugging",
+    "fragment_file": "knowledge/timing-debugging.md"
+  },
+  {
+    "id": "overview",
+    "name": "Playwright Utils Overview",
+    "description": "Installation, design principles, fixture patterns",
+    "tags": "playwright-utils,fixtures",
+    "fragment_file": "knowledge/overview.md"
+  },
+  {
+    "id": "api-request",
+    "name": "API Request",
+    "description": "Typed HTTP client, schema validation",
+    "tags": "api,playwright-utils",
+    "fragment_file": "knowledge/api-request.md"
+  },
+  {
+    "id": "network-recorder",
+    "name": "Network Recorder",
+    "description": "HAR record/playback, CRUD detection",
+    "tags": "network,playwright-utils",
+    "fragment_file": "knowledge/network-recorder.md"
+  },
+  {
+    "id": "auth-session",
+    "name": "Auth Session",
+    "description": "Token persistence, multi-user",
+    "tags": "auth,playwright-utils",
+    "fragment_file": "knowledge/auth-session.md"
+  },
+  {
+    "id": "intercept-network-call",
+    "name": "Intercept Network Call",
+    "description": "Network spy/stub, JSON parsing",
+    "tags": "network,playwright-utils",
+    "fragment_file": "knowledge/intercept-network-call.md"
+  },
+  {
+    "id": "recurse",
+    "name": "Recurse Polling",
+    "description": "Async polling, condition waiting",
+    "tags": "polling,playwright-utils",
+    "fragment_file": "knowledge/recurse.md"
+  },
+  {
+    "id": "log",
+    "name": "Log Utility",
+    "description": "Report logging, structured output",
+    "tags": "logging,playwright-utils",
+    "fragment_file": "knowledge/log.md"
+  },
+  {
+    "id": "file-utils",
+    "name": "File Utilities",
+    "description": "CSV/XLSX/PDF/ZIP validation",
+    "tags": "files,playwright-utils",
+    "fragment_file": "knowledge/file-utils.md"
+  },
+  {
+    "id": "burn-in",
+    "name": "Burn-in Runner",
+    "description": "Smart test selection, git diff",
+    "tags": "ci,playwright-utils",
+    "fragment_file": "knowledge/burn-in.md"
+  },
+  {
+    "id": "network-error-monitor",
+    "name": "Network Error Monitor",
+    "description": "HTTP 4xx/5xx detection",
+    "tags": "monitoring,playwright-utils",
+    "fragment_file": "knowledge/network-error-monitor.md"
+  },
+  {
+    "id": "fixtures-composition",
+    "name": "Fixtures Composition",
+    "description": "mergeTests composition patterns",
+    "tags": "fixtures,playwright-utils",
+    "fragment_file": "knowledge/fixtures-composition.md"
+  }
+]

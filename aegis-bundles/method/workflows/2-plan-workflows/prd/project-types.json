@@ -1,0 +1,92 @@
+[
+  {
+    "project_type": "api_backend",
+    "detection_signals": "API,REST,GraphQL,backend,service,endpoints",
+    "key_questions": "Endpoints needed?;Authentication method?;Data formats?;Rate limits?;Versioning?;SDK needed?",
+    "required_sections": "endpoint_specs;auth_model;data_schemas;error_codes;rate_limits;api_docs",
+    "skip_sections": "ux_ui;visual_design;user_journeys",
+    "web_search_triggers": "framework best practices;OpenAPI standards",
+    "innovation_signals": "API composition;New protocol"
+  },
+  {
+    "project_type": "mobile_app",
+    "detection_signals": "iOS,Android,app,mobile,iPhone,iPad",
+    "key_questions": "Native or cross-platform?;Offline needed?;Push notifications?;Device features?;Store compliance?",
+    "required_sections": "platform_reqs;device_permissions;offline_mode;push_strategy;store_compliance",
+    "skip_sections": "desktop_features;cli_commands",
+    "web_search_triggers": "app store guidelines;platform requirements",
+    "innovation_signals": "Gesture innovation;AR/VR features"
+  },
+  {
+    "project_type": "saas_b2b",
+    "detection_signals": "SaaS,B2B,platform,dashboard,teams,enterprise",
+    "key_questions": "Multi-tenant?;Permission model?;Subscription tiers?;Integrations?;Compliance?",
+    "required_sections": "tenant_model;rbac_matrix;subscription_tiers;integration_list;compliance_reqs",
+    "skip_sections": "cli_interface;mobile_first",
+    "web_search_triggers": "compliance requirements;integration guides",
+    "innovation_signals": "Workflow automation;AI agents"
+  },
+  {
+    "project_type": "developer_tool",
+    "detection_signals": "SDK,library,package,npm,pip,framework",
+    "key_questions": "Language support?;Package managers?;IDE integration?;Documentation?;Examples?",
+    "required_sections": "language_matrix;installation_methods;api_surface;code_examples;migration_guide",
+    "skip_sections": "visual_design;store_compliance",
+    "web_search_triggers": "package manager best practices;API design patterns",
+    "innovation_signals": "New paradigm;DSL creation"
+  },
+  {
+    "project_type": "cli_tool",
+    "detection_signals": "CLI,command,terminal,bash,script",
+    "key_questions": "Interactive or scriptable?;Output formats?;Config method?;Shell completion?",
+    "required_sections": "command_structure;output_formats;config_schema;scripting_support",
+    "skip_sections": "visual_design;ux_principles;touch_interactions",
+    "web_search_triggers": "CLI design patterns;shell integration",
+    "innovation_signals": "Natural language CLI;AI commands"
+  },
+  {
+    "project_type": "web_app",
+    "detection_signals": "website,webapp,browser,SPA,PWA",
+    "key_questions": "SPA or MPA?;Browser support?;SEO needed?;Real-time?;Accessibility?",
+    "required_sections": "browser_matrix;responsive_design;performance_targets;seo_strategy;accessibility_level",
+    "skip_sections": "native_features;cli_commands",
+    "web_search_triggers": "web standards;WCAG guidelines",
+    "innovation_signals": "New interaction;WebAssembly use"
+  },
+  {
+    "project_type": "game",
+    "detection_signals": "game,player,gameplay,level,character",
+    "key_questions": "REDIRECT TO USE THE Aegis Method Game Module Agent and Workflows - HALT",
+    "required_sections": "game-brief;GDD",
+    "skip_sections": "most_sections",
+    "web_search_triggers": "game design patterns",
+    "innovation_signals": "Novel mechanics;Genre mixing"
+  },
+  {
+    "project_type": "desktop_app",
+    "detection_signals": "desktop,Windows,Mac,Linux,native",
+    "key_questions": "Cross-platform?;Auto-update?;System integration?;Offline?",
+    "required_sections": "platform_support;system_integration;update_strategy;offline_capabilities",
+    "skip_sections": "web_seo;mobile_features",
+    "web_search_triggers": "desktop guidelines;platform requirements",
+    "innovation_signals": "Desktop AI;System automation"
+  },
+  {
+    "project_type": "iot_embedded",
+    "detection_signals": "IoT,embedded,device,sensor,hardware",
+    "key_questions": "Hardware specs?;Connectivity?;Power constraints?;Security?;OTA updates?",
+    "required_sections": "hardware_reqs;connectivity_protocol;power_profile;security_model;update_mechanism",
+    "skip_sections": "visual_ui;browser_support",
+    "web_search_triggers": "IoT standards;protocol specs",
+    "innovation_signals": "Edge AI;New sensors"
+  },
+  {
+    "project_type": "blockchain_web3",
+    "detection_signals": "blockchain,crypto,DeFi,NFT,smart contract",
+    "key_questions": "Chain selection?;Wallet integration?;Gas optimization?;Security audit?",
+    "required_sections": "chain_specs;wallet_support;smart_contracts;security_audit;gas_optimization",
+    "skip_sections": "traditional_auth;centralized_db",
+    "web_search_triggers": "blockchain standards;security patterns",
+    "innovation_signals": "Novel tokenomics;DAO structure"
+  }
+]

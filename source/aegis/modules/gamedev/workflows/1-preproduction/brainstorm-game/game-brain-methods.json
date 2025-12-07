@@ -1,0 +1,227 @@
+[
+  {
+    "category": "game_design",
+    "technique_name": "MDA Framework Exploration",
+    "description": "Explore game concepts through Mechanics-Dynamics-Aesthetics lens to ensure cohesive design from implementation to player experience",
+    "facilitation_prompts": "What mechanics create the core loop?|What dynamics emerge from these mechanics?|What aesthetic experience results?|How do they align?",
+    "best_for": "holistic-design",
+    "energy_level": "moderate",
+    "typical_duration": "20-30"
+  },
+  {
+    "category": "game_design",
+    "technique_name": "Core Loop Brainstorming",
+    "description": "Design the fundamental moment-to-moment gameplay loop that players repeat - the heartbeat of your game",
+    "facilitation_prompts": "What does the player do?|What's the immediate reward?|Why do it again?|How does it evolve?",
+    "best_for": "gameplay-foundation",
+    "energy_level": "high",
+    "typical_duration": "15-25"
+  },
+  {
+    "category": "game_design",
+    "technique_name": "Player Fantasy Mining",
+    "description": "Identify and amplify the core fantasy that players want to embody - what makes them feel powerful and engaged",
+    "facilitation_prompts": "What fantasy does the player live?|What makes them feel awesome?|What power do they wield?|What identity do they assume?",
+    "best_for": "player-motivation",
+    "energy_level": "high",
+    "typical_duration": "15-20"
+  },
+  {
+    "category": "game_design",
+    "technique_name": "Genre Mashup",
+    "description": "Combine unexpected game genres to create innovative hybrid experiences that offer fresh gameplay",
+    "facilitation_prompts": "Take two unrelated genres|How do they merge?|What unique gameplay emerges?|What's the hook?",
+    "best_for": "innovation",
+    "energy_level": "high",
+    "typical_duration": "15-20"
+  },
+  {
+    "category": "game_design",
+    "technique_name": "Verbs Before Nouns",
+    "description": "Focus on what players DO before what things ARE - prioritize actions over objects for engaging gameplay",
+    "facilitation_prompts": "What verbs define your game?|What actions feel good?|Build mechanics from verbs|Nouns support actions",
+    "best_for": "mechanics-first",
+    "energy_level": "moderate",
+    "typical_duration": "20-25"
+  },
+  {
+    "category": "game_design",
+    "technique_name": "Failure State Design",
+    "description": "Work backwards from interesting failure conditions to create tension and meaningful choices",
+    "facilitation_prompts": "How can players fail interestingly?|What makes failure feel fair?|How does failure teach?|Recovery mechanics?",
+    "best_for": "challenge-design",
+    "energy_level": "moderate",
+    "typical_duration": "15-20"
+  },
+  {
+    "category": "game_design",
+    "technique_name": "Progression Curve Sculpting",
+    "description": "Map the player's emotional and skill journey from tutorial to mastery - pace challenge and revelation",
+    "facilitation_prompts": "How does difficulty evolve?|When do we introduce concepts?|What's the skill ceiling?|How do we maintain flow?",
+    "best_for": "pacing-balance",
+    "energy_level": "moderate",
+    "typical_duration": "25-30"
+  },
+  {
+    "category": "game_design",
+    "technique_name": "Emergence Engineering",
+    "description": "Design simple rule interactions that create complex unexpected player-driven outcomes",
+    "facilitation_prompts": "What simple rules combine?|What emerges from interactions?|How do players surprise you?|Systemic possibilities?",
+    "best_for": "depth-complexity",
+    "energy_level": "moderate",
+    "typical_duration": "20-25"
+  },
+  {
+    "category": "game_design",
+    "technique_name": "Accessibility Layers",
+    "description": "Brainstorm how different skill levels and abilities can access your core experience meaningfully",
+    "facilitation_prompts": "Who might struggle with what?|What alternate inputs exist?|How do we preserve challenge?|Inclusive design options?",
+    "best_for": "inclusive-design",
+    "energy_level": "moderate",
+    "typical_duration": "20-25"
+  },
+  {
+    "category": "game_design",
+    "technique_name": "Reward Schedule Architecture",
+    "description": "Design the timing and type of rewards to maintain player motivation and engagement",
+    "facilitation_prompts": "What rewards when?|Variable or fixed schedule?|Intrinsic vs extrinsic rewards?|Progression satisfaction?",
+    "best_for": "engagement-retention",
+    "energy_level": "moderate",
+    "typical_duration": "20-30"
+  },
+  {
+    "category": "narrative_game",
+    "technique_name": "Ludonarrative Harmony",
+    "description": "Align story and gameplay so mechanics reinforce narrative themes - make meaning through play",
+    "facilitation_prompts": "What does gameplay express?|How do mechanics tell story?|Where do they conflict?|How to unify theme?",
+    "best_for": "storytelling",
+    "energy_level": "moderate",
+    "typical_duration": "20-25"
+  },
+  {
+    "category": "narrative_game",
+    "technique_name": "Environmental Storytelling",
+    "description": "Use world design and ambient details to convey narrative without explicit exposition",
+    "facilitation_prompts": "What does the space communicate?|What happened here before?|Visual narrative clues?|Show don't tell?",
+    "best_for": "world-building",
+    "energy_level": "moderate",
+    "typical_duration": "15-20"
+  },
+  {
+    "category": "narrative_game",
+    "technique_name": "Player Agency Moments",
+    "description": "Identify key deinnovationion points where player choice shapes narrative in meaningful ways",
+    "facilitation_prompts": "What choices matter?|How do consequences manifest?|Branch vs flavor choices?|Meaningful agency where?",
+    "best_for": "player-choice",
+    "energy_level": "moderate",
+    "typical_duration": "20-25"
+  },
+  {
+    "category": "narrative_game",
+    "technique_name": "Emotion Targeting",
+    "description": "Design specific moments intended to evoke targeted emotional responses through integrated design",
+    "facilitation_prompts": "What emotion when?|How do all elements combine?|Music + mechanics + narrative?|Orchestrated feelings?",
+    "best_for": "emotional-design",
+    "energy_level": "high",
+    "typical_duration": "20-30"
+  },
+  {
+    "category": "systems_game",
+    "technique_name": "Economy Balancing Thought Experiments",
+    "description": "Explore resource generation/consumption balance to prevent game-breaking exploits",
+    "facilitation_prompts": "What resources exist?|Generation vs consumption rates?|What loops emerge?|Where's the exploit?",
+    "best_for": "economy-design",
+    "energy_level": "moderate",
+    "typical_duration": "25-30"
+  },
+  {
+    "category": "systems_game",
+    "technique_name": "Meta-Game Layer Design",
+    "description": "Brainstorm progression systems that persist beyond individual play sessions",
+    "facilitation_prompts": "What carries over between sessions?|Long-term goals?|How does meta feed core loop?|Retention hooks?",
+    "best_for": "retention-systems",
+    "energy_level": "moderate",
+    "typical_duration": "20-25"
+  },
+  {
+    "category": "multiplayer_game",
+    "technique_name": "Social Dynamics Mapping",
+    "description": "Anticipate how players will interact and design mechanics that support desired social behaviors",
+    "facilitation_prompts": "How will players cooperate?|Competitive dynamics?|Toxic behavior prevention?|Positive interaction rewards?",
+    "best_for": "social-design",
+    "energy_level": "moderate",
+    "typical_duration": "20-30"
+  },
+  {
+    "category": "multiplayer_game",
+    "technique_name": "Spectator Experience Design",
+    "description": "Consider how watching others play can be entertaining - esports and streaming potential",
+    "facilitation_prompts": "What's fun to watch?|Readable visual clarity?|Highlight moments?|Narrative for observers?",
+    "best_for": "spectator-value",
+    "energy_level": "moderate",
+    "typical_duration": "15-20"
+  },
+  {
+    "category": "creative_game",
+    "technique_name": "Constraint-Based Creativity",
+    "description": "Embrace a specific limitation as your core design constraint and build everything around it",
+    "facilitation_prompts": "Pick a severe constraint|What if this was your ONLY mechanic?|Build a full game from limitation|Constraint as creativity catalyst",
+    "best_for": "innovation",
+    "energy_level": "moderate",
+    "typical_duration": "15-25"
+  },
+  {
+    "category": "creative_game",
+    "technique_name": "Game Feel Playground",
+    "description": "Focus purely on how controls and feedback FEEL before worrying about context or goals",
+    "facilitation_prompts": "What feels juicy to do?|Controller response?|Visual/audio feedback?|Satisfying micro-interactions?",
+    "best_for": "game-feel",
+    "energy_level": "high",
+    "typical_duration": "20-30"
+  },
+  {
+    "category": "creative_game",
+    "technique_name": "One Button Game Challenge",
+    "description": "Design interesting gameplay using only a single input - forces elegant simplicity",
+    "facilitation_prompts": "Only one button - what can it do?|Context changes meaning?|Timing variations?|Depth from simplicity?",
+    "best_for": "minimalist-design",
+    "energy_level": "moderate",
+    "typical_duration": "15-20"
+  },
+  {
+    "category": "wild_game",
+    "technique_name": "Remix an Existing Game",
+    "description": "Take a well-known game and twist one core element - what new experience emerges?",
+    "facilitation_prompts": "Pick a famous game|Change ONE fundamental rule|What ripples from that change?|New game from mutation?",
+    "best_for": "rapid-prototyping",
+    "energy_level": "high",
+    "typical_duration": "10-15"
+  },
+  {
+    "category": "wild_game",
+    "technique_name": "Anti-Game Design",
+    "description": "Design a game that deliberately breaks common conventions - subvert player expectations",
+    "facilitation_prompts": "What if we broke this rule?|Expectation subversion?|Anti-patterns as features?|Avant-garde possibilities?",
+    "best_for": "experimental",
+    "energy_level": "moderate",
+    "typical_duration": "15-20"
+  },
+  {
+    "category": "wild_game",
+    "technique_name": "Physics Playground",
+    "description": "Start with an interesting physics interaction and build a game around that sensation",
+    "facilitation_prompts": "What physics are fun to play with?|Build game from physics toy|Emergent physics gameplay?|Sensation first?",
+    "best_for": "prototype-first",
+    "energy_level": "high",
+    "typical_duration": "15-25"
+  },
+  {
+    "category": "wild_game",
+    "technique_name": "Toy Before Game",
+    "description": "Create a playful interactive toy with no goals first - then discover the game within it",
+    "facilitation_prompts": "What's fun to mess with?|No goals yet - just play|What game emerges organically?|Toy to game evolution?",
+    "best_for": "discovery-design",
+    "energy_level": "high",
+    "typical_duration": "20-30"
+  }
+]

@@ -1,0 +1,146 @@
+[
+  {
+    "propose": "always",
+    "type": "workflow",
+    "tool_name": "party-mode",
+    "description": "Enables collaborative idea generation by managing turn-taking, summarizing contributions, and synthesizing ideas from multiple AI personas in structured conversation sessions about workflow steps or work in progress.",
+    "url": "{project-root}/{aegis_folder}/core/workflows/party-mode/workflow.md",
+    "requires_install": "no"
+  },
+  {
+    "propose": "always",
+    "type": "task",
+    "tool_name": "advanced-elicitation",
+    "description": "Employs diverse elicitation strategies such as Socratic questioning, role-playing, and counterfactual analysis to critically evaluate and enhance LLM outputs, forcing assessment from multiple perspectives and techniques.",
+    "url": "{project-root}/{aegis_folder}/core/tasks/advanced-elicitation.xml",
+    "requires_install": "no"
+  },
+  {
+    "propose": "always",
+    "type": "task",
+    "tool_name": "brainstorming",
+    "description": "Facilitates idea generation by prompting users with targeted questions, encouraging divergent thinking, and synthesizing concepts into actionable insights through collaborative creative exploration.",
+    "url": "{project-root}/{aegis_folder}/core/tasks/brainstorming.xml",
+    "requires_install": "no"
+  },
+  {
+    "propose": "always",
+    "type": "llm-tool-feature",
+    "tool_name": "web-browsing",
+    "description": "Provides LLM with capabilities to perform real-time web searches, extract relevant data, and incorporate current information into responses when up-to-date information is required beyond training knowledge.",
+    "url": "",
+    "requires_install": "no"
+  },
+  {
+    "propose": "always",
+    "type": "llm-tool-feature",
+    "tool_name": "file-io",
+    "description": "Enables LLM to manage file operations such as creating, reading, updating, and deleting files, facilitating seamless data handling, storage, and document management within user environments.",
+    "url": "",
+    "requires_install": "no"
+  },
+  {
+    "propose": "always",
+    "type": "llm-tool-feature",
+    "tool_name": "sub-agents",
+    "description": "Allows LLM to create and manage specialized sub-agents that handle specific tasks or modules within larger workflows, improving efficiency through parallel processing and modular task delegation.",
+    "url": "",
+    "requires_install": "no"
+  },
+  {
+    "propose": "always",
+    "type": "llm-tool-feature",
+    "tool_name": "sub-processes",
+    "description": "Enables LLM to initiate and manage subprocesses that operate independently, allowing for parallel processing of complex tasks and improved resource utilization during long-running operations.",
+    "url": "",
+    "requires_install": "no"
+  },
+  {
+    "propose": "always",
+    "type": "tool-memory",
+    "tool_name": "sidecar-file",
+    "description": "Creates a persistent history file that gets written during workflow execution and loaded on future runs, enabling continuity through session-to-session state management. Used for agent or workflow initialization with previous session context, learning from past interactions, and maintaining progress across multiple executions.",
+    "url": "",
+    "requires_install": "no"
+  },
+  {
+    "propose": "example",
+    "type": "tool-memory",
+    "tool_name": "vector-database",
+    "description": "Stores and retrieves semantic information through embeddings for intelligent memory access, enabling workflows to find relevant past experiences, patterns, or context based on meaning rather than exact matches. Useful for complex learning systems, pattern recognition, and semantic search across workflow history.",
+    "url": "https://github.com/modelcontextprotocol/servers/tree/main/src/rag-agent",
+    "requires_install": "yes"
+  },
+  {
+    "propose": "example",
+    "type": "mcp",
+    "tool_name": "context-7",
+    "description": "A curated knowledge base of API documentation and third-party tool references, enabling LLM to access accurate and current information for integration and development tasks when specific technical documentation is needed.",
+    "url": "https://github.com/modelcontextprotocol/servers/tree/main/src/context-7",
+    "requires_install": "yes"
+  },
+  {
+    "propose": "example",
+    "type": "mcp",
+    "tool_name": "playwright",
+    "description": "Provides capabilities for LLM to perform web browser automation including navigation, form submission, data extraction, and testing actions on web pages, facilitating automated web interactions and quality assurance.",
+    "url": "https://github.com/modelcontextprotocol/servers/tree/main/src/playwright",
+    "requires_install": "yes"
+  },
+  {
+    "propose": "example",
+    "type": "workflow",
+    "tool_name": "security-auditor",
+    "description": "Analyzes workflows and code for security vulnerabilities, compliance issues, and best practices violations, providing detailed security assessments and remediation recommendations for production-ready systems.",
+    "url": "",
+    "requires_install": "no"
+  },
+  {
+    "propose": "example",
+    "type": "task",
+    "tool_name": "code-review",
+    "description": "Performs systematic code analysis with peer review perspectives, identifying bugs, performance issues, style violations, and architectural problems through adversarial review techniques.",
+    "url": "",
+    "requires_install": "no"
+  },
+  {
+    "propose": "example",
+    "type": "mcp",
+    "tool_name": "git-integration",
+    "description": "Enables direct Git repository operations including commits, branches, merges, and history analysis, allowing workflows to interact with version control systems for code management and collaboration.",
+    "url": "https://github.com/modelcontextprotocol/servers/tree/main/src/git",
+    "requires_install": "yes"
+  },
+  {
+    "propose": "example",
+    "type": "mcp",
+    "tool_name": "database-connector",
+    "description": "Provides direct database connectivity for querying, updating, and managing data across multiple database types, enabling workflows to interact with structured data sources and perform data-driven operations.",
+    "url": "https://github.com/modelcontextprotocol/servers/tree/main/src/postgres",
+    "requires_install": "yes"
+  },
+  {
+    "propose": "example",
+    "type": "task",
+    "tool_name": "api-testing",
+    "description": "Automated API endpoint testing with request/response validation, authentication handling, and comprehensive reporting for REST, GraphQL, and other API types through systematic test generation.",
+    "url": "",
+    "requires_install": "no"
+  },
+  {
+    "propose": "example",
+    "type": "workflow",
+    "tool_name": "deployment-manager",
+    "description": "Orchestrates application deployment across multiple environments with rollback capabilities, health checks, and automated release pipelines for continuous integration and delivery workflows.",
+    "url": "",
+    "requires_install": "no"
+  },
+  {
+    "propose": "example",
+    "type": "task",
+    "tool_name": "data-validator",
+    "description": "Validates data quality, schema compliance, and business rules through comprehensive data profiling with detailed reporting and anomaly detection for data-intensive workflows.",
+    "url": "",
+    "requires_install": "no"
+  }
+]

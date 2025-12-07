@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Generate simple Mermaid diagrams for each workflow in .aegis/_cfg/workflow-manifest.csv.
+ * Generate simple Mermaid diagrams for each workflow in .aegis/_cfg/workflow-manifest.json.
  * Output: docs/workflow-diagrams/<module>/<workflow-name>.md
  */
 
@@ -10,7 +10,7 @@ const yaml = require('yaml');
 
 const ROOT = process.cwd();
 const Aegis_DIR = path.join(ROOT, '.aegis');
-const MANIFEST = path.join(Aegis_DIR, '_cfg', 'workflow-manifest.csv');
+const MANIFEST = path.join(Aegis_DIR, '_cfg', 'workflow-manifest.json');
 const OUT_DIR = path.join(ROOT, 'docs', 'workflow-diagrams');
 const INSTALL_FOLDER_NAME = path.basename(Aegis_DIR);
 
@@ -18,17 +18,17 @@ function readManifest() {
   if (!fs.existsSync(MANIFEST)) {
     throw new Error(`Manifest not found at ${MANIFEST}`);
   }
-  const lines = fs.readFileSync(MANIFEST, 'utf8').trim().split(/\r?\n/);
-  const rows = lines.slice(1); // skip header
-  return rows
-    .map((line) => line.split(','))
-    .filter((cols) => cols.length >= 3)
-    .map((cols) => ({
-      name: cols[0],
-      module: cols[1],
-      relPath: cols[2],
-      description: cols[3] || '',
-    }));
+  const content = fs.readFileSync(MANIFEST, 'utf8').trim();
+  const data = content ? JSON.parse(content) : [];
+  if (!Array.isArray(data)) {
+    throw new Error('workflow-manifest.json must be an array');
+  }
+  return data.map((item) => ({
+    name: item.name || '',
+    module: item.module || 'workflows',
+    relPath: item.path || item.relPath || '',
+    description: item.description || '',
+  }));
 }
 
 function readWorkflow(filePath) {

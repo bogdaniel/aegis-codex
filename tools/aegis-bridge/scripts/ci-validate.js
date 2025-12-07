@@ -33,17 +33,17 @@ buildAll(path.resolve(opts.config), {
 
 const base = path.join(opts.out, opts.folder);
 const manifestPath = path.join(base, '_cfg', 'manifest.yaml');
-const workflowManifest = path.join(base, '_cfg', 'workflow-manifest.csv');
-const taskManifest = path.join(base, '_cfg', 'task-manifest.csv');
+const workflowManifest = path.join(base, '_cfg', 'workflow-manifest.json');
+const taskManifest = path.join(base, '_cfg', 'task-manifest.json');
 
 ensure(exists(manifestPath), 'Missing manifest.yaml');
-ensure(exists(workflowManifest), 'Missing workflow-manifest.csv');
-ensure(exists(taskManifest), 'Missing task-manifest.csv');
+ensure(exists(workflowManifest), 'Missing workflow-manifest.json');
+ensure(exists(taskManifest), 'Missing task-manifest.json');
 
-const wfLines = fs.readFileSync(workflowManifest, 'utf8').trim().split(/\r?\n/);
-const taskLines = fs.readFileSync(taskManifest, 'utf8').trim().split(/\r?\n/);
-ensure(wfLines.length > 1, 'workflow-manifest.csv is empty');
-ensure(taskLines.length > 1, 'task-manifest.csv is empty');
+const workflows = JSON.parse(fs.readFileSync(workflowManifest, 'utf8') || '[]');
+const tasks = JSON.parse(fs.readFileSync(taskManifest, 'utf8') || '[]');
+ensure(Array.isArray(workflows) && workflows.length > 0, 'workflow-manifest.json is empty');
+ensure(Array.isArray(tasks) && tasks.length > 0, 'task-manifest.json is empty');
 
 // Basic path checks
 ensure(exists(path.join(base, 'core', 'tasks')), 'Missing core/tasks');

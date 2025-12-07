@@ -18,7 +18,7 @@
 
 ## CONTEXT BOUNDARIES:
 
-- Agent manifest CSV is available at `{project-root}/{bmad_folder}/_cfg/agent-manifest.csv`
+- Agent manifest JSON is available at `{project-root}/{aegis_folder}/_cfg/agent-manifest.json`
 - User configuration from config.yaml is loaded and resolved
 - Party mode is standalone interactive workflow
 - All agent data is available for conversation orchestration
@@ -33,15 +33,15 @@ Load the complete agent roster from manifest and initialize party mode with enga
 
 Begin agent loading process:
 
-"Now initializing **Party Mode** with our complete BMAD agent roster! Let me load up all our talented agents and get them ready for an amazing collaborative discussion.
+"Now initializing **Party Mode** with our complete Aegis agent roster! Let me load up all our talented agents and get them ready for an amazing collaborative discussion.
 
 **Agent Manifest Loading:**"
 
-Load and parse the agent manifest CSV from `{project-root}/{bmad_folder}/_cfg/agent-manifest.csv`
+Load and parse the agent manifest JSON from `{project-root}/{aegis_folder}/_cfg/agent-manifest.json`
 
 ### 2. Extract Agent Data
 
-Parse CSV to extract complete agent information for each entry:
+Parse JSON to extract complete agent information for each entry:
 
 **Agent Data Points:**
 
@@ -52,7 +52,7 @@ Parse CSV to extract complete agent information for each entry:
 - **role** (capabilities and expertise summary)
 - **identity** (background and specialization details)
 - **communicationStyle** (how they communicate and express themselves)
-- **principles** (decision-making philosophy and values)
+- **principles** (deinnovationion-making philosophy and values)
 - **module** (source module organization)
 - **path** (file location reference)
 
@@ -73,7 +73,7 @@ Generate enthusiastic party mode introduction:
 
 "🎉 PARTY MODE ACTIVATED! 🎉
 
-Welcome {{user_name}}! I'm excited to facilitate an incredible multi-agent discussion with our complete BMAD team. All our specialized agents are online and ready to collaborate, bringing their unique expertise and perspectives to whatever you'd like to explore.
+Welcome {{user_name}}! I'm excited to facilitate an incredible multi-agent discussion with our complete Aegis team. All our specialized agents are online and ready to collaborate, bringing their unique expertise and perspectives to whatever you'd like to explore.
 
 **Our Collaborating Agents Include:**
 
@@ -91,7 +91,7 @@ Welcome {{user_name}}! I'm excited to facilitate an incredible multi-agent discu
 
 After agent loading and introduction:
 
-"**Agent roster loaded successfully!** All our BMAD experts are excited to collaborate with you.
+"**Agent roster loaded successfully!** All our Aegis experts are excited to collaborate with you.
 
 **Ready to start the discussion?**
 [C] Continue - Begin multi-agent conversation

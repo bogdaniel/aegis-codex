@@ -6,7 +6,7 @@ flowchart TD
   instructions__installed_path__instructions_md["instructions: {installed_path}/instructions.md"]
   template__installed_path__workflow_status_templa["template: {installed_path}/workflow-status-template.yaml"]
   path_files__installed_path__paths_["path_files: {installed_path}/paths/"]
-  default_output__output_folder__bmm_workflow_stat["default_output: {output_folder}/bmm-workflow-status.yaml"]
+  default_output__output_folder__method_workflow_s["default_output: {output_folder}/method-workflow-status.yaml"]
   step_1_instructions_md["Step 1: Workflow Status Check - Multi-Mode Service"]
   step_2_instructions_md["Step 2: 📊 Current Status"]
   step_3_instructions_md["Step 3: 🎯 Next Steps"]
@@ -20,7 +20,7 @@ flowchart TD
   workflow_status -->|instructions| instructions__installed_path__instructions_md
   workflow_status -->|template| template__installed_path__workflow_status_templa
   workflow_status -->|path_files| path_files__installed_path__paths_
-  workflow_status -->|default_output| default_output__output_folder__bmm_workflow_stat
+  workflow_status -->|default_output| default_output__output_folder__method_workflow_s
   workflow_status --> step_1_instructions_md
   step_1_instructions_md --> step_2_instructions_md
   step_2_instructions_md --> step_3_instructions_md

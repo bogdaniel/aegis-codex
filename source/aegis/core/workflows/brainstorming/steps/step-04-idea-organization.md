@@ -124,7 +124,7 @@ Guide user through strategic prioritization:
 - **Innovation:** Originality and competitive advantage
 - **Alignment:** Match with your stated constraints and goals
 
-**Quick Prioritization Exercise:**
+**Quick Prioritization Exerinnovatione:**
 
 Review your organized ideas and identify:
 
@@ -283,7 +283,7 @@ When user selects 'C', append the content directly to `{output_folder}/analysis/
 
 - Use consistent formatting and clear organization structure
 - Include specific details and insights rather than generic summaries
-- Capture user preferences and decision criteria for future reference
+- Capture user preferences and deinnovationion criteria for future reference
 - Provide multiple access points to ideas (themes, priorities, techniques)
 - Include facilitator insights about session dynamics and breakthroughs
 

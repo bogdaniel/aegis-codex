@@ -1,0 +1,122 @@
+[
+  {
+    "domain": "healthcare",
+    "signals": "medical,diagnostic,clinical,FDA,patient,treatment,HIPAA,therapy,pharma,drug",
+    "complexity": "high",
+    "key_concerns": "FDA approval;Clinical validation;HIPAA compliance;Patient safety;Medical device classification;Liability",
+    "required_knowledge": "Regulatory pathways;Clinical trial design;Medical standards;Data privacy;Integration requirements",
+    "suggested_workflow": "domain-research",
+    "web_searches": "FDA software medical device guidance {date};HIPAA compliance software requirements;Medical software standards {date};Clinical validation software",
+    "special_sections": "clinical_requirements;regulatory_pathway;validation_methodology;safety_measures"
+  },
+  {
+    "domain": "fintech",
+    "signals": "payment,banking,trading,investment,crypto,wallet,transaction,KYC,AML,funds,fintech",
+    "complexity": "high",
+    "key_concerns": "Regional compliance;Security standards;Audit requirements;Fraud prevention;Data protection",
+    "required_knowledge": "KYC/AML requirements;PCI DSS;Open banking;Regional laws (US/EU/APAC);Crypto regulations",
+    "suggested_workflow": "domain-research",
+    "web_searches": "fintech regulations {date};payment processing compliance {date};open banking API standards;cryptocurrency regulations {date}",
+    "special_sections": "compliance_matrix;security_architecture;audit_requirements;fraud_prevention"
+  },
+  {
+    "domain": "govtech",
+    "signals": "government,federal,civic,public sector,citizen,municipal,voting",
+    "complexity": "high",
+    "key_concerns": "Procurement rules;Security clearance;Accessibility (508);FedRAMP;Privacy;Transparency",
+    "required_knowledge": "Government procurement;Security frameworks;Accessibility standards;Privacy laws;Open data requirements",
+    "suggested_workflow": "domain-research",
+    "web_searches": "government software procurement {date};FedRAMP compliance requirements;section 508 accessibility;government security standards",
+    "special_sections": "procurement_compliance;security_clearance;accessibility_standards;transparency_requirements"
+  },
+  {
+    "domain": "edtech",
+    "signals": "education,learning,student,teacher,curriculum,assessment,K-12,university,LMS",
+    "complexity": "medium",
+    "key_concerns": "Student privacy (COPPA/FERPA);Accessibility;Content moderation;Age verification;Curriculum standards",
+    "required_knowledge": "Educational privacy laws;Learning standards;Accessibility requirements;Content guidelines;Assessment validity",
+    "suggested_workflow": "domain-research",
+    "web_searches": "educational software privacy {date};COPPA FERPA compliance;WCAG education requirements;learning management standards",
+    "special_sections": "privacy_compliance;content_guidelines;accessibility_features;curriculum_alignment"
+  },
+  {
+    "domain": "aerospace",
+    "signals": "aircraft,spacecraft,aviation,drone,satellite,propulsion,flight,radar,navigation",
+    "complexity": "high",
+    "key_concerns": "Safety certification;DO-178C compliance;Performance validation;Simulation accuracy;Export controls",
+    "required_knowledge": "Aviation standards;Safety analysis;Simulation validation;ITAR/export controls;Performance requirements",
+    "suggested_workflow": "domain-research + technical-model",
+    "web_searches": "DO-178C software certification;aerospace simulation standards {date};ITAR export controls software;aviation safety requirements",
+    "special_sections": "safety_certification;simulation_validation;performance_requirements;export_compliance"
+  },
+  {
+    "domain": "automotive",
+    "signals": "vehicle,car,autonomous,ADAS,automotive,driving,EV,charging",
+    "complexity": "high",
+    "key_concerns": "Safety standards;ISO 26262;V2X communication;Real-time requirements;Certification",
+    "required_knowledge": "Automotive standards;Functional safety;V2X protocols;Real-time systems;Testing requirements",
+    "suggested_workflow": "domain-research",
+    "web_searches": "ISO 26262 automotive software;automotive safety standards {date};V2X communication protocols;EV charging standards",
+    "special_sections": "safety_standards;functional_safety;communication_protocols;certification_requirements"
+  },
+  {
+    "domain": "scientific",
+    "signals": "research,algorithm,simulation,modeling,computational,analysis,data science,ML,AI",
+    "complexity": "medium",
+    "key_concerns": "Reproducibility;Validation methodology;Peer review;Performance;Accuracy;Computational resources",
+    "required_knowledge": "Scientific method;Statistical validity;Computational requirements;Domain expertise;Publication standards",
+    "suggested_workflow": "technical-model",
+    "web_searches": "scientific computing best practices {date};research reproducibility standards;computational modeling validation;peer review software",
+    "special_sections": "validation_methodology;accuracy_metrics;reproducibility_plan;computational_requirements"
+  },
+  {
+    "domain": "legaltech",
+    "signals": "legal,law,contract,compliance,litigation,patent,attorney,court",
+    "complexity": "high",
+    "key_concerns": "Legal ethics;Bar regulations;Data retention;Attorney-client privilege;Court system integration",
+    "required_knowledge": "Legal practice rules;Ethics requirements;Court filing systems;Document standards;Confidentiality",
+    "suggested_workflow": "domain-research",
+    "web_searches": "legal technology ethics {date};law practice management software requirements;court filing system standards;attorney client privilege technology",
+    "special_sections": "ethics_compliance;data_retention;confidentiality_measures;court_integration"
+  },
+  {
+    "domain": "insuretech",
+    "signals": "insurance,claims,underwriting,actuarial,policy,risk,premium",
+    "complexity": "high",
+    "key_concerns": "Insurance regulations;Actuarial standards;Data privacy;Fraud detection;State compliance",
+    "required_knowledge": "Insurance regulations by state;Actuarial methods;Risk modeling;Claims processing;Regulatory reporting",
+    "suggested_workflow": "domain-research",
+    "web_searches": "insurance software regulations {date};actuarial standards software;insurance fraud detection;state insurance compliance",
+    "special_sections": "regulatory_requirements;risk_modeling;fraud_detection;reporting_compliance"
+  },
+  {
+    "domain": "energy",
+    "signals": "energy,utility,grid,solar,wind,power,electricity,oil,gas",
+    "complexity": "high",
+    "key_concerns": "Grid compliance;NERC standards;Environmental regulations;Safety requirements;Real-time operations",
+    "required_knowledge": "Energy regulations;Grid standards;Environmental compliance;Safety protocols;SCADA systems",
+    "suggested_workflow": "domain-research",
+    "web_searches": "energy sector software compliance {date};NERC CIP standards;smart grid requirements;renewable energy software standards",
+    "special_sections": "grid_compliance;safety_protocols;environmental_compliance;operational_requirements"
+  },
+  {
+    "domain": "gaming",
+    "signals": "game,player,gameplay,level,character,multiplayer,quest",
+    "complexity": "redirect",
+    "key_concerns": "REDIRECT TO GAME WORKFLOWS",
+    "required_knowledge": "Game design",
+    "suggested_workflow": "game-brief",
+    "web_searches": "NA",
+    "special_sections": "NA"
+  },
+  {
+    "domain": "general",
+    "signals": "",
+    "complexity": "low",
+    "key_concerns": "Standard requirements;Basic security;User experience;Performance",
+    "required_knowledge": "General software practices",
+    "suggested_workflow": "continue",
+    "web_searches": "software development best practices {date}",
+    "special_sections": "standard_requirements"
+  }
+]

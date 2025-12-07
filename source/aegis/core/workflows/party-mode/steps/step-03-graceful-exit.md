@@ -33,7 +33,7 @@ Provide satisfying agent farewells and conclude the party mode session with grat
 
 Begin exit process with warm acknowledgment:
 
-"What an incredible collaborative session! Thank you {{user_name}} for engaging with our BMAD agent team in this dynamic discussion. Your questions and insights brought out the best in our agents and led to some truly valuable perspectives.
+"What an incredible collaborative session! Thank you {{user_name}} for engaging with our Aegis agent team in this dynamic discussion. Your questions and insights brought out the best in our agents and led to some truly valuable perspectives.
 
 **Before we wrap up, let a few of our agents say goodbye...**"
 
@@ -54,7 +54,7 @@ For each selected agent:
 
 "[Icon Emoji] **[Agent Name]**: [Characteristic farewell reflecting their personality, communication style, and role. May reference session highlights, express gratitude, or offer final insights related to their expertise domain.]
 
-[Bash: .claude/hooks/bmad-speak.sh \"[Agent Name]\" \"[Their farewell message]\"]"
+[Bash: .claude/hooks/aegis-speak.sh \"[Agent Name]\" \"[Their farewell message]\"]"
 
 **Example Farewells:**
 
@@ -75,7 +75,7 @@ End with enthusiastic and appreciative closure:
 
 "🎊 **Party Mode Session Complete!** 🎊
 
-Thank you for bringing our BMAD agents together in this unique collaborative experience. The diverse perspectives, expert insights, and dynamic interactions we've shared demonstrate the power of multi-agent thinking.
+Thank you for bringing our Aegis agents together in this unique collaborative experience. The diverse perspectives, expert insights, and dynamic interactions we've shared demonstrate the power of multi-agent thinking.
 
 **Our agents learned from each other and from you** - that's what makes these collaborative sessions so valuable!
 
@@ -114,7 +114,7 @@ Execute final workflow termination:
 
 "[PARTY MODE WORKFLOW COMPLETE]
 
-Thank you for using BMAD Party Mode for collaborative multi-agent discussions!"
+Thank you for using Aegis Party Mode for collaborative multi-agent discussions!"
 
 ## SUCCESS METRICS:
 
@@ -153,6 +153,6 @@ After farewell sequence and final closure:
 - Multi-agent collaboration demonstrated value and effectiveness
 - Workflow ready for next party mode session activation
 
-Congratulations on facilitating a successful multi-agent collaborative discussion through BMAD Party Mode! 🎉
+Congratulations on facilitating a successful multi-agent collaborative discussion through Aegis Party Mode! 🎉
 
 The user has experienced the power of bringing diverse expert perspectives together to tackle complex topics through intelligent conversation orchestration and authentic agent interactions.

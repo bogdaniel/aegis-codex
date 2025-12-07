@@ -46,6 +46,22 @@ function copyTree(srcRoot, destRoot, subpaths = []) {
   }
 }
 
+function removeLegacyCsvManifests(cfgDir) {
+  const legacyFiles = [
+    'workflow-manifest.csv',
+    'task-manifest.csv',
+    'tool-manifest.csv',
+    'team-manifest.csv',
+    'agent-manifest.csv',
+  ];
+  for (const file of legacyFiles) {
+    const full = path.join(cfgDir, file);
+    if (fs.existsSync(full)) {
+      fs.rmSync(full, { force: true });
+    }
+  }
+}
+
 function ensureCoreConfig(outRoot, installFolder) {
   const coreDir = path.join(outRoot, installFolder, 'core');
   ensureDir(coreDir);
@@ -76,6 +92,7 @@ function ensureModuleConfig(outRoot, installFolder, moduleName) {
 function ensureCfg(outRoot, installFolder) {
   const cfgDir = path.join(outRoot, installFolder, '_cfg');
   ensureDir(cfgDir);
+  removeLegacyCsvManifests(cfgDir);
 
   const manifestPath = path.join(cfgDir, 'manifest.yaml');
   if (!fs.existsSync(manifestPath)) {
@@ -87,26 +104,30 @@ function ensureCfg(outRoot, installFolder) {
     fs.writeFileSync(manifestPath, yaml.stringify(manifest), 'utf8');
   }
 
-  const workflowManifestPath = path.join(cfgDir, 'workflow-manifest.csv');
+  const workflowManifestPath = path.join(cfgDir, 'workflow-manifest.json');
   if (!fs.existsSync(workflowManifestPath)) {
-    fs.writeFileSync(workflowManifestPath, 'name,module,path,description\n', 'utf8');
+    fs.writeFileSync(workflowManifestPath, '[]\n', 'utf8');
   }
 
-  const taskManifestPath = path.join(cfgDir, 'task-manifest.csv');
+  const taskManifestPath = path.join(cfgDir, 'task-manifest.json');
   if (!fs.existsSync(taskManifestPath)) {
-    fs.writeFileSync(taskManifestPath, 'name,module,path,description,standalone\n', 'utf8');
+    fs.writeFileSync(taskManifestPath, '[]\n', 'utf8');
   }
 
-  const toolManifestPath = path.join(cfgDir, 'tool-manifest.csv');
+  const toolManifestPath = path.join(cfgDir, 'tool-manifest.json');
   if (!fs.existsSync(toolManifestPath)) {
-    fs.writeFileSync(toolManifestPath, 'name,module,path,description,standalone\n', 'utf8');
+    fs.writeFileSync(toolManifestPath, '[]\n', 'utf8');
+  }
+
+  const teamManifestPath = path.join(cfgDir, 'team-manifest.json');
+  if (!fs.existsSync(teamManifestPath)) {
+    fs.writeFileSync(teamManifestPath, '[]\n', 'utf8');
   }
 }
 
-function writeCsv(filePath, header, rows) {
+function writeJson(filePath, data) {
   ensureDir(path.dirname(filePath));
-  const content = [header, ...rows].join('\n') + '\n';
-  fs.writeFileSync(filePath, content, 'utf8');
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
 }
 
 function parseDescriptionFromContent(filePath) {
@@ -138,11 +159,12 @@ function generateManifests(outRoot, installFolder, modules = [], ides = []) {
   const base = path.join(outRoot, installFolder);
   const cfgDir = path.join(base, '_cfg');
   ensureDir(cfgDir);
+  removeLegacyCsvManifests(cfgDir);
 
-  const workflowManifestPath = path.join(cfgDir, 'workflow-manifest.csv');
-  const taskManifestPath = path.join(cfgDir, 'task-manifest.csv');
-  const toolManifestPath = path.join(cfgDir, 'tool-manifest.csv');
-  const teamManifestPath = path.join(cfgDir, 'team-manifest.csv');
+  const workflowManifestPath = path.join(cfgDir, 'workflow-manifest.json');
+  const taskManifestPath = path.join(cfgDir, 'task-manifest.json');
+  const toolManifestPath = path.join(cfgDir, 'tool-manifest.json');
+  const teamManifestPath = path.join(cfgDir, 'team-manifest.json');
   const manifestPath = path.join(cfgDir, 'manifest.yaml');
 
   const workflows = listFiles(base, (f) => f.endsWith('workflow.yaml') || f.endsWith('workflow.md'));
@@ -161,10 +183,10 @@ function generateManifests(outRoot, installFolder, modules = [], ides = []) {
     const parts = rel.split('/');
     const module = parts[0] === 'core' ? 'core' : (parts[1] || 'method');
     const name = validation.name || wf.name || parts[parts.length - 2] || path.basename(file, path.extname(file));
-    const description = String(validation.description || wf.description || '').replaceAll(',', ' ');
-    workflowRows.push(`${name},${module},${rel},${description}`);
+    const description = String(validation.description || wf.description || '');
+    workflowRows.push({ name, module, path: rel, description });
   }
-  writeCsv(workflowManifestPath, 'name,module,path,description', workflowRows);
+  writeJson(workflowManifestPath, workflowRows);
 
   const tasks = [
     ...listFiles(path.join(base, 'core', 'tasks'), (f) => f.endsWith('.xml') || f.endsWith('.md')),
@@ -178,10 +200,10 @@ function generateManifests(outRoot, installFolder, modules = [], ides = []) {
     const parts = rel.split('/');
     const name = path.basename(file, path.extname(file));
     const module = parts[0] === 'core' ? 'core' : (parts[1] || 'method');
-    const description = parseDescriptionFromContent(file).replaceAll(',', ' ');
-    return `${name},${module},${rel},${description},true`;
+    const description = parseDescriptionFromContent(file);
+    return { name, module, path: rel, description, standalone: true };
   });
-  writeCsv(taskManifestPath, 'name,module,path,description,standalone', taskRows);
+  writeJson(taskManifestPath, taskRows);
 
   const tools = [
     ...listFiles(path.join(base, 'core', 'tools'), (f) => f.endsWith('.xml') || f.endsWith('.md')),
@@ -195,17 +217,17 @@ function generateManifests(outRoot, installFolder, modules = [], ides = []) {
     const parts = rel.split('/');
     const name = path.basename(file, path.extname(file));
     const module = parts[0] === 'core' ? 'core' : (parts[1] || 'method');
-    const description = parseDescriptionFromContent(file).replaceAll(',', ' ');
-    return `${name},${module},${rel},${description},true`;
+    const description = parseDescriptionFromContent(file);
+    return { name, module, path: rel, description, standalone: true };
   });
-  writeCsv(toolManifestPath, 'name,module,path,description,standalone', toolRows);
+  writeJson(toolManifestPath, toolRows);
 
   const teams = [
-    ...listFiles(path.join(base, 'method', 'teams'), (f) => f.endsWith('.csv') || f.endsWith('.yaml') || f.endsWith('.yml')),
+    ...listFiles(path.join(base, 'method', 'teams'), (f) => f.endsWith('.json') || f.endsWith('.yaml') || f.endsWith('.yml')),
     ...modules
       .filter((mod) => mod !== 'method')
       .flatMap((mod) =>
-        listFiles(path.join(base, mod, 'teams'), (f) => f.endsWith('.csv') || f.endsWith('.yaml') || f.endsWith('.yml')),
+        listFiles(path.join(base, mod, 'teams'), (f) => f.endsWith('.json') || f.endsWith('.yaml') || f.endsWith('.yml')),
       ),
   ];
   const teamRows = teams.map((file) => {
@@ -213,9 +235,9 @@ function generateManifests(outRoot, installFolder, modules = [], ides = []) {
     const parts = rel.split('/');
     const name = path.basename(file, path.extname(file));
     const module = parts[0] === 'core' ? 'core' : (parts[1] || 'method');
-    return `${name},${module},${rel},`;
+    return { name, module, path: rel, description: '' };
   });
-  writeCsv(teamManifestPath, 'name,module,path,description', teamRows);
+  writeJson(teamManifestPath, teamRows);
 
   // Write manifest.yaml with real metadata
   let pkgVersion = '0.0.0';
@@ -283,10 +305,10 @@ function exportWorkflowsAndTasks(outRoot, installFolder) {
     .filter((entry) => entry.isDirectory() && entry.name !== 'core' && entry.name !== '_cfg');
 
   const moduleMap = {
-    bmm: 'method',
-    bmb: 'builder',
-    bmgd: 'gamedev',
-    cis: 'innovation',
+    method: 'method',
+    builder: 'builder',
+    gamedev: 'gamedev',
+    innovation: 'innovation',
   };
   for (const entry of moduleEntries) {
     const mod = entry.name;
@@ -348,19 +370,17 @@ function writeAgentManifest(outRoot, installFolder, agents = []) {
   const base = path.join(outRoot, installFolder);
   const cfgDir = path.join(base, '_cfg');
   ensureDir(cfgDir);
-  const manifestPath = path.join(cfgDir, 'agent-manifest.csv');
-  const rows = agents.map((agent) => {
-    return [
-      agent.name || '',
-      agent.module || '',
-      agent.path || '',
-      (agent.title || '').replaceAll(',', ' '),
-      (agent.icon || '').replaceAll(',', ' '),
-      (agent.role || '').replaceAll(',', ' '),
-      (agent.identity || '').replaceAll(',', ' '),
-    ].join(',');
-  });
-  writeCsv(manifestPath, 'name,module,path,title,icon,role,identity', rows);
+  const manifestPath = path.join(cfgDir, 'agent-manifest.json');
+  const rows = agents.map((agent) => ({
+    name: agent.name || '',
+    module: agent.module || '',
+    path: agent.path || '',
+    title: agent.title || '',
+    icon: agent.icon || '',
+    role: agent.role || '',
+    identity: agent.identity || '',
+  }));
+  writeJson(manifestPath, rows);
 }
 
 function overlayAgent(templateYaml, aegis, mapping, installFolder) {

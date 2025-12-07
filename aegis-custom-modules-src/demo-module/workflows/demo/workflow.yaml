@@ -1,0 +1,16 @@
+name: demo
+description: Demo workflow for the custom module.
+installed_path: "{project-root}/{aegis_folder}/demo/workflows/demo"
+default_output_file: "{output_folder}/demo-output-{{date}}.md"
+
+steps:
+  - description: "Capture demo goal"
+    actions:
+      - ask: "What do you want this demo workflow to summarize?"
+  - description: "Write summary"
+    actions:
+      - write_file: "{output_folder}/demo-output-{{date}}.md"
+        template: |
+          # Demo Output
+          Request: {{user_request}}
+          Date: {{date}}

@@ -4,13 +4,13 @@
 
 - ✅ YOU ARE A TECHNIQUE MATCHMAKER, using AI analysis to recommend optimal approaches
 - 🎯 ANALYZE SESSION CONTEXT from Step 1 for intelligent technique matching
-- 📋 LOAD TECHNIQUES ON-DEMAND from brain-methods.csv for recommendations
+- 📋 LOAD TECHNIQUES ON-DEMAND from brain-methods.json for recommendations
 - 🔍 MATCH TECHNIQUES to user goals, constraints, and preferences
 - 💬 PROVIDE CLEAR RATIONALE for each recommendation
 
 ## EXECUTION PROTOCOLS:
 
-- 🎯 Load brain techniques CSV only when needed for analysis
+- 🎯 Load brain techniques JSON only when needed for analysis
 - ⚠️ Present [B] back option and [C] continue options
 - 💾 Update frontmatter with recommended techniques
 - 📖 Route to technique execution after user confirmation
@@ -19,7 +19,7 @@
 ## CONTEXT BOUNDARIES:
 
 - Session context (`session_topic`, `session_goals`, constraints) from Step 1
-- Brain techniques CSV with 36+ techniques across 7 categories
+- Brain techniques JSON with 36+ techniques across 7 categories
 - User wants expert guidance in technique selection
 - Must analyze multiple factors for optimal matching
 
@@ -31,7 +31,7 @@ Analyze session context and recommend optimal brainstorming techniques based on 
 
 ### 1. Load Brain Techniques Library
 
-Load techniques from CSV for analysis:
+Load techniques from JSON for analysis:
 
 "Great choice! Let me analyze your session context and recommend the perfect brainstorming techniques for your specific needs.
 
@@ -44,9 +44,9 @@ Load techniques from CSV for analysis:
 
 **Loading Brain Techniques Library for AI Analysis...**"
 
-**Load CSV and parse:**
+**Load JSON and parse:**
 
-- Read `brain-methods.csv`
+- Read `brain-methods.json`
 - Parse: category, technique_name, description, facilitation_prompts, best_for, energy_level, typical_duration
 
 ### 2. Context Analysis for Technique Matching
@@ -218,7 +218,7 @@ Load `./step-03-technique-execution.md`
 ❌ Generic recommendations without specific context analysis
 ❌ Not explaining rationale behind technique selections
 ❌ Missing option for user to modify or question recommendations
-❌ Not loading techniques from CSV for accurate recommendations
+❌ Not loading techniques from JSON for accurate recommendations
 ❌ Not updating frontmatter with selected techniques
 
 ## AI RECOMMENDATION PROTOCOLS:
@@ -226,11 +226,11 @@ Load `./step-03-technique-execution.md`
 - Analyze session context systematically across multiple factors
 - Provide clear rationale linking recommendations to user's goals
 - Allow user input and modification of recommendations
-- Load accurate technique data from CSV for informed analysis
+- Load accurate technique data from JSON for informed analysis
 - Balance expertise with user autonomy in final selection
 
 ## NEXT STEP:
 
 After user confirmation, load `./step-03-technique-execution.md` to begin facilitating the AI-recommended brainstorming techniques.
 
-Remember: Your recommendations should demonstrate clear expertise while respecting user's final decision-making authority!
+Remember: Your recommendations should demonstrate clear expertise while respecting user's final deinnovationion-making authority!

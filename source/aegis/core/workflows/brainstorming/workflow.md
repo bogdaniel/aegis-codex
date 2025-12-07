@@ -28,7 +28,7 @@ This uses **micro-file architecture** for disciplined execution:
 
 ### Configuration Loading
 
-Load config from `{project-root}/{bmad_folder}/bmm/config.yaml` and resolve:
+Load config from `{project-root}/{aegis_folder}/method/config.yaml` and resolve:
 
 - `project_name`, `output_folder`, `user_name`
 - `communication_language`, `document_output_language`, `user_skill_level`
@@ -36,9 +36,9 @@ Load config from `{project-root}/{bmad_folder}/bmm/config.yaml` and resolve:
 
 ### Paths
 
-- `installed_path` = `{project-root}/{bmad_folder}/core/workflows/brainstorming`
+- `installed_path` = `{project-root}/{aegis_folder}/core/workflows/brainstorming`
 - `template_path` = `{installed_path}/template.md`
-- `brain_techniques_path` = `{installed_path}/brain-methods.csv`
+- `brain_techniques_path` = `{installed_path}/brain-methods.json`
 - `default_output_file` = `{output_folder}/analysis/brainstorming-session-{{date}}.md`
 - `context_file` = Optional context file path from workflow invocation for project-specific guidance
 

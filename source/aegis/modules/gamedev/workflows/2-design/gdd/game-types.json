@@ -1,0 +1,170 @@
+[
+  {
+    "id": "action-platformer",
+    "name": "Action Platformer",
+    "description": "Side-scrolling or 3D platforming with combat mechanics",
+    "genre_tags": "action,platformer,combat,movement",
+    "fragment_file": "action-platformer.md"
+  },
+  {
+    "id": "puzzle",
+    "name": "Puzzle",
+    "description": "Logic-based challenges and problem-solving",
+    "genre_tags": "puzzle,logic,cerebral",
+    "fragment_file": "puzzle.md"
+  },
+  {
+    "id": "rpg",
+    "name": "RPG",
+    "description": "Character progression, stats, inventory, quests",
+    "genre_tags": "rpg,stats,inventory,quests,narrative",
+    "fragment_file": "rpg.md"
+  },
+  {
+    "id": "strategy",
+    "name": "Strategy",
+    "description": "Resource management, tactical deinnovationions, long-term planning",
+    "genre_tags": "strategy,tactics,resources,planning",
+    "fragment_file": "strategy.md"
+  },
+  {
+    "id": "shooter",
+    "name": "Shooter",
+    "description": "Projectile combat, aiming mechanics, arena/level design",
+    "genre_tags": "shooter,combat,aiming,fps,tps",
+    "fragment_file": "shooter.md"
+  },
+  {
+    "id": "adventure",
+    "name": "Adventure",
+    "description": "Story-driven exploration and narrative",
+    "genre_tags": "adventure,narrative,exploration,story",
+    "fragment_file": "adventure.md"
+  },
+  {
+    "id": "simulation",
+    "name": "Simulation",
+    "description": "Realistic systems, management, building",
+    "genre_tags": "simulation,management,sandbox,systems",
+    "fragment_file": "simulation.md"
+  },
+  {
+    "id": "roguelike",
+    "name": "Roguelike",
+    "description": "Procedural generation, permadeath, run-based progression",
+    "genre_tags": "roguelike,procedural,permadeath,runs",
+    "fragment_file": "roguelike.md"
+  },
+  {
+    "id": "moba",
+    "name": "MOBA",
+    "description": "Multiplayer team battles, hero/champion selection, lanes",
+    "genre_tags": "moba,multiplayer,pvp,heroes,lanes",
+    "fragment_file": "moba.md"
+  },
+  {
+    "id": "fighting",
+    "name": "Fighting",
+    "description": "1v1 combat, combos, frame data, competitive",
+    "genre_tags": "fighting,combat,competitive,combos,pvp",
+    "fragment_file": "fighting.md"
+  },
+  {
+    "id": "racing",
+    "name": "Racing",
+    "description": "Vehicle control, tracks, speed, lap times",
+    "genre_tags": "racing,vehicles,tracks,speed",
+    "fragment_file": "racing.md"
+  },
+  {
+    "id": "sports",
+    "name": "Sports",
+    "description": "Team-based or individual sports simulation",
+    "genre_tags": "sports,teams,realistic,physics",
+    "fragment_file": "sports.md"
+  },
+  {
+    "id": "survival",
+    "name": "Survival",
+    "description": "Resource gathering, crafting, persistent threats",
+    "genre_tags": "survival,crafting,resources,danger",
+    "fragment_file": "survival.md"
+  },
+  {
+    "id": "horror",
+    "name": "Horror",
+    "description": "Atmosphere, tension, limited resources, fear mechanics",
+    "genre_tags": "horror,atmosphere,tension,fear",
+    "fragment_file": "horror.md"
+  },
+  {
+    "id": "idle-incremental",
+    "name": "Idle/Incremental",
+    "description": "Passive progression, upgrades, automation",
+    "genre_tags": "idle,incremental,automation,progression",
+    "fragment_file": "idle-incremental.md"
+  },
+  {
+    "id": "card-game",
+    "name": "Card Game",
+    "description": "Deck building, card mechanics, turn-based strategy",
+    "genre_tags": "card,deck-building,strategy,turns",
+    "fragment_file": "card-game.md"
+  },
+  {
+    "id": "tower-defense",
+    "name": "Tower Defense",
+    "description": "Wave-based defense, tower placement, resource management",
+    "genre_tags": "tower-defense,waves,placement,strategy",
+    "fragment_file": "tower-defense.md"
+  },
+  {
+    "id": "metroidvania",
+    "name": "Metroidvania",
+    "description": "Interconnected world, ability gating, exploration",
+    "genre_tags": "metroidvania,exploration,abilities,interconnected",
+    "fragment_file": "metroidvania.md"
+  },
+  {
+    "id": "visual-novel",
+    "name": "Visual Novel",
+    "description": "Narrative choices, branching story, dialogue",
+    "genre_tags": "visual-novel,narrative,choices,story",
+    "fragment_file": "visual-novel.md"
+  },
+  {
+    "id": "rhythm",
+    "name": "Rhythm",
+    "description": "Music synchronization, timing-based gameplay",
+    "genre_tags": "rhythm,music,timing,beats",
+    "fragment_file": "rhythm.md"
+  },
+  {
+    "id": "turn-based-tactics",
+    "name": "Turn-Based Tactics",
+    "description": "Grid-based movement, turn order, positioning",
+    "genre_tags": "tactics,turn-based,grid,positioning",
+    "fragment_file": "turn-based-tactics.md"
+  },
+  {
+    "id": "sandbox",
+    "name": "Sandbox",
+    "description": "Creative freedom, building, minimal objectives",
+    "genre_tags": "sandbox,creative,building,freedom",
+    "fragment_file": "sandbox.md"
+  },
+  {
+    "id": "text-based",
+    "name": "Text-Based",
+    "description": "Text input/output, parser or choice-based",
+    "genre_tags": "text,parser,interactive-fiction,mud",
+    "fragment_file": "text-based.md"
+  },
+  {
+    "id": "party-game",
+    "name": "Party Game",
+    "description": "Local multiplayer, minigames, casual fun",
+    "genre_tags": "party,multiplayer,minigames,casual",
+    "fragment_file": "party-game.md"
+  }
+]

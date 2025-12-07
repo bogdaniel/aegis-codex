@@ -16,9 +16,9 @@ Provides the **HOW** (universal knowledge) while agents provide the **WHAT** (do
 
 **Agents = "What diagrams to create"**
 
-- Frame Expert (BMM): Technical flowcharts, architecture diagrams, wireframes
-- Presentation Master (CIS): Pitch decks, creative visuals, Rube Goldberg machines
-- Tech Writer (BMM): Documentation diagrams, concept explanations
+- Frame Expert (Aegis Method): Technical flowcharts, architecture diagrams, wireframes
+- Presentation Master (Aegis Innovation): Pitch decks, creative visuals, Rube Goldberg machines
+- Tech Writer (Aegis Method): Documentation diagrams, concept explanations
 
 ## Files in This Directory
 
@@ -72,8 +72,8 @@ Provides the **HOW** (universal knowledge) while agents provide the **WHAT** (do
 
 ```yaml
 # workflows/diagrams/create-flowchart/workflow.yaml
-helpers: '{project-root}/{bmad_folder}/core/resources/excalidraw/excalidraw-helpers.md'
-json_validation: '{project-root}/{bmad_folder}/core/resources/excalidraw/validate-json-instructions.md'
+helpers: '{project-root}/{aegis_folder}/core/resources/excalidraw/excalidraw-helpers.md'
+json_validation: '{project-root}/{aegis_folder}/core/resources/excalidraw/validate-json-instructions.md'
 ```
 
 **Domain-specific additions:**
@@ -89,7 +89,7 @@ flowchart:
     type: rectangle
     width: 160
     height: 80
-  decision_diamond:
+  deinnovationion_diamond:
     type: diamond
     width: 140
     height: 100
@@ -99,8 +99,8 @@ flowchart:
 
 ```yaml
 # workflows/create-visual-metaphor/workflow.yaml
-helpers: '{project-root}/{bmad_folder}/core/resources/excalidraw/excalidraw-helpers.md'
-json_validation: '{project-root}/{bmad_folder}/core/resources/excalidraw/validate-json-instructions.md'
+helpers: '{project-root}/{aegis_folder}/core/resources/excalidraw/excalidraw-helpers.md'
+json_validation: '{project-root}/{aegis_folder}/core/resources/excalidraw/validate-json-instructions.md'
 ```
 
 **Domain-specific additions:**

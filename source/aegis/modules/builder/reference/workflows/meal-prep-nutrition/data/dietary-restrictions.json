@@ -1,0 +1,136 @@
+[
+  {
+    "category": "Allergy",
+    "restriction": "Nuts",
+    "considerations": "Severe allergy",
+    "alternatives": " check labels carefully",
+    "notes": "Seeds",
+    "null": [
+      " sunflower seed butter"
+    ]
+  },
+  {
+    "category": "Allergy",
+    "restriction": "Shellfish",
+    "considerations": "Cross-reactivity with some fish",
+    "alternatives": "Fin fish",
+    "notes": " vegetarian proteins"
+  },
+  {
+    "category": "Allergy",
+    "restriction": "Dairy",
+    "considerations": "Calcium and vitamin D needs",
+    "alternatives": "Almond milk",
+    "notes": " fortified plant milks"
+  },
+  {
+    "category": "Allergy",
+    "restriction": "Soy",
+    "considerations": "Protein source replacement",
+    "alternatives": "Legumes",
+    "notes": " quinoa",
+    "null": [
+      " seitan"
+    ]
+  },
+  {
+    "category": "Allergy",
+    "restriction": "Gluten",
+    "considerations": "Celiac vs sensitivity",
+    "alternatives": "Quinoa",
+    "notes": " rice",
+    "null": [
+      " certified gluten-free"
+    ]
+  },
+  {
+    "category": "Medical",
+    "restriction": "Diabetes",
+    "considerations": "Carbohydrate timing and type",
+    "alternatives": "Fiber-rich foods",
+    "notes": " low glycemic"
+  },
+  {
+    "category": "Medical",
+    "restriction": "Hypertension",
+    "considerations": "Sodium restriction",
+    "alternatives": "Herbs",
+    "notes": " spices",
+    "null": [
+      " salt-free seasonings"
+    ]
+  },
+  {
+    "category": "Medical",
+    "restriction": "IBS",
+    "considerations": "FODMAP triggers",
+    "alternatives": "Low FODMAP vegetables",
+    "notes": " soluble fiber"
+  },
+  {
+    "category": "Ethical",
+    "restriction": "Vegetarian",
+    "considerations": "Complete protein combinations",
+    "alternatives": "Quinoa",
+    "notes": " buckwheat",
+    "null": [
+      " hemp seeds"
+    ]
+  },
+  {
+    "category": "Ethical",
+    "restriction": "Vegan",
+    "considerations": "B12 supplementation mandatory",
+    "alternatives": "Nutritional yeast",
+    "notes": " fortified foods"
+  },
+  {
+    "category": "Ethical",
+    "restriction": "Halal",
+    "considerations": "Meat sourcing requirements",
+    "alternatives": "Halal-certified products",
+    "notes": null
+  },
+  {
+    "category": "Ethical",
+    "restriction": "Kosher",
+    "considerations": "Dairy-meat separation",
+    "alternatives": "Parve alternatives",
+    "notes": null
+  },
+  {
+    "category": "Intolerance",
+    "restriction": "Lactose",
+    "considerations": "Dairy digestion issues",
+    "alternatives": "Lactase pills",
+    "notes": " aged cheeses"
+  },
+  {
+    "category": "Intolerance",
+    "restriction": "FODMAP",
+    "considerations": "Carbohydrate malabsorption",
+    "alternatives": "Low FODMAP fruits/veg",
+    "notes": null
+  },
+  {
+    "category": "Preference",
+    "restriction": "Dislikes",
+    "considerations": "Texture/flavor preferences",
+    "alternatives": "Similar texture alternatives",
+    "notes": null
+  },
+  {
+    "category": "Preference",
+    "restriction": "Budget",
+    "considerations": "Cost-effective options",
+    "alternatives": "Bulk buying",
+    "notes": " seasonal produce"
+  },
+  {
+    "category": "Preference",
+    "restriction": "Convenience",
+    "considerations": "Time-saving options",
+    "alternatives": "Pre-cut vegetables",
+    "notes": " frozen produce"
+  }
+]

@@ -1,0 +1,152 @@
+[
+  {
+    "goal": "weight_loss",
+    "activity_level": "sedentary",
+    "multiplier": "1.2",
+    "protein_ratio": "0.3",
+    "protein_min": "1.6",
+    "protein_max": "2.2",
+    "fat_ratio": "0.35",
+    "carb_ratio": "0.35"
+  },
+  {
+    "goal": "weight_loss",
+    "activity_level": "light",
+    "multiplier": "1.375",
+    "protein_ratio": "0.35",
+    "protein_min": "1.8",
+    "protein_max": "2.5",
+    "fat_ratio": "0.30",
+    "carb_ratio": "0.35"
+  },
+  {
+    "goal": "weight_loss",
+    "activity_level": "moderate",
+    "multiplier": "1.55",
+    "protein_ratio": "0.4",
+    "protein_min": "2.0",
+    "protein_max": "2.8",
+    "fat_ratio": "0.30",
+    "carb_ratio": "0.30"
+  },
+  {
+    "goal": "weight_loss",
+    "activity_level": "active",
+    "multiplier": "1.725",
+    "protein_ratio": "0.4",
+    "protein_min": "2.2",
+    "protein_max": "3.0",
+    "fat_ratio": "0.25",
+    "carb_ratio": "0.35"
+  },
+  {
+    "goal": "weight_loss",
+    "activity_level": "very_active",
+    "multiplier": "1.9",
+    "protein_ratio": "0.45",
+    "protein_min": "2.5",
+    "protein_max": "3.3",
+    "fat_ratio": "0.25",
+    "carb_ratio": "0.30"
+  },
+  {
+    "goal": "maintenance",
+    "activity_level": "sedentary",
+    "multiplier": "1.2",
+    "protein_ratio": "0.25",
+    "protein_min": "0.8",
+    "protein_max": "1.2",
+    "fat_ratio": "0.35",
+    "carb_ratio": "0.40"
+  },
+  {
+    "goal": "maintenance",
+    "activity_level": "light",
+    "multiplier": "1.375",
+    "protein_ratio": "0.25",
+    "protein_min": "1.0",
+    "protein_max": "1.4",
+    "fat_ratio": "0.35",
+    "carb_ratio": "0.40"
+  },
+  {
+    "goal": "maintenance",
+    "activity_level": "moderate",
+    "multiplier": "1.55",
+    "protein_ratio": "0.3",
+    "protein_min": "1.2",
+    "protein_max": "1.6",
+    "fat_ratio": "0.35",
+    "carb_ratio": "0.35"
+  },
+  {
+    "goal": "maintenance",
+    "activity_level": "active",
+    "multiplier": "1.725",
+    "protein_ratio": "0.3",
+    "protein_min": "1.4",
+    "protein_max": "1.8",
+    "fat_ratio": "0.30",
+    "carb_ratio": "0.40"
+  },
+  {
+    "goal": "maintenance",
+    "activity_level": "very_active",
+    "multiplier": "1.9",
+    "protein_ratio": "0.35",
+    "protein_min": "1.6",
+    "protein_max": "2.2",
+    "fat_ratio": "0.30",
+    "carb_ratio": "0.35"
+  },
+  {
+    "goal": "muscle_gain",
+    "activity_level": "sedentary",
+    "multiplier": "1.2",
+    "protein_ratio": "0.35",
+    "protein_min": "1.8",
+    "protein_max": "2.5",
+    "fat_ratio": "0.30",
+    "carb_ratio": "0.35"
+  },
+  {
+    "goal": "muscle_gain",
+    "activity_level": "light",
+    "multiplier": "1.375",
+    "protein_ratio": "0.4",
+    "protein_min": "2.0",
+    "protein_max": "2.8",
+    "fat_ratio": "0.30",
+    "carb_ratio": "0.30"
+  },
+  {
+    "goal": "muscle_gain",
+    "activity_level": "moderate",
+    "multiplier": "1.55",
+    "protein_ratio": "0.4",
+    "protein_min": "2.2",
+    "protein_max": "3.0",
+    "fat_ratio": "0.25",
+    "carb_ratio": "0.35"
+  },
+  {
+    "goal": "muscle_gain",
+    "activity_level": "active",
+    "multiplier": "1.725",
+    "protein_ratio": "0.45",
+    "protein_min": "2.5",
+    "protein_max": "3.3",
+    "fat_ratio": "0.25",
+    "carb_ratio": "0.30"
+  },
+  {
+    "goal": "muscle_gain",
+    "activity_level": "very_active",
+    "multiplier": "1.9",
+    "protein_ratio": "0.45",
+    "protein_min": "2.8",
+    "protein_max": "3.5",
+    "fat_ratio": "0.25",
+    "carb_ratio": "0.30"
+  }
+]

@@ -1,0 +1,68 @@
+[
+  {
+    "category": "naming_patterns",
+    "when_needed": "Any technology with named entities",
+    "what_to_define": "How things are named (format/case/structure)",
+    "why_critical": "Agents will create different names for same concept"
+  },
+  {
+    "category": "structure_patterns",
+    "when_needed": "Any technology with organization",
+    "what_to_define": "How things are organized (folders/modules/layers)",
+    "why_critical": "Agents will put things in different places"
+  },
+  {
+    "category": "format_patterns",
+    "when_needed": "Any technology with data exchange",
+    "what_to_define": "How data is formatted (JSON/XML/responses)",
+    "why_critical": "Agents will use incompatible formats"
+  },
+  {
+    "category": "communication_patterns",
+    "when_needed": "Any technology with inter-component communication",
+    "what_to_define": "How components talk (protocols/events/messages)",
+    "why_critical": "Agents will use different communication methods"
+  },
+  {
+    "category": "lifecycle_patterns",
+    "when_needed": "Any technology with state or flow",
+    "what_to_define": "How state changes and flows work",
+    "why_critical": "Agents will handle state transitions differently"
+  },
+  {
+    "category": "location_patterns",
+    "when_needed": "Any technology with storage or routing",
+    "what_to_define": "Where things go (URLs/paths/storage)",
+    "why_critical": "Agents will put things in different locations"
+  },
+  {
+    "category": "consistency_patterns",
+    "when_needed": "Always",
+    "what_to_define": "Cross-cutting concerns (dates/errors/logs)",
+    "why_critical": "Every agent will do these differently"
+  },
+  {
+    "category": "# PRINCIPLE FOR LLM:",
+    "when_needed": null,
+    "what_to_define": null,
+    "why_critical": null
+  },
+  {
+    "category": "# Any time multiple agents might make the SAME deinnovationion DIFFERENTLY",
+    "when_needed": " that's a pattern to capture.",
+    "what_to_define": null,
+    "why_critical": null
+  },
+  {
+    "category": "# Think about: What could an agent encounter where they'd have to guess?",
+    "when_needed": null,
+    "what_to_define": null,
+    "why_critical": null
+  },
+  {
+    "category": "# If they'd guess",
+    "when_needed": " define the pattern. If it's obvious from the tech choice",
+    "what_to_define": " skip it.",
+    "why_critical": null
+  }
+]

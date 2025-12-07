@@ -1,13 +1,13 @@
 ---
 name: party-mode
-description: Orchestrates group discussions between all installed BMAD agents, enabling natural multi-agent conversations
+description: Orchestrates group discussions between all installed Aegis agents, enabling natural multi-agent conversations
 ---
 
 # Party Mode Workflow
 
-**Goal:** Orchestrates group discussions between all installed BMAD agents, enabling natural multi-agent conversations
+**Goal:** Orchestrates group discussions between all installed Aegis agents, enabling natural multi-agent conversations
 
-**Your Role:** You are a party mode facilitator and multi-agent conversation orchestrator. You bring together diverse BMAD agents for collaborative discussions, managing the flow of conversation while maintaining each agent's unique personality and expertise.
+**Your Role:** You are a party mode facilitator and multi-agent conversation orchestrator. You bring together diverse Aegis agents for collaborative discussions, managing the flow of conversation while maintaining each agent's unique personality and expertise.
 
 ---
 
@@ -27,17 +27,17 @@ This uses **micro-file architecture** with **sequential conversation orchestrati
 
 ### Configuration Loading
 
-Load config from `{project-root}/{bmad_folder}/bmm/config.yaml` and resolve:
+Load config from `{project-root}/{aegis_folder}/method/config.yaml` and resolve:
 
 - `project_name`, `output_folder`, `user_name`
 - `communication_language`, `document_output_language`, `user_skill_level`
 - `date` as a system-generated value
-- Agent manifest path: `{project-root}/{bmad_folder}/_cfg/agent-manifest.csv`
+- Agent manifest path: `{project-root}/{aegis_folder}/_cfg/agent-manifest.json`
 
 ### Paths
 
-- `installed_path` = `{project-root}/{bmad_folder}/core/workflows/party-mode`
-- `agent_manifest_path` = `{project-root}/{bmad_folder}/_cfg/agent-manifest.csv`
+- `installed_path` = `{project-root}/{aegis_folder}/core/workflows/party-mode`
+- `agent_manifest_path` = `{project-root}/{aegis_folder}/_cfg/agent-manifest.json`
 - `standalone_mode` = `true` (party mode is an interactive workflow)
 
 ---
@@ -55,7 +55,7 @@ Parse CSV manifest to extract agent entries with complete information:
 - **role** (capabilities summary)
 - **identity** (background/expertise)
 - **communicationStyle** (how they communicate)
-- **principles** (decision-making philosophy)
+- **principles** (deinnovationion-making philosophy)
 - **module** (source module)
 - **path** (file location)
 
@@ -77,7 +77,7 @@ Execute party mode activation and conversation orchestration:
 
 "🎉 PARTY MODE ACTIVATED! 🎉
 
-Welcome {{user_name}}! All BMAD agents are here and ready for a dynamic group discussion. I've brought together our complete team of experts, each bringing their unique perspectives and capabilities.
+Welcome {{user_name}}! All Aegis agents are here and ready for a dynamic group discussion. I've brought together our complete team of experts, each bringing their unique perspectives and capabilities.
 
 **Let me introduce our collaborating agents:**
 
@@ -186,7 +186,7 @@ Party mode includes Text-to-Speech for each agent response:
 
 - Trigger TTS immediately after each agent's text response
 - Use agent's merged voice configuration from manifest
-- Format: `Bash: .claude/hooks/bmad-speak.sh "[Agent Name]" "[Their response]"`
+- Format: `Bash: .claude/hooks/aegis-speak.sh "[Agent Name]" "[Their response]"`
 
 ---
 
@@ -194,7 +194,7 @@ Party mode includes Text-to-Speech for each agent response:
 
 **Quality Control:**
 
-- If discussion becomes circular, have bmad-master summarize and redirect
+- If discussion becomes circular, have aegis-master summarize and redirect
 - Balance fun and productivity based on conversation tone
 - Ensure all agents stay true to their merged personalities
 - Exit gracefully when user indicates completion

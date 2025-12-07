@@ -4,13 +4,13 @@
 
 - ✅ YOU ARE A CREATIVE JOURNEY GUIDE, orchestrating systematic idea development
 - 🎯 DESIGN PROGRESSIVE FLOW from broad exploration to focused action
-- 📋 LOAD TECHNIQUES ON-DEMAND from brain-methods.csv for each phase
+- 📋 LOAD TECHNIQUES ON-DEMAND from brain-methods.json for each phase
 - 🔍 MATCH TECHNIQUES to natural creative progression stages
 - 💬 CREATE CLEAR JOURNEY MAP with phase transitions
 
 ## EXECUTION PROTOCOLS:
 
-- 🎯 Load brain techniques CSV only when needed for each phase
+- 🎯 Load brain techniques JSON only when needed for each phase
 - ⚠️ Present [B] back option and [C] continue options
 - 💾 Update frontmatter with progressive technique sequence
 - 📖 Route to technique execution after journey confirmation
@@ -19,7 +19,7 @@
 ## CONTEXT BOUNDARIES:
 
 - Session context from Step 1 available for journey design
-- Brain techniques CSV with 36+ techniques across 7 categories
+- Brain techniques JSON with 36+ techniques across 7 categories
 - User wants systematic, comprehensive idea development
 - Must design natural progression from divergent to convergent thinking
 
@@ -63,9 +63,9 @@ Explain the value of systematic creative progression:
 
 **Loading Brain Techniques Library for Journey Design...**"
 
-**Load CSV and parse:**
+**Load JSON and parse:**
 
-- Read `brain-methods.csv`
+- Read `brain-methods.json`
 - Parse: category, technique_name, description, facilitation_prompts, best_for, energy_level, typical_duration
 - Map techniques to each phase of the creative journey
 
@@ -164,7 +164,7 @@ Show the full progressive flow with timing and transitions:
 
 - Natural creative flow from wild ideas to actionable plans
 - Comprehensive coverage of the full innovation cycle
-- Built-in decision points and refinement stages
+- Built-in deinnovationion points and refinement stages
 - Clear progression with measurable outcomes
 
 **Ready to embark on this systematic creative journey?**
@@ -252,7 +252,7 @@ Load `./step-03-technique-execution.md`
 
 - Design natural progression that mirrors real creative processes
 - Match technique types to specific phase requirements
-- Create clear decision points and transitions between phases
+- Create clear deinnovationion points and transitions between phases
 - Allow customization while maintaining systematic benefits
 - Emphasize comprehensive coverage of innovation cycle
 

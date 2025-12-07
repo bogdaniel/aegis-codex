@@ -1,0 +1,16 @@
+name: hello-world
+description: Minimal example workflow for a custom agent.
+installed_path: "{project-root}/{aegis_folder}/custom/workflows/hello-world"
+default_output_file: "{output_folder}/hello-world-{{date}}.md"
+
+steps:
+  - description: "Greet the user and confirm the goal."
+    actions:
+      - ask: "Hi! What should we produce in this hello-world example?"
+  - description: "Summarize and write to output."
+    actions:
+      - write_file: "{output_folder}/hello-world-{{date}}.md"
+        template: |
+          # Hello World Summary
+          Goal: {{user_goal}}
+          Timestamp: {{date}}

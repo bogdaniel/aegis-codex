@@ -1,0 +1,177 @@
+[
+  {
+    "category": "transformation",
+    "story_type": "hero-journey",
+    "name": "Hero's Journey",
+    "description": "Classic transformation arc following protagonist through adventure and return with wisdom",
+    "key_questions": "Who is the hero?|What's their ordinary world?|What call disrupts their world?|What trials do they face?|How are they transformed?"
+  },
+  {
+    "category": "transformation",
+    "story_type": "pixar-spine",
+    "name": "Pixar Story Spine",
+    "description": "Emotional narrative structure using once upon a time framework that builds tension to resolution",
+    "key_questions": "Once upon a time what?|Every day what happened?|Until one day what changed?|Because of that what?|Until finally how resolved?"
+  },
+  {
+    "category": "transformation",
+    "story_type": "customer-journey",
+    "name": "Customer Journey",
+    "description": "Narrative following customer transformation from pain point through solution to success",
+    "key_questions": "What was the before struggle?|What discovery moment occurred?|How did they implement?|What transformation happened?|What's their new reality?"
+  },
+  {
+    "category": "transformation",
+    "story_type": "challenge-overcome",
+    "name": "Challenge Overcome",
+    "description": "Dramatic structure centered on confronting and conquering significant obstacles",
+    "key_questions": "What obstacle blocked progress?|How did stakes escalate?|What was the darkest moment?|What breakthrough occurred?|What was learned?"
+  },
+  {
+    "category": "transformation",
+    "story_type": "character-arc",
+    "name": "Character Arc",
+    "description": "Personal evolution story showing growth through experience and struggle",
+    "key_questions": "Who are they at start?|What forces change?|What do they resist?|What breakthrough shifts them?|Who have they become?"
+  },
+  {
+    "category": "strategic",
+    "story_type": "brand-story",
+    "name": "Brand Story",
+    "description": "Authentic narrative communicating brand values mission and unique market position",
+    "key_questions": "What sparked this brand?|What core values drive it?|How does it impact customers?|What makes it different?|Where is it heading?"
+  },
+  {
+    "category": "strategic",
+    "story_type": "vision-narrative",
+    "name": "Vision Narrative",
+    "description": "Future-focused story painting vivid picture of desired state and path to get there",
+    "key_questions": "What's the current reality?|What opportunity emerges?|What's the bold vision?|What's the strategic path?|What does transformed future look like?"
+  },
+  {
+    "category": "strategic",
+    "story_type": "origin-story",
+    "name": "Origin Story",
+    "description": "Foundational narrative explaining how something came to be and why it matters today",
+    "key_questions": "What was the spark moment?|What early struggles occurred?|What key breakthrough happened?|How did it evolve?|What's the current mission?"
+  },
+  {
+    "category": "strategic",
+    "story_type": "positioning-story",
+    "name": "Positioning Story",
+    "description": "Narrative establishing unique market position and competitive differentiation",
+    "key_questions": "What market gap exists?|How are you uniquely qualified?|What makes your approach different?|Why should audience care?|What future do you enable?"
+  },
+  {
+    "category": "strategic",
+    "story_type": "culture-story",
+    "name": "Culture Story",
+    "description": "Internal narrative defining organizational values behaviors and identity",
+    "key_questions": "What principles guide deinnovationions?|What behaviors exemplify culture?|What stories illustrate values?|How do people experience it?|What culture are you building?"
+  },
+  {
+    "category": "persuasive",
+    "story_type": "pitch-narrative",
+    "name": "Pitch Narrative",
+    "description": "Compelling story structure designed to inspire action investment or partnership",
+    "key_questions": "What problem landscape exists?|What's your vision for solution?|What proof validates approach?|What's the opportunity size?|What action do you want?"
+  },
+  {
+    "category": "persuasive",
+    "story_type": "sales-story",
+    "name": "Sales Story",
+    "description": "Customer-centric narrative demonstrating value and building desire for solution",
+    "key_questions": "What pain do they feel?|How do you understand it?|What solution transforms situation?|What results can they expect?|What's the path forward?"
+  },
+  {
+    "category": "persuasive",
+    "story_type": "change-story",
+    "name": "Change Story",
+    "description": "Narrative making case for transformation and mobilizing people through transition",
+    "key_questions": "Why can't we stay here?|What does better look like?|What's at stake if we don't?|How do we get there?|What's in it for them?"
+  },
+  {
+    "category": "persuasive",
+    "story_type": "fundraising-story",
+    "name": "Fundraising Story",
+    "description": "Emotionally compelling narrative connecting donor values to mission impact",
+    "key_questions": "What problem breaks hearts?|What solution creates hope?|What impact will investment make?|Why is this urgent?|How can they help?"
+  },
+  {
+    "category": "persuasive",
+    "story_type": "advocacy-story",
+    "name": "Advocacy Story",
+    "description": "Story galvanizing support for cause movement or policy change",
+    "key_questions": "What injustice demands attention?|Who is affected and how?|What change is needed?|What happens if we act?|How can they join?"
+  },
+  {
+    "category": "analytical",
+    "story_type": "data-story",
+    "name": "Data Storytelling",
+    "description": "Transform data insights into compelling narrative with clear actionable takeaways",
+    "key_questions": "What context is needed?|What data reveals insight?|What patterns explain it?|So what why does it matter?|What actions should follow?"
+  },
+  {
+    "category": "analytical",
+    "story_type": "case-study",
+    "name": "Case Study",
+    "description": "Detailed narrative documenting real-world application results and learnings",
+    "key_questions": "What was the situation?|What approach was taken?|What challenges emerged?|What results were achieved?|What lessons transfer?"
+  },
+  {
+    "category": "analytical",
+    "story_type": "research-story",
+    "name": "Research Narrative",
+    "description": "Story structure presenting research findings in accessible engaging way",
+    "key_questions": "What question drove research?|How was it investigated?|What did you discover?|What does it mean?|What are implications?"
+  },
+  {
+    "category": "analytical",
+    "story_type": "insight-narrative",
+    "name": "Insight Narrative",
+    "description": "Narrative revealing non-obvious truth or pattern that shifts understanding",
+    "key_questions": "What did everyone assume?|What did you notice?|What deeper pattern emerged?|Why does it matter?|What should change?"
+  },
+  {
+    "category": "analytical",
+    "story_type": "process-story",
+    "name": "Process Story",
+    "description": "Behind-the-scenes narrative showing how something was made or accomplished",
+    "key_questions": "What was being created?|What approach was chosen?|What challenges arose?|How were they solved?|What was learned?"
+  },
+  {
+    "category": "emotional",
+    "story_type": "hook-driven",
+    "name": "Hook Driven",
+    "description": "Story structure maximizing emotional engagement through powerful opening and touchpoints",
+    "key_questions": "What surprising fact opens?|What urgent question emerges?|Where are emotional peaks?|What creates relatability?|What payoff satisfies?"
+  },
+  {
+    "category": "emotional",
+    "story_type": "conflict-resolution",
+    "name": "Conflict Resolution",
+    "description": "Narrative centered on tension building and satisfying resolution of core conflict",
+    "key_questions": "What's the central conflict?|Who wants what and why?|What prevents resolution?|How does tension escalate?|How is it resolved?"
+  },
+  {
+    "category": "emotional",
+    "story_type": "empathy-story",
+    "name": "Empathy Story",
+    "description": "Story designed to create emotional connection and understanding of other perspectives",
+    "key_questions": "Whose perspective are we taking?|What do they experience?|What do they feel?|Why should audience care?|What common ground exists?"
+  },
+  {
+    "category": "emotional",
+    "story_type": "human-interest",
+    "name": "Human Interest",
+    "description": "Personal story highlighting universal human experiences and emotions",
+    "key_questions": "Who is at the center?|What personal stakes exist?|What universal themes emerge?|What emotional journey occurs?|What makes it relatable?"
+  },
+  {
+    "category": "emotional",
+    "story_type": "vulnerable-story",
+    "name": "Vulnerable Story",
+    "description": "Authentic personal narrative sharing struggle failure or raw truth to build connection",
+    "key_questions": "What truth is hard to share?|What struggle was faced?|What was learned?|Why share this now?|What hope does it offer?"
+  }
+]

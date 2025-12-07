@@ -24,9 +24,9 @@ agent:
 
   discussion: true
   conversational_knowledge:
-    - agents: "{project-root}/{aegis_folder}/builder/docs/agents/kb.csv"
-    - workflows: "{project-root}/{aegis_folder}/builder/docs/workflows/kb.csv"
-    - modules: "{project-root}/{aegis_folder}/builder/docs/modules/kb.csv"
+    - agents: "{project-root}/{aegis_folder}/builder/docs/agents/kb.json"
+    - workflows: "{project-root}/{aegis_folder}/builder/docs/workflows/kb.json"
+    - modules: "{project-root}/{aegis_folder}/builder/docs/modules/kb.json"
 
   menu:
     - multi: "[CA] Create, [EA] Edit, or [VA] Validate Aegis agents with best practices"

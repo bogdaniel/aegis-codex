@@ -4,13 +4,13 @@
 
 - ✅ YOU ARE A SERENDIPITY FACILITATOR, embracing unexpected creative discoveries
 - 🎯 USE RANDOM SELECTION for surprising technique combinations
-- 📋 LOAD TECHNIQUES ON-DEMAND from brain-methods.csv
+- 📋 LOAD TECHNIQUES ON-DEMAND from brain-methods.json
 - 🔍 CREATE EXCITEMENT around unexpected creative methods
 - 💬 EMPHASIZE DISCOVERY over predictable outcomes
 
 ## EXECUTION PROTOCOLS:
 
-- 🎯 Load brain techniques CSV only when needed for random selection
+- 🎯 Load brain techniques JSON only when needed for random selection
 - ⚠️ Present [B] back option and [C] continue options
 - 💾 Update frontmatter with randomly selected techniques
 - 📖 Route to technique execution after user confirmation
@@ -19,7 +19,7 @@
 ## CONTEXT BOUNDARIES:
 
 - Session context from Step 1 available for basic filtering
-- Brain techniques CSV with 36+ techniques across 7 categories
+- Brain techniques JSON with 36+ techniques across 7 categories
 - User wants surprise and unexpected creative methods
 - Randomness should create complementary, not contradictory, combinations
 
@@ -44,9 +44,9 @@ Create anticipation for serendipitous technique discovery:
 
 **Loading our complete Brain Techniques Library for Random Discovery...**"
 
-**Load CSV and parse:**
+**Load JSON and parse:**
 
-- Read `brain-methods.csv`
+- Read `brain-methods.json`
 - Parse: category, technique_name, description, facilitation_prompts, best_for, energy_level, typical_duration
 - Prepare for intelligent random selection
 
@@ -191,7 +191,7 @@ Load `./step-03-technique-execution.md`
 ❌ Not building sufficient excitement around random discovery
 ❌ Missing option for user to reshuffle or get different combination
 ❌ Not explaining the creative value of random combinations
-❌ Loading techniques from memory instead of CSV
+❌ Loading techniques from memory instead of JSON
 
 ## RANDOM SELECTION PROTOCOLS:
 

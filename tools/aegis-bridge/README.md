@@ -7,7 +7,7 @@ Compiles Aegis `.mdc` agents into compiled agents (`.md` XML) and web bundles (`
 - `npm run aegis:validate` — Runs the same pipeline to ensure schema compliance.
 - `npm run aegis:bundle` — Alias of compile (includes workflows/tasks manifests and bundles copies).
 - `npm run aegis:ci` — CI validation (builds to `.tmp-aegis-ci`, checks manifests/workflows/tasks presence).
-- `npm run aegis:diagrams` — Generate workflow diagrams from `.aegis/_cfg/workflow-manifest.csv`.
+- `npm run aegis:diagrams` — Generate workflow diagrams from `.aegis/_cfg/workflow-manifest.json`.
 
 Options:
 - `--out <path>`: output root (default `.`)
@@ -19,7 +19,7 @@ Options:
 Additional outputs:
 - Generates `.aegis/core/config.yaml` if missing.
 - Exports workflows/tasks from source into `.aegis/core/tasks` and `.aegis/method/workflows|tasks` when source exists.
-- Creates `_cfg/manifest.yaml` and empty manifests (`workflow-manifest.csv`, `task-manifest.csv`, `tool-manifest.csv`).
+- Creates `_cfg/manifest.yaml` and empty manifests (`workflow-manifest.json`, `task-manifest.json`, `tool-manifest.json`).
 - Populates manifests by scanning `.aegis` workflows/tasks and writing workflow/task manifest CSVs.
 
 ## Mapping
