@@ -83,15 +83,15 @@ pre-commit run
 
 ## Standalone Architecture Check Script
 
-**File:** `scripts/pre-commit-architecture-check.sh`
+**File:** `node src/checks/pre-commit-architecture-check.js`
 
 **Usage:**
 ```bash
 # Run manually
-./scripts/pre-commit-architecture-check.sh
+node src/checks/pre-commit-architecture-check.js
 
 # Use as git pre-commit hook
-ln -s ../../scripts/pre-commit-architecture-check.sh .git/hooks/pre-commit
+ln -s ../.node src/checks/pre-commit-architecture-check.js .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 ```
 
@@ -262,7 +262,7 @@ ls -la .git/hooks/pre-commit
 pre-commit run --all-files
 
 # Or use standalone script
-./scripts/pre-commit-architecture-check.sh
+node src/checks/pre-commit-architecture-check.js
 
 # TypeScript-specific
 cd test/example-app
@@ -283,7 +283,7 @@ npm run type-check
 
 1. ✅ **GitHub Actions workflow created** — `.github/workflows/aegis-architecture-check.yml`
 2. ✅ **Pre-commit hooks configured** — `.pre-commit-config.yaml`
-3. ✅ **Standalone script created** — `scripts/pre-commit-architecture-check.sh`
+3. ✅ **Standalone script created** — `node src/checks/pre-commit-architecture-check.js`
 4. ⏭️ **Install pre-commit hooks:** `pip install pre-commit && pre-commit install`
 5. ⏭️ **Configure Deptrac for PHP** (if using PHP)
 6. ⏭️ **Set up ArchUnit for Java/C#** (if using Java/C#)

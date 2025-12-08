@@ -323,11 +323,10 @@ When updating rules or agents:
 1. Run relevant test scenarios
 2. Compare outputs to acceptance criteria
 3. If outputs drift, update rules in `.cursor/rules/*.mdc`
-4. Regenerate `AGENTS.md` via `node scripts/build-agents-doc.js`
+4. Regenerate `AGENTS.md` via `node src/rules-builder/build-agents-doc.js` (or `npx aegis rules`)
 5. Update this document if acceptance criteria change
 
 ---
 
 **Last Updated:** 2024-01-XX
 **Version:** 1.0.0
-

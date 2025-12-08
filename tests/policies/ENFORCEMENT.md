@@ -5,7 +5,7 @@
 Policy scenarios in `tests/policies/` are now **enforceable** through multiple mechanisms:
 
 1. **Structured Format** - Each scenario has `prompt.md`, `expected-output.md`, and `validation.md`
-2. **Validation Script** - `scripts/validate-policies.sh` validates scenario structure
+2. **Validation Script** - `node src/checks/validate-policies.js` validates scenario structure
 3. **CI Integration** - Policy validation runs in GitHub Actions
 4. **Pre-commit Hooks** - Policy validation runs before commits
 5. **Rule References** - Policies are referenced in `.cursor/rules/*.mdc` files
@@ -14,7 +14,7 @@ Policy scenarios in `tests/policies/` are now **enforceable** through multiple m
 
 ### 1. Validation Script
 
-**Location:** `scripts/validate-policies.sh`
+**Location:** `node src/checks/validate-policies.js`
 
 **Purpose:** Validates that all policy scenarios have the required structure:
 - `prompt.md` - Contains the prompt to run
@@ -23,7 +23,7 @@ Policy scenarios in `tests/policies/` are now **enforceable** through multiple m
 
 **Usage:**
 ```bash
-./scripts/validate-policies.sh
+node src/checks/validate-policies.js
 ```
 
 **Integration:**
@@ -110,7 +110,7 @@ Contains:
    - `prompt.md` - The prompt
    - `expected-output.md` - Expected behavior
    - `validation.md` - Acceptance criteria
-3. Run validation: `./scripts/validate-policies.sh`
+3. Run validation: `node src/checks/validate-policies.js`
 4. Update `tests/policies/README.md` to list the new scenario
 5. Reference the policy in relevant `.cursor/rules/*.mdc` files
 
@@ -131,7 +131,7 @@ If a policy validation fails:
 
 1. **Tighten relevant rules** - Update `.cursor/rules/*.mdc` files to enforce the policy
 2. **Update agent definitions** - Ensure agents in `.cursor/rules/20-agents.mdc` comply
-3. **Re-run validation** - Verify fixes with `./scripts/validate-policies.sh`
+3. **Re-run validation** - Verify fixes with `node src/checks/validate-policies.js`
 4. **Document changes** - Update policy documentation if criteria change
 
 ## See Also

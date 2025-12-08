@@ -31,7 +31,7 @@ GitHub Actions workflow (`.github/workflows/aegis-architecture-check.yml`) runs 
 
 ```bash
 # Run architecture checks manually
-./scripts/pre-commit-architecture-check.sh
+node src/checks/pre-commit-architecture-check.js
 
 # Or use pre-commit
 pre-commit run --all-files
@@ -62,7 +62,7 @@ pre-commit run --all-files
 
 1. **`.github/workflows/aegis-architecture-check.yml`** — GitHub Actions workflow
 2. **`.pre-commit-config.yaml`** — Pre-commit hooks configuration
-3. **`scripts/pre-commit-architecture-check.sh`** — Standalone check script
+3. **`node src/checks/pre-commit-architecture-check.js`** — Standalone check script
 4. **`docs/CI_CD_SETUP.md`** — Detailed setup guide
 
 ---

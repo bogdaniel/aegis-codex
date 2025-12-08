@@ -36,7 +36,7 @@ function renderRule(name, rule) {
 function generateAgentsDoc(rules, sourceDir = ".cursor/rules") {
   const lines = [];
   lines.push(`# AGENTS (generated from ${sourceDir})`);
-  lines.push(`> Do not edit by hand. Run: node scripts/build-agents-doc.js`);
+  lines.push(`> Do not edit by hand. Run: node src/rules-builder/build-agents-doc.js`);
   lines.push("");
 
   lines.push(`[RULE FILE ORDER]`);

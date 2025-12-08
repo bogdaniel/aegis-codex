@@ -57,24 +57,24 @@ The rule builder lets you select which rules to include in your project. You hav
 3. **Choose output mode** (important: choose one to avoid loading both in Cursor IDE):
    ```bash
    # For Cursor IDE: Copy rules to .cursor/rules/ (recommended)
-   node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --copy-rules
    
    # For human-readable summary: Generate AGENTS.md only
-   node scripts/build-agents-doc.js --config .aegis-rules.json --generate-agents
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --generate-agents
    
    # Generate both (not recommended - Cursor IDE will load .cursor/rules/ automatically)
-   node scripts/build-agents-doc.js --config .aegis-rules.json --both
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --both
    ```
 
 4. **Clean up repository** (remove builder files after generation):
    ```bash
    # Generate rules and clean up in one command
-   node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules --cleanup
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --copy-rules --cleanup
    ```
 
 5. **Preview what will be included** (dry run):
    ```bash
-   node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules --cleanup --dry-run
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --copy-rules --cleanup --dry-run
    ```
 
 ### Option 2: Using --interactive Flag (Interactive Selection)
@@ -84,10 +84,10 @@ For interactive rule selection with prompts:
 ```bash
 # Interactive mode - prompts you to select rules
 # Choose output mode: --copy-rules (for Cursor IDE) or --generate-agents (for summary)
-node scripts/build-agents-doc.js --interactive --copy-rules
+node src/rules-builder/build-agents-doc.js --interactive --copy-rules
 
 # With cleanup (removes builder files after generation)
-node scripts/build-agents-doc.js --interactive --copy-rules --cleanup
+node src/rules-builder/build-agents-doc.js --interactive --copy-rules --cleanup
 ```
 
 The interactive mode will:
@@ -105,7 +105,7 @@ For quick selection of languages only:
 
 ```bash
 # Include TypeScript and PHP rules (includes all mandatory rules + these languages)
-node scripts/build-agents-doc.js --langs typescript,php --both
+node src/rules-builder/build-agents-doc.js --langs typescript,php --both
 ```
 
 **Note:** This includes all mandatory rules plus the specified languages. For more control, use a config file or interactive mode.
@@ -116,30 +116,30 @@ node scripts/build-agents-doc.js --langs typescript,php --both
 
 ```bash
 # Interactive rule selection with prompts
-node scripts/build-agents-doc.js --interactive --both
+node src/rules-builder/build-agents-doc.js --interactive --both
 
 # Interactive mode with dry run (preview only)
-node scripts/build-agents-doc.js --interactive --both --dry-run
+node src/rules-builder/build-agents-doc.js --interactive --both --dry-run
 ```
 
 ### Output Modes
 
 ```bash
 # Generate only AGENTS.md (default if no mode specified)
-node scripts/build-agents-doc.js --config .aegis-rules.json --generate-agents
+node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --generate-agents
 
 # Copy rules only to .cursor/rules/
-node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules
+node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --copy-rules
 
 # Do both (recommended)
-node scripts/build-agents-doc.js --config .aegis-rules.json --both
+node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --both
 ```
 
 ### Preview Mode
 
 ```bash
 # See what would be included without actually generating files
-node scripts/build-agents-doc.js --config .aegis-rules.json --both --dry-run
+node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --both --dry-run
 ```
 
 ## What Gets Included
@@ -198,7 +198,7 @@ These rules are **always** included for backend/server-side profiles, regardless
 cp docs/.aegis-rules.example-typescript-backend.json .aegis-rules.json
 
 # Generate rules
-node scripts/build-agents-doc.js --config .aegis-rules.json --both
+node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --both
 ```
 
 This includes:
@@ -215,7 +215,7 @@ This includes:
 cp docs/.aegis-rules.example-minimal.json .aegis-rules.json
 
 # Generate rules
-node scripts/build-agents-doc.js --config .aegis-rules.json --both
+node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --both
 ```
 
 This includes:
@@ -256,26 +256,26 @@ This includes:
 
 2. Generate:
    ```bash
-   node scripts/build-agents-doc.js --config .aegis-rules.json --both
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --both
    ```
 
 ## Quick Reference
 
 ```bash
 # Preview with minimal config
-node scripts/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --both --dry-run
+node src/rules-builder/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --both --dry-run
 
 # Generate with TypeScript backend config
-node scripts/build-agents-doc.js --config docs/.aegis-rules.example-typescript-backend.json --both
+node src/rules-builder/build-agents-doc.js --config docs/.aegis-rules.example-typescript-backend.json --both
 
 # Quick language selection (backward compatible)
-node scripts/build-agents-doc.js --langs typescript,php --both
+node src/rules-builder/build-agents-doc.js --langs typescript,php --both
 
 # Generate only AGENTS.md
-node scripts/build-agents-doc.js --config .aegis-rules.json --generate-agents
+node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --generate-agents
 
 # Copy rules only
-node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules
+node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --copy-rules
 ```
 
 ## Available Example Configs

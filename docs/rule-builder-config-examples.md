@@ -32,13 +32,13 @@ cp docs/.aegis-rules.example-full-stack.json .aegis-rules.json
 
 ```bash
 # Generate AGENTS.md only
-node scripts/build-agents-doc.js --config .aegis-rules.json
+node src/rules-builder/build-agents-doc.js --config .aegis-rules.json
 
 # Copy rules to .cursor/rules/ and generate AGENTS.md
-node scripts/build-agents-doc.js --config .aegis-rules.json --both
+node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --both
 
 # Dry run to see what would be included
-node scripts/build-agents-doc.js --config .aegis-rules.json --both --dry-run
+node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --both --dry-run
 ```
 
 ## Config Structure
@@ -142,7 +142,7 @@ You can override language selection via CLI:
 
 ```bash
 # Use config file but override languages
-node scripts/build-agents-doc.js --config .aegis-rules.json --langs typescript,php
+node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --langs typescript,php
 ```
 
 ## Default Behavior

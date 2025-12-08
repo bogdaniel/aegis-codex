@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const { buildAll } = require('../lib/bridge');
 
 const opts = {
-  config: process.env.AEGIS_CONFIG || 'tools/aegis-bridge/config/agents.json',
+  config: process.env.AEGIS_CONFIG || path.join('src', 'config', 'agents.json'),
   out: path.resolve('.tmp-aegis-ci'),
   folder: process.env.AEGIS_FOLDER || '.aegis',
   modules: process.env.AEGIS_MODULES || '',

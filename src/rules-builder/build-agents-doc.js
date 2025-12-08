@@ -6,7 +6,7 @@
  * Generates AGENTS.md from selected rules based on configuration.
  * 
  * Usage:
- *   node scripts/build-agents-doc.js [--config .aegis-rules.json] [--copy-rules|--generate-agents|--both] [--cleanup] [--dry-run] [--langs typescript,php] [--interactive]
+ *   node src/rules-builder/build-agents-doc.js [--config .aegis-rules.json] [--copy-rules|--generate-agents|--both] [--cleanup] [--dry-run] [--langs typescript,php] [--interactive]
  * 
  * Output modes (choose one):
  *   --copy-rules      Copy rules to .cursor/rules/ (for Cursor IDE)

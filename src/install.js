@@ -110,9 +110,6 @@ async function collectConfigAnswers(rl, installCfg, contextOverrides = {}) {
     if (typeof defaultVal === 'string') {
       defaultVal = resolvePlaceholders(defaultVal, mergedContext);
     }
-    if (key === 'aegis_folder' && defaultVal === '.bmad') {
-      defaultVal = '.aegis';
-    }
     const choices = Array.isArray(meta['single-select']) ? meta['single-select'] : null;
     const validator = meta.regex ? (val) => new RegExp(meta.regex).test(val) : null;
     const answer = await promptQuestion(rl, promptText, defaultVal, choices, validator);

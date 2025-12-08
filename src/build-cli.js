@@ -7,7 +7,7 @@ const program = new Command();
 program
   .name('aegis-bridge')
   .description('Compile Aegis agents into compiled agents and web bundles')
-  .option('-c, --config <path>', 'Agent mapping config JSON', 'tools/aegis-bridge/config/agents.json')
+  .option('-c, --config <path>', 'Agent mapping config JSON', path.join(__dirname, 'config', 'agents.json'))
   .option('-o, --out <path>', 'Output root directory (default current project)', '.')
   .option('-f, --folder <name>', 'install folder name', '.aegis')
   .option('-m, --modules <list>', 'Comma-separated extra modules to export (in addition to mapped modules)', '')

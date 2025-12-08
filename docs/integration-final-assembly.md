@@ -3,7 +3,7 @@
 - Purpose: tie together architecture, security, testing, CI, and agents into a cohesive configuration. Use after regenerating `.cursor/rules/` and `AGENTS.md`.
 
 ## Configuration
-- Regenerate rules: `node scripts/build-agents-doc.js --copy-rules` (or `--both` if AGENTS.md needed).
+- Regenerate rules: `node src/rules-builder/build-agents-doc.js --copy-rules` (or `--both` if AGENTS.md needed).
 - Ensure `.cursor/rules/` and `AGENTS.md` match `rules/` sources; do not edit generated files.
 - Verify CI config includes architecture/testing/security gates per `rules/topics/34-ci.mdc`.
 

@@ -18,7 +18,7 @@ This guide explains how to use Aegis Codex rules (`rules/*.mdc` exported to `.cu
 
 ```bash
 # Interactive prompts guide you through rule selection
-node scripts/build-agents-doc.js --interactive --both
+node src/rules-builder/build-agents-doc.js --interactive --both
 ```
 
 **Option 2: Use Example Config**
@@ -29,7 +29,7 @@ node scripts/build-agents-doc.js --interactive --both
    cp docs/.aegis-rules.example-typescript-backend.json .aegis-rules.json
    
    # Generate .cursor/rules/ and AGENTS.md
-   node scripts/build-agents-doc.js --config .aegis-rules.json --both
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --both
    ```
    See the [Rule Builder](#rule-builder) section below for details.
 
@@ -288,7 +288,7 @@ See `tests/multi-agent/` for test scenarios validating multi-agent workflows.
    - Controllers are thin (delegate to Application use cases)
    - Cross-context via public API modules
 
-4. **Update:** Regenerate `AGENTS.md` by running `node scripts/build-agents-doc.js`
+4. **Update:** Regenerate `AGENTS.md` by running `node src/rules-builder/build-agents-doc.js`
 
 #### Adding a New Pattern
 
@@ -427,8 +427,8 @@ Expected: Architecture shape with Domain/Application/Infrastructure/Interface la
 - C#: `.cursor/rules/50-lang-csharp.mdc`
 
 ### Common Commands
-- Generate rules and AGENTS.md: `node scripts/build-agents-doc.js --config .aegis-rules.json --both`
-- Regenerate after rule changes: `node scripts/build-agents-doc.js --config .aegis-rules.json --both`
+- Generate rules and AGENTS.md: `node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --both`
+- Regenerate after rule changes: `node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --both`
 - Run tests: Language-specific (see `50-lang-*.mdc`)
 - Lint/format: Language-specific (see `50-lang-*.mdc`)
 
@@ -494,18 +494,18 @@ The Aegis Codex rule builder allows you to select only the rules relevant to you
 2. **Generate rules and AGENTS.md**:
    ```bash
    # Generate both .cursor/rules/ and AGENTS.md
-   node scripts/build-agents-doc.js --config .aegis-rules.json --both
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --both
    
    # Or generate only AGENTS.md
-   node scripts/build-agents-doc.js --config .aegis-rules.json --generate-agents
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --generate-agents
    
    # Or copy rules only
-   node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --copy-rules
    ```
 
 3. **Preview what will be included** (dry run):
    ```bash
-   node scripts/build-agents-doc.js --config .aegis-rules.json --both --dry-run
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --both --dry-run
    ```
 
 ### What Gets Included
@@ -564,7 +564,7 @@ The Aegis Codex rule builder allows you to select only the rules relevant to you
 The builder supports the legacy `--langs` flag:
 ```bash
 # Include TypeScript and PHP rules
-node scripts/build-agents-doc.js --langs typescript,php --both
+node src/rules-builder/build-agents-doc.js --langs typescript,php --both
 ```
 
 ### Available Example Configs
@@ -582,13 +582,13 @@ node scripts/build-agents-doc.js --langs typescript,php --both
 
 - **Config Examples**: See `docs/rule-builder-config-examples.md` for detailed configuration documentation
 - **Testing Guide**: See `docs/rule-builder-testing.md` for comprehensive testing instructions
-- **Test Script**: Run `./scripts/test-rule-builder.sh` to validate the rule builder
+- **Test Script**: Run `node src/checks/test-rule-builder.js` to validate the rule builder
 
 ### Updating Rules
 
 After modifying rules in the `rules/` directory, regenerate `.cursor/rules/` and `AGENTS.md`:
 ```bash
-node scripts/build-agents-doc.js --config .aegis-rules.json --both
+node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --both
 ```
 
 **Note:** This tier system indicates where to invest next and prevents pretending all languages are equally governed. When adding new languages, prioritize Tier 1 for enterprise-critical stacks.
@@ -619,18 +619,18 @@ The Aegis Codex rule builder allows you to select only the rules relevant to you
 2. **Generate rules and AGENTS.md**:
    ```bash
    # Generate both .cursor/rules/ and AGENTS.md
-   node scripts/build-agents-doc.js --config .aegis-rules.json --both
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --both
    
    # Or generate only AGENTS.md
-   node scripts/build-agents-doc.js --config .aegis-rules.json --generate-agents
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --generate-agents
    
    # Or copy rules only
-   node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --copy-rules
    ```
 
 3. **Preview what will be included** (dry run):
    ```bash
-   node scripts/build-agents-doc.js --config .aegis-rules.json --both --dry-run
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --both --dry-run
    ```
 
 ### What Gets Included
@@ -689,7 +689,7 @@ The Aegis Codex rule builder allows you to select only the rules relevant to you
 The builder supports the legacy `--langs` flag:
 ```bash
 # Include TypeScript and PHP rules
-node scripts/build-agents-doc.js --langs typescript,php --both
+node src/rules-builder/build-agents-doc.js --langs typescript,php --both
 ```
 
 ### Available Example Configs
@@ -707,13 +707,13 @@ node scripts/build-agents-doc.js --langs typescript,php --both
 
 - **Config Examples**: See `docs/rule-builder-config-examples.md` for detailed configuration documentation
 - **Testing Guide**: See `docs/rule-builder-testing.md` for comprehensive testing instructions
-- **Test Script**: Run `./scripts/test-rule-builder.sh` to validate the rule builder
+- **Test Script**: Run `node src/checks/test-rule-builder.js` to validate the rule builder
 
 ### Updating Rules
 
 After modifying rules in the `rules/` directory, regenerate `.cursor/rules/` and `AGENTS.md`:
 ```bash
-node scripts/build-agents-doc.js --config .aegis-rules.json --both
+node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --both
 ```
 
 ---

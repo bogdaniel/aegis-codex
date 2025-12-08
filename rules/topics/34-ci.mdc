@@ -218,9 +218,9 @@ See `docs/tooling/` for more examples (if created).
   - Go: fmt + vet
   - Python: Black + Ruff
 
-**Standalone Script:** `scripts/pre-commit-architecture-check.sh`
-- Can be used as git pre-commit hook: `ln -s ../../scripts/pre-commit-architecture-check.sh .git/hooks/pre-commit`
-- Run manually: `./scripts/pre-commit-architecture-check.sh`
+**Standalone Script:** `node src/checks/pre-commit-architecture-check.js`
+- Can be used as git pre-commit hook: `ln -s ../../src/checks/pre-commit-architecture-check.js .git/hooks/pre-commit`
+- Run manually: `node src/checks/pre-commit-architecture-check.js`
 - Checks:
   - Deep relative imports (../../ or deeper)
   - Cross-context direct imports
@@ -256,5 +256,5 @@ pre-commit run --all-files
 pre-commit run --all-files
 
 # Or use standalone script
-./scripts/pre-commit-architecture-check.sh
+node src/checks/pre-commit-architecture-check.js
 ```

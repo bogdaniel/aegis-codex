@@ -12,13 +12,13 @@ This document describes how to test the Aegis Codex rule builder.
 
 ```bash
 # Run structure validation
-./scripts/test-rule-builder.sh
+node src/checks/test-rule-builder.js
 
 # Test with minimal config (dry run)
-node scripts/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --dry-run
+node src/rules-builder/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --dry-run
 
 # Test with TypeScript backend config
-node scripts/build-agents-doc.js --config docs/.aegis-rules.example-typescript-backend.json --dry-run
+node src/rules-builder/build-agents-doc.js --config docs/.aegis-rules.example-typescript-backend.json --dry-run
 ```
 
 ## Test Scenarios
@@ -35,7 +35,7 @@ node scripts/build-agents-doc.js --config docs/.aegis-rules.example-typescript-b
 
 **Command:**
 ```bash
-node scripts/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --dry-run
+node src/rules-builder/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --dry-run
 ```
 
 **Verify:**
@@ -57,7 +57,7 @@ node scripts/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json
 
 **Command:**
 ```bash
-node scripts/build-agents-doc.js --config docs/.aegis-rules.example-typescript-backend.json --dry-run
+node src/rules-builder/build-agents-doc.js --config docs/.aegis-rules.example-typescript-backend.json --dry-run
 ```
 
 **Verify:**
@@ -81,7 +81,7 @@ node scripts/build-agents-doc.js --config docs/.aegis-rules.example-typescript-b
 
 **Command:**
 ```bash
-node scripts/build-agents-doc.js --config docs/.aegis-rules.example-full-stack.json --dry-run
+node src/rules-builder/build-agents-doc.js --config docs/.aegis-rules.example-full-stack.json --dry-run
 ```
 
 **Verify:**
@@ -102,7 +102,7 @@ node scripts/build-agents-doc.js --config docs/.aegis-rules.example-full-stack.j
 
 **Command:**
 ```bash
-node scripts/build-agents-doc.js --config docs/.aegis-rules.example-php-laravel.json --dry-run
+node src/rules-builder/build-agents-doc.js --config docs/.aegis-rules.example-php-laravel.json --dry-run
 ```
 
 **Verify:**
@@ -123,7 +123,7 @@ node scripts/build-agents-doc.js --config docs/.aegis-rules.example-php-laravel.
 
 **Command:**
 ```bash
-node scripts/build-agents-doc.js --config docs/.aegis-rules.example-patterns-specific.json --dry-run
+node src/rules-builder/build-agents-doc.js --config docs/.aegis-rules.example-patterns-specific.json --dry-run
 ```
 
 **Verify:**
@@ -137,7 +137,7 @@ node scripts/build-agents-doc.js --config docs/.aegis-rules.example-patterns-spe
 
 ```bash
 # Generate .cursor/rules/ and AGENTS.md
-node scripts/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --both
+node src/rules-builder/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --both
 
 # Verify output
 ls -la .cursor/rules/ | head -20
@@ -154,7 +154,7 @@ cat AGENTS.md | head -50
 **Test:** Language rules should automatically include architecture rules
 
 ```bash
-node scripts/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --dry-run | grep -i "dependency"
+node src/rules-builder/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --dry-run | grep -i "dependency"
 ```
 
 **Expected:**
@@ -166,7 +166,7 @@ node scripts/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json
 **Test:** `--langs` flag should still work
 
 ```bash
-node scripts/build-agents-doc.js --langs typescript,php --dry-run
+node src/rules-builder/build-agents-doc.js --langs typescript,php --dry-run
 ```
 
 **Expected:**
@@ -197,13 +197,13 @@ find rules -name "*.mdc" -type f -exec grep -L "required:" {} \;
 
 **Check mandatory rules are always included:**
 ```bash
-node scripts/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --dry-run | grep "00-persona\|10-global\|20-agents"
+node src/rules-builder/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --dry-run | grep "00-persona\|10-global\|20-agents"
 ```
 
 **Check optional rules are filtered:**
 ```bash
 # Should NOT include PHP rule
-node scripts/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --dry-run | grep "50-lang-php" && echo "ERROR: PHP rule included" || echo "OK: PHP rule excluded"
+node src/rules-builder/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --dry-run | grep "50-lang-php" && echo "ERROR: PHP rule included" || echo "OK: PHP rule excluded"
 ```
 
 ## Error Cases
@@ -213,7 +213,7 @@ node scripts/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json
 ```bash
 # Create invalid JSON
 echo '{"invalid": json}' > /tmp/invalid.json
-node scripts/build-agents-doc.js --config /tmp/invalid.json --dry-run
+node src/rules-builder/build-agents-doc.js --config /tmp/invalid.json --dry-run
 ```
 
 **Expected:** Error message about invalid JSON
@@ -221,7 +221,7 @@ node scripts/build-agents-doc.js --config /tmp/invalid.json --dry-run
 ### Missing Config File
 
 ```bash
-node scripts/build-agents-doc.js --config /tmp/nonexistent.json --dry-run
+node src/rules-builder/build-agents-doc.js --config /tmp/nonexistent.json --dry-run
 ```
 
 **Expected:** Error message or fallback to default config
@@ -231,7 +231,7 @@ node scripts/build-agents-doc.js --config /tmp/nonexistent.json --dry-run
 ```bash
 # Temporarily rename rules directory
 mv rules rules.backup
-node scripts/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --dry-run
+node src/rules-builder/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --dry-run
 mv rules.backup rules
 ```
 
@@ -243,10 +243,10 @@ mv rules.backup rules
 
 ```bash
 # Test with all languages and patterns
-node scripts/build-agents-doc.js --config docs/.aegis-rules.example-full-stack.json --both
+node src/rules-builder/build-agents-doc.js --config docs/.aegis-rules.example-full-stack.json --both
 
 # Measure time
-time node scripts/build-agents-doc.js --config docs/.aegis-rules.example-full-stack.json --both
+time node src/rules-builder/build-agents-doc.js --config docs/.aegis-rules.example-full-stack.json --both
 ```
 
 **Expected:** Completes in < 5 seconds for 80+ rules
@@ -259,18 +259,18 @@ Add to CI pipeline:
 # .github/workflows/test-rule-builder.yml
 - name: Test Rule Builder
   run: |
-    ./scripts/test-rule-builder.sh
-    node scripts/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --dry-run
-    node scripts/build-agents-doc.js --config docs/.aegis-rules.example-typescript-backend.json --dry-run
+    node src/checks/test-rule-builder.js
+    node src/rules-builder/build-agents-doc.js --config docs/.aegis-rules.example-minimal.json --dry-run
+    node src/rules-builder/build-agents-doc.js --config docs/.aegis-rules.example-typescript-backend.json --dry-run
 ```
 
 ## Troubleshooting
 
 ### "Module not found" errors
 
-**Solution:** Ensure all modules are in `scripts/lib/`:
+**Solution:** Ensure all modules are in `src/rules-builder/lib/`:
 ```bash
-ls -la scripts/lib/*/
+ls -la src/rules-builder/lib/*/
 ```
 
 ### "Config validation failed"

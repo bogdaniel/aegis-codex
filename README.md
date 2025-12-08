@@ -11,6 +11,10 @@ Aegis Codex is a **rules & governance catalog** for AI/LLM‑assisted software d
 
 You do **not** restate these standards in your prompts. Instead, the agents and rule files (`rules/*.mdc` exported to `.cursor/rules/*.mdc`) act as the “policy brain” so you can focus on the task (“build X”, “review Y”, “add tests for Z”).
 
+## CLI (global or npx)
+- Global install: `npm i -g @aegis/cli` (or use `npx aegis <command>`).
+- Commands: `aegis install` (stage .aegis), `aegis compile` (generate bundles), `aegis diagrams` (Mermaid docs), `aegis rules` (Rule Builder / AGENTS.md), `aegis check` (lint/test/audit), `aegis menu` (interactive picker).
+
 ## Layout
 - `rules/*.mdc` — Canonical machine‑readable rules for Aegis Codex (architecture, security, change‑discipline, data, config/env, flags, observability, agents, etc.).
 - `.cursor/rules/*.mdc` — Generated subset of rules for tools like Cursor; produced from `rules/*.mdc` via the [Rule Builder](#rule-builder) based on your project profile.
@@ -28,7 +32,7 @@ You do **not** restate these standards in your prompts. Instead, the agents and 
   - `docs/language-guides/` — Language‑specific standards.
 - `examples/` — Small “before/after” and flow examples (optional; for humans).
 
-**Editing note:** Modify `rules/**/*.mdc`, then run `node scripts/build-agents-doc.js --copy-rules` (or `--both`) to regenerate `.cursor/rules/` and `AGENTS.md`. Do not edit `.cursor/rules/` or `AGENTS.md` directly.
+**Editing note:** Modify `rules/**/*.mdc`, then run `node src/rules-builder/build-agents-doc.js --copy-rules` (legacy shim: `node src/rules-builder/build-agents-doc.js`) to regenerate `.cursor/rules/` and `AGENTS.md`. Do not edit `.cursor/rules/` or `AGENTS.md` directly.
 
 ### Cursor rule load order (priority)
 Rules are ordered by filename so persona/bootstrap runs first, then global/multi‑agent governance, topic standards, methodologies, and language rules. At a high level (see `.cursor/rules/11-meta-map.mdc` for details):
@@ -190,10 +194,10 @@ Aegis Codex includes a **rule builder** that lets you select only the rules rele
 ```bash
 # Interactive prompts guide you through rule selection
 # Choose output mode: --copy-rules (for Cursor IDE) or --generate-agents (for summary)
-node scripts/build-agents-doc.js --interactive --copy-rules
+node src/rules-builder/build-agents-doc.js --interactive --copy-rules
 
 # With cleanup (removes builder files after generation)
-node scripts/build-agents-doc.js --interactive --copy-rules --cleanup
+node src/rules-builder/build-agents-doc.js --interactive --copy-rules --cleanup
 ```
 
 **Option 2: Use Example Config**
@@ -216,24 +220,24 @@ node scripts/build-agents-doc.js --interactive --copy-rules --cleanup
 2. **Choose output mode** (important: choose one to avoid loading both in Cursor IDE):
    ```bash
    # For Cursor IDE: Copy rules to .cursor/rules/ (recommended)
-   node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --copy-rules
    
    # For human-readable summary: Generate AGENTS.md only
-   node scripts/build-agents-doc.js --config .aegis-rules.json --generate-agents
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --generate-agents
    
    # Generate both (not recommended - Cursor IDE will load .cursor/rules/ automatically)
-   node scripts/build-agents-doc.js --config .aegis-rules.json --both
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --both
    ```
 
 3. **Clean up repository** (remove builder files after generation):
    ```bash
    # Generate rules and clean up in one command
-   node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules --cleanup
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --copy-rules --cleanup
    ```
 
 4. **Preview what will be included** (dry run):
    ```bash
-   node scripts/build-agents-doc.js --config .aegis-rules.json --copy-rules --cleanup --dry-run
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --copy-rules --cleanup --dry-run
    ```
 
 ### Configuration Options
@@ -262,7 +266,7 @@ See `docs/.aegis-rules.example-*.json` files for:
 The builder supports the legacy `--langs` flag:
 ```bash
 # Include TypeScript and PHP rules
-node scripts/build-agents-doc.js --langs typescript,php --both
+node src/rules-builder/build-agents-doc.js --langs typescript,php --both
 ```
 
 ### Custom Configuration
@@ -308,7 +312,7 @@ See `docs/rule-builder-config-examples.md` for detailed configuration documentat
 
 Run the test script to validate the rule builder:
 ```bash
-./scripts/test-rule-builder.sh
+node src/checks/test-rule-builder.js
 ```
 
 See `docs/rule-builder-testing.md` for comprehensive testing guide.
@@ -323,7 +327,7 @@ See `docs/rule-builder-testing.md` for comprehensive testing guide.
 2) **Generate rules for your project** (see [Rule Builder](#rule-builder) section):
    ```bash
    cp docs/.aegis-rules.example-typescript-backend.json .aegis-rules.json
-   node scripts/build-agents-doc.js --config .aegis-rules.json --both
+   node src/rules-builder/build-agents-doc.js --config .aegis-rules.json --both
    ```
    This creates `.cursor/rules/` and `AGENTS.md` at the project root.
 3) Use an agent prompt, e.g.: `Act as the @code-reviewer. Review this diff.` or `Act as the @security-auditor. Audit src/handler.ts`.

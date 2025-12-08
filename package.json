@@ -1,15 +1,33 @@
 {
-  "name": "aegis-bridge",
+  "name": "@aegis/cli",
   "version": "0.1.0",
-  "private": true,
-  "description": "Compiled agent/bundle generator for Aegis agents",
+  "private": false,
+  "description": "Aegis CLI for installing, compiling, and generating agent/workflow bundles",
+  "files": [
+    "src/**/*",
+    "source/**/*",
+    "rules/**/*",
+    "docs/.aegis-rules.example-*.json",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "bin": {
+    "aegis": "src/cli.js"
+  },
   "scripts": {
-    "aegis:compile": "node tools/aegis-bridge/cli.js compile",
-    "aegis:bundle": "node tools/aegis-bridge/cli.js bundle",
-    "aegis:validate": "node tools/aegis-bridge/cli.js validate",
-    "aegis:ci": "node tools/aegis-bridge/scripts/ci-validate.js",
-    "aegis:diagrams": "node tools/aegis-bridge/scripts/generate-workflow-diagrams.js",
-    "aegis:install": "node tools/aegis-bridge/install.js"
+    "aegis:menu": "node src/cli.js menu",
+    "aegis:compile": "node src/cli.js compile",
+    "aegis:bundle": "node src/build-cli.js bundle",
+    "aegis:validate": "node src/build-cli.js validate",
+    "aegis:ci": "node src/scripts/ci-validate.js",
+    "aegis:diagrams": "node src/cli.js diagrams",
+    "aegis:install": "node src/cli.js install",
+    "aegis:rules": "node src/cli.js rules",
+    "aegis:check": "node src/cli.js check"
   },
   "engines": {
     "node": ">=20.0.0"

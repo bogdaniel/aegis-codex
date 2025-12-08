@@ -1,0 +1,11 @@
+[
+  ,{"aegisId":"innovation-design-thinking-maestro","aegisPath":"rules/agents/innovation-design-thinking-maestro.mdc","template":"src/templates/innovation/design-thinking-coach.agent.yaml","module":"innovation","output":"design-thinking-coach"}
+  ,{"aegisId":"innovation-oracle","aegisPath":"rules/agents/innovation-oracle.mdc","template":"src/templates/innovation/innovation-strategist.agent.yaml","module":"innovation","output":"innovation-strategist"}
+  ,{"aegisId":"innovation-presentation-master","aegisPath":"rules/agents/innovation-presentation-master.mdc","template":"src/templates/innovation/presentation-master.agent.yaml","module":"innovation","output":"presentation-master"}
+  ,{"aegisId":"innovation-storyteller","aegisPath":"rules/agents/innovation-storyteller.mdc","template":"src/templates/innovation/storyteller.agent.yaml","module":"innovation","output":"storyteller"}
+  ,{"aegisId":"game-architect","aegisPath":"rules/agents/game-architect.mdc","template":"src/templates/gamedev/game-architect.agent.yaml","module":"gamedev","output":"game-architect"}
+  ,{"aegisId":"game-designer","aegisPath":"rules/agents/game-designer.mdc","template":"src/templates/gamedev/game-designer.agent.yaml","module":"gamedev","output":"game-designer"}
+  ,{"aegisId":"game-developer","aegisPath":"rules/agents/game-developer.mdc","template":"src/templates/gamedev/game-dev.agent.yaml","module":"gamedev","output":"game-dev"}
+  ,{"aegisId":"game-dev-scrum-master","aegisPath":"rules/agents/game-dev-scrum-master.mdc","template":"src/templates/gamedev/game-scrum-master.agent.yaml","module":"gamedev","output":"game-scrum-master"}
+  ,{"aegisId":"aegis-builder","aegisPath":"rules/agents/architect.mdc","template":"src/templates/builder/aegis-builder.agent.yaml","module":"builder","output":"aegis-builder"}
+]
